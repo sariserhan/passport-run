@@ -6,13 +6,14 @@ export const difficulty = v.union(v.literal("easy"), v.literal("moderate"), v.li
 export const rankedMode = v.union(v.literal("daily"), v.literal("infinite"));
 export const manifestFields = {
   mode: rankedMode, difficulty, seed: v.number(), route: v.array(v.string()), date: v.string(),
+  catalogVersion: v.optional(v.union(v.literal(1), v.literal(2))),
   generatorVersion: v.literal(1), balanceVersion: v.union(v.literal(1), v.literal(2)),
 };
 export default defineSchema({
   ...authTables,
   players: defineTable({ userId: v.id("users"), homeCountry: v.string(), discoveries: v.array(v.string()) })
     .index("by_userId", ["userId"]),
-  dailyChallenges: defineTable(manifestFields).index("by_date_and_difficulty", ["date", "difficulty"]),
+  dailyChallenges: defineTable(manifestFields).index("by_date_difficulty_and_catalog", ["date", "difficulty", "catalogVersion"]),
   runs: defineTable({
     ...manifestFields, userId: v.id("users"), startedAt: v.number(),
     status: v.union(v.literal("active"), v.literal("submitted")),

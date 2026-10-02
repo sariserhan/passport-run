@@ -19,7 +19,7 @@ function validRun(manifest: Manifest, rows = 20): { events: Selection[]; end: nu
 }
 describe("v1 cross-language compatibility", () => {
   for (const fixture of fixtures.lanes) test(`lane ${fixture.seed}/${fixture.lanes}/${fixture.row}`, () => expect(laneAt(fixture.seed, fixture.lanes, fixture.row)).toBe(fixture.lane));
-  for (const fixture of fixtures.routes) test(`route ${fixture.home}/${fixture.seed}`, () => expect(routeFrom(fixture.home, fixture.seed)).toEqual(fixture.route));
+  for (const fixture of fixtures.routes) test(`route ${fixture.home}/${fixture.seed}`, () => expect(routeFrom(fixture.home, fixture.seed, 1)).toEqual(fixture.route));
   for (const fixture of fixtures.daily) test(`daily ${fixture.date}/${fixture.difficulty}`, () => expect(dailySeed(fixture.date, fixture.difficulty as Difficulty)).toBe(fixture.seed));
   test("immutable balance matches Godot", () => expect(BALANCE).toEqual(fixtures.balance));
 });
@@ -75,4 +75,19 @@ describe("replay validation", () => {
     events[0].atMs += 10000;
     expect(verifyReplay(manifest, events, end + 10000, end + 10000).score).toBe(1);
   });
+});
+
+
+test("expanded catalog routes and boards stay deterministic and separate from legacy", () => {
+  const current = manifestFor("daily", "hard", 0);
+  for (const home of ["AE", "DE", "KR", "JM", "BO", "NZ"]) {
+    const route = routeFrom(home, 88);
+    expect(route).toHaveLength(197);
+    expect(new Set(route).size).toBe(197);
+    expect(route[0]).toBe(home);
+    expect(route).toEqual(routeFrom(home, 88));
+  }
+  expect(boardKey(current)).not.toBe(boardKey({...current, catalogVersion: undefined}));
+  const {events, end} = validRun(current, 3940);
+  expect(verifyReplay(current, events, end, end)).toEqual({score: 3940, countries: 197});
 });

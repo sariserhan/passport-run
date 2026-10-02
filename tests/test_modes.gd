@@ -88,8 +88,14 @@ func run_all() -> void:
 	expect(game.menu.pending_mode == "world", "Home selection required")
 	await wait()
 	await capture("11-home-country")
-	# Country picker order: heading, subtitle, search, US, FR, ...
-	tap(game.menu.content.get_child(4).get_global_rect().get_center())
+	# Search makes the expanded picker usable on phone-sized screens.
+	game.menu.content.get_child(2).text = "France"
+	game.menu.content.get_child(2).text_changed.emit("France")
+	await wait()
+	for control in game.menu.content.get_children():
+		if control is Button and control.text.begins_with("FR "):
+			tap(control.get_global_rect().get_center())
+			break
 	await wait()
 	expect(game.session.mode == "world" and game.session.current_country() == "FR", "Touch selecting France starts World Tour")
 	game.start_preview()
@@ -100,7 +106,7 @@ func run_all() -> void:
 	await capture("13-country-complete")
 	var tour_seed: int = game.session.seed_value
 	var seen: Array[String] = ["FR"]
-	while not game.session.choices().is_empty():
+	while seen.size() < 5 and not game.session.choices().is_empty():
 		var destination: String = game.session.choices()[0]
 		game.travel_to(destination)
 		expect(game.travel.active, "Country choice opens a skippable travel sequence")
@@ -109,7 +115,7 @@ func run_all() -> void:
 		await wait()
 		await capture("country-" + destination)
 		await cross_country()
-	expect(game.session.completed_countries == 5 and game.session.banked_tiles == 50, "Whole five-country tour completes")
+	expect(game.session.completed_countries == 5 and game.session.banked_tiles == 50, "Five-country sample banks completion")
 	expect(game.profile.discoveries.size() == 5, "Five unique stamps")
 	expect(game.session.seed_value == tour_seed, "Travel does not mutate run identity")
 	await capture("14-tour-complete")

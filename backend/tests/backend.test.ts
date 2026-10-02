@@ -2,7 +2,7 @@ import { afterEach, expect, test, vi } from "vitest";
 import { convexTest } from "convex-test";
 import schema from "../convex/schema";
 import { api } from "../convex/_generated/api";
-import { BALANCE, derivedSeed, laneAt } from "../convex/competition";
+import { BALANCE, derivedSeed, laneAt, manifestFor, routeFrom } from "../convex/competition";
 const modules = import.meta.glob("../convex/**/*.ts");
 afterEach(() => vi.useRealTimers());
 
@@ -79,4 +79,32 @@ test("daily retry stays pinned across midnight", async () => {
   expect(retry.date).toBe("2026-10-02");
   expect(retry.route).toEqual(original.route);
   expect(retry.seed).toBe(original.seed);
+});
+
+
+test("new catalog coexists with today's saved five-country challenge and retries", async () => {
+  vi.useFakeTimers(); const now = Date.UTC(2026, 9, 2); vi.setSystemTime(now);
+  const {t, client, userId} = await setup();
+  const {catalogVersion: _version, ...old} = manifestFor("daily", "easy", now);
+  old.route = routeFrom("FR", old.seed, 1);
+  const oldRun = await t.run(async (ctx) => {
+    await ctx.db.insert("dailyChallenges", old);
+    return ctx.db.insert("runs", {...old, userId, startedAt: now - 2000, status: "active"});
+  });
+  const current = await client.mutation(api.runs.begin, {mode: "daily", difficulty: "easy"});
+  expect(current.catalogVersion).toBe(2);
+  expect(current.route).toHaveLength(197);
+  vi.setSystemTime(now + 2000);
+  const retry = await client.mutation(api.runs.begin, {mode: "daily", difficulty: "easy", retryRunId: oldRun});
+  expect(retry.route).toEqual(old.route);
+  expect(retry.catalogVersion).toBeUndefined();
+  expect(await t.run((ctx) => ctx.db.query("dailyChallenges").collect())).toHaveLength(2);
+});
+
+test("all new passport destinations persist through authenticated sync", async () => {
+  const {client} = await setup();
+  const route = routeFrom("AE", 88);
+  const saved = await client.mutation(api.players.syncPassport, {homeCountry: "AE", discoveries: route});
+  expect(saved.homeCountry).toBe("AE");
+  expect(saved.discoveries).toHaveLength(197);
 });

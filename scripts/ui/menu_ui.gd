@@ -153,7 +153,7 @@ func show_countries() -> void:
 	search.add_theme_font_size_override("font_size", 20)
 	content.add_child(search)
 	var buttons: Array[Button] = []
-	for id in GameCatalog.COUNTRIES:
+	for id in GameCatalog.sorted_countries():
 		var country: String = id
 		var control := action(country + "   " + GameCatalog.country_name(country), country == profile.home_country, func():
 			profile.home_country = country
@@ -169,14 +169,22 @@ func show_countries() -> void:
 		buttons.append(control)
 	search.text_changed.connect(func(query: String):
 		for control in buttons:
-			control.visible = query.to_lower() in control.text.to_lower()
+			var id := control.text.left(2)
+			control.visible = query.to_lower() in (control.text + " " + str(GameCatalog.COUNTRIES[id].aliases)).to_lower()
 	)
-	copy("This prototype has five countries. The travel graph will expand after playtesting.", 15)
+	copy("Geography: mledoze/countries · ODbL 1.0", 15)
+	copy("%d destinations to explore. Dubai is included under the United Arab Emirates." % GameCatalog.COUNTRIES.size(), 15)
 	action("BACK", false, func(): pending_mode = ""; show_main())
 
 func show_passport() -> void:
 	clear("My passport", "%d / %d countries discovered" % [profile.discoveries.size(), GameCatalog.COUNTRIES.size()])
-	for id in GameCatalog.COUNTRIES:
+	var search := LineEdit.new()
+	search.placeholder_text = "Search your passport"
+	search.custom_minimum_size.y = 54
+	search.add_theme_font_size_override("font_size", 20)
+	content.add_child(search)
+	var panels: Dictionary = {}
+	for id in GameCatalog.sorted_countries():
 		var visited: bool = id in profile.discoveries
 		var panel := PanelContainer.new()
 		panel.add_theme_stylebox_override("panel", style.panel_style(Color("fff6df") if visited else Color("28546b"), 12))
@@ -185,8 +193,13 @@ func show_passport() -> void:
 		text_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		panel.add_child(text_label)
 		content.add_child(panel)
+		panels[id] = panel
+	search.text_changed.connect(func(query: String):
+		for id in panels:
+			panels[id].visible = query.to_lower() in (id + " " + GameCatalog.country_name(id) + " " + str(GameCatalog.COUNTRIES[id].aliases)).to_lower()
+	)
 	if profile.discoveries.size() == GameCatalog.COUNTRIES.size():
-		copy("WORLD EXPLORER · All five destination stickers collected!", 21)
+		copy("WORLD EXPLORER · Every destination sticker collected!", 21)
 	action("MY TRAVEL STICKERS", false, show_stickers)
 	copy("Recent journey", 22)
 	var names: Array[String] = []
@@ -197,17 +210,17 @@ func show_passport() -> void:
 
 func show_stickers() -> void:
 	clear("Travel stickers", "Your discoveries become a little collection of the world.")
-	for id in GameCatalog.COUNTRIES:
-		copy(GameCatalog.country_name(id), 23)
+	if profile.discoveries.is_empty():
+		copy("Complete a destination to collect its sticker.")
+	for id in GameCatalog.sorted_countries():
 		if id in profile.discoveries:
+			copy(GameCatalog.country_name(id), 23)
 			var artwork := TravelArtwork.new()
 			artwork.country_id = id
 			artwork.show_traveler = false
 			artwork.custom_minimum_size.y = 170
 			content.add_child(artwork)
 			copy(CountryRewards.fact(id))
-		else:
-			copy("Complete this destination to collect its sticker.")
 	action("BACK TO PASSPORT", true, show_passport)
 
 func show_records() -> void:

@@ -1,0 +1,2961 @@
+{
+  "US": {
+    "name": "United States",
+    "region": "North America",
+    "neighbors": [
+      "CA",
+      "MX"
+    ],
+    "color": "91b8b0",
+    "art": 0,
+    "capital": [
+      "Washington D.C."
+    ],
+    "aliases": "US USA United States of America"
+  },
+  "FR": {
+    "name": "France",
+    "region": "Western Europe",
+    "neighbors": [
+      "AD",
+      "BE",
+      "CH",
+      "DE",
+      "ES",
+      "IT",
+      "LU",
+      "MC"
+    ],
+    "color": "91b8b0",
+    "art": 0,
+    "capital": [
+      "Paris"
+    ],
+    "aliases": "FR French Republic République française"
+  },
+  "EG": {
+    "name": "Egypt",
+    "region": "Northern Africa",
+    "neighbors": [
+      "IL",
+      "LY",
+      "PS",
+      "SD"
+    ],
+    "color": "dcb475",
+    "art": 4,
+    "capital": [
+      "Cairo"
+    ],
+    "aliases": "EG Arab Republic of Egypt"
+  },
+  "TR": {
+    "name": "Turkey",
+    "region": "Western Asia",
+    "neighbors": [
+      "AM",
+      "AZ",
+      "BG",
+      "GE",
+      "GR",
+      "IQ",
+      "IR",
+      "SY"
+    ],
+    "color": "dcb475",
+    "art": 4,
+    "capital": [
+      "Ankara"
+    ],
+    "aliases": "TR Turkiye Republic of Turkey Türkiye Cumhuriyeti"
+  },
+  "JP": {
+    "name": "Japan",
+    "region": "Eastern Asia",
+    "neighbors": [],
+    "color": "91bca5",
+    "art": 3,
+    "capital": [
+      "Tokyo"
+    ],
+    "aliases": "JP Nippon Nihon"
+  },
+  "AF": {
+    "name": "Afghanistan",
+    "region": "Southern Asia",
+    "neighbors": [
+      "CN",
+      "IR",
+      "PK",
+      "TJ",
+      "TM",
+      "UZ"
+    ],
+    "color": "81b7b0",
+    "art": 11,
+    "capital": [
+      "Kabul"
+    ],
+    "aliases": "AF Afġānistān"
+  },
+  "AL": {
+    "name": "Albania",
+    "region": "Southeast Europe",
+    "neighbors": [
+      "GR",
+      "ME",
+      "MK",
+      "XK"
+    ],
+    "color": "d9ac85",
+    "art": 1,
+    "capital": [
+      "Tirana"
+    ],
+    "aliases": "AL Shqipëri Shqipëria Shqipnia"
+  },
+  "DZ": {
+    "name": "Algeria",
+    "region": "Northern Africa",
+    "neighbors": [
+      "LY",
+      "MA",
+      "ML",
+      "MR",
+      "NE",
+      "TN"
+    ],
+    "color": "dcb475",
+    "art": 4,
+    "capital": [
+      "Algiers"
+    ],
+    "aliases": "DZ Dzayer Algérie"
+  },
+  "AD": {
+    "name": "Andorra",
+    "region": "Southern Europe",
+    "neighbors": [
+      "ES",
+      "FR"
+    ],
+    "color": "d9a28b",
+    "art": 9,
+    "capital": [
+      "Andorra la Vella"
+    ],
+    "aliases": "AD Principality of Andorra Principat d'Andorra"
+  },
+  "AO": {
+    "name": "Angola",
+    "region": "Middle Africa",
+    "neighbors": [
+      "CD",
+      "CG",
+      "NA",
+      "ZM"
+    ],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Luanda"
+    ],
+    "aliases": "AO República de Angola ʁɛpublika de an'ɡɔla"
+  },
+  "AG": {
+    "name": "Antigua and Barbuda",
+    "region": "Caribbean",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Saint John's"
+    ],
+    "aliases": "AG"
+  },
+  "AR": {
+    "name": "Argentina",
+    "region": "South America",
+    "neighbors": [
+      "BO",
+      "BR",
+      "CL",
+      "PY",
+      "UY"
+    ],
+    "color": "aeb8be",
+    "art": 13,
+    "capital": [
+      "Buenos Aires"
+    ],
+    "aliases": "AR Argentine Republic República Argentina"
+  },
+  "AM": {
+    "name": "Armenia",
+    "region": "Western Asia",
+    "neighbors": [
+      "AZ",
+      "GE",
+      "IR",
+      "TR"
+    ],
+    "color": "dcb475",
+    "art": 4,
+    "capital": [
+      "Yerevan"
+    ],
+    "aliases": "AM Hayastan Republic of Armenia Հայաստանի Հանրապետություն"
+  },
+  "AU": {
+    "name": "Australia",
+    "region": "Australia and New Zealand",
+    "neighbors": [],
+    "color": "69afc4",
+    "art": 5,
+    "capital": [
+      "Canberra"
+    ],
+    "aliases": "AU"
+  },
+  "AT": {
+    "name": "Austria",
+    "region": "Central Europe",
+    "neighbors": [
+      "CH",
+      "CZ",
+      "DE",
+      "HU",
+      "IT",
+      "LI",
+      "SI",
+      "SK"
+    ],
+    "color": "91b8b0",
+    "art": 0,
+    "capital": [
+      "Vienna"
+    ],
+    "aliases": "AT Osterreich Oesterreich"
+  },
+  "AZ": {
+    "name": "Azerbaijan",
+    "region": "Western Asia",
+    "neighbors": [
+      "AM",
+      "GE",
+      "IR",
+      "RU",
+      "TR"
+    ],
+    "color": "dcb475",
+    "art": 4,
+    "capital": [
+      "Baku"
+    ],
+    "aliases": "AZ Republic of Azerbaijan Azərbaycan Respublikası"
+  },
+  "BS": {
+    "name": "Bahamas",
+    "region": "Caribbean",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Nassau"
+    ],
+    "aliases": "BS Commonwealth of the Bahamas"
+  },
+  "BH": {
+    "name": "Bahrain",
+    "region": "Western Asia",
+    "neighbors": [],
+    "color": "dcb475",
+    "art": 4,
+    "capital": [
+      "Manama"
+    ],
+    "aliases": "BH Kingdom of Bahrain Mamlakat al-Baḥrayn"
+  },
+  "BD": {
+    "name": "Bangladesh",
+    "region": "Southern Asia",
+    "neighbors": [
+      "IN",
+      "MM"
+    ],
+    "color": "81b7b0",
+    "art": 11,
+    "capital": [
+      "Dhaka"
+    ],
+    "aliases": "BD People's Republic of Bangladesh Gônôprôjatôntri Bangladesh"
+  },
+  "BB": {
+    "name": "Barbados",
+    "region": "Caribbean",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Bridgetown"
+    ],
+    "aliases": "BB"
+  },
+  "BY": {
+    "name": "Belarus",
+    "region": "Eastern Europe",
+    "neighbors": [
+      "LT",
+      "LV",
+      "PL",
+      "RU",
+      "UA"
+    ],
+    "color": "bb9aa7",
+    "art": 2,
+    "capital": [
+      "Minsk"
+    ],
+    "aliases": "BY Bielaruś Republic of Belarus Белоруссия Республика Белоруссия"
+  },
+  "BE": {
+    "name": "Belgium",
+    "region": "Western Europe",
+    "neighbors": [
+      "DE",
+      "FR",
+      "LU",
+      "NL"
+    ],
+    "color": "91b8b0",
+    "art": 0,
+    "capital": [
+      "Brussels"
+    ],
+    "aliases": "BE België Belgie Belgien Belgique Kingdom of Belgium Koninkrijk België Royaume de Belgique Königreich Belgien"
+  },
+  "BZ": {
+    "name": "Belize",
+    "region": "Central America",
+    "neighbors": [
+      "GT",
+      "MX"
+    ],
+    "color": "c3a58b",
+    "art": 14,
+    "capital": [
+      "Belmopan"
+    ],
+    "aliases": "BZ"
+  },
+  "BJ": {
+    "name": "Benin",
+    "region": "Western Africa",
+    "neighbors": [
+      "BF",
+      "NE",
+      "NG",
+      "TG"
+    ],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Porto-Novo"
+    ],
+    "aliases": "BJ Republic of Benin République du Bénin"
+  },
+  "BT": {
+    "name": "Bhutan",
+    "region": "Southern Asia",
+    "neighbors": [
+      "CN",
+      "IN"
+    ],
+    "color": "81b7b0",
+    "art": 11,
+    "capital": [
+      "Thimphu"
+    ],
+    "aliases": "BT Kingdom of Bhutan"
+  },
+  "BO": {
+    "name": "Bolivia",
+    "region": "South America",
+    "neighbors": [
+      "AR",
+      "BR",
+      "CL",
+      "PE",
+      "PY"
+    ],
+    "color": "aeb8be",
+    "art": 13,
+    "capital": [
+      "Sucre"
+    ],
+    "aliases": "BO Buliwya Wuliwya Bolivia, Plurinational State of Plurinational State of Bolivia Estado Plurinacional de Bolivia Buliwya Mamallaqta Wuliwya Suyu Tetã Volívia"
+  },
+  "BA": {
+    "name": "Bosnia and Herzegovina",
+    "region": "Southeast Europe",
+    "neighbors": [
+      "HR",
+      "ME",
+      "RS"
+    ],
+    "color": "d9ac85",
+    "art": 1,
+    "capital": [
+      "Sarajevo"
+    ],
+    "aliases": "BA Bosnia-Herzegovina Босна и Херцеговина"
+  },
+  "BW": {
+    "name": "Botswana",
+    "region": "Southern Africa",
+    "neighbors": [
+      "NA",
+      "ZA",
+      "ZM",
+      "ZW"
+    ],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Gaborone"
+    ],
+    "aliases": "BW Republic of Botswana Lefatshe la Botswana"
+  },
+  "BR": {
+    "name": "Brazil",
+    "region": "South America",
+    "neighbors": [
+      "AR",
+      "BO",
+      "CO",
+      "GY",
+      "PE",
+      "PY",
+      "SR",
+      "UY",
+      "VE"
+    ],
+    "color": "73bba0",
+    "art": 7,
+    "capital": [
+      "Brasília"
+    ],
+    "aliases": "BR Brasil Federative Republic of Brazil República Federativa do Brasil"
+  },
+  "BN": {
+    "name": "Brunei",
+    "region": "South-Eastern Asia",
+    "neighbors": [
+      "MY"
+    ],
+    "color": "81b7b0",
+    "art": 11,
+    "capital": [
+      "Bandar Seri Begawan"
+    ],
+    "aliases": "BN Brunei Darussalam Nation of Brunei the Abode of Peace"
+  },
+  "BG": {
+    "name": "Bulgaria",
+    "region": "Southeast Europe",
+    "neighbors": [
+      "GR",
+      "MK",
+      "RO",
+      "RS",
+      "TR"
+    ],
+    "color": "d9ac85",
+    "art": 1,
+    "capital": [
+      "Sofia"
+    ],
+    "aliases": "BG Republic of Bulgaria Република България"
+  },
+  "BF": {
+    "name": "Burkina Faso",
+    "region": "Western Africa",
+    "neighbors": [
+      "BJ",
+      "CI",
+      "GH",
+      "ML",
+      "NE",
+      "TG"
+    ],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Ouagadougou"
+    ],
+    "aliases": "BF"
+  },
+  "BI": {
+    "name": "Burundi",
+    "region": "Eastern Africa",
+    "neighbors": [
+      "CD",
+      "RW",
+      "TZ"
+    ],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Gitega"
+    ],
+    "aliases": "BI Republic of Burundi Republika y'Uburundi République du Burundi"
+  },
+  "KH": {
+    "name": "Cambodia",
+    "region": "South-Eastern Asia",
+    "neighbors": [
+      "LA",
+      "TH",
+      "VN"
+    ],
+    "color": "81b7b0",
+    "art": 11,
+    "capital": [
+      "Phnom Penh"
+    ],
+    "aliases": "KH Kingdom of Cambodia"
+  },
+  "CM": {
+    "name": "Cameroon",
+    "region": "Middle Africa",
+    "neighbors": [
+      "CF",
+      "CG",
+      "GA",
+      "GQ",
+      "NG",
+      "TD"
+    ],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Yaoundé"
+    ],
+    "aliases": "CM Republic of Cameroon République du Cameroun"
+  },
+  "CA": {
+    "name": "Canada",
+    "region": "North America",
+    "neighbors": [
+      "US"
+    ],
+    "color": "8cb8cf",
+    "art": 6,
+    "capital": [
+      "Ottawa"
+    ],
+    "aliases": "CA"
+  },
+  "CV": {
+    "name": "Cape Verde",
+    "region": "Western Africa",
+    "neighbors": [],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Praia"
+    ],
+    "aliases": "CV Republic of Cabo Verde República de Cabo Verde"
+  },
+  "CF": {
+    "name": "Central African Republic",
+    "region": "Middle Africa",
+    "neighbors": [
+      "CD",
+      "CG",
+      "CM",
+      "SD",
+      "SS",
+      "TD"
+    ],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Bangui"
+    ],
+    "aliases": "CF Central African Republic République centrafricaine"
+  },
+  "TD": {
+    "name": "Chad",
+    "region": "Middle Africa",
+    "neighbors": [
+      "CF",
+      "CM",
+      "LY",
+      "NE",
+      "NG",
+      "SD"
+    ],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "N'Djamena"
+    ],
+    "aliases": "TD Tchad Republic of Chad République du Tchad"
+  },
+  "CL": {
+    "name": "Chile",
+    "region": "South America",
+    "neighbors": [
+      "AR",
+      "BO",
+      "PE"
+    ],
+    "color": "aeb8be",
+    "art": 13,
+    "capital": [
+      "Santiago"
+    ],
+    "aliases": "CL Republic of Chile República de Chile"
+  },
+  "CN": {
+    "name": "China",
+    "region": "Eastern Asia",
+    "neighbors": [
+      "AF",
+      "BT",
+      "IN",
+      "KG",
+      "KP",
+      "KZ",
+      "LA",
+      "MM",
+      "MN",
+      "NP",
+      "PK",
+      "RU",
+      "TJ",
+      "VN"
+    ],
+    "color": "91bca5",
+    "art": 3,
+    "capital": [
+      "Beijing"
+    ],
+    "aliases": "CN Zhōngguó Zhongguo Zhonghua People's Republic of China 中华人民共和国 Zhōnghuá Rénmín Gònghéguó"
+  },
+  "CO": {
+    "name": "Colombia",
+    "region": "South America",
+    "neighbors": [
+      "BR",
+      "EC",
+      "PA",
+      "PE",
+      "VE"
+    ],
+    "color": "aeb8be",
+    "art": 13,
+    "capital": [
+      "Bogotá"
+    ],
+    "aliases": "CO Republic of Colombia República de Colombia"
+  },
+  "KM": {
+    "name": "Comoros",
+    "region": "Eastern Africa",
+    "neighbors": [],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Moroni"
+    ],
+    "aliases": "KM Union of the Comoros Union des Comores Udzima wa Komori al-Ittiḥād al-Qumurī"
+  },
+  "CG": {
+    "name": "Congo",
+    "region": "Middle Africa",
+    "neighbors": [
+      "AO",
+      "CD",
+      "CF",
+      "CM",
+      "GA"
+    ],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Brazzaville"
+    ],
+    "aliases": "CG Congo Congo-Brazzaville"
+  },
+  "CR": {
+    "name": "Costa Rica",
+    "region": "Central America",
+    "neighbors": [
+      "NI",
+      "PA"
+    ],
+    "color": "c3a58b",
+    "art": 14,
+    "capital": [
+      "San José"
+    ],
+    "aliases": "CR Republic of Costa Rica República de Costa Rica"
+  },
+  "HR": {
+    "name": "Croatia",
+    "region": "Southeast Europe",
+    "neighbors": [
+      "BA",
+      "HU",
+      "ME",
+      "RS",
+      "SI"
+    ],
+    "color": "d9ac85",
+    "art": 1,
+    "capital": [
+      "Zagreb"
+    ],
+    "aliases": "HR Hrvatska Republic of Croatia Republika Hrvatska"
+  },
+  "CU": {
+    "name": "Cuba",
+    "region": "Caribbean",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Havana"
+    ],
+    "aliases": "CU Republic of Cuba República de Cuba"
+  },
+  "CY": {
+    "name": "Cyprus",
+    "region": "Southern Europe",
+    "neighbors": [],
+    "color": "89bcd1",
+    "art": 8,
+    "capital": [
+      "Nicosia"
+    ],
+    "aliases": "CY Kýpros Kıbrıs Republic of Cyprus Κυπριακή Δημοκρατία Kıbrıs Cumhuriyeti"
+  },
+  "CZ": {
+    "name": "Czechia",
+    "region": "Central Europe",
+    "neighbors": [
+      "AT",
+      "DE",
+      "PL",
+      "SK"
+    ],
+    "color": "91b8b0",
+    "art": 0,
+    "capital": [
+      "Prague"
+    ],
+    "aliases": "CZ Česká republika Česko"
+  },
+  "CD": {
+    "name": "DR Congo",
+    "region": "Middle Africa",
+    "neighbors": [
+      "AO",
+      "BI",
+      "CF",
+      "CG",
+      "RW",
+      "SS",
+      "TZ",
+      "UG",
+      "ZM"
+    ],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Kinshasa"
+    ],
+    "aliases": "CD DR Congo Congo-Kinshasa Congo, the Democratic Republic of the Democratic Republic of Congo DRC"
+  },
+  "DK": {
+    "name": "Denmark",
+    "region": "Northern Europe",
+    "neighbors": [
+      "DE"
+    ],
+    "color": "8cb8cf",
+    "art": 6,
+    "capital": [
+      "Copenhagen"
+    ],
+    "aliases": "DK Danmark Kingdom of Denmark Kongeriget Danmark"
+  },
+  "DJ": {
+    "name": "Djibouti",
+    "region": "Eastern Africa",
+    "neighbors": [
+      "ER",
+      "ET",
+      "SO"
+    ],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Djibouti"
+    ],
+    "aliases": "DJ Jabuuti Gabuuti Republic of Djibouti République de Djibouti Gabuutih Ummuuno Jamhuuriyadda Jabuuti"
+  },
+  "DM": {
+    "name": "Dominica",
+    "region": "Caribbean",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Roseau"
+    ],
+    "aliases": "DM Dominique Wai‘tu kubuli Commonwealth of Dominica"
+  },
+  "DO": {
+    "name": "Dominican Republic",
+    "region": "Caribbean",
+    "neighbors": [
+      "HT"
+    ],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Santo Domingo"
+    ],
+    "aliases": "DO"
+  },
+  "EC": {
+    "name": "Ecuador",
+    "region": "South America",
+    "neighbors": [
+      "CO",
+      "PE"
+    ],
+    "color": "aeb8be",
+    "art": 13,
+    "capital": [
+      "Quito"
+    ],
+    "aliases": "EC Republic of Ecuador República del Ecuador"
+  },
+  "SV": {
+    "name": "El Salvador",
+    "region": "Central America",
+    "neighbors": [
+      "GT",
+      "HN"
+    ],
+    "color": "c3a58b",
+    "art": 14,
+    "capital": [
+      "San Salvador"
+    ],
+    "aliases": "SV Republic of El Salvador República de El Salvador"
+  },
+  "GQ": {
+    "name": "Equatorial Guinea",
+    "region": "Middle Africa",
+    "neighbors": [
+      "CM",
+      "GA"
+    ],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Malabo"
+    ],
+    "aliases": "GQ Republic of Equatorial Guinea República de Guinea Ecuatorial République de Guinée équatoriale República da Guiné Equatorial"
+  },
+  "ER": {
+    "name": "Eritrea",
+    "region": "Eastern Africa",
+    "neighbors": [
+      "DJ",
+      "ET",
+      "SD"
+    ],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Asmara"
+    ],
+    "aliases": "ER State of Eritrea ሃገረ ኤርትራ Dawlat Iritriyá ʾErtrā Iritriyā"
+  },
+  "EE": {
+    "name": "Estonia",
+    "region": "Northern Europe",
+    "neighbors": [
+      "LV",
+      "RU"
+    ],
+    "color": "8cb8cf",
+    "art": 6,
+    "capital": [
+      "Tallinn"
+    ],
+    "aliases": "EE Eesti Republic of Estonia Eesti Vabariik"
+  },
+  "SZ": {
+    "name": "Eswatini",
+    "region": "Southern Africa",
+    "neighbors": [
+      "MZ",
+      "ZA"
+    ],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Lobamba"
+    ],
+    "aliases": "SZ Swaziland weSwatini Swatini Ngwane Kingdom of Eswatini Umbuso weSwatini"
+  },
+  "ET": {
+    "name": "Ethiopia",
+    "region": "Eastern Africa",
+    "neighbors": [
+      "DJ",
+      "ER",
+      "KE",
+      "SD",
+      "SO",
+      "SS"
+    ],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Addis Ababa"
+    ],
+    "aliases": "ET ʾĪtyōṗṗyā Federal Democratic Republic of Ethiopia የኢትዮጵያ ፌዴራላዊ ዲሞክራሲያዊ ሪፐብሊክ"
+  },
+  "FJ": {
+    "name": "Fiji",
+    "region": "Melanesia",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Suva"
+    ],
+    "aliases": "FJ Viti Republic of Fiji Matanitu ko Viti Fijī Gaṇarājya"
+  },
+  "FI": {
+    "name": "Finland",
+    "region": "Northern Europe",
+    "neighbors": [
+      "NO",
+      "RU",
+      "SE"
+    ],
+    "color": "8cb8cf",
+    "art": 6,
+    "capital": [
+      "Helsinki"
+    ],
+    "aliases": "FI Suomi Republic of Finland Suomen tasavalta Republiken Finland"
+  },
+  "GA": {
+    "name": "Gabon",
+    "region": "Middle Africa",
+    "neighbors": [
+      "CG",
+      "CM",
+      "GQ"
+    ],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Libreville"
+    ],
+    "aliases": "GA Gabonese Republic République Gabonaise"
+  },
+  "GM": {
+    "name": "Gambia",
+    "region": "Western Africa",
+    "neighbors": [
+      "SN"
+    ],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Banjul"
+    ],
+    "aliases": "GM Republic of the Gambia"
+  },
+  "GE": {
+    "name": "Georgia",
+    "region": "Western Asia",
+    "neighbors": [
+      "AM",
+      "AZ",
+      "RU",
+      "TR"
+    ],
+    "color": "dcb475",
+    "art": 4,
+    "capital": [
+      "Tbilisi"
+    ],
+    "aliases": "GE Sakartvelo"
+  },
+  "DE": {
+    "name": "Germany",
+    "region": "Western Europe",
+    "neighbors": [
+      "AT",
+      "BE",
+      "CH",
+      "CZ",
+      "DK",
+      "FR",
+      "LU",
+      "NL",
+      "PL"
+    ],
+    "color": "91b8b0",
+    "art": 0,
+    "capital": [
+      "Berlin"
+    ],
+    "aliases": "DE Federal Republic of Germany Bundesrepublik Deutschland"
+  },
+  "GH": {
+    "name": "Ghana",
+    "region": "Western Africa",
+    "neighbors": [
+      "BF",
+      "CI",
+      "TG"
+    ],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Accra"
+    ],
+    "aliases": "GH"
+  },
+  "GR": {
+    "name": "Greece",
+    "region": "Southern Europe",
+    "neighbors": [
+      "AL",
+      "BG",
+      "MK",
+      "TR"
+    ],
+    "color": "89bcd1",
+    "art": 8,
+    "capital": [
+      "Athens"
+    ],
+    "aliases": "GR Elláda Hellenic Republic Ελληνική Δημοκρατία"
+  },
+  "GD": {
+    "name": "Grenada",
+    "region": "Caribbean",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "St. George's"
+    ],
+    "aliases": "GD"
+  },
+  "GT": {
+    "name": "Guatemala",
+    "region": "Central America",
+    "neighbors": [
+      "BZ",
+      "HN",
+      "MX",
+      "SV"
+    ],
+    "color": "c3a58b",
+    "art": 14,
+    "capital": [
+      "Guatemala City"
+    ],
+    "aliases": "GT"
+  },
+  "GN": {
+    "name": "Guinea",
+    "region": "Western Africa",
+    "neighbors": [
+      "CI",
+      "GW",
+      "LR",
+      "ML",
+      "SL",
+      "SN"
+    ],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Conakry"
+    ],
+    "aliases": "GN Republic of Guinea République de Guinée"
+  },
+  "GW": {
+    "name": "Guinea-Bissau",
+    "region": "Western Africa",
+    "neighbors": [
+      "GN",
+      "SN"
+    ],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Bissau"
+    ],
+    "aliases": "GW Republic of Guinea-Bissau República da Guiné-Bissau"
+  },
+  "GY": {
+    "name": "Guyana",
+    "region": "South America",
+    "neighbors": [
+      "BR",
+      "SR",
+      "VE"
+    ],
+    "color": "73bba0",
+    "art": 7,
+    "capital": [
+      "Georgetown"
+    ],
+    "aliases": "GY Co-operative Republic of Guyana"
+  },
+  "HT": {
+    "name": "Haiti",
+    "region": "Caribbean",
+    "neighbors": [
+      "DO"
+    ],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Port-au-Prince"
+    ],
+    "aliases": "HT Republic of Haiti République d'Haïti Repiblik Ayiti"
+  },
+  "HN": {
+    "name": "Honduras",
+    "region": "Central America",
+    "neighbors": [
+      "GT",
+      "NI",
+      "SV"
+    ],
+    "color": "c3a58b",
+    "art": 14,
+    "capital": [
+      "Tegucigalpa"
+    ],
+    "aliases": "HN Republic of Honduras República de Honduras"
+  },
+  "HU": {
+    "name": "Hungary",
+    "region": "Central Europe",
+    "neighbors": [
+      "AT",
+      "HR",
+      "RO",
+      "RS",
+      "SI",
+      "SK",
+      "UA"
+    ],
+    "color": "91b8b0",
+    "art": 0,
+    "capital": [
+      "Budapest"
+    ],
+    "aliases": "HU"
+  },
+  "IS": {
+    "name": "Iceland",
+    "region": "Northern Europe",
+    "neighbors": [],
+    "color": "8cb8cf",
+    "art": 6,
+    "capital": [
+      "Reykjavik"
+    ],
+    "aliases": "IS Island Republic of Iceland Lýðveldið Ísland"
+  },
+  "IN": {
+    "name": "India",
+    "region": "Southern Asia",
+    "neighbors": [
+      "BD",
+      "BT",
+      "CN",
+      "LK",
+      "MM",
+      "NP",
+      "PK"
+    ],
+    "color": "81b7b0",
+    "art": 11,
+    "capital": [
+      "New Delhi"
+    ],
+    "aliases": "IN Bhārat Republic of India Bharat Ganrajya இந்தியா"
+  },
+  "ID": {
+    "name": "Indonesia",
+    "region": "South-Eastern Asia",
+    "neighbors": [
+      "MY",
+      "PG",
+      "TL"
+    ],
+    "color": "81b7b0",
+    "art": 11,
+    "capital": [
+      "Jakarta"
+    ],
+    "aliases": "ID Republic of Indonesia Republik Indonesia"
+  },
+  "IR": {
+    "name": "Iran",
+    "region": "Southern Asia",
+    "neighbors": [
+      "AF",
+      "AM",
+      "AZ",
+      "IQ",
+      "PK",
+      "TM",
+      "TR"
+    ],
+    "color": "81b7b0",
+    "art": 11,
+    "capital": [
+      "Tehran"
+    ],
+    "aliases": "IR Islamic Republic of Iran Iran, Islamic Republic of Jomhuri-ye Eslāmi-ye Irān"
+  },
+  "IQ": {
+    "name": "Iraq",
+    "region": "Western Asia",
+    "neighbors": [
+      "IR",
+      "JO",
+      "KW",
+      "SA",
+      "SY",
+      "TR"
+    ],
+    "color": "dcb475",
+    "art": 4,
+    "capital": [
+      "Baghdad"
+    ],
+    "aliases": "IQ Republic of Iraq Jumhūriyyat al-‘Irāq"
+  },
+  "IE": {
+    "name": "Ireland",
+    "region": "Northern Europe",
+    "neighbors": [
+      "GB"
+    ],
+    "color": "8cb8cf",
+    "art": 6,
+    "capital": [
+      "Dublin"
+    ],
+    "aliases": "IE Éire Republic of Ireland Poblacht na hÉireann"
+  },
+  "IL": {
+    "name": "Israel",
+    "region": "Western Asia",
+    "neighbors": [
+      "EG",
+      "JO",
+      "LB",
+      "PS",
+      "SY"
+    ],
+    "color": "dcb475",
+    "art": 4,
+    "capital": [
+      "Jerusalem"
+    ],
+    "aliases": "IL State of Israel Medīnat Yisrā'el"
+  },
+  "IT": {
+    "name": "Italy",
+    "region": "Southern Europe",
+    "neighbors": [
+      "AT",
+      "CH",
+      "FR",
+      "SI",
+      "SM",
+      "VA"
+    ],
+    "color": "d9ac85",
+    "art": 1,
+    "capital": [
+      "Rome"
+    ],
+    "aliases": "IT Italian Republic Repubblica italiana"
+  },
+  "CI": {
+    "name": "Ivory Coast",
+    "region": "Western Africa",
+    "neighbors": [
+      "BF",
+      "GH",
+      "GN",
+      "LR",
+      "ML"
+    ],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Yamoussoukro"
+    ],
+    "aliases": "CI Côte d'Ivoire Cote d'Ivoire Ivory Coast Republic of Côte d'Ivoire République de Côte d'Ivoire"
+  },
+  "JM": {
+    "name": "Jamaica",
+    "region": "Caribbean",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Kingston"
+    ],
+    "aliases": "JM"
+  },
+  "JO": {
+    "name": "Jordan",
+    "region": "Western Asia",
+    "neighbors": [
+      "IL",
+      "IQ",
+      "PS",
+      "SA",
+      "SY"
+    ],
+    "color": "dcb475",
+    "art": 4,
+    "capital": [
+      "Amman"
+    ],
+    "aliases": "JO Hashemite Kingdom of Jordan al-Mamlakah al-Urdunīyah al-Hāshimīyah"
+  },
+  "KZ": {
+    "name": "Kazakhstan",
+    "region": "Central Asia",
+    "neighbors": [
+      "CN",
+      "KG",
+      "RU",
+      "TM",
+      "UZ"
+    ],
+    "color": "b2ad94",
+    "art": 10,
+    "capital": [
+      "Astana"
+    ],
+    "aliases": "KZ Qazaqstan Казахстан Republic of Kazakhstan Қазақстан Республикасы Qazaqstan Respublïkası Республика Казахстан Respublika Kazakhstan"
+  },
+  "KE": {
+    "name": "Kenya",
+    "region": "Eastern Africa",
+    "neighbors": [
+      "ET",
+      "SO",
+      "SS",
+      "TZ",
+      "UG"
+    ],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Nairobi"
+    ],
+    "aliases": "KE Republic of Kenya Jamhuri ya Kenya"
+  },
+  "KI": {
+    "name": "Kiribati",
+    "region": "Micronesia",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "South Tarawa"
+    ],
+    "aliases": "KI Republic of Kiribati Ribaberiki Kiribati"
+  },
+  "XK": {
+    "name": "Kosovo",
+    "region": "Southeast Europe",
+    "neighbors": [
+      "AL",
+      "ME",
+      "MK",
+      "RS"
+    ],
+    "color": "d9ac85",
+    "art": 1,
+    "capital": [
+      "Pristina"
+    ],
+    "aliases": "XK Република Косово"
+  },
+  "KW": {
+    "name": "Kuwait",
+    "region": "Western Asia",
+    "neighbors": [
+      "IQ",
+      "SA"
+    ],
+    "color": "dcb475",
+    "art": 4,
+    "capital": [
+      "Kuwait City"
+    ],
+    "aliases": "KW State of Kuwait Dawlat al-Kuwait"
+  },
+  "KG": {
+    "name": "Kyrgyzstan",
+    "region": "Central Asia",
+    "neighbors": [
+      "CN",
+      "KZ",
+      "TJ",
+      "UZ"
+    ],
+    "color": "b2ad94",
+    "art": 10,
+    "capital": [
+      "Bishkek"
+    ],
+    "aliases": "KG Киргизия Kyrgyz Republic Кыргыз Республикасы Kyrgyz Respublikasy"
+  },
+  "LA": {
+    "name": "Laos",
+    "region": "South-Eastern Asia",
+    "neighbors": [
+      "CN",
+      "KH",
+      "MM",
+      "TH",
+      "VN"
+    ],
+    "color": "81b7b0",
+    "art": 11,
+    "capital": [
+      "Vientiane"
+    ],
+    "aliases": "LA Lao Lao People's Democratic Republic Sathalanalat Paxathipatai Paxaxon Lao"
+  },
+  "LV": {
+    "name": "Latvia",
+    "region": "Northern Europe",
+    "neighbors": [
+      "BY",
+      "EE",
+      "LT",
+      "RU"
+    ],
+    "color": "8cb8cf",
+    "art": 6,
+    "capital": [
+      "Riga"
+    ],
+    "aliases": "LV Republic of Latvia Latvijas Republika"
+  },
+  "LB": {
+    "name": "Lebanon",
+    "region": "Western Asia",
+    "neighbors": [
+      "IL",
+      "SY"
+    ],
+    "color": "dcb475",
+    "art": 4,
+    "capital": [
+      "Beirut"
+    ],
+    "aliases": "LB Lebanese Republic Al-Jumhūrīyah Al-Libnānīyah"
+  },
+  "LS": {
+    "name": "Lesotho",
+    "region": "Southern Africa",
+    "neighbors": [
+      "ZA"
+    ],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Maseru"
+    ],
+    "aliases": "LS Kingdom of Lesotho Muso oa Lesotho"
+  },
+  "LR": {
+    "name": "Liberia",
+    "region": "Western Africa",
+    "neighbors": [
+      "CI",
+      "GN",
+      "SL"
+    ],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Monrovia"
+    ],
+    "aliases": "LR Republic of Liberia"
+  },
+  "LY": {
+    "name": "Libya",
+    "region": "Northern Africa",
+    "neighbors": [
+      "DZ",
+      "EG",
+      "NE",
+      "SD",
+      "TD",
+      "TN"
+    ],
+    "color": "dcb475",
+    "art": 4,
+    "capital": [
+      "Tripoli"
+    ],
+    "aliases": "LY State of Libya Dawlat Libya"
+  },
+  "LI": {
+    "name": "Liechtenstein",
+    "region": "Western Europe",
+    "neighbors": [
+      "AT",
+      "CH"
+    ],
+    "color": "91b8b0",
+    "art": 0,
+    "capital": [
+      "Vaduz"
+    ],
+    "aliases": "LI Principality of Liechtenstein Fürstentum Liechtenstein"
+  },
+  "LT": {
+    "name": "Lithuania",
+    "region": "Northern Europe",
+    "neighbors": [
+      "BY",
+      "LV",
+      "PL",
+      "RU"
+    ],
+    "color": "8cb8cf",
+    "art": 6,
+    "capital": [
+      "Vilnius"
+    ],
+    "aliases": "LT Republic of Lithuania Lietuvos Respublika"
+  },
+  "LU": {
+    "name": "Luxembourg",
+    "region": "Western Europe",
+    "neighbors": [
+      "BE",
+      "DE",
+      "FR"
+    ],
+    "color": "91b8b0",
+    "art": 0,
+    "capital": [
+      "Luxembourg"
+    ],
+    "aliases": "LU Grand Duchy of Luxembourg Grand-Duché de Luxembourg Großherzogtum Luxemburg Groussherzogtum Lëtzebuerg"
+  },
+  "MG": {
+    "name": "Madagascar",
+    "region": "Eastern Africa",
+    "neighbors": [],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Antananarivo"
+    ],
+    "aliases": "MG Republic of Madagascar Repoblikan'i Madagasikara République de Madagascar"
+  },
+  "MW": {
+    "name": "Malawi",
+    "region": "Eastern Africa",
+    "neighbors": [
+      "MZ",
+      "TZ",
+      "ZM"
+    ],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Lilongwe"
+    ],
+    "aliases": "MW Republic of Malawi"
+  },
+  "MY": {
+    "name": "Malaysia",
+    "region": "South-Eastern Asia",
+    "neighbors": [
+      "BN",
+      "ID",
+      "TH"
+    ],
+    "color": "81b7b0",
+    "art": 11,
+    "capital": [
+      "Kuala Lumpur"
+    ],
+    "aliases": "MY"
+  },
+  "MV": {
+    "name": "Maldives",
+    "region": "Southern Asia",
+    "neighbors": [],
+    "color": "81b7b0",
+    "art": 11,
+    "capital": [
+      "Malé"
+    ],
+    "aliases": "MV Maldive Islands Republic of the Maldives Dhivehi Raajjeyge Jumhooriyya"
+  },
+  "ML": {
+    "name": "Mali",
+    "region": "Western Africa",
+    "neighbors": [
+      "BF",
+      "CI",
+      "DZ",
+      "GN",
+      "MR",
+      "NE",
+      "SN"
+    ],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Bamako"
+    ],
+    "aliases": "ML Republic of Mali République du Mali"
+  },
+  "MT": {
+    "name": "Malta",
+    "region": "Southern Europe",
+    "neighbors": [],
+    "color": "89bcd1",
+    "art": 8,
+    "capital": [
+      "Valletta"
+    ],
+    "aliases": "MT Republic of Malta Repubblika ta' Malta"
+  },
+  "MH": {
+    "name": "Marshall Islands",
+    "region": "Micronesia",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Majuro"
+    ],
+    "aliases": "MH Republic of the Marshall Islands Aolepān Aorōkin M̧ajeļ"
+  },
+  "MR": {
+    "name": "Mauritania",
+    "region": "Western Africa",
+    "neighbors": [
+      "DZ",
+      "ML",
+      "SN"
+    ],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Nouakchott"
+    ],
+    "aliases": "MR Islamic Republic of Mauritania al-Jumhūriyyah al-ʾIslāmiyyah al-Mūrītāniyyah"
+  },
+  "MU": {
+    "name": "Mauritius",
+    "region": "Eastern Africa",
+    "neighbors": [],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Port Louis"
+    ],
+    "aliases": "MU Republic of Mauritius République de Maurice"
+  },
+  "MX": {
+    "name": "Mexico",
+    "region": "North America",
+    "neighbors": [
+      "BZ",
+      "GT",
+      "US"
+    ],
+    "color": "c3a58b",
+    "art": 14,
+    "capital": [
+      "Mexico City"
+    ],
+    "aliases": "MX Mexicanos United Mexican States Estados Unidos Mexicanos"
+  },
+  "FM": {
+    "name": "Micronesia",
+    "region": "Micronesia",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Palikir"
+    ],
+    "aliases": "FM Federated States of Micronesia Micronesia, Federated States of"
+  },
+  "MD": {
+    "name": "Moldova",
+    "region": "Eastern Europe",
+    "neighbors": [
+      "RO",
+      "UA"
+    ],
+    "color": "bb9aa7",
+    "art": 2,
+    "capital": [
+      "Chișinău"
+    ],
+    "aliases": "MD Moldova, Republic of Republic of Moldova Republica Moldova"
+  },
+  "MC": {
+    "name": "Monaco",
+    "region": "Western Europe",
+    "neighbors": [
+      "FR"
+    ],
+    "color": "91b8b0",
+    "art": 0,
+    "capital": [
+      "Monaco"
+    ],
+    "aliases": "MC Principality of Monaco Principauté de Monaco"
+  },
+  "MN": {
+    "name": "Mongolia",
+    "region": "Eastern Asia",
+    "neighbors": [
+      "CN",
+      "RU"
+    ],
+    "color": "b2ad94",
+    "art": 10,
+    "capital": [
+      "Ulan Bator"
+    ],
+    "aliases": "MN"
+  },
+  "ME": {
+    "name": "Montenegro",
+    "region": "Southeast Europe",
+    "neighbors": [
+      "AL",
+      "BA",
+      "HR",
+      "RS",
+      "XK"
+    ],
+    "color": "d9ac85",
+    "art": 1,
+    "capital": [
+      "Podgorica"
+    ],
+    "aliases": "ME Crna Gora"
+  },
+  "MA": {
+    "name": "Morocco",
+    "region": "Northern Africa",
+    "neighbors": [
+      "DZ",
+      "ES"
+    ],
+    "color": "dcb475",
+    "art": 4,
+    "capital": [
+      "Rabat"
+    ],
+    "aliases": "MA Kingdom of Morocco Al-Mamlakah al-Maġribiyah"
+  },
+  "MZ": {
+    "name": "Mozambique",
+    "region": "Eastern Africa",
+    "neighbors": [
+      "MW",
+      "SZ",
+      "TZ",
+      "ZA",
+      "ZM",
+      "ZW"
+    ],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Maputo"
+    ],
+    "aliases": "MZ Republic of Mozambique República de Moçambique"
+  },
+  "MM": {
+    "name": "Myanmar",
+    "region": "South-Eastern Asia",
+    "neighbors": [
+      "BD",
+      "CN",
+      "IN",
+      "LA",
+      "TH"
+    ],
+    "color": "81b7b0",
+    "art": 11,
+    "capital": [
+      "Naypyidaw"
+    ],
+    "aliases": "MM Burma Republic of the Union of Myanmar Pyidaunzu Thanmăda Myăma Nainngandaw"
+  },
+  "NA": {
+    "name": "Namibia",
+    "region": "Southern Africa",
+    "neighbors": [
+      "AO",
+      "BW",
+      "ZA",
+      "ZM"
+    ],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Windhoek"
+    ],
+    "aliases": "NA Namibië Republic of Namibia"
+  },
+  "NR": {
+    "name": "Nauru",
+    "region": "Micronesia",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Yaren"
+    ],
+    "aliases": "NR Naoero Pleasant Island Republic of Nauru Ripublik Naoero"
+  },
+  "NP": {
+    "name": "Nepal",
+    "region": "Southern Asia",
+    "neighbors": [
+      "CN",
+      "IN"
+    ],
+    "color": "81b7b0",
+    "art": 11,
+    "capital": [
+      "Kathmandu"
+    ],
+    "aliases": "NP Federal Democratic Republic of Nepal Loktāntrik Ganatantra Nepāl"
+  },
+  "NL": {
+    "name": "Netherlands",
+    "region": "Western Europe",
+    "neighbors": [
+      "BE",
+      "DE"
+    ],
+    "color": "91b8b0",
+    "art": 0,
+    "capital": [
+      "Amsterdam"
+    ],
+    "aliases": "NL Holland Nederland The Netherlands"
+  },
+  "NZ": {
+    "name": "New Zealand",
+    "region": "Australia and New Zealand",
+    "neighbors": [],
+    "color": "69afc4",
+    "art": 5,
+    "capital": [
+      "Wellington"
+    ],
+    "aliases": "NZ Aotearoa"
+  },
+  "NI": {
+    "name": "Nicaragua",
+    "region": "Central America",
+    "neighbors": [
+      "CR",
+      "HN"
+    ],
+    "color": "c3a58b",
+    "art": 14,
+    "capital": [
+      "Managua"
+    ],
+    "aliases": "NI Republic of Nicaragua República de Nicaragua"
+  },
+  "NE": {
+    "name": "Niger",
+    "region": "Western Africa",
+    "neighbors": [
+      "BF",
+      "BJ",
+      "DZ",
+      "LY",
+      "ML",
+      "NG",
+      "TD"
+    ],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Niamey"
+    ],
+    "aliases": "NE Nijar"
+  },
+  "NG": {
+    "name": "Nigeria",
+    "region": "Western Africa",
+    "neighbors": [
+      "BJ",
+      "CM",
+      "NE",
+      "TD"
+    ],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Abuja"
+    ],
+    "aliases": "NG Nijeriya Naíjíríà Federal Republic of Nigeria"
+  },
+  "KP": {
+    "name": "North Korea",
+    "region": "Eastern Asia",
+    "neighbors": [
+      "CN",
+      "KR",
+      "RU"
+    ],
+    "color": "91bca5",
+    "art": 3,
+    "capital": [
+      "Pyongyang"
+    ],
+    "aliases": "KP Democratic People's Republic of Korea DPRK 조선민주주의인민공화국 Chosŏn Minjujuŭi Inmin Konghwaguk Korea, Democratic People's Republic of 북한 북조선"
+  },
+  "MK": {
+    "name": "North Macedonia",
+    "region": "Southeast Europe",
+    "neighbors": [
+      "AL",
+      "BG",
+      "GR",
+      "RS",
+      "XK"
+    ],
+    "color": "d9ac85",
+    "art": 1,
+    "capital": [
+      "Skopje"
+    ],
+    "aliases": "MK The former Yugoslav Republic of Macedonia Republic of North Macedonia Macedonia, The Former Yugoslav Republic of Република Северна Македонија Macedonia"
+  },
+  "NO": {
+    "name": "Norway",
+    "region": "Northern Europe",
+    "neighbors": [
+      "FI",
+      "RU",
+      "SE"
+    ],
+    "color": "8cb8cf",
+    "art": 6,
+    "capital": [
+      "Oslo"
+    ],
+    "aliases": "NO Norge Noreg Kingdom of Norway Kongeriket Norge Kongeriket Noreg"
+  },
+  "OM": {
+    "name": "Oman",
+    "region": "Western Asia",
+    "neighbors": [
+      "AE",
+      "SA",
+      "YE"
+    ],
+    "color": "dcb475",
+    "art": 4,
+    "capital": [
+      "Muscat"
+    ],
+    "aliases": "OM Sultanate of Oman Salṭanat ʻUmān"
+  },
+  "PK": {
+    "name": "Pakistan",
+    "region": "Southern Asia",
+    "neighbors": [
+      "AF",
+      "CN",
+      "IN",
+      "IR"
+    ],
+    "color": "81b7b0",
+    "art": 11,
+    "capital": [
+      "Islamabad"
+    ],
+    "aliases": "PK Pākistān Islamic Republic of Pakistan Islāmī Jumhūriya'eh Pākistān"
+  },
+  "PW": {
+    "name": "Palau",
+    "region": "Micronesia",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Ngerulmud"
+    ],
+    "aliases": "PW Republic of Palau Beluu er a Belau"
+  },
+  "PS": {
+    "name": "Palestine",
+    "region": "Western Asia",
+    "neighbors": [
+      "EG",
+      "IL",
+      "JO"
+    ],
+    "color": "dcb475",
+    "art": 4,
+    "capital": [
+      "Ramallah"
+    ],
+    "aliases": "PS Palestine, State of State of Palestine Dawlat Filasṭin"
+  },
+  "PA": {
+    "name": "Panama",
+    "region": "Central America",
+    "neighbors": [
+      "CO",
+      "CR"
+    ],
+    "color": "c3a58b",
+    "art": 14,
+    "capital": [
+      "Panama City"
+    ],
+    "aliases": "PA Republic of Panama República de Panamá"
+  },
+  "PG": {
+    "name": "Papua New Guinea",
+    "region": "Melanesia",
+    "neighbors": [
+      "ID"
+    ],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Port Moresby"
+    ],
+    "aliases": "PG Independent State of Papua New Guinea Independen Stet bilong Papua Niugini"
+  },
+  "PY": {
+    "name": "Paraguay",
+    "region": "South America",
+    "neighbors": [
+      "AR",
+      "BO",
+      "BR"
+    ],
+    "color": "73bba0",
+    "art": 7,
+    "capital": [
+      "Asunción"
+    ],
+    "aliases": "PY Republic of Paraguay República del Paraguay Tetã Paraguái"
+  },
+  "PE": {
+    "name": "Peru",
+    "region": "South America",
+    "neighbors": [
+      "BO",
+      "BR",
+      "CL",
+      "CO",
+      "EC"
+    ],
+    "color": "aeb8be",
+    "art": 13,
+    "capital": [
+      "Lima"
+    ],
+    "aliases": "PE Republic of Peru República del Perú"
+  },
+  "PH": {
+    "name": "Philippines",
+    "region": "South-Eastern Asia",
+    "neighbors": [],
+    "color": "81b7b0",
+    "art": 11,
+    "capital": [
+      "Manila"
+    ],
+    "aliases": "PH Republic of the Philippines Repúblika ng Pilipinas"
+  },
+  "PL": {
+    "name": "Poland",
+    "region": "Central Europe",
+    "neighbors": [
+      "BY",
+      "CZ",
+      "DE",
+      "LT",
+      "RU",
+      "SK",
+      "UA"
+    ],
+    "color": "91b8b0",
+    "art": 0,
+    "capital": [
+      "Warsaw"
+    ],
+    "aliases": "PL Republic of Poland Rzeczpospolita Polska"
+  },
+  "PT": {
+    "name": "Portugal",
+    "region": "Southern Europe",
+    "neighbors": [
+      "ES"
+    ],
+    "color": "d9a28b",
+    "art": 9,
+    "capital": [
+      "Lisbon"
+    ],
+    "aliases": "PT Portuguesa Portuguese Republic República Portuguesa"
+  },
+  "QA": {
+    "name": "Qatar",
+    "region": "Western Asia",
+    "neighbors": [
+      "SA"
+    ],
+    "color": "dcb475",
+    "art": 4,
+    "capital": [
+      "Doha"
+    ],
+    "aliases": "QA State of Qatar Dawlat Qaṭar"
+  },
+  "RO": {
+    "name": "Romania",
+    "region": "Southeast Europe",
+    "neighbors": [
+      "BG",
+      "HU",
+      "MD",
+      "RS",
+      "UA"
+    ],
+    "color": "d9ac85",
+    "art": 1,
+    "capital": [
+      "Bucharest"
+    ],
+    "aliases": "RO Rumania Roumania România"
+  },
+  "RU": {
+    "name": "Russia",
+    "region": "Eastern Europe",
+    "neighbors": [
+      "AZ",
+      "BY",
+      "CN",
+      "EE",
+      "FI",
+      "GE",
+      "KP",
+      "KZ",
+      "LT",
+      "LV",
+      "MN",
+      "NO",
+      "PL",
+      "UA"
+    ],
+    "color": "bb9aa7",
+    "art": 2,
+    "capital": [
+      "Moscow"
+    ],
+    "aliases": "RU Russian Federation Российская Федерация"
+  },
+  "RW": {
+    "name": "Rwanda",
+    "region": "Eastern Africa",
+    "neighbors": [
+      "BI",
+      "CD",
+      "TZ",
+      "UG"
+    ],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Kigali"
+    ],
+    "aliases": "RW Republic of Rwanda Repubulika y'u Rwanda République du Rwanda"
+  },
+  "KN": {
+    "name": "Saint Kitts and Nevis",
+    "region": "Caribbean",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Basseterre"
+    ],
+    "aliases": "KN Federation of Saint Christopher and Nevis"
+  },
+  "LC": {
+    "name": "Saint Lucia",
+    "region": "Caribbean",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Castries"
+    ],
+    "aliases": "LC"
+  },
+  "VC": {
+    "name": "Saint Vincent and the Grenadines",
+    "region": "Caribbean",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Kingstown"
+    ],
+    "aliases": "VC"
+  },
+  "WS": {
+    "name": "Samoa",
+    "region": "Polynesia",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Apia"
+    ],
+    "aliases": "WS Independent State of Samoa Malo Saʻoloto Tutoʻatasi o Sāmoa"
+  },
+  "SM": {
+    "name": "San Marino",
+    "region": "Southern Europe",
+    "neighbors": [
+      "IT"
+    ],
+    "color": "d9ac85",
+    "art": 1,
+    "capital": [
+      "City of San Marino"
+    ],
+    "aliases": "SM Republic of San Marino Repubblica di San Marino"
+  },
+  "SA": {
+    "name": "Saudi Arabia",
+    "region": "Western Asia",
+    "neighbors": [
+      "AE",
+      "IQ",
+      "JO",
+      "KW",
+      "OM",
+      "QA",
+      "YE"
+    ],
+    "color": "dcb475",
+    "art": 4,
+    "capital": [
+      "Riyadh"
+    ],
+    "aliases": "Saudi SA Kingdom of Saudi Arabia Al-Mamlakah al-‘Arabiyyah as-Su‘ūdiyyah"
+  },
+  "SN": {
+    "name": "Senegal",
+    "region": "Western Africa",
+    "neighbors": [
+      "GM",
+      "GN",
+      "GW",
+      "ML",
+      "MR"
+    ],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Dakar"
+    ],
+    "aliases": "SN Republic of Senegal République du Sénégal"
+  },
+  "RS": {
+    "name": "Serbia",
+    "region": "Southeast Europe",
+    "neighbors": [
+      "BA",
+      "BG",
+      "HR",
+      "HU",
+      "ME",
+      "MK",
+      "RO",
+      "XK"
+    ],
+    "color": "d9ac85",
+    "art": 1,
+    "capital": [
+      "Belgrade"
+    ],
+    "aliases": "RS Srbija Republika Srbija Србија Република Србија Republic of Serbia"
+  },
+  "SC": {
+    "name": "Seychelles",
+    "region": "Eastern Africa",
+    "neighbors": [],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Victoria"
+    ],
+    "aliases": "SC Republic of Seychelles Repiblik Sesel République des Seychelles"
+  },
+  "SL": {
+    "name": "Sierra Leone",
+    "region": "Western Africa",
+    "neighbors": [
+      "GN",
+      "LR"
+    ],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Freetown"
+    ],
+    "aliases": "SL Republic of Sierra Leone"
+  },
+  "SG": {
+    "name": "Singapore",
+    "region": "South-Eastern Asia",
+    "neighbors": [],
+    "color": "81b7b0",
+    "art": 11,
+    "capital": [
+      "Singapore"
+    ],
+    "aliases": "SG Singapura Republik Singapura 新加坡共和国"
+  },
+  "SK": {
+    "name": "Slovakia",
+    "region": "Central Europe",
+    "neighbors": [
+      "AT",
+      "CZ",
+      "HU",
+      "PL",
+      "UA"
+    ],
+    "color": "91b8b0",
+    "art": 0,
+    "capital": [
+      "Bratislava"
+    ],
+    "aliases": "SK Slovak Republic Slovenská republika"
+  },
+  "SI": {
+    "name": "Slovenia",
+    "region": "Central Europe",
+    "neighbors": [
+      "AT",
+      "HR",
+      "HU",
+      "IT"
+    ],
+    "color": "91b8b0",
+    "art": 0,
+    "capital": [
+      "Ljubljana"
+    ],
+    "aliases": "SI Republic of Slovenia Republika Slovenija"
+  },
+  "SB": {
+    "name": "Solomon Islands",
+    "region": "Melanesia",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Honiara"
+    ],
+    "aliases": "SB"
+  },
+  "SO": {
+    "name": "Somalia",
+    "region": "Eastern Africa",
+    "neighbors": [
+      "DJ",
+      "ET",
+      "KE"
+    ],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Mogadishu"
+    ],
+    "aliases": "SO aṣ-Ṣūmāl Federal Republic of Somalia Jamhuuriyadda Federaalka Soomaaliya Jumhūriyyat aṣ-Ṣūmāl al-Fiderāliyya"
+  },
+  "ZA": {
+    "name": "South Africa",
+    "region": "Southern Africa",
+    "neighbors": [
+      "BW",
+      "LS",
+      "MZ",
+      "NA",
+      "SZ",
+      "ZW"
+    ],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Pretoria",
+      "Bloemfontein",
+      "Cape Town"
+    ],
+    "aliases": "ZA RSA Suid-Afrika Republic of South Africa"
+  },
+  "KR": {
+    "name": "South Korea",
+    "region": "Eastern Asia",
+    "neighbors": [
+      "KP"
+    ],
+    "color": "91bca5",
+    "art": 3,
+    "capital": [
+      "Seoul"
+    ],
+    "aliases": "KR Korea, Republic of Republic of Korea 남한 남조선"
+  },
+  "SS": {
+    "name": "South Sudan",
+    "region": "Middle Africa",
+    "neighbors": [
+      "CD",
+      "CF",
+      "ET",
+      "KE",
+      "SD",
+      "UG"
+    ],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Juba"
+    ],
+    "aliases": "SS"
+  },
+  "ES": {
+    "name": "Spain",
+    "region": "Southern Europe",
+    "neighbors": [
+      "AD",
+      "FR",
+      "MA",
+      "PT"
+    ],
+    "color": "d9a28b",
+    "art": 9,
+    "capital": [
+      "Madrid"
+    ],
+    "aliases": "ES Kingdom of Spain Reino de España"
+  },
+  "LK": {
+    "name": "Sri Lanka",
+    "region": "Southern Asia",
+    "neighbors": [
+      "IN"
+    ],
+    "color": "81b7b0",
+    "art": 11,
+    "capital": [
+      "Colombo"
+    ],
+    "aliases": "LK ilaṅkai Democratic Socialist Republic of Sri Lanka"
+  },
+  "SD": {
+    "name": "Sudan",
+    "region": "Northern Africa",
+    "neighbors": [
+      "CF",
+      "EG",
+      "ER",
+      "ET",
+      "LY",
+      "SS",
+      "TD"
+    ],
+    "color": "dcb475",
+    "art": 4,
+    "capital": [
+      "Khartoum"
+    ],
+    "aliases": "SD Republic of the Sudan Jumhūrīyat as-Sūdān"
+  },
+  "SR": {
+    "name": "Suriname",
+    "region": "South America",
+    "neighbors": [
+      "BR",
+      "GY"
+    ],
+    "color": "73bba0",
+    "art": 7,
+    "capital": [
+      "Paramaribo"
+    ],
+    "aliases": "SR Sarnam Sranangron Republic of Suriname Republiek Suriname"
+  },
+  "SE": {
+    "name": "Sweden",
+    "region": "Northern Europe",
+    "neighbors": [
+      "FI",
+      "NO"
+    ],
+    "color": "8cb8cf",
+    "art": 6,
+    "capital": [
+      "Stockholm"
+    ],
+    "aliases": "SE Kingdom of Sweden Konungariket Sverige"
+  },
+  "CH": {
+    "name": "Switzerland",
+    "region": "Western Europe",
+    "neighbors": [
+      "AT",
+      "DE",
+      "FR",
+      "IT",
+      "LI"
+    ],
+    "color": "91b8b0",
+    "art": 0,
+    "capital": [
+      "Bern"
+    ],
+    "aliases": "CH Swiss Confederation Schweiz Suisse Svizzera Svizra"
+  },
+  "SY": {
+    "name": "Syria",
+    "region": "Western Asia",
+    "neighbors": [
+      "IL",
+      "IQ",
+      "JO",
+      "LB",
+      "TR"
+    ],
+    "color": "dcb475",
+    "art": 4,
+    "capital": [
+      "Damascus"
+    ],
+    "aliases": "SY Syrian Arab Republic Al-Jumhūrīyah Al-ʻArabīyah As-Sūrīyah"
+  },
+  "ST": {
+    "name": "São Tomé and Príncipe",
+    "region": "Middle Africa",
+    "neighbors": [],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "São Tomé"
+    ],
+    "aliases": "ST Democratic Republic of São Tomé and Príncipe Sao Tome and Principe República Democrática de São Tomé e Príncipe"
+  },
+  "TW": {
+    "name": "Taiwan",
+    "region": "Eastern Asia",
+    "neighbors": [],
+    "color": "91bca5",
+    "art": 3,
+    "capital": [
+      "Taipei"
+    ],
+    "aliases": "TW Táiwān Republic of China 中華民國 Zhōnghuá Mínguó Chinese Taipei"
+  },
+  "TJ": {
+    "name": "Tajikistan",
+    "region": "Central Asia",
+    "neighbors": [
+      "AF",
+      "CN",
+      "KG",
+      "UZ"
+    ],
+    "color": "b2ad94",
+    "art": 10,
+    "capital": [
+      "Dushanbe"
+    ],
+    "aliases": "TJ Toçikiston Republic of Tajikistan Ҷумҳурии Тоҷикистон Çumhuriyi Toçikiston"
+  },
+  "TZ": {
+    "name": "Tanzania",
+    "region": "Eastern Africa",
+    "neighbors": [
+      "BI",
+      "CD",
+      "KE",
+      "MW",
+      "MZ",
+      "RW",
+      "UG",
+      "ZM"
+    ],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Dodoma"
+    ],
+    "aliases": "TZ Tanzania, United Republic of United Republic of Tanzania Jamhuri ya Muungano wa Tanzania"
+  },
+  "TH": {
+    "name": "Thailand",
+    "region": "South-Eastern Asia",
+    "neighbors": [
+      "KH",
+      "LA",
+      "MM",
+      "MY"
+    ],
+    "color": "81b7b0",
+    "art": 11,
+    "capital": [
+      "Bangkok"
+    ],
+    "aliases": "TH Prathet Thai Kingdom of Thailand ราชอาณาจักรไทย Ratcha Anachak Thai"
+  },
+  "TL": {
+    "name": "Timor-Leste",
+    "region": "South-Eastern Asia",
+    "neighbors": [
+      "ID"
+    ],
+    "color": "81b7b0",
+    "art": 11,
+    "capital": [
+      "Dili"
+    ],
+    "aliases": "TL East Timor Timor Democratic Republic of Timor-Leste República Democrática de Timor-Leste Repúblika Demokrátika Timór-Leste Timór Lorosa'e Timor Lorosae"
+  },
+  "TG": {
+    "name": "Togo",
+    "region": "Western Africa",
+    "neighbors": [
+      "BF",
+      "BJ",
+      "GH"
+    ],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Lomé"
+    ],
+    "aliases": "TG Togolese Togolese Republic République Togolaise"
+  },
+  "TO": {
+    "name": "Tonga",
+    "region": "Polynesia",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Nuku'alofa"
+    ],
+    "aliases": "TO"
+  },
+  "TT": {
+    "name": "Trinidad and Tobago",
+    "region": "Caribbean",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Port of Spain"
+    ],
+    "aliases": "TT Republic of Trinidad and Tobago"
+  },
+  "TN": {
+    "name": "Tunisia",
+    "region": "Northern Africa",
+    "neighbors": [
+      "DZ",
+      "LY"
+    ],
+    "color": "dcb475",
+    "art": 4,
+    "capital": [
+      "Tunis"
+    ],
+    "aliases": "TN Republic of Tunisia al-Jumhūriyyah at-Tūnisiyyah"
+  },
+  "TM": {
+    "name": "Turkmenistan",
+    "region": "Central Asia",
+    "neighbors": [
+      "AF",
+      "IR",
+      "KZ",
+      "UZ"
+    ],
+    "color": "b2ad94",
+    "art": 10,
+    "capital": [
+      "Ashgabat"
+    ],
+    "aliases": "TM"
+  },
+  "TV": {
+    "name": "Tuvalu",
+    "region": "Polynesia",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Funafuti"
+    ],
+    "aliases": "TV"
+  },
+  "UG": {
+    "name": "Uganda",
+    "region": "Eastern Africa",
+    "neighbors": [
+      "CD",
+      "KE",
+      "RW",
+      "SS",
+      "TZ"
+    ],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Kampala"
+    ],
+    "aliases": "UG Republic of Uganda Jamhuri ya Uganda"
+  },
+  "UA": {
+    "name": "Ukraine",
+    "region": "Eastern Europe",
+    "neighbors": [
+      "BY",
+      "HU",
+      "MD",
+      "PL",
+      "RO",
+      "RU",
+      "SK"
+    ],
+    "color": "bb9aa7",
+    "art": 2,
+    "capital": [
+      "Kyiv"
+    ],
+    "aliases": "UA Ukrayina"
+  },
+  "AE": {
+    "name": "United Arab Emirates (Dubai)",
+    "region": "Western Asia",
+    "neighbors": [
+      "OM",
+      "SA"
+    ],
+    "color": "dcb475",
+    "art": 4,
+    "capital": [
+      "Abu Dhabi"
+    ],
+    "aliases": "AE UAE Emirates"
+  },
+  "GB": {
+    "name": "United Kingdom",
+    "region": "Northern Europe",
+    "neighbors": [
+      "IE"
+    ],
+    "color": "8cb8cf",
+    "art": 6,
+    "capital": [
+      "London"
+    ],
+    "aliases": "GB UK Great Britain"
+  },
+  "UY": {
+    "name": "Uruguay",
+    "region": "South America",
+    "neighbors": [
+      "AR",
+      "BR"
+    ],
+    "color": "73bba0",
+    "art": 7,
+    "capital": [
+      "Montevideo"
+    ],
+    "aliases": "UY Oriental Republic of Uruguay República Oriental del Uruguay"
+  },
+  "UZ": {
+    "name": "Uzbekistan",
+    "region": "Central Asia",
+    "neighbors": [
+      "AF",
+      "KG",
+      "KZ",
+      "TJ",
+      "TM"
+    ],
+    "color": "b2ad94",
+    "art": 10,
+    "capital": [
+      "Tashkent"
+    ],
+    "aliases": "UZ Republic of Uzbekistan O‘zbekiston Respublikasi Ўзбекистон Республикаси"
+  },
+  "VU": {
+    "name": "Vanuatu",
+    "region": "Melanesia",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Port Vila"
+    ],
+    "aliases": "VU Republic of Vanuatu Ripablik blong Vanuatu République de Vanuatu"
+  },
+  "VA": {
+    "name": "Vatican City",
+    "region": "Southern Europe",
+    "neighbors": [
+      "IT"
+    ],
+    "color": "d9ac85",
+    "art": 1,
+    "capital": [
+      "Vatican City"
+    ],
+    "aliases": "VA Holy See (Vatican City State) Vatican City State Vatican Stato della Città del Vaticano"
+  },
+  "VE": {
+    "name": "Venezuela",
+    "region": "South America",
+    "neighbors": [
+      "BR",
+      "CO",
+      "GY"
+    ],
+    "color": "73bba0",
+    "art": 7,
+    "capital": [
+      "Caracas"
+    ],
+    "aliases": "VE Bolivarian Republic of Venezuela Venezuela, Bolivarian Republic of República Bolivariana de Venezuela"
+  },
+  "VN": {
+    "name": "Vietnam",
+    "region": "South-Eastern Asia",
+    "neighbors": [
+      "CN",
+      "KH",
+      "LA"
+    ],
+    "color": "81b7b0",
+    "art": 11,
+    "capital": [
+      "Hanoi"
+    ],
+    "aliases": "VN Socialist Republic of Vietnam Cộng hòa Xã hội chủ nghĩa Việt Nam Viet Nam"
+  },
+  "YE": {
+    "name": "Yemen",
+    "region": "Western Asia",
+    "neighbors": [
+      "OM",
+      "SA"
+    ],
+    "color": "dcb475",
+    "art": 4,
+    "capital": [
+      "Sana'a"
+    ],
+    "aliases": "YE Yemeni Republic al-Jumhūriyyah al-Yamaniyyah"
+  },
+  "ZM": {
+    "name": "Zambia",
+    "region": "Eastern Africa",
+    "neighbors": [
+      "AO",
+      "BW",
+      "CD",
+      "MW",
+      "MZ",
+      "NA",
+      "TZ",
+      "ZW"
+    ],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Lusaka"
+    ],
+    "aliases": "ZM Republic of Zambia"
+  },
+  "ZW": {
+    "name": "Zimbabwe",
+    "region": "Eastern Africa",
+    "neighbors": [
+      "BW",
+      "MZ",
+      "ZA",
+      "ZM"
+    ],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Harare"
+    ],
+    "aliases": "ZW Republic of Zimbabwe"
+  }
+}

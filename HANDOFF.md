@@ -4,7 +4,7 @@ Read `spec.md`, this file, [build status](docs/build-status.md), and [iPhone val
 
 ## Current state
 
-Godot 4.5.2 standard/GDScript portrait game, five countries (US, FR, EG, TR, JP), Compatibility renderer. World Tour, Infinite, offline Daily, Kids, tutorial, immutable difficulty presets, durable local passport/history/records, accessibility/audio preferences, validated PR1 challenge codes, and original temporary procedural 3D art/audio work. The latest graphics pass follows the references with perspective stone paths, detailed illustrated scenery and backpacker artwork; see [visual asset notes](docs/visual-assets.md). It is a hybrid scene rather than a fully rigged 3D art pipeline. Section 91 requires validation before major country expansion.
+Godot 4.5.2 standard/GDScript portrait game, 197 travel destinations, Compatibility renderer. World Tour, Infinite, offline Daily, Kids, tutorial, immutable difficulty presets, durable local passport/history/records, accessibility/audio preferences, validated PR1 challenge codes, and original temporary procedural 3D art/audio work. The latest graphics pass follows the references with perspective stone paths, detailed illustrated scenery and backpacker artwork; see [visual asset notes](docs/visual-assets.md). It is a hybrid scene rather than a fully rigged 3D art pipeline. The user explicitly approved broad country expansion on 2026-10-02, overriding the old five-country gate.
 
 This continuation added illustrated pauseable/skippable travel, Kids robot/facts/stickers, a collection badge, illustrated PNG cards, safe-area scrolling/focus fixes, session/run-aware local reporting, and a real **local Convex** competition service with Godot integration. Facts have primary sources in [country-facts.md](docs/country-facts.md).
 
@@ -35,7 +35,7 @@ With local backend running, execute `tests/test_online.gd` from Godot (see backe
 ## Resume priorities
 
 1. Complete actual iPhone install/launch and human checks: notch/home indicator, taps, Hard readability, focus/lock/resume, sound/mute/haptics, sustained frame times, memory and thermal behavior. Do not infer 60 FPS from desktop tests.
-2. Human-test the five-country memory loop before adding countries or replacing all art. Infinite reveals successive sections; retries retain paths. Active-run restoration after process death is not implemented (conditional in spec).
+2. Human-test the expanded travel and passport loop on a physical phone. Infinite reveals successive sections; retries retain paths. Active-run restoration after process death is not implemented (conditional in spec).
 3. Provision and validate hosted Convex only with an authorized target. Preserve v1 generator/balance and challenge compatibility. Complete account linking/recovery, abuse controls and retention policy before public rankings. Ranked replay ceiling is 4,096 choices; longer play remains local. Menu-aborted runs are not ranked.
 4. Native sharing and hosted challenge links need real platform code. Ads and purchases need actual provider/store setup and verified callbacks/transactions; do not create fake rewards or premium flags.
 5. Remote analytics needs consent/age handling and real users. The 500-event single-device report cannot establish population D1 retention, conversion or revenue.
@@ -63,3 +63,13 @@ The server checks bounded supplied decision times and their consistency with rec
 Animation/timer suite: 36 checks passed headlessly and rendered; backend: 151 tests and typecheck passed; real Godot/backend integration: 19 checks including waiting a real 10 seconds and submitting a timeout. The paired phone remained locked when installation was attempted; native build success is not device acceptance.
 
 Rendered motion demo: `artifacts/character-motion.mp4` (390×844), with stills `24-thinking.png` through `28-passport-stamped.png`. Capture source: `tools/capture_motion.gd`. Latest signed native build: `/private/tmp/passport-native-animated/PassportRun.xcodeproj`.
+
+## World destination expansion — 2026-10-02
+
+197 destinations are bundled in `resources/geography/destinations.json`; Godot and Convex consume the same snapshot. Dubai is under UAE (`AE`). Every requested country is covered. The graph now uses filtered reciprocal land borders; islands and exhausted neighbors use flights. Country picker and passport are searchable; sticker view renders earned discoveries only. Long buttons clip to avoid forcing the entire menu wider than a phone, and shared cards summarize lengthy routes.
+
+Catalog v2 is distinct from generator v1 and balance v2. New Daily routes cover all 197 destinations; full hard route is 3,940 events, within the existing 4,096-event ceiling. Old ranked runs missing catalogVersion retain the five-country graph, original board keys and retry manifests. Daily records have an index including optional catalogVersion to permit old and new challenges on the same date. PR1 challenge routes remain self-contained and old codes continue to decode.
+
+Five original country paintings remain. `assets/world-backdrops.png` is a 16-cell regional scenery atlas used consistently by gameplay, passport animation, travel and stickers; this is shared regional art, not 192 unique new paintings. Provenance and exact prompt are in `docs/visual-assets.md`. Dataset license and source hash are bundled alongside the catalog and credited in the country picker. See `docs/destinations.md` for full coverage and import instructions.
+
+Expanded catalog verification: seven offline suites passed (7,795 checks plus 3 Python checks), backend typecheck plus 154 tests passed, HTTP smoke passed and real Godot/backend integration passed 19 checks. Rendered sixteen new scenery variants plus Dubai search/passport/sticker; captures are in `artifacts/`, generated by `tools/capture_destinations.gd`. Latest signed native project: `/private/tmp/passport-native-world/PassportRun.xcodeproj`; packaged JSON, license/source and every backdrop were loaded in native-pack QA. No hosted deploy or physical-device acceptance.

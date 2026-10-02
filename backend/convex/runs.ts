@@ -20,13 +20,13 @@ export const begin = mutation({
     if (args.retryRunId) {
       const original = await ctx.db.get(args.retryRunId);
       if (!original || original.userId !== userId || original.mode !== args.mode || original.difficulty !== args.difficulty || now - original.startedAt > 48 * 60 * 60 * 1000) throw new Error("Invalid retry");
-      manifest = {mode: original.mode, difficulty: original.difficulty, seed: original.seed, route: original.route, date: original.date, generatorVersion: original.generatorVersion, balanceVersion: original.balanceVersion};
+      manifest = {mode: original.mode, difficulty: original.difficulty, seed: original.seed, route: original.route, date: original.date, generatorVersion: original.generatorVersion, balanceVersion: original.balanceVersion, ...(original.catalogVersion ? {catalogVersion: original.catalogVersion} : {})};
     }
     if (args.mode === "daily") {
-      const existing = await ctx.db.query("dailyChallenges").withIndex("by_date_and_difficulty", (q) => q.eq("date", manifest.date).eq("difficulty", args.difficulty)).unique();
-      if (existing) {
-        manifest.seed = existing.seed;
-        manifest.route = existing.route;
+      const sameCatalog = await ctx.db.query("dailyChallenges").withIndex("by_date_difficulty_and_catalog", (q) => q.eq("date", manifest.date).eq("difficulty", args.difficulty).eq("catalogVersion", manifest.catalogVersion)).unique();
+      if (sameCatalog) {
+        manifest.seed = sameCatalog.seed;
+        manifest.route = sameCatalog.route;
       } else await ctx.db.insert("dailyChallenges", manifest);
     }
     const runId = await ctx.db.insert("runs", { ...manifest, userId, startedAt: now, status: "active" });

@@ -29,7 +29,7 @@ func draw_book() -> void:
 	book.draw_line(Vector2(170, 12), Vector2(170, 218), Color("c8bda7"), 3)
 	var font := ThemeDB.fallback_font
 	book.draw_string(font, Vector2(20, 36), "MY PASSPORT", HORIZONTAL_ALIGNMENT_LEFT, -1, 18, GameHUD.INK)
-	var texture: Texture2D = load("res://assets/backdrops/" + country_id + ".png")
+	var texture: Texture2D = GameCatalog.backdrop(country_id)
 	book.draw_texture_rect(texture, Rect2(20, 52, 132, 126), false)
 	book.draw_string(font, Vector2(20, 207), GameCatalog.country_name(country_id), HORIZONTAL_ALIGNMENT_LEFT, 135, 16, GameHUD.INK)
 	for index in 6:

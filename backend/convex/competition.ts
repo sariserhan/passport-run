@@ -1,6 +1,9 @@
 // Generator/presets v1 stay immutable; balance v2 adds the decision deadline.
 export const MODULUS = 2147483647n;
-export const COUNTRIES = ["US", "FR", "EG", "TR", "JP"] as const;
+import destinations from "../../resources/geography/destinations.json";
+export const COUNTRIES = Object.keys(destinations);
+const legacyCountries = ["US", "FR", "EG", "TR", "JP"];
+const geography: Record<string, {neighbors: string[]}> = destinations;
 export type Difficulty = "easy" | "moderate" | "hard";
 export type Mode = "daily" | "infinite";
 export const BALANCE = {
@@ -10,7 +13,7 @@ export const BALANCE = {
 } as const;
 export const MAX_EVENTS = 4096;
 export const DECISION_MS = 10000;
-const neighbors: Record<string, string[]> = { US: ["FR"], FR: ["TR"], EG: ["TR"], TR: ["FR", "EG"], JP: [] };
+const legacyNeighbors: Record<string, string[]> = { US: ["FR"], FR: ["TR"], EG: ["TR"], TR: ["FR", "EG"], JP: [] };
 
 export function laneAt(seed: number, lanes: number, row: number): number {
   if (!Number.isSafeInteger(seed) || !Number.isInteger(lanes) || lanes < 1 || !Number.isSafeInteger(row) || row < 0) throw new Error("Invalid generator input");
@@ -33,12 +36,14 @@ export function dailySeed(date: string, difficulty: Difficulty): number {
   for (const char of `passport-daily-v1:${date}:${difficulty}`) value = (value * 33 + char.charCodeAt(0)) % 2147483646;
   return value;
 }
-export function routeFrom(home: string, seed: number): string[] {
-  if (!COUNTRIES.includes(home as typeof COUNTRIES[number])) throw new Error("Unknown country");
+export function routeFrom(home: string, seed: number, catalogVersion = 2): string[] {
+  const countries = catalogVersion === 1 ? legacyCountries : COUNTRIES;
+  const neighbors = catalogVersion === 1 ? legacyNeighbors : Object.fromEntries(countries.map((id) => [id, geography[id].neighbors]));
+  if (!countries.includes(home)) throw new Error("Unknown country");
   const route = [home];
-  while (route.length < COUNTRIES.length) {
+  while (route.length < countries.length) {
     const current = route[route.length - 1];
-    const remaining = COUNTRIES.filter((id) => !route.includes(id));
+    const remaining = countries.filter((id) => !route.includes(id));
     const nearby = neighbors[current].filter((id) => remaining.includes(id as typeof COUNTRIES[number]));
     const choiceSeed = derivedSeed(seed, route.length);
     const flight = nearby.length === 0 || route.length % 3 === 0 || laneAt(choiceSeed, 100, 0) >= 80;
@@ -49,12 +54,12 @@ export function routeFrom(home: string, seed: number): string[] {
 }
 export interface Manifest {
   mode: Mode; difficulty: Difficulty; seed: number; route: string[]; date: string;
-  generatorVersion: 1; balanceVersion: 1 | 2;
+  generatorVersion: 1; balanceVersion: 1 | 2; catalogVersion?: 1 | 2;
 }
 export function manifestFor(mode: Mode, difficulty: Difficulty, now: number): Manifest {
   const date = mode === "daily" ? new Date(now).toISOString().slice(0, 10) : "";
   const seed = dailySeed(mode === "daily" ? date : "infinite-v1", difficulty);
-  return { mode, difficulty, seed, route: mode === "daily" ? routeFrom("FR", seed) : [], date, generatorVersion: 1, balanceVersion: 2 };
+  return { mode, difficulty, seed, route: mode === "daily" ? routeFrom("FR", seed) : [], date, generatorVersion: 1, balanceVersion: 2, catalogVersion: 2 };
 }
 export interface Selection { countryIndex: number; row: number; lane: number; atMs: number; decisionMs?: number }
 export function verifyReplay(manifest: Manifest, events: Selection[], endedAtMs: number, serverElapsedMs: number): {score: number; countries: number} {
@@ -85,5 +90,5 @@ export function verifyReplay(manifest: Manifest, events: Selection[], endedAtMs:
   return { score, countries };
 }
 export function boardKey(manifest: Manifest): string {
-  return `${manifest.mode}:${manifest.difficulty}:${manifest.date}:g1:b${manifest.balanceVersion}`;
+  return `${manifest.mode}:${manifest.difficulty}:${manifest.date}:g1:b${manifest.balanceVersion}${manifest.catalogVersion === 2 ? ":c2" : ""}`;
 }

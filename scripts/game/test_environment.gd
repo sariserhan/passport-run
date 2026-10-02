@@ -33,9 +33,7 @@ func _ready() -> void:
 	image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 	image.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var destination: String = country_id if country_id in GameCatalog.COUNTRIES else "FR"
-	var path := "res://assets/backdrops/" + destination + ".png"
-	image.texture = load(path if ResourceLoader.exists(path) else "res://assets/backdrops/FR.png")
+	image.texture = GameCatalog.backdrop(country_id)
 	backdrop.add_child(image)
 	var finish_z: float = -(config.row_count + 1) * config.row_spacing - 1.15
 	var stone := MeshFactory.stone_material(Color("bea68b"))

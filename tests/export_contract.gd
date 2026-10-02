@@ -6,8 +6,8 @@ func _initialize() -> void:
 		for lanes in [3, 4, 5]:
 			for row in [0, 1, 9, 49, 999, 1000000]:
 				data.lanes.append({"seed": seed_value, "lanes": lanes, "row": row, "lane": PathGenerator.lane_at(seed_value, lanes, row)})
-		for home in GameCatalog.COUNTRIES:
-			data.routes.append({"home": home, "seed": seed_value, "route": RoutePlanner.standardized(home, seed_value)})
+		for home in GameCatalog.LEGACY_COUNTRIES:
+			data.routes.append({"home": home, "seed": seed_value, "route": RoutePlanner.standardized(home, seed_value, 1)})
 	for difficulty_key in GameCatalog.DIFFICULTIES:
 		var config := GameCatalog.difficulty(difficulty_key)
 		data.balance[difficulty_key] = {"lanes": config.lane_count, "rows": config.row_count, "previewMs": roundi(config.preview_seconds * 1000), "jumpMs": roundi(config.jump_seconds * 1000)}

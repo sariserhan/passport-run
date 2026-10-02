@@ -260,6 +260,8 @@ func label(text: String, size: int, color: Color) -> Label:
 func button(text: String, primary: bool) -> Button:
 	var node := Button.new()
 	node.text = text
+	node.clip_text = true
+	node.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	node.custom_minimum_size.y = 56
 	node.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	node.add_theme_font_size_override("font_size", 19)

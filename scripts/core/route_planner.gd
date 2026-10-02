@@ -1,9 +1,10 @@
 class_name RoutePlanner
 extends RefCounted
 
-# Temporary five-destination travel graph. Replace with a curated geographic dataset at scale.
+# Land-border neighbors from the bundled geography snapshot; v1 preserves existing ranked routes.
 const REGIONAL_WEIGHT: int = 80
 const FLIGHT_INTERVAL: int = 3
+var catalog_version := GameCatalog.CATALOG_VERSION
 var route_seed: int = 1
 var route: Array[String] = []
 var completed: Array[String] = []
@@ -23,13 +24,13 @@ func complete_current() -> void:
 
 func choices() -> Array[String]:
 	var remaining: Array[String] = []
-	for id in GameCatalog.COUNTRIES:
+	for id in catalog():
 		if id not in route:
 			remaining.append(id)
 	if remaining.is_empty():
 		return remaining
 	var nearby: Array[String] = []
-	for id in GameCatalog.COUNTRIES[current()].neighbors:
+	for id in catalog()[current()].neighbors:
 		if id in remaining:
 			nearby.append(id)
 	var seed_value := GameCatalog.derived_seed(route_seed, completed.size())
@@ -48,10 +49,14 @@ func travel_to(id: String) -> bool:
 	route.append(id)
 	return true
 
-static func standardized(home: String, seed_value: int) -> Array[String]:
+func catalog() -> Dictionary:
+	return GameCatalog.LEGACY_COUNTRIES if catalog_version == 1 else GameCatalog.COUNTRIES
+
+static func standardized(home: String, seed_value: int, version: int = GameCatalog.CATALOG_VERSION) -> Array[String]:
 	var planner := RoutePlanner.new()
+	planner.catalog_version = version
 	planner.start(home, seed_value)
-	while planner.route.size() < GameCatalog.COUNTRIES.size():
+	while planner.route.size() < planner.catalog().size():
 		planner.complete_current()
 		var options := planner.choices()
 		if options.is_empty():

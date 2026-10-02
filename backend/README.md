@@ -55,3 +55,7 @@ Provision a hosted project and keys, configure its site URL, verify native HTTPS
 New manifests use balance 2 with a 10-second active decision window per row. Generator-v1 lanes, seed formulas and preset values remain unchanged. Existing balance-v1 runs/retries retain untimed rules; leaderboard keys include their balance version. The schema accepts both versions so old data remains valid.
 
 Version-2 replay choices carry integer `decisionMs` in [0, 10000]. Verification rejects missing/out-of-range values and values inconsistent with the available recorded elapsed time (250ms clock tolerance). Client pauses and travel time are excluded from its active decision clock. This clock is supplied by the client; it is not independently authenticated and does not prove human play. Bot resistance remains release work.
+
+### Expanded destination catalog
+
+Both backend and Godot read `resources/geography/destinations.json` (197 destinations). New manifests carry optional `catalogVersion: 2`; old persisted runs with no field keep the five-country catalog and original board keys. Daily challenge indexing includes catalogVersion, so new routes cannot inherit old saved five-country routes on the same date. New boards append `:c2`; retries preserve the issued catalog and route. A complete hard Daily is 3,940 selections, below the existing 4,096-event cap. Dataset provenance and license: [world destinations](../docs/destinations.md).

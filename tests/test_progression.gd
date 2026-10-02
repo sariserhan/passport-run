@@ -23,16 +23,25 @@ func _initialize() -> void:
 		var config := GameCatalog.difficulty(key)
 		expect(config.lane_count == 3 + GameCatalog.DIFFICULTIES.find(key), "Difficulty lane counts")
 		expect(config.preview_seconds == {"easy": 5.0, "moderate": 3.0, "hard": 2.0}[key], "Difficulty preview durations")
-	# Every starting country must reach all five without repetitions or dead ends.
+	# Every starting country must reach every destination without repetitions or dead ends.
 	for id in GameCatalog.COUNTRIES:
-		for seed_value in 30:
+		for seed_value in [0, 88, 817294]:
 			var route := RoutePlanner.standardized(id, seed_value)
-			expect(route.size() == 5 and route[0] == id, "Complete route from any home")
+			expect(route.size() == GameCatalog.COUNTRIES.size() and route[0] == id, "Complete route from any home")
 			var unique: Dictionary = {}
 			for country in route:
 				unique[country] = true
-			expect(unique.size() == 5, "No repeated countries")
+			expect(unique.size() == GameCatalog.COUNTRIES.size(), "No repeated countries")
 			expect(route == RoutePlanner.standardized(id, seed_value), "Route reproducibility")
+	for id in ["DE", "IT", "RU", "CN", "AE", "AU", "NO", "BR", "AR", "GR", "ES", "PT", "SA", "BG", "MN", "KZ", "KR", "TH", "ID", "MY", "PH", "MX", "CA", "NL", "TN", "MA", "ZA", "KE", "NG", "CL", "BO", "CO", "VE", "PY", "UY", "JM"]:
+		expect(id in GameCatalog.COUNTRIES, "Requested destination included: " + id)
+	for id in GameCatalog.COUNTRIES:
+		expect(GameCatalog.backdrop(id) != null, "Every destination has illustrated scenery: " + id)
+		for neighbor in GameCatalog.COUNTRIES[id].neighbors:
+			expect(neighbor in GameCatalog.COUNTRIES and id in GameCatalog.COUNTRIES[neighbor].neighbors, "Reciprocal known border: " + id + "/" + str(neighbor))
+	var full_code := ChallengeCode.encode(88, "hard", RoutePlanner.standardized("FR", 88), GameCatalog.COUNTRIES.size() * 20)
+	var full_challenge := ChallengeCode.decode(full_code)
+	expect(full_challenge.get("route", []).size() == GameCatalog.COUNTRIES.size(), "Full world challenge fits code limit")
 	var planner := RoutePlanner.new()
 	planner.start("TR", 10)
 	expect(not planner.travel_to("JP"), "Cannot travel before completing country")

@@ -1,5 +1,9 @@
 # Passport Run — Product & Build Specification
 
+## Latest approved destination scope — 2026-10-02
+
+The user explicitly requests broad country coverage, superseding the five-country expansion gate in the original spec. Ship 197 travel destinations: the existing five, all explicitly requested countries, the remaining independent entries, Palestine, Taiwan and Kosovo. Dubai is presented under United Arab Emirates. Every destination supports gameplay, home selection, travel, passport stamps and rewards. Use land-border neighbors with long-haul flights for islands. Regional illustrated scenery may be shared; do not claim every country has a unique landmark painting. Preserve existing five-country ranked runs and challenge routes with catalog versioning.
+
 ## Latest approved rules — 2026-10-02
 
 - The visual direction must follow the supplied reference images: detailed destination scenery, a backpacker, a perspective stone path, and polished mobile presentation.

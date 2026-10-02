@@ -101,9 +101,12 @@ func begin_run(mode: String, difficulty: String, retry_id: String = "") -> Dicti
 	if not value.get("route") is Array or not value.get("date") is String:
 		return {}
 	if mode == "daily":
-		if value.route.size() != 5 or value.route[0] != "FR" or value.seed != GameCatalog.daily_seed(value.date, difficulty):
+		var catalog: Variant = value.get("catalogVersion", 1)
+		if catalog != 1 and catalog != 2:
 			return {}
-		var expected: Array = RoutePlanner.standardized("FR", int(value.seed))
+		if value.route.size() != (5 if catalog == 1 else GameCatalog.COUNTRIES.size()) or value.route[0] != "FR" or value.seed != GameCatalog.daily_seed(value.date, difficulty):
+			return {}
+		var expected: Array = RoutePlanner.standardized("FR", int(value.seed), int(catalog))
 		if value.route != expected:
 			return {}
 	elif not value.route.is_empty():

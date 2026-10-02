@@ -1,0 +1,5 @@
+Country data adapted from https://github.com/mledoze/countries (ODbL-1.0).
+Retrieved 2026-10-02; source countries.json SHA-256: 913e5d716f9dc6b59881ee23488d47f5fda52070d1a34cac5fa327c9e61d8f7c
+Includes independent entries plus Palestine, Taiwan, Kosovo; 197 travel destinations.
+Country names, capitals, subregions, and filtered land-border neighbors are snapshot data.
+Dubai is offered under the United Arab Emirates; artwork is stylized regional scenery.

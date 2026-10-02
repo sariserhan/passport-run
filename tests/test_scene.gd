@@ -74,7 +74,7 @@ func run_tests() -> void:
 	expect(game.camera.projection == Camera3D.PROJECTION_PERSPECTIVE, "Gameplay uses perspective depth")
 	expect(game.grid.tiles[0].slab.mesh is ArrayMesh, "Tiles use rounded stone geometry")
 	for country in GameCatalog.COUNTRIES:
-		expect(ResourceLoader.exists("res://assets/backdrops/" + country + ".png"), "Every destination has packaged backdrop art")
+		expect(GameCatalog.backdrop(country) != null, "Every destination has packaged backdrop art")
 	await capture("01-ready")
 	tap(game.hud.begin_button.get_global_rect().get_center())
 	await process_frame

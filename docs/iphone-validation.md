@@ -34,7 +34,7 @@ Menu/HUD safe areas convert physical pixels separately on both axes, including s
 
 Record model/iOS, cold launch, safe-area clearance on every screen, one-handed taps, all difficulty previews (especially Hard's 20 rows in 2 seconds), lock/focus/background/resume, sound/mute/haptics, sustained frame times, repeated-retry memory and thermal behavior. Target 60 FPS remains unverified. Native share-sheet integration is unfinished.
 
-Keep the five-country scope until validation supports expansion (spec section 91). See [build status](build-status.md) and [backend setup](../backend/README.md) for service limitations.
+The user explicitly approved broad destination expansion on 2026-10-02; native acceptance must now include large destination lists and regional scenery. See [build status](build-status.md) and [backend setup](../backend/README.md) for service limitations.
 
 ## Reference graphics update
 
@@ -43,3 +43,7 @@ The updated native export packages five destination backdrops, menu key art, a t
 ## Animation and deadline update
 
 The newest exported/signed project is `/private/tmp/passport-native-animated`. It includes the 16-pose backpacker atlas, passport animation and balance-v2 10-second per-row deadline. The attempted physical-phone install reported that the device was still locked. Animation checks passed headlessly and rendered (36), and real online integration passed 19 checks, including an actual 10-second timeout. No physical-device animation/FPS PASS is claimed.
+
+### 197-destination native pass
+
+Latest project: `/private/tmp/passport-native-world/PassportRun.xcodeproj`. Export includes the shared JSON catalog, geography license/source, five original backdrop paintings and the sixteen-scene world atlas. Signed generic-iPhone build succeeded. Resource-pack loading verifies all 197 destination textures. The new country scenes and Dubai search/passport/sticker UI were captured at 390×844 (`artifacts/destination-*.png`, `29-dubai-search.png` through `31-dubai-sticker.png`). Physical-device install/performance acceptance remains pending.

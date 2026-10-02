@@ -29,8 +29,10 @@ static func save_card(owner_node: Node, session: JourneySession, score: int, hud
 	stack.add_child(hud.label("TILES REMEMBERED", 24, GameHUD.CREAM))
 	stack.add_child(hud.label("%s · %d countries reached" % [session.difficulty.capitalize(), session.completed_countries], 25, GameHUD.CREAM))
 	var route_names: Array[String] = []
-	for id in session.challenge_route():
+	for id in session.challenge_route().slice(0, 6):
 		route_names.append(GameCatalog.country_name(id))
+	if session.challenge_route().size() > 6:
+		route_names.append("+ %d destinations" % (session.challenge_route().size() - 6))
 	var route := hud.label(" → ".join(route_names), 23, Color("c4dce5"))
 	route.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	stack.add_child(route)

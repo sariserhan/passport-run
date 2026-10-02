@@ -12,7 +12,7 @@ A playable **Godot 4.5.2 / GDScript memory adventure**, built from `spec.md` and
 4. Remember the checked tiles during preview. When they disappear, choose a tile in the next row within 10 seconds. Landing safely resets the clock; pauses and jumps freeze it.
 5. Retry after falling to replay the same path. Infinite also offers a new path. Pause or Escape suspends the run; End Run returns to the menu.
 
-Modes: **World Tour**, **Infinite Memory**, **Daily World Tour**, and **Kids Adventure**. The prototype has five destinations, a persistent passport/history, local records, accessibility/audio settings, manually shared challenge codes, and locally exported share cards.
+Modes: **World Tour**, **Infinite Memory**, **Daily World Tour**, and **Kids Adventure**. The game has 197 destinations (including Dubai under the United Arab Emirates), a persistent passport/history, local records, accessibility/audio settings, manually shared challenge codes, and locally exported share cards.
 
 ![France path preview](artifacts/12-france-preview-375x667.png)
 
@@ -70,3 +70,5 @@ No private signing credentials are committed. Godot export and unsigned Xcode co
 - `scripts/game/` — playable scene and temporary 3D/audio assets
 - `scripts/ui/` — menu, HUD and share card
 - `artifacts/` — rendered screenshots; excluded from runtime imports
+
+Destination coverage, artwork sharing, data attribution and update instructions: [world destinations](docs/destinations.md).
