@@ -21,6 +21,16 @@ func expect(condition: bool, message: String) -> void:
 func wait(seconds: float) -> void:
 	await create_timer(seconds).timeout
 
+func wait_for_phase(phase: RunState.Phase) -> void:
+	for frame in 180:
+		await process_frame
+		# Desktop automation may steal focus; production correctly pauses for that.
+		if game.paused:
+			game.resume_game()
+		if game.run.phase == phase:
+			return
+	push_error("Expected phase %s, got %s; paused=%s" % [phase, game.run.phase, game.paused])
+
 func capture(name: String) -> void:
 	if screenshots:
 		await RenderingServer.frame_post_draw
@@ -39,6 +49,8 @@ func tap(point: Vector2) -> void:
 	Input.parse_input_event(up)
 
 func tap_tile(row: int, lane: int) -> void:
+	if game.paused:
+		game.resume_game()
 	var point: Vector2 = game.camera.unproject_position(game.grid.position_for(row, lane))
 	tap(point)
 
@@ -59,6 +71,10 @@ func run_tests() -> void:
 	game.restart(false, false)
 	await wait(0.1)
 	expect(game.grid.tiles.size() == 30, "Grid has 30 tiles")
+	expect(game.camera.projection == Camera3D.PROJECTION_PERSPECTIVE, "Gameplay uses perspective depth")
+	expect(game.grid.tiles[0].slab.mesh is ArrayMesh, "Tiles use rounded stone geometry")
+	for country in GameCatalog.COUNTRIES:
+		expect(ResourceLoader.exists("res://assets/backdrops/" + country + ".png"), "Every destination has packaged backdrop art")
 	await capture("01-ready")
 	tap(game.hud.begin_button.get_global_rect().get_center())
 	await process_frame
@@ -84,10 +100,11 @@ func run_tests() -> void:
 	await capture("03-pause")
 	game.resume_game()
 	game.preview_remaining = 0.03
-	await wait(0.7)
+	await wait_for_phase(RunState.Phase.PLAY)
 	expect(game.run.phase == RunState.Phase.PLAY, "Preview ends automatically")
 	for tile in game.grid.tiles:
 		expect(tile.state == PathTile.State.NORMAL and not tile.marker.visible, "All tiles hide safe indicators")
+	await wait(0.65)
 	await capture("04-play")
 	tap_tile(1, 0)
 	await process_frame
@@ -96,17 +113,17 @@ func run_tests() -> void:
 	await process_frame
 	expect(game.run.phase == RunState.Phase.JUMPING, "Next row touch starts jump")
 	expect(not game.choose_tile(0, game.run.path[0]), "Double tap cannot queue jump")
-	await wait(0.45)
+	await wait_for_phase(RunState.Phase.PLAY)
 	expect(game.run.completed_rows == 1, "Correct landing advances exactly once")
 	await wait(0.55)
 	await capture("05-landing")
 	tap_tile(1, (game.run.path[1] + 1) % 3)
-	await wait(0.48)
+	await wait_for_phase(RunState.Phase.FALLING)
 	expect(game.run.phase == RunState.Phase.FALLING, "Wrong tile triggers fall")
 	await capture("06-cracking")
 	await wait(0.35)
 	await capture("07-falling")
-	await wait(0.65)
+	await wait_for_phase(RunState.Phase.FAILED)
 	expect(game.run.phase == RunState.Phase.FAILED, "Fall finishes in results")
 	expect(game.hud.overlay.visible, "Failure results visible")
 	await capture("08-results")

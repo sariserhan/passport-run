@@ -26,7 +26,7 @@ After the phone is unlocked, open this Xcode project, select the paired phone, a
 
 ## Desktop verification
 
-Six headless suites passed (5,165 checks) plus 3 reporting tests. Real local Godot/backend integration passed 16 checks; backend types and 144 tests passed. Rendered modes passed at 375×667 and 390×844; long safe-area dialogs also passed down to 320×568.
+Six headless suites passed (over 5,180 checks after the graphics update) plus 3 reporting tests. Real local Godot/backend integration passed 16 checks; backend types and 144 tests passed. Rendered modes passed at 375×667 and 390×844; long safe-area dialogs also passed down to 320×568.
 
 Menu/HUD safe areas convert physical pixels separately on both axes, including side insets. Results and pause dialogs wrap and scroll, focus remains readable, and primary actions receive focus. The original illustrated share card and Kids reward were visually inspected. These are desktop UI checks, not iPhone profiling.
 
@@ -35,3 +35,7 @@ Menu/HUD safe areas convert physical pixels separately on both axes, including s
 Record model/iOS, cold launch, safe-area clearance on every screen, one-handed taps, all difficulty previews (especially Hard's 20 rows in 2 seconds), lock/focus/background/resume, sound/mute/haptics, sustained frame times, repeated-retry memory and thermal behavior. Target 60 FPS remains unverified. Native share-sheet integration is unfinished.
 
 Keep the five-country scope until validation supports expansion (spec section 91). See [build status](build-status.md) and [backend setup](../backend/README.md) for service limitations.
+
+## Reference graphics update
+
+The updated native export packages five destination backdrops, menu key art, a transparent backpacker and the licensed Lilita One font. Desktop QA now exercises perspective preview/follow cameras and rounded stone meshes. Scene checks increased to 156; mode checks include bounded state waits and explicit preview readiness. See [visual assets](visual-assets.md). The latest export/build directory is `/private/tmp/passport-native-visual`. No physical-device acceptance is inferred from this visual pass.

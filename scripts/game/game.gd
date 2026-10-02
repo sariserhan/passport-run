@@ -43,7 +43,8 @@ func _ready() -> void:
 	add_child(grid)
 	camera = Camera3D.new()
 	camera.name = "CameraRig"
-	camera.projection = Camera3D.PROJECTION_ORTHOGONAL
+	camera.projection = Camera3D.PROJECTION_PERSPECTIVE
+	camera.fov = 48.0
 	camera.near = 0.1
 	camera.far = 400
 	add_child(camera)
@@ -188,6 +189,7 @@ func load_country(auto_preview: bool) -> void:
 	rebuild_environment()
 	set_overview()
 	hud.show_ready(config.lane_count, config.row_count)
+	hud.destination.text = GameCatalog.country_name(session.current_country()) if not session.current_country().is_empty() else "PASSPORT RUN"
 	hud.update_score(0, config.row_count)
 	if not session.current_country().is_empty():
 		hud.phase_title.text = GameCatalog.country_name(session.current_country())
@@ -217,10 +219,26 @@ func rebuild_environment() -> void:
 func set_overview() -> void:
 	var depth: float = (config.row_count + 1) * config.row_spacing
 	var focus := Vector3(0, 0, -segment_start * config.row_spacing - depth / 2)
-	camera.position = focus + Vector3(0, 31, 31)
-	camera.look_at(focus)
-	# Leave room for the HUD, fitting the entire path at every difficulty.
-	camera.size = maxf(37.0, depth * 0.7072 / 0.51)
+	var screen := get_viewport().get_visible_rect().size
+	var direction := Vector3(0, 0.72, 0.69).normalized()
+	var distance := 18.0
+	var target_y: float = (195.0 + screen.y - 160.0) / 2
+	# Fit the complete preview at every difficulty; play moves closer to the traveler.
+	for attempt in 48:
+		camera.position = focus + direction * distance
+		camera.look_at(focus)
+		camera.position += camera.basis.y * ((0.5 - target_y / screen.y) * 2 * distance * tan(deg_to_rad(camera.fov / 2)))
+		var fits := true
+		for row in [segment_start, segment_start + config.row_count - 1]:
+			for lane in [0, config.lane_count - 1]:
+				for offset in [Vector3(-1, 0, -1), Vector3(1, 0, 1)]:
+					var point := camera.unproject_position(grid.position_for(row, lane) + offset)
+					fits = fits and point.x > 16 and point.x < screen.x - 16 and point.y > 200 and point.y < screen.y - 170
+		var boots := camera.unproject_position(Vector3(0, 0, -segment_start * config.row_spacing + 0.8))
+		fits = fits and boots.y < screen.y - 170
+		if fits:
+			break
+		distance *= 1.06
 
 func start_preview() -> void:
 	if paused or travel.active or not run.begin_preview():
@@ -331,19 +349,18 @@ func next_infinite_segment() -> void:
 func follow_player() -> void:
 	if camera_tween and camera_tween.is_valid():
 		camera_tween.kill()
-	var focus := Vector3(0, 0, traveler.position.z - 6.5)
-	var camera_position := focus + Vector3(0, 18, 17)
-	var size: float = maxf(23.5, (config.lane_count * config.lane_spacing + 2) / (get_viewport().get_visible_rect().size.x / get_viewport().get_visible_rect().size.y))
+	var aspect: float = get_viewport().get_visible_rect().size.x / get_viewport().get_visible_rect().size.y
+	var factor: float = maxf(1.0, (config.lane_count * config.lane_spacing + 0.8) / (aspect * 18.0))
+	var camera_position := Vector3(0, 8.0 * factor, traveler.position.z + 12.0 * factor)
+	var rotation := Vector3(-atan2(8.0, 17.5), 0, 0)
 	if profile.settings.reduced_motion:
 		camera.position = camera_position
-		camera.size = size
-		camera.rotation = Vector3(-atan2(18.0, 17.0), 0, 0)
+		camera.rotation = rotation
 		return
 	camera_tween = create_tween().set_parallel(true)
 	camera_tween.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	camera_tween.tween_property(camera, "position", camera_position, 0.5)
-	camera_tween.tween_property(camera, "size", size, 0.5)
-	camera_tween.tween_property(camera, "rotation", Vector3(-atan2(18.0, 17.0), 0, 0), 0.5)
+	camera_tween.tween_property(camera, "rotation", rotation, 0.5)
 
 func fall(tile: PathTile) -> void:
 	hud.show_falling()

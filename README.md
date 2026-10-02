@@ -14,9 +14,9 @@ A playable **Godot 4.5.2 / GDScript memory adventure**, built from `spec.md` and
 
 Modes: **World Tour**, **Infinite Memory**, **Daily World Tour**, and **Kids Adventure**. The prototype has five destinations, a persistent passport/history, local records, accessibility/audio settings, manually shared challenge codes, and locally exported share cards.
 
-![France path preview](artifacts/12-france-preview.png)
+![France path preview](artifacts/12-france-preview-375x667.png)
 
-The art and audio are original temporary prototype assets. Illustrated travel, Kids stickers/facts and share cards are included. Authenticated server manifests, replay-verified rankings and passport discovery sync work against a real local Convex backend; see [backend setup](backend/README.md). Online buttons appear only when a backend URL is configured. Hosted deployment, ads, purchases, public challenge URLs, native sharing and device acceptance remain unfinished.
+The visuals now follow the supplied references with illustrated destinations, a detailed backpacker sprite, rounded stone tiles and a perspective camera. See [visual assets and remaining animation limits](docs/visual-assets.md). Audio is original prototype audio. Illustrated travel, Kids stickers/facts and share cards are included. Authenticated server manifests, replay-verified rankings and passport discovery sync work against a real local Convex backend; see [backend setup](backend/README.md). Online buttons appear only when a backend URL is configured. Hosted deployment, ads, purchases, public challenge URLs, native sharing and device acceptance remain unfinished.
 
 ## Checks
 

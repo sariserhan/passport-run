@@ -8,18 +8,17 @@ var state: State = State.NORMAL
 var slab: MeshInstance3D
 var marker: Node3D
 var cracks: Node3D
-var neutral := MeshFactory.material(Color("94a9b3"))
-var green := MeshFactory.material(Color("97e85f"))
-var landed := MeshFactory.material(Color("78bbb0"))
-var broken := MeshFactory.material(Color("e9926a"))
+var neutral := MeshFactory.stone_material(Color("777a83"))
+var green := MeshFactory.stone_material(Color("84da62"))
+var landed := MeshFactory.stone_material(Color("78bbb0"))
+var broken := MeshFactory.stone_material(Color("e9926a"))
 
 func build(row_index: int, lane_index: int, size: Vector3) -> void:
 	row = row_index
 	lane = lane_index
 	collision_layer = 1
 	collision_mask = 0
-	slab = MeshFactory.box(self, size, Vector3(0, -size.y / 2, 0), neutral)
-	MeshFactory.box(self, Vector3(size.x * 0.91, 0.035, size.z * 0.91), Vector3(0, 0.018, 0), neutral)
+	slab = MeshFactory.beveled_box(self, size, Vector3(0, -size.y / 2, 0), neutral)
 	var collider := CollisionShape3D.new()
 	var shape := BoxShape3D.new()
 	shape.size = size + Vector3(0.05, 0.04, 0.05)

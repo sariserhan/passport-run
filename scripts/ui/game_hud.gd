@@ -13,6 +13,7 @@ const CREAM := Color("fff6df")
 var root: Control
 var safe_margin: MarginContainer
 var score: Label
+var destination: Label
 var phase_title: Label
 var phase_hint: Label
 var footer_panel: PanelContainer
@@ -40,9 +41,8 @@ func _ready() -> void:
 	sky_scrim.offset_bottom = 220
 	sky_scrim.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var gradient := Gradient.new()
-	gradient.set_color(0, Color("a6dce7"))
-	gradient.set_color(1, Color(0.65, 0.86, 0.91, 0))
-	gradient.add_point(0.7, Color(0.65, 0.86, 0.91, 0.96))
+	gradient.set_color(0, Color(0.04, 0.13, 0.25, 0.52))
+	gradient.set_color(1, Color(0.04, 0.13, 0.25, 0))
 	var texture := GradientTexture2D.new()
 	texture.gradient = gradient
 	texture.fill_from = Vector2(0, 0)
@@ -66,12 +66,11 @@ func _ready() -> void:
 	brand.add_theme_constant_override("separation", -6)
 	brand.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	header.add_child(brand)
-	var passport := label("PASSPORT", 19, INK)
-	brand.add_child(passport)
-	var run := label("RUN", 36, CREAM)
-	run.add_theme_color_override("font_shadow_color", INK)
-	run.add_theme_constant_override("shadow_offset_y", 3)
-	brand.add_child(run)
+	destination = label("PASSPORT RUN", 21, CREAM)
+	destination.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	destination.add_theme_color_override("font_shadow_color", INK)
+	destination.add_theme_constant_override("shadow_offset_y", 2)
+	brand.add_child(destination)
 	var score_panel := PanelContainer.new()
 	score_panel.add_theme_stylebox_override("panel", panel_style(Color("153e57"), 14))
 	score_panel.custom_minimum_size = Vector2(94, 58)
@@ -89,10 +88,14 @@ func _ready() -> void:
 	instructions.offset_top = 104
 	instructions.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	content.add_child(instructions)
-	phase_title = label("Ready for takeoff?", 28, INK)
+	phase_title = label("Ready for takeoff?", 28, CREAM)
+	phase_title.add_theme_color_override("font_outline_color", INK)
+	phase_title.add_theme_constant_override("outline_size", 5)
 	phase_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	instructions.add_child(phase_title)
-	phase_hint = label("Remember the path. Make the leap.", 17, INK)
+	phase_hint = label("Remember the path. Make the leap.", 17, CREAM)
+	phase_hint.add_theme_color_override("font_outline_color", INK)
+	phase_hint.add_theme_constant_override("outline_size", 3)
 	phase_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	instructions.add_child(phase_hint)
 	footer_panel = PanelContainer.new()
@@ -237,6 +240,8 @@ func label(text: String, size: int, color: Color) -> Label:
 	var node := Label.new()
 	node.text = text
 	node.add_theme_font_size_override("font_size", size)
+	if size >= 28:
+		node.add_theme_font_override("font", preload("res://assets/fonts/LilitaOne-Regular.ttf"))
 	node.add_theme_color_override("font_color", color)
 	node.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return node
@@ -247,11 +252,11 @@ func button(text: String, primary: bool) -> Button:
 	node.custom_minimum_size.y = 56
 	node.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	node.add_theme_font_size_override("font_size", 19)
-	node.add_theme_color_override("font_color", Color("163e39") if primary else CREAM)
-	node.add_theme_color_override("font_focus_color", INK if primary else CREAM)
-	node.add_theme_color_override("font_hover_color", INK if primary else CREAM)
-	node.add_theme_color_override("font_pressed_color", INK if primary else CREAM)
-	var base := Color("a6e771") if primary else Color("28546b")
+	node.add_theme_color_override("font_color", Color("073914") if primary else CREAM)
+	node.add_theme_color_override("font_focus_color", Color("073914") if primary else CREAM)
+	node.add_theme_color_override("font_hover_color", Color("073914") if primary else CREAM)
+	node.add_theme_color_override("font_pressed_color", Color("073914") if primary else CREAM)
+	var base := Color("51df65") if primary else Color("117eb9")
 	node.add_theme_stylebox_override("normal", panel_style(base, 12))
 	node.add_theme_stylebox_override("hover", panel_style(base.lightened(0.08), 12))
 	node.add_theme_stylebox_override("pressed", panel_style(base.darkened(0.08), 12))
@@ -265,6 +270,12 @@ func panel_style(color: Color, radius: int) -> StyleBoxFlat:
 	var style := StyleBoxFlat.new()
 	style.bg_color = color
 	style.set_corner_radius_all(radius)
+	if color.a > 0:
+		style.border_color = color.lightened(0.24)
+		style.set_border_width_all(1)
+		style.shadow_color = Color(0.02, 0.06, 0.14, 0.30)
+		style.shadow_size = 3
+		style.shadow_offset = Vector2(0, 3)
 	return style
 
 func show_journey_result(title: String, body: String, actions: Array) -> void:

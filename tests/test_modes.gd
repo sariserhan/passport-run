@@ -20,6 +20,14 @@ func expect(value: bool, message: String) -> void:
 func wait(seconds: float = 0.08) -> void:
 	await create_timer(seconds).timeout
 
+func wait_for_landing() -> void:
+	for frame in 120:
+		await process_frame
+		if game.paused:
+			game.resume_game()
+		if game.run.phase != RunState.Phase.JUMPING:
+			return
+
 func capture(name: String) -> void:
 	if render:
 		await RenderingServer.frame_post_draw
@@ -33,17 +41,25 @@ func tap(point: Vector2) -> void:
 		Input.parse_input_event(event)
 
 func finish_preview() -> void:
+	if game.paused:
+		game.resume_game()
 	if game.run.phase == RunState.Phase.READY:
 		game.start_preview()
 	game.preview_remaining = 0.001
-	await wait(0.6 if render else 0.03)
+	for frame in 120:
+		await process_frame
+		if game.paused:
+			game.resume_game()
+		if game.run.phase != RunState.Phase.PREVIEW:
+			break
+	expect(game.run.phase == RunState.Phase.PLAY, "Preview finishes before selecting tiles (paused=%s)" % game.paused)
 
 func cross_country() -> void:
 	game.config.jump_seconds = 0.005
 	await finish_preview()
 	for row in game.config.row_count:
 		expect(game.choose_tile(row, game.run.safe_lane(row)), "Accept next safe tile")
-		await wait(0.02)
+		await wait_for_landing()
 	await wait(0.6)
 	expect(game.run.phase == RunState.Phase.COMPLETE, "Country completed")
 
@@ -133,7 +149,7 @@ func run_all() -> void:
 		if game.run.phase == RunState.Phase.PREVIEW:
 			await finish_preview()
 		expect(game.choose_tile(row, game.run.safe_lane(row)), "Infinite accepts streamed row")
-		await wait(0.02)
+		await wait_for_landing()
 		expect(game.grid.tiles.size() <= 33, "Infinite resident tile bound")
 	expect(game.run.completed_rows == 34 and game.run.path.size() == 10, "Infinite progression avoids growing path arrays")
 	await capture("18-infinite")

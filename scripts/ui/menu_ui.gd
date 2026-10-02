@@ -31,6 +31,18 @@ func setup(saved_profile: PlayerProfile, hud_style: GameHUD) -> void:
 	root.color = Color("153e57")
 	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(root)
+	var artwork := TextureRect.new()
+	artwork.texture = preload("res://assets/backdrops/FR.png")
+	artwork.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	artwork.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	artwork.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	artwork.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(artwork)
+	var shade := ColorRect.new()
+	shade.color = Color(0.025, 0.09, 0.18, 0.76)
+	shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(shade)
 	safe_margin = MarginContainer.new()
 	var margins := safe_margin
 	margins.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -62,6 +74,8 @@ func clear(title: String, subtitle: String) -> void:
 	mode_buttons.clear()
 	scroll.scroll_vertical = 0
 	var heading := style.label(title, 34, GameHUD.CREAM)
+	heading.add_theme_color_override("font_outline_color", Color("123352"))
+	heading.add_theme_constant_override("outline_size", 6)
 	heading.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	content.add_child(heading)
 	copy(subtitle)
@@ -80,8 +94,18 @@ func action(text: String, primary: bool, callback: Callable) -> Button:
 	return control
 
 func show_main() -> void:
-	clear("PASSPORT RUN", "Remember the path. Travel the world.")
-	copy("Five destinations. One small world to explore.")
+	clear("PASSPORT\nRUN", "Remember the path. Travel the world.")
+	var title: Label = content.get_child(0)
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.add_theme_font_size_override("font_size", 48)
+	title.add_theme_color_override("font_color", Color("ffda65"))
+	var hero := TextureRect.new()
+	hero.texture = preload("res://assets/menu-key-art.png")
+	hero.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	hero.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	hero.custom_minimum_size.y = 210
+	hero.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	content.add_child(hero)
 	home_button = action("Start: " + (GameCatalog.country_name(profile.home_country) if not profile.home_country.is_empty() else "Choose your home country"), false, func(): show_countries())
 	difficulty_picker = OptionButton.new()
 	difficulty_picker.custom_minimum_size.y = 52

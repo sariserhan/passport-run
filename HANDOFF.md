@@ -4,11 +4,15 @@ Read `spec.md`, this file, [build status](docs/build-status.md), and [iPhone val
 
 ## Current state
 
-Godot 4.5.2 standard/GDScript portrait game, five countries (US, FR, EG, TR, JP), Compatibility renderer. World Tour, Infinite, offline Daily, Kids, tutorial, immutable difficulty presets, durable local passport/history/records, accessibility/audio preferences, validated PR1 challenge codes, and original temporary procedural 3D art/audio work. The references' final visual fidelity is unfinished. Section 91 requires validation before major country expansion.
+Godot 4.5.2 standard/GDScript portrait game, five countries (US, FR, EG, TR, JP), Compatibility renderer. World Tour, Infinite, offline Daily, Kids, tutorial, immutable difficulty presets, durable local passport/history/records, accessibility/audio preferences, validated PR1 challenge codes, and original temporary procedural 3D art/audio work. The latest graphics pass follows the references with perspective stone paths, detailed illustrated scenery and backpacker artwork; see [visual asset notes](docs/visual-assets.md). It is a hybrid scene rather than a fully rigged 3D art pipeline. Section 91 requires validation before major country expansion.
 
 This continuation added illustrated pauseable/skippable travel, Kids robot/facts/stickers, a collection badge, illustrated PNG cards, safe-area scrolling/focus fixes, session/run-aware local reporting, and a real **local Convex** competition service with Godot integration. Facts have primary sources in [country-facts.md](docs/country-facts.md).
 
 Online play is explicitly optional: `network/backend_url` defaults empty, so offline modes work independently. When configured, Online Daily/Infinite/Rankings use authenticated anonymous sessions, server manifests, exact replay reconstruction, atomic personal bests and separated boards. Passport discovery merges cannot award ranked points. There is no hosted deployment, account recovery, bot prevention, ad provider, purchase product, public challenge URL, native share sheet or remote analytics. Kids remains local and exposes no sharing actions.
+
+## Graphics continuation
+
+The reference-driven graphics pass replaces the overhead camera and primitive destination set with perspective preview/follow views, five generated matte paintings, a detailed transparent backpacker sprite, textured rounded shared tile meshes, illustrated main-menu key art and an openly licensed display font. Kids retains a rounded procedural robot. All generated assets are in `assets/`; prompts, provenance and remaining animation limits are documented in `docs/visual-assets.md`. Physical-device profiling is still required.
 
 ## Native build
 
@@ -26,7 +30,7 @@ npm test
 node tools/smoke.mjs
 ```
 
-With local backend running, execute `tests/test_online.gd` from Godot (see backend README). Six offline suites, 3 report tests, 144 backend tests, real HTTP smoke and 16 Godot online checks passed. Portrait rendered checks passed at 375×667/390×844 and dialogs down to 320×568. Test profiles and development scores are isolated from ordinary game saves.
+With local backend running, execute `tests/test_online.gd` from Godot (see backend README). Six offline suites, 3 report tests, 144 backend tests, real HTTP smoke and 16 Godot online checks passed. The graphics pass adds seven scene checks and bounded animation-state waits for rendered QA. Portrait rendered checks passed at 375×667/390×844 and dialogs down to 320×568. Test profiles and development scores are isolated from ordinary game saves.
 
 ## Resume priorities
 
