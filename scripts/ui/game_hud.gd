@@ -202,6 +202,17 @@ func show_play(completed: int, total: int) -> void:
 func update_score(completed: int, total: int) -> void:
 	score.text = "%02d / %02d" % [completed, total]
 
+func update_decision(remaining: float, total: float) -> void:
+	timer_label.text = "CHOOSE YOUR TILE   ·   %ds" % ceili(remaining)
+	timer_bar.value = remaining / total
+	timer_bar.add_theme_stylebox_override("fill", panel_style(Color("ff956e") if remaining <= 3 else Color("b3ec69"), 5))
+
+func show_celebration() -> void:
+	phase_title.text = "You made it!"
+	phase_hint.text = "One more country for your passport."
+	timer_label.text = "COUNTRY COMPLETE"
+	timer_bar.value = 1
+
 func show_falling() -> void:
 	phase_title.text = "Whoops!"
 	phase_hint.text = "One more step to remember."

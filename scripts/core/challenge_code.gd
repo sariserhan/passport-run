@@ -3,8 +3,9 @@ extends RefCounted
 
 const PREFIX := "PR1."
 
-static func encode(seed_value: int, difficulty_key: String, route: Array[String], target: int) -> String:
+static func encode(seed_value: int, difficulty_key: String, route: Array[String], target: int, balance_version: int = GameCatalog.BALANCE_VERSION) -> String:
 	var data := {"generator_version": PathGenerator.VERSION, "seed": seed_value, "difficulty": difficulty_key, "route": route, "starting_country": route[0], "target_score": target}
+	data.balance_version = balance_version
 	return PREFIX + Marshalls.utf8_to_base64(JSON.stringify(data))
 
 static func decode(code: String) -> Dictionary:
@@ -27,6 +28,10 @@ static func decode(code: String) -> Dictionary:
 	if not value is Dictionary:
 		return {}
 	var data: Dictionary = value
+	var balance: Variant = data.get("balance_version", 1)
+	if not (balance is int or balance is float) or (balance != 1 and balance != 2):
+		return {}
+	data.balance_version = int(data.get("balance_version", 1))
 	if data.get("generator_version") != PathGenerator.VERSION or data.get("difficulty") not in GameCatalog.DIFFICULTIES:
 		return {}
 	for key in ["seed", "target_score"]:

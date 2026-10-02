@@ -11,7 +11,7 @@ function validRun(manifest: Manifest, rows = 20): { events: Selection[]; end: nu
     const countryIndex = manifest.mode === "daily" ? Math.floor(index / balance.rows) : 0;
     const row = manifest.mode === "daily" ? index % balance.rows : index;
     const seed = manifest.mode === "daily" ? derivedSeed(manifest.seed, countryIndex) : manifest.seed;
-    events.push({ countryIndex, row, lane: laneAt(seed, balance.lanes, row), atMs });
+    events.push({ countryIndex, row, lane: laneAt(seed, balance.lanes, row), atMs, decisionMs: 0 });
     atMs += balance.jumpMs;
     if ((index + 1) % balance.rows === 0) atMs += balance.previewMs + (manifest.mode === "daily" ? 500 : 0);
   }
@@ -56,5 +56,23 @@ describe("replay validation", () => {
     expect(boardKey(manifest)).not.toBe(boardKey(manifestFor("daily", "hard", Date.UTC(2026, 9, 2))));
     expect(boardKey(manifest)).not.toBe(boardKey(manifestFor("daily", "easy", Date.UTC(2026, 9, 3))));
     expect(boardKey(manifest)).not.toBe(boardKey(manifestFor("infinite", "easy", 0)));
+    expect(boardKey(manifest)).not.toBe(boardKey({...manifest, balanceVersion: 1}));
+  });
+  test.each([undefined, -1, 10001, 1.5, Number.NaN])("v2 rejects invalid decision time %s", (decisionMs) => {
+    const {events, end} = validRun(manifest, 1);
+    events[0].decisionMs = decisionMs;
+    expect(() => verifyReplay(manifest, events, end, end)).toThrow();
+  });
+  test("v1 replays keep their original untimed rules", () => {
+    const {events, end} = validRun(manifest, 1);
+    delete events[0].decisionMs;
+    expect(verifyReplay({...manifest, balanceVersion: 1}, events, end, end).score).toBe(1);
+  });
+  test("decision time cannot exceed the recorded available elapsed time", () => {
+    const {events, end} = validRun(manifest, 1);
+    events[0].decisionMs = 10000;
+    expect(() => verifyReplay(manifest, events, end, end)).toThrow();
+    events[0].atMs += 10000;
+    expect(verifyReplay(manifest, events, end + 10000, end + 10000).score).toBe(1);
   });
 });

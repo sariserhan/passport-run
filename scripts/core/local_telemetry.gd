@@ -28,7 +28,7 @@ func track(event: String, metadata: Dictionary = {}) -> void:
 		entry.run_id = run_id
 		entry.elapsed_ms = Time.get_ticks_msec() - run_started_at
 	# Fixed allowlist: no player names, contact details, location, or free-form user input.
-	for key in ["mode", "difficulty", "country", "row", "lane", "score", "countries", "seed", "version"]:
+	for key in ["mode", "difficulty", "country", "row", "lane", "score", "countries", "seed", "version", "balance_version"]:
 		if metadata.has(key):
 			entry[key] = metadata[key]
 	events.append(entry)

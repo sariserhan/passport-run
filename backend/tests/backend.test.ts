@@ -36,7 +36,7 @@ test("verified submission is atomic, owner-only, and cannot replay twice", async
   const otherSession = await t.run((ctx) => ctx.db.insert("authSessions", {userId: otherId, expirationTime: Date.now() + 48 * 60 * 60 * 1000}));
   const other = t.withIdentity({subject: `${otherId}|${otherSession}`});
   const balance = BALANCE.easy;
-  const events = [{countryIndex: 0, row: 0, lane: laneAt(derivedSeed(issued.seed, 0), 3, 0), atMs: balance.previewMs}];
+  const events = [{countryIndex: 0, row: 0, lane: laneAt(derivedSeed(issued.seed, 0), 3, 0), atMs: balance.previewMs, decisionMs: 0}];
   vi.setSystemTime(now + 6000);
   const args = {runId: issued.runId, events, endedAtMs: 6000};
   await expect(other.mutation(api.runs.submit, args)).rejects.toThrow("Run not found");

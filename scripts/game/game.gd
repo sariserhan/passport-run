@@ -29,6 +29,10 @@ var replay := ReplayRecorder.new()
 var online := false
 var network_busy := false
 var retry_run_id := ""
+var decision_remaining := GameCatalog.DECISION_SECONDS
+var failure_reason := ""
+var celebrating := false
+var passport_stamp: PassportStamp
 
 func _ready() -> void:
 	config = GameCatalog.difficulty("easy")
@@ -67,6 +71,11 @@ func _ready() -> void:
 	add_child(travel)
 	travel.setup(hud)
 	travel.arrived.connect(func(): load_country(true))
+	passport_stamp = PassportStamp.new()
+	add_child(passport_stamp)
+	passport_stamp.setup(hud)
+	passport_stamp.stamped.connect(func(): traveler.play_animation("stamp"); audio.play_cue("stamp"))
+	passport_stamp.finished.connect(finish_celebration)
 	menu.start_requested.connect(start_game)
 	menu.challenge_requested.connect(func(data: Dictionary): imported_challenge = data; start_game("challenge", data.difficulty))
 	menu.settings_changed.connect(func(): audio.apply_settings(profile.settings))
@@ -121,6 +130,7 @@ func start_game(mode: String, difficulty_key: String) -> void:
 		return
 	session.begin(mode, difficulty_key, profile.home_country, randi_range(1, PathGenerator.MODULUS - 2), imported_challenge)
 	if online:
+		session.balance_version = int(issued.balanceVersion)
 		session.seed_value = int(issued.seed)
 		session.date = issued.date
 		session.fixed_route.assign(issued.route)
@@ -139,6 +149,11 @@ func start_game(mode: String, difficulty_key: String) -> void:
 		telemetry.track(mode + "_started", metadata())
 
 func cancel_motion() -> void:
+	celebrating = false
+	if passport_stamp:
+		passport_stamp.cancel()
+	if is_instance_valid(traveler):
+		traveler.animation_paused = false
 	if travel:
 		travel.cancel()
 	generation += 1
@@ -176,6 +191,8 @@ func load_country(auto_preview: bool) -> void:
 	hud.root.show()
 	segment_start = 0
 	country_awarded = false
+	failure_reason = ""
+	decision_remaining = GameCatalog.DECISION_SECONDS
 	run.reset(session.path_seed(), config, session.mode == "infinite")
 	grid.build(config)
 	if is_instance_valid(traveler):
@@ -183,6 +200,7 @@ func load_country(auto_preview: bool) -> void:
 		traveler.queue_free()
 	traveler = Traveler.new()
 	traveler.kids = session.mode == "kids"
+	traveler.reduced_motion = profile.settings.reduced_motion
 	traveler.name = "Player"
 	add_child(traveler)
 	traveler.position = Vector3(0, 0.03, 0.6)
@@ -259,7 +277,22 @@ func _process(delta: float) -> void:
 			grid.hide_path()
 			run.finish_preview()
 			update_play_hud()
+			reset_decision_clock()
 			follow_player()
+		return
+	if run.phase == RunState.Phase.PLAY and session.balance_version >= 2:
+		decision_remaining = maxf(0, decision_remaining - delta)
+		hud.update_decision(decision_remaining, GameCatalog.DECISION_SECONDS)
+		if decision_remaining <= 0 and run.time_out():
+			failure_reason = "timeout"
+			var tile: PathTile = grid.tile_at(run.completed_rows - 1, run.selected_lane) if run.completed_rows > 0 else null
+			fall(tile)
+
+func reset_decision_clock() -> void:
+	decision_remaining = GameCatalog.DECISION_SECONDS
+	traveler.play_animation("thinking")
+	if session.balance_version >= 2:
+		hud.update_decision(decision_remaining, GameCatalog.DECISION_SECONDS)
 
 func update_play_hud() -> void:
 	hud.show_play(run.completed_rows, config.row_count)
@@ -298,9 +331,13 @@ func _unhandled_input(event: InputEvent) -> void:
 		choose_tile(tile.row, tile.lane)
 
 func choose_tile(row: int, lane: int) -> bool:
+	if session.balance_version >= 2 and decision_remaining <= 0:
+		return false
 	if paused or travel.active or not run.select(row, lane, config.lane_count):
 		return false
-	replay.select(0 if session.mode == "infinite" else session.country_index, row, lane)
+	replay.select(0 if session.mode == "infinite" else session.country_index, row, lane, int(round((GameCatalog.DECISION_SECONDS - decision_remaining) * 1000)))
+	traveler.play_animation("jump")
+	hud.timer_label.text = "JUMPING…"
 	telemetry.track("tile_selected", {"row": row, "lane": lane, "mode": session.mode})
 	audio.play_cue("jump")
 	var start := traveler.position
@@ -331,6 +368,7 @@ func land(row: int, lane: int) -> void:
 		elif session.mode == "infinite" and run.completed_rows % config.row_count == 0:
 			next_infinite_segment()
 		else:
+			reset_decision_clock()
 			follow_player()
 	else:
 		fall(tile)
@@ -352,6 +390,9 @@ func follow_player() -> void:
 	var aspect: float = get_viewport().get_visible_rect().size.x / get_viewport().get_visible_rect().size.y
 	var factor: float = maxf(1.0, (config.lane_count * config.lane_spacing + 0.8) / (aspect * 18.0))
 	var camera_position := Vector3(0, 8.0 * factor, traveler.position.z + 12.0 * factor)
+	if run.phase == RunState.Phase.COMPLETE:
+		camera_position.x = traveler.position.x
+		camera_position.y = 9.0 * factor
 	var rotation := Vector3(-atan2(8.0, 17.5), 0, 0)
 	if profile.settings.reduced_motion:
 		camera.position = camera_position
@@ -362,31 +403,40 @@ func follow_player() -> void:
 	camera_tween.tween_property(camera, "position", camera_position, 0.5)
 	camera_tween.tween_property(camera, "rotation", rotation, 0.5)
 
-func fall(tile: PathTile) -> void:
+func fall(tile: PathTile = null) -> void:
 	hud.show_falling()
+	traveler.play_animation("fall")
+	if failure_reason == "timeout":
+		hud.phase_title.text = "Time’s up!"
+		hud.phase_hint.text = "Choose your next tile within 10 seconds."
 	if session.mode == "kids":
 		hud.phase_title.text = "Almost!"
 		hud.phase_hint.text = "Great try. Remember it and go again."
-	tile.set_state(PathTile.State.CRACKING)
+	if tile:
+		tile.set_state(PathTile.State.CRACKING)
 	audio.play_cue("fall")
 	vibrate(55)
-	telemetry.track("wrong_tile", metadata())
+	telemetry.track("decision_timeout" if failure_reason == "timeout" else "wrong_tile", metadata())
 	var token: int = generation
 	var start := traveler.position
-	var tile_start := tile.position
+	var tile_start := tile.position if tile else Vector3.ZERO
 	active_tween = create_tween()
-	if profile.settings.reduced_motion:
+	if profile.settings.reduced_motion or not tile:
 		active_tween.tween_interval(config.crack_seconds)
 	else:
 		active_tween.tween_property(tile, "rotation:z", 0.055, config.crack_seconds / 2)
 		active_tween.tween_property(tile, "rotation:z", -0.045, config.crack_seconds / 2)
-	active_tween.tween_callback(func(): tile.set_state(PathTile.State.FALLING))
+	active_tween.tween_callback(func():
+		if tile:
+			tile.set_state(PathTile.State.FALLING)
+	)
 	active_tween.tween_method(func(progress: float):
 		if not profile.settings.reduced_motion:
 			traveler.position = start + Vector3(0, -9 * progress * progress, 0)
 			traveler.pose_fall(progress)
-			tile.position = tile_start + Vector3(0.5 * progress, -11 * progress * progress, 0)
-			tile.rotation.z = progress * 0.65
+			if tile:
+				tile.position = tile_start + Vector3(0.5 * progress, -11 * progress * progress, 0)
+				tile.rotation.z = progress * 0.65
 	, 0.0, 1.0, config.fall_seconds)
 	active_tween.tween_callback(func():
 		if token == generation:
@@ -402,8 +452,13 @@ func fall(tile: PathTile) -> void:
 func show_failure() -> void:
 	if session.mode == "practice":
 		hud.show_result(false, run.completed_rows, config.row_count)
+		if failure_reason == "timeout":
+			hud.modal_title.text = "Time’s up!"
+			hud.modal_body.text += "\nEach new row gives you 10 seconds."
 		return
 	var body := "%d tiles · %d countries\nSame path. Another chance." % [total_score(), session.completed_countries]
+	if failure_reason == "timeout":
+		body += "\nTime ran out. Each new row gives you 10 seconds."
 	if session.mode == "infinite":
 		body = "%d tiles remembered\nRetry starts at step 1\nwith the exact same path." % run.completed_rows
 	if session.mode == "tutorial":
@@ -417,28 +472,45 @@ func show_failure() -> void:
 	hud.show_journey_result("Great try!", body, actions)
 
 func celebrate() -> void:
+	celebrating = true
+	hud.show_celebration()
+	follow_player()
 	var token: int = generation
 	var start := traveler.position
-	audio.play_cue("stamp")
 	active_tween = create_tween()
 	active_tween.tween_method(func(progress: float):
 		if not profile.settings.reduced_motion:
 			traveler.position = start + Vector3.UP * sin(progress * PI) * 0.7
 			traveler.pose_jump(progress)
 	, 0.0, 1.0, 0.5)
+	active_tween.tween_callback(func(): traveler.play_animation("celebrate"))
+	active_tween.tween_interval(0.2 if profile.settings.reduced_motion else 0.55)
+	active_tween.tween_callback(func(): traveler.play_animation("pocket"))
+	active_tween.tween_interval(0.15 if profile.settings.reduced_motion else 0.35)
 	active_tween.tween_callback(func():
 		if token != generation:
 			return
-		if session.mode == "practice":
-			hud.show_result(true, run.completed_rows, config.row_count)
-		elif session.mode == "tutorial":
-			profile.tutorial_done = true
-			profile.save()
-			telemetry.track("tutorial_completed")
-			hud.show_journey_result("You’ve got it!", "Remember. Jump. Explore.", [{"text": "START MY JOURNEY", "primary": true, "callback": func(): menu.pending_mode = "world"; menu.show_countries()}])
+		traveler.play_animation("passport")
+		if session.mode in ["practice", "tutorial"]:
+			finish_celebration()
 		else:
-			complete_country()
+			passport_stamp.present(session.current_country(), camera.unproject_position(traveler.position + Vector3(0, 1, 0)), profile.settings.reduced_motion)
 	)
+
+func finish_celebration() -> void:
+	if not celebrating or run.phase != RunState.Phase.COMPLETE:
+		return
+	celebrating = false
+	traveler.play_animation("celebrate")
+	if session.mode == "practice":
+		hud.show_result(true, run.completed_rows, config.row_count)
+	elif session.mode == "tutorial":
+		profile.tutorial_done = true
+		profile.save()
+		telemetry.track("tutorial_completed")
+		hud.show_journey_result("You’ve got it!", "Remember. Jump. Explore.", [{"text": "START MY JOURNEY", "primary": true, "callback": func(): menu.pending_mode = "world"; menu.show_countries()}])
+	else:
+		complete_country()
 
 func complete_country() -> void:
 	if country_awarded:
@@ -498,7 +570,7 @@ func copy_challenge() -> void:
 	var route := session.challenge_route()
 	if route.is_empty():
 		return
-	var code := ChallengeCode.encode(session.seed_value, session.difficulty, route, total_score())
+	var code := ChallengeCode.encode(session.seed_value, session.difficulty, route, total_score(), session.balance_version)
 	DisplayServer.clipboard_set(code)
 	hud.modal_body.text = "Challenge code copied.\nSend it to a friend to replay\nthe same route and path."
 	telemetry.track("challenge_created", metadata())
@@ -518,13 +590,15 @@ func share_challenge() -> void:
 	sharing = false
 
 func metadata() -> Dictionary:
-	return {"mode": session.mode, "difficulty": session.difficulty, "country": session.current_country(), "row": run.completed_rows, "score": total_score(), "countries": session.completed_countries, "seed": session.seed_value, "version": PathGenerator.VERSION}
+	return {"mode": session.mode, "difficulty": session.difficulty, "country": session.current_country(), "row": run.completed_rows, "score": total_score(), "countries": session.completed_countries, "seed": session.seed_value, "version": PathGenerator.VERSION, "balance_version": session.balance_version}
 
 func vibrate(milliseconds: int) -> void:
 	if profile.settings.haptics and OS.has_feature("mobile"):
 		Input.vibrate_handheld(milliseconds)
 
 func return_to_menu() -> void:
+	if celebrating:
+		finish_celebration()
 	network_busy = false
 	online = false
 	save_record()
@@ -536,9 +610,11 @@ func return_to_menu() -> void:
 	menu.show_main()
 
 func pause_game() -> void:
-	if paused or menu.root.visible or (run.phase in [RunState.Phase.FAILED, RunState.Phase.COMPLETE] and not travel.active):
+	if paused or menu.root.visible or (run.phase in [RunState.Phase.FAILED, RunState.Phase.COMPLETE] and not travel.active and not celebrating):
 		return
 	paused = true
+	traveler.animation_paused = true
+	passport_stamp.set_paused(true)
 	travel.set_paused(true)
 	for tween in [active_tween, camera_tween]:
 		if tween and tween.is_valid():
@@ -550,6 +626,8 @@ func resume_game() -> void:
 	if not paused:
 		return
 	paused = false
+	traveler.animation_paused = false
+	passport_stamp.set_paused(false)
 	travel.set_paused(false)
 	hud.overlay.hide()
 	for tween in [active_tween, camera_tween]:

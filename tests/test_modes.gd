@@ -60,7 +60,13 @@ func cross_country() -> void:
 	for row in game.config.row_count:
 		expect(game.choose_tile(row, game.run.safe_lane(row)), "Accept next safe tile")
 		await wait_for_landing()
-	await wait(0.6)
+	var celebration_deadline := Time.get_ticks_msec() + 6000
+	while Time.get_ticks_msec() < celebration_deadline:
+		await process_frame
+		if game.paused:
+			game.resume_game()
+		if not game.celebrating:
+			break
 	expect(game.run.phase == RunState.Phase.COMPLETE, "Country completed")
 
 func run_all() -> void:

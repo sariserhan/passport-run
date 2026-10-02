@@ -31,7 +31,11 @@ func run_tests() -> void:
 	for row in game.config.row_count:
 		game.choose_tile(row, game.run.safe_lane(row))
 		await wait(0.02)
-	await wait(0.6)
+	var celebration_deadline := Time.get_ticks_msec() + 6000
+	while Time.get_ticks_msec() < celebration_deadline:
+		await process_frame
+		if game.country_awarded:
+			break
 	var id: String = game.session.choices()[0]
 	game.travel_to(id)
 	expect(game.travel.active, "Country selection starts travel")

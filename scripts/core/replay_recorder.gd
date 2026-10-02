@@ -13,13 +13,13 @@ func begin(id: String) -> void:
 	started_at = Time.get_ticks_msec()
 	overflow = false
 
-func select(country_index: int, row: int, lane: int) -> void:
+func select(country_index: int, row: int, lane: int, decision_ms: int = 0) -> void:
 	if run_id.is_empty() or overflow:
 		return
 	if events.size() >= MAX_EVENTS:
 		overflow = true
 		return
-	events.append({"countryIndex": country_index, "row": row, "lane": lane, "atMs": Time.get_ticks_msec() - started_at})
+	events.append({"countryIndex": country_index, "row": row, "lane": lane, "atMs": Time.get_ticks_msec() - started_at, "decisionMs": decision_ms})
 
 func submission() -> Dictionary:
 	if run_id.is_empty() or overflow:

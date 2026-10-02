@@ -10,6 +10,12 @@ var selected_lane: int = -1
 var endless: bool = false
 var lane_count: int = 3
 
+func time_out() -> bool:
+	if phase != Phase.PLAY:
+		return false
+	phase = Phase.FALLING
+	return true
+
 func reset(new_seed: int, config: DifficultyConfig, is_endless: bool = false) -> void:
 	endless = is_endless
 	lane_count = config.lane_count

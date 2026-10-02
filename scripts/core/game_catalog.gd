@@ -1,6 +1,8 @@
 class_name GameCatalog
 extends RefCounted
 
+const BALANCE_VERSION := 2
+const DECISION_SECONDS := 10.0
 const DIFFICULTIES := ["easy", "moderate", "hard"]
 const COUNTRIES := {
 	"US": {"name": "United States", "region": "North America", "neighbors": ["FR"], "color": "6398bd"},

@@ -51,3 +51,15 @@ With local backend running, execute `tests/test_online.gd` from Godot (see backe
 - `export_presets.cfg`: iPhone-only ARM64 development Xcode project; docs/tests/backend/artifacts excluded.
 
 Preserve unrelated work, make scoped local commits, and do not push/deploy/publish unless authorized. Read Convex skill before changing backend code; use current primary documentation when needed (Context7 is preferred when available).
+
+## Latest user follow-up: animations and 10-second choices
+
+The user explicitly requested thinking, jumping, falling, celebration and taking a passport from the pocket to stamp the completed country. These use a generated 16-pose atlas plus a pauseable country-specific passport animation. Kids uses procedural gestures and a book prop. Completion is awarded once after the sequence; ending during celebration preserves the earned completion and cancels visual callbacks.
+
+New runs use balance v2: each playable row gets 10 seconds, reset after successful landing. Preview/jumping/pause/travel/completion freeze the clock. Timeout triggers a fall while preserving the earned score. Old PR1 codes without a balance field and old balance-v1 ranked retries remain untimed; generator-v1 paths and preset values remain unchanged. New challenge codes include the balance version, and server boards separate it.
+
+The server checks bounded supplied decision times and their consistency with recorded elapsed time. The active client clock is not independently attested; existing bot/modified-client limitations remain. The local Convex service was restarted against its existing persisted database and the widened schema pushed successfully. No hosted project was created.
+
+Animation/timer suite: 36 checks passed headlessly and rendered; backend: 151 tests and typecheck passed; real Godot/backend integration: 19 checks including waiting a real 10 seconds and submitting a timeout. The paired phone remained locked when installation was attempted; native build success is not device acceptance.
+
+Rendered motion demo: `artifacts/character-motion.mp4` (390×844), with stills `24-thinking.png` through `28-passport-stamped.png`. Capture source: `tools/capture_motion.gd`. Latest signed native build: `/private/tmp/passport-native-animated/PassportRun.xcodeproj`.

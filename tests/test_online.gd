@@ -33,6 +33,7 @@ func run_tests() -> void:
 		print(client.last_error)
 		quit(1)
 		return
+	expect(issued.balanceVersion == 2, "New server manifests use the timed balance rules")
 	var recorder := ReplayRecorder.new()
 	recorder.begin(issued.runId)
 	await create_timer(5.05).timeout
@@ -69,6 +70,14 @@ func run_tests() -> void:
 	expect("Server verified: 1 tiles" in game.hud.modal_body.text, "Actual game result reports server verification")
 	game.return_to_menu()
 	expect(not game.online and game.menu.root.visible, "Online failure can return to offline menu")
+	await game.start_game("online_daily", "easy")
+	game.start_preview()
+	await create_timer(5.1).timeout
+	await create_timer(10.1).timeout
+	await create_timer(1.8).timeout
+	expect(game.failure_reason == "timeout" and game.run.phase == RunState.Phase.FAILED, "Real online run enforces the 10-second first-row deadline")
+	expect("Server verified: 0 tiles" in game.hud.modal_body.text, "Server accepts actual timed-out zero-score run")
+	game.return_to_menu()
 	game.network_busy = true
 	game.return_to_menu()
 	game.start_game("infinite", "easy")

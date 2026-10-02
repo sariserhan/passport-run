@@ -6,7 +6,7 @@ export const difficulty = v.union(v.literal("easy"), v.literal("moderate"), v.li
 export const rankedMode = v.union(v.literal("daily"), v.literal("infinite"));
 export const manifestFields = {
   mode: rankedMode, difficulty, seed: v.number(), route: v.array(v.string()), date: v.string(),
-  generatorVersion: v.literal(1), balanceVersion: v.literal(1),
+  generatorVersion: v.literal(1), balanceVersion: v.union(v.literal(1), v.literal(2)),
 };
 export default defineSchema({
   ...authTables,

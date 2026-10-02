@@ -11,9 +11,11 @@ var country_index: int = 0
 var completed_countries: int = 0
 var banked_tiles: int = 0
 var target: int = 0
+var balance_version: int = GameCatalog.BALANCE_VERSION
 
 func begin(selected_mode: String, selected_difficulty: String, home: String, new_seed: int, challenge: Dictionary = {}) -> void:
 	mode = selected_mode
+	balance_version = int(challenge.get("balance_version", 1)) if mode == "challenge" else GameCatalog.BALANCE_VERSION
 	difficulty = "kids" if mode == "kids" else selected_difficulty
 	seed_value = new_seed
 	country_index = 0

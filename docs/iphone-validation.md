@@ -39,3 +39,7 @@ Keep the five-country scope until validation supports expansion (spec section 91
 ## Reference graphics update
 
 The updated native export packages five destination backdrops, menu key art, a transparent backpacker and the licensed Lilita One font. Desktop QA now exercises perspective preview/follow cameras and rounded stone meshes. Scene checks increased to 156; mode checks include bounded state waits and explicit preview readiness. See [visual assets](visual-assets.md). The latest export/build directory is `/private/tmp/passport-native-visual`. No physical-device acceptance is inferred from this visual pass.
+
+## Animation and deadline update
+
+The newest exported/signed project is `/private/tmp/passport-native-animated`. It includes the 16-pose backpacker atlas, passport animation and balance-v2 10-second per-row deadline. The attempted physical-phone install reported that the device was still locked. Animation checks passed headlessly and rendered (36), and real online integration passed 19 checks, including an actual 10-second timeout. No physical-device animation/FPS PASS is claimed.

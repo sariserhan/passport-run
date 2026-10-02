@@ -10,9 +10,9 @@ Generated with the built-in image-generation tool, copied into the repository an
 
 - `assets/backdrops/FR.png`, `TR.png`, `JP.png`, `EG.png`, `US.png`: destination matte paintings.
 - `assets/menu-key-art.png`: main-menu travel illustration.
-- `assets/backpacker.png`: transparent rear-view character artwork.
+- `assets/backpacker.png`: original transparent character artwork; `assets/backpacker-poses.png`: the 16-pose animation atlas used in play.
 
-This is a hybrid presentation: static illustrated destination backdrops and a camera-facing backpacker sprite over actual interactive 3D tiles. The backpacker moves, jumps, scales and tilts; it is not a fully rigged animated 3D character. Kids retains its procedural explorer robot. Full skeletal character animation, dynamic environment parallax and physical-device performance remain future visual work. Do not describe this as exact reference parity or a finished art pipeline.
+This is a hybrid presentation: static illustrated destination backdrops and a camera-facing backpacker sprite over actual interactive 3D tiles. The backpacker now uses 16 thinking, jump, fall, celebration, pocket, open-passport and stamping poses, with movement and pose timing driven by actual game state. It is still a sprite atlas rather than a fully rigged 3D character. Kids retains its procedural explorer robot. Full skeletal character animation, dynamic environment parallax and physical-device performance remain future visual work. Do not describe this as exact reference parity or a finished art pipeline.
 
 `assets/fonts/LilitaOne-Regular.ttf` is the openly licensed Lilita One display face, sourced from the Google Fonts repository. Its license is included as `assets/fonts/OFL.txt`. Body text uses Godot's default font. Image art was generated for this project; the supplied references were inspected for visual direction, not copied into runtime screens.
 
@@ -31,3 +31,9 @@ Backpacker prompt: “Transparent full-body rear-view game sprite. Charming youn
 Offline suites check complete preview framing at every difficulty, real touch dispatch, jump/fall/retry lifecycle, mobile dialog scrolling, contrast settings and resource inclusion. Rendered tests use bounded state waits and resume if desktop automation steals focus; explicit pause tests still verify that the preview clock freezes. See build status for current evidence. Native packaging must include all seven image assets and the font; do not ship source references or test screenshots.
 
 Godot canvas layering was checked against the [Godot 4.5 Environment documentation](https://docs.godotengine.org/en/4.5/classes/class_environment.html#class-environment-property-background-canvas-max-layer); Context7 was unavailable in this session.
+
+## Character animation follow-up
+
+The built-in image-generation tool produced a strict 4×4 transparent atlas using the original backpacker as its reference. Prompt: preserve the same character/costume and consistent scale; row one relaxed/thinking/chin/head-scratch/hands-on-hips, row two crouch/airborne/descent/landing, row three victory/pocket/open-passport/stamp, row four startled/flailing/falling/tumbling; full-body poses, no labels, no grid, no background. Each pose occupies one equal cell.
+
+Country completion now plays victory, pocket and open-passport gestures, then an enlarged actual-country passport stamp. The sequence pauses/resumes, respects reduced motion and cancels on departure without duplicate awards. The capture tool `tools/capture_motion.gd` saves a desktop animation demo; this is visual evidence, not mobile frame-time profiling.

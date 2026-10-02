@@ -49,3 +49,9 @@ Local HTTP cannot serve hosted OIDC discovery, so local auth verifies inline pub
 ## Release work
 
 Provision a hosted project and keys, configure its site URL, verify native HTTPS/auth/refresh and data retention, add account recovery and abuse limits, and review public competition with real players. Ads, purchases, hosted challenge links, native sharing and remote analytics are not implemented by this backend. Test users and scores are local development evidence only.
+
+## Timed balance version 2
+
+New manifests use balance 2 with a 10-second active decision window per row. Generator-v1 lanes, seed formulas and preset values remain unchanged. Existing balance-v1 runs/retries retain untimed rules; leaderboard keys include their balance version. The schema accepts both versions so old data remains valid.
+
+Version-2 replay choices carry integer `decisionMs` in [0, 10000]. Verification rejects missing/out-of-range values and values inconsistent with the available recorded elapsed time (250ms clock tolerance). Client pauses and travel time are excluded from its active decision clock. This clock is supplied by the client; it is not independently authenticated and does not prove human play. Bot resistance remains release work.

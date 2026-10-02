@@ -1,5 +1,12 @@
 # Passport Run — Product & Build Specification
 
+## Latest approved rules — 2026-10-02
+
+- The visual direction must follow the supplied reference images: detailed destination scenery, a backpacker, a perspective stone path, and polished mobile presentation.
+- Character animation includes thinking while waiting, jump preparation/airborne/landing, falling, and country celebration. On completing a country, the character takes a passport from its pocket, opens it, and stamps the completed country before showing the result.
+- Each playable row gives the user **10 seconds to choose a tile**. The first countdown starts after memorization. A successful landing on the next row resets it to 10 seconds. Preview, jumping, pause/focus interruption, travel, and celebrations do not consume this decision time. Expiry ends the run with the earned score preserved.
+- These timed rules are **balance version 2**. Previously issued balance-v1 challenges/ranked runs retain their untimed rules; generator-v1 paths and difficulty presets stay unchanged. Competitive boards separate balance versions.
+
 ## 1. Product Summary
 
 ### Problem

@@ -1,4 +1,4 @@
-// Version 1 is immutable: use a new generator/balance version for future changes.
+// Generator/presets v1 stay immutable; balance v2 adds the decision deadline.
 export const MODULUS = 2147483647n;
 export const COUNTRIES = ["US", "FR", "EG", "TR", "JP"] as const;
 export type Difficulty = "easy" | "moderate" | "hard";
@@ -9,6 +9,7 @@ export const BALANCE = {
   hard: { lanes: 5, rows: 20, previewMs: 2000, jumpMs: 380 },
 } as const;
 export const MAX_EVENTS = 4096;
+export const DECISION_MS = 10000;
 const neighbors: Record<string, string[]> = { US: ["FR"], FR: ["TR"], EG: ["TR"], TR: ["FR", "EG"], JP: [] };
 
 export function laneAt(seed: number, lanes: number, row: number): number {
@@ -48,16 +49,16 @@ export function routeFrom(home: string, seed: number): string[] {
 }
 export interface Manifest {
   mode: Mode; difficulty: Difficulty; seed: number; route: string[]; date: string;
-  generatorVersion: 1; balanceVersion: 1;
+  generatorVersion: 1; balanceVersion: 1 | 2;
 }
 export function manifestFor(mode: Mode, difficulty: Difficulty, now: number): Manifest {
   const date = mode === "daily" ? new Date(now).toISOString().slice(0, 10) : "";
   const seed = dailySeed(mode === "daily" ? date : "infinite-v1", difficulty);
-  return { mode, difficulty, seed, route: mode === "daily" ? routeFrom("FR", seed) : [], date, generatorVersion: 1, balanceVersion: 1 };
+  return { mode, difficulty, seed, route: mode === "daily" ? routeFrom("FR", seed) : [], date, generatorVersion: 1, balanceVersion: 2 };
 }
-export interface Selection { countryIndex: number; row: number; lane: number; atMs: number }
+export interface Selection { countryIndex: number; row: number; lane: number; atMs: number; decisionMs?: number }
 export function verifyReplay(manifest: Manifest, events: Selection[], endedAtMs: number, serverElapsedMs: number): {score: number; countries: number} {
-  if (manifest.generatorVersion !== 1 || manifest.balanceVersion !== 1 || !BALANCE[manifest.difficulty]) throw new Error("Unsupported rules");
+  if (manifest.generatorVersion !== 1 || ![1, 2].includes(manifest.balanceVersion) || !BALANCE[manifest.difficulty]) throw new Error("Unsupported rules");
   if (events.length > MAX_EVENTS || !Number.isSafeInteger(endedAtMs) || endedAtMs < 0 || endedAtMs > serverElapsedMs + 250) throw new Error("Invalid elapsed time or event limit");
   const balance = BALANCE[manifest.difficulty];
   let countryIndex = 0, row = 0, score = 0, countries = 0;
@@ -66,6 +67,7 @@ export function verifyReplay(manifest: Manifest, events: Selection[], endedAtMs:
   for (const event of events) {
     if (failed || (manifest.mode === "daily" && countryIndex >= manifest.route.length)) throw new Error("Events after run ended");
     if (![event.countryIndex, event.row, event.lane, event.atMs].every(Number.isSafeInteger) || event.countryIndex !== countryIndex || event.row !== row || event.lane < 0 || event.lane >= balance.lanes || event.atMs < earliest || event.atMs + balance.jumpMs > endedAtMs) throw new Error("Invalid row, lane, or timing");
+    if (manifest.balanceVersion === 2 && (!Number.isSafeInteger(event.decisionMs) || event.decisionMs! < 0 || event.decisionMs! > DECISION_MS || event.decisionMs! > event.atMs - earliest + 250)) throw new Error("Invalid decision time");
     const seed = manifest.mode === "infinite" ? manifest.seed : derivedSeed(manifest.seed, countryIndex);
     if (event.lane !== laneAt(seed, balance.lanes, row)) { failed = true; continue; }
     score++;
@@ -83,5 +85,5 @@ export function verifyReplay(manifest: Manifest, events: Selection[], endedAtMs:
   return { score, countries };
 }
 export function boardKey(manifest: Manifest): string {
-  return `${manifest.mode}:${manifest.difficulty}:${manifest.date}:g1:b1`;
+  return `${manifest.mode}:${manifest.difficulty}:${manifest.date}:g1:b${manifest.balanceVersion}`;
 }

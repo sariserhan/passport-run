@@ -6,6 +6,12 @@ var body: Node3D
 var left_arm: MeshInstance3D
 var right_arm: MeshInstance3D
 var contact_shadow: MeshInstance3D
+var portrait: Sprite3D
+var animation := "thinking"
+var animation_clock := 0.0
+var animation_paused := false
+var reduced_motion := false
+var passport_prop: Node3D
 
 func _ready() -> void:
 	body = Node3D.new()
@@ -15,10 +21,12 @@ func _ready() -> void:
 		shade.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 		contact_shadow = MeshFactory.cylinder(self, 0.32, 0.32, 0.008, Vector3(0, 0.01, 0), shade)
 		contact_shadow.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-		var portrait := Sprite3D.new()
-		portrait.texture = preload("res://assets/backpacker.png")
+		portrait = Sprite3D.new()
+		portrait.texture = preload("res://assets/backpacker-poses.png")
+		portrait.hframes = 4
+		portrait.vframes = 4
 		portrait.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-		portrait.pixel_size = 2.8 / portrait.texture.get_height()
+		portrait.pixel_size = 2.8 / (portrait.texture.get_height() / 4.0)
 		portrait.position.y = 1.28
 		portrait.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		body.add_child(portrait)
@@ -56,9 +64,44 @@ func _ready() -> void:
 		MeshFactory.capsule(body, 0.045, 0.62, Vector3(side * 0.29, 1.15, 0.12), strap)
 		MeshFactory.sphere(body, 0.075, Vector3(side * 0.30, 1.61, 0), skin)
 	scale = Vector3.ONE * 1.25
+	passport_prop = Node3D.new()
+	passport_prop.position = Vector3(-0.48, 0.95, 0.48)
+	body.add_child(passport_prop)
+	MeshFactory.beveled_box(passport_prop, Vector3(0.50, 0.07, 0.33), Vector3.ZERO, shirt, 0.025)
+	MeshFactory.box(passport_prop, Vector3(0.03, 0.08, 0.35), Vector3.ZERO, strap)
+	passport_prop.hide()
+
+func play_animation(next: String) -> void:
+	animation = next
+	animation_clock = 0
+	body.position.y = 0
+	if portrait:
+		portrait.frame = {"thinking": 0, "jump": 4, "celebrate": 8, "pocket": 9, "passport": 10, "stamp": 11, "fall": 12}.get(next, 0)
+	if passport_prop:
+		passport_prop.visible = next in ["passport", "stamp"]
+
+func _process(delta: float) -> void:
+	if animation_paused or reduced_motion:
+		return
+	animation_clock += delta
+	if animation == "thinking":
+		if portrait:
+			portrait.frame = int(animation_clock / 0.8) % 4
+		body.rotation.z = sin(animation_clock * 1.5) * 0.025
+		if kids:
+			right_arm.rotation.z = -maxf(0, sin(animation_clock)) * 0.9
+	elif animation == "celebrate":
+		body.position.y = absf(sin(animation_clock * 7)) * 0.06
+		if kids:
+			left_arm.rotation.z = 2.2
+			right_arm.rotation.z = -2.2
+	elif kids and animation in ["pocket", "passport", "stamp"]:
+		right_arm.rotation.z = -0.7 if animation == "pocket" else -1.5
+		left_arm.rotation.z = 1.1
 
 func pose_jump(progress: float) -> void:
 	if not kids:
+		portrait.frame = 4 + mini(3, int(progress * 4))
 		contact_shadow.position.y = 0.04 - position.y
 		contact_shadow.scale = Vector3.ONE * (1.0 - sin(progress * PI) * 0.25)
 		body.rotation.z = sin(progress * PI) * 0.08
@@ -70,6 +113,7 @@ func pose_jump(progress: float) -> void:
 
 func pose_fall(progress: float) -> void:
 	if not kids:
+		portrait.frame = 12 + mini(3, int(progress * 4))
 		contact_shadow.hide()
 		body.rotation.z = progress * 0.7
 		body.scale = Vector3.ONE * (1.0 - progress * 0.18)

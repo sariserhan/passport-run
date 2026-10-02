@@ -36,7 +36,7 @@ export const begin = mutation({
 export const submit = mutation({
   args: {
     runId: v.id("runs"),
-    events: v.array(v.object({countryIndex: v.number(), row: v.number(), lane: v.number(), atMs: v.number()})),
+    events: v.array(v.object({countryIndex: v.number(), row: v.number(), lane: v.number(), atMs: v.number(), decisionMs: v.optional(v.number())})),
     endedAtMs: v.number(),
   },
   returns: v.object({score: v.number(), countries: v.number(), board: v.string(), newBest: v.boolean()}),
