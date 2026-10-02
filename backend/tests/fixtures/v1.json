@@ -1,0 +1,888 @@
+{
+  "balance": {
+    "easy": {
+      "jumpMs": 380,
+      "lanes": 3,
+      "previewMs": 5000,
+      "rows": 10
+    },
+    "hard": {
+      "jumpMs": 380,
+      "lanes": 5,
+      "previewMs": 2000,
+      "rows": 20
+    },
+    "moderate": {
+      "jumpMs": 380,
+      "lanes": 4,
+      "previewMs": 3000,
+      "rows": 14
+    }
+  },
+  "daily": [
+    {
+      "date": "2026-10-02",
+      "difficulty": "easy",
+      "seed": 1203660172
+    },
+    {
+      "date": "2026-10-03",
+      "difficulty": "easy",
+      "seed": 1242795565
+    },
+    {
+      "date": "infinite-v1",
+      "difficulty": "easy",
+      "seed": 178206787
+    },
+    {
+      "date": "2026-10-02",
+      "difficulty": "moderate",
+      "seed": 402223901
+    },
+    {
+      "date": "2026-10-03",
+      "difficulty": "moderate",
+      "seed": 470068502
+    },
+    {
+      "date": "infinite-v1",
+      "difficulty": "moderate",
+      "seed": 802259240
+    },
+    {
+      "date": "2026-10-02",
+      "difficulty": "hard",
+      "seed": 1203767929
+    },
+    {
+      "date": "2026-10-03",
+      "difficulty": "hard",
+      "seed": 1242903322
+    },
+    {
+      "date": "infinite-v1",
+      "difficulty": "hard",
+      "seed": 178314544
+    }
+  ],
+  "lanes": [
+    {
+      "lane": 1,
+      "lanes": 3,
+      "row": 0,
+      "seed": 0
+    },
+    {
+      "lane": 0,
+      "lanes": 3,
+      "row": 1,
+      "seed": 0
+    },
+    {
+      "lane": 2,
+      "lanes": 3,
+      "row": 9,
+      "seed": 0
+    },
+    {
+      "lane": 2,
+      "lanes": 3,
+      "row": 49,
+      "seed": 0
+    },
+    {
+      "lane": 0,
+      "lanes": 3,
+      "row": 999,
+      "seed": 0
+    },
+    {
+      "lane": 0,
+      "lanes": 3,
+      "row": 1000000,
+      "seed": 0
+    },
+    {
+      "lane": 3,
+      "lanes": 4,
+      "row": 0,
+      "seed": 0
+    },
+    {
+      "lane": 2,
+      "lanes": 4,
+      "row": 1,
+      "seed": 0
+    },
+    {
+      "lane": 3,
+      "lanes": 4,
+      "row": 9,
+      "seed": 0
+    },
+    {
+      "lane": 0,
+      "lanes": 4,
+      "row": 49,
+      "seed": 0
+    },
+    {
+      "lane": 2,
+      "lanes": 4,
+      "row": 999,
+      "seed": 0
+    },
+    {
+      "lane": 2,
+      "lanes": 4,
+      "row": 1000000,
+      "seed": 0
+    },
+    {
+      "lane": 1,
+      "lanes": 5,
+      "row": 0,
+      "seed": 0
+    },
+    {
+      "lane": 4,
+      "lanes": 5,
+      "row": 1,
+      "seed": 0
+    },
+    {
+      "lane": 1,
+      "lanes": 5,
+      "row": 9,
+      "seed": 0
+    },
+    {
+      "lane": 0,
+      "lanes": 5,
+      "row": 49,
+      "seed": 0
+    },
+    {
+      "lane": 3,
+      "lanes": 5,
+      "row": 999,
+      "seed": 0
+    },
+    {
+      "lane": 1,
+      "lanes": 5,
+      "row": 1000000,
+      "seed": 0
+    },
+    {
+      "lane": 2,
+      "lanes": 3,
+      "row": 0,
+      "seed": 1
+    },
+    {
+      "lane": 0,
+      "lanes": 3,
+      "row": 1,
+      "seed": 1
+    },
+    {
+      "lane": 0,
+      "lanes": 3,
+      "row": 9,
+      "seed": 1
+    },
+    {
+      "lane": 0,
+      "lanes": 3,
+      "row": 49,
+      "seed": 1
+    },
+    {
+      "lane": 0,
+      "lanes": 3,
+      "row": 999,
+      "seed": 1
+    },
+    {
+      "lane": 0,
+      "lanes": 3,
+      "row": 1000000,
+      "seed": 1
+    },
+    {
+      "lane": 2,
+      "lanes": 4,
+      "row": 0,
+      "seed": 1
+    },
+    {
+      "lane": 0,
+      "lanes": 4,
+      "row": 1,
+      "seed": 1
+    },
+    {
+      "lane": 3,
+      "lanes": 4,
+      "row": 9,
+      "seed": 1
+    },
+    {
+      "lane": 1,
+      "lanes": 4,
+      "row": 49,
+      "seed": 1
+    },
+    {
+      "lane": 0,
+      "lanes": 4,
+      "row": 999,
+      "seed": 1
+    },
+    {
+      "lane": 0,
+      "lanes": 4,
+      "row": 1000000,
+      "seed": 1
+    },
+    {
+      "lane": 2,
+      "lanes": 5,
+      "row": 0,
+      "seed": 1
+    },
+    {
+      "lane": 3,
+      "lanes": 5,
+      "row": 1,
+      "seed": 1
+    },
+    {
+      "lane": 0,
+      "lanes": 5,
+      "row": 9,
+      "seed": 1
+    },
+    {
+      "lane": 3,
+      "lanes": 5,
+      "row": 49,
+      "seed": 1
+    },
+    {
+      "lane": 1,
+      "lanes": 5,
+      "row": 999,
+      "seed": 1
+    },
+    {
+      "lane": 2,
+      "lanes": 5,
+      "row": 1000000,
+      "seed": 1
+    },
+    {
+      "lane": 2,
+      "lanes": 3,
+      "row": 0,
+      "seed": 88
+    },
+    {
+      "lane": 2,
+      "lanes": 3,
+      "row": 1,
+      "seed": 88
+    },
+    {
+      "lane": 1,
+      "lanes": 3,
+      "row": 9,
+      "seed": 88
+    },
+    {
+      "lane": 1,
+      "lanes": 3,
+      "row": 49,
+      "seed": 88
+    },
+    {
+      "lane": 1,
+      "lanes": 3,
+      "row": 999,
+      "seed": 88
+    },
+    {
+      "lane": 1,
+      "lanes": 3,
+      "row": 1000000,
+      "seed": 88
+    },
+    {
+      "lane": 3,
+      "lanes": 4,
+      "row": 0,
+      "seed": 88
+    },
+    {
+      "lane": 1,
+      "lanes": 4,
+      "row": 1,
+      "seed": 88
+    },
+    {
+      "lane": 1,
+      "lanes": 4,
+      "row": 9,
+      "seed": 88
+    },
+    {
+      "lane": 1,
+      "lanes": 4,
+      "row": 49,
+      "seed": 88
+    },
+    {
+      "lane": 3,
+      "lanes": 4,
+      "row": 999,
+      "seed": 88
+    },
+    {
+      "lane": 1,
+      "lanes": 4,
+      "row": 1000000,
+      "seed": 88
+    },
+    {
+      "lane": 4,
+      "lanes": 5,
+      "row": 0,
+      "seed": 88
+    },
+    {
+      "lane": 2,
+      "lanes": 5,
+      "row": 1,
+      "seed": 88
+    },
+    {
+      "lane": 2,
+      "lanes": 5,
+      "row": 9,
+      "seed": 88
+    },
+    {
+      "lane": 2,
+      "lanes": 5,
+      "row": 49,
+      "seed": 88
+    },
+    {
+      "lane": 3,
+      "lanes": 5,
+      "row": 999,
+      "seed": 88
+    },
+    {
+      "lane": 3,
+      "lanes": 5,
+      "row": 1000000,
+      "seed": 88
+    },
+    {
+      "lane": 2,
+      "lanes": 3,
+      "row": 0,
+      "seed": 817294
+    },
+    {
+      "lane": 2,
+      "lanes": 3,
+      "row": 1,
+      "seed": 817294
+    },
+    {
+      "lane": 0,
+      "lanes": 3,
+      "row": 9,
+      "seed": 817294
+    },
+    {
+      "lane": 0,
+      "lanes": 3,
+      "row": 49,
+      "seed": 817294
+    },
+    {
+      "lane": 2,
+      "lanes": 3,
+      "row": 999,
+      "seed": 817294
+    },
+    {
+      "lane": 1,
+      "lanes": 3,
+      "row": 1000000,
+      "seed": 817294
+    },
+    {
+      "lane": 3,
+      "lanes": 4,
+      "row": 0,
+      "seed": 817294
+    },
+    {
+      "lane": 2,
+      "lanes": 4,
+      "row": 1,
+      "seed": 817294
+    },
+    {
+      "lane": 2,
+      "lanes": 4,
+      "row": 9,
+      "seed": 817294
+    },
+    {
+      "lane": 1,
+      "lanes": 4,
+      "row": 49,
+      "seed": 817294
+    },
+    {
+      "lane": 1,
+      "lanes": 4,
+      "row": 999,
+      "seed": 817294
+    },
+    {
+      "lane": 0,
+      "lanes": 4,
+      "row": 1000000,
+      "seed": 817294
+    },
+    {
+      "lane": 4,
+      "lanes": 5,
+      "row": 0,
+      "seed": 817294
+    },
+    {
+      "lane": 3,
+      "lanes": 5,
+      "row": 1,
+      "seed": 817294
+    },
+    {
+      "lane": 2,
+      "lanes": 5,
+      "row": 9,
+      "seed": 817294
+    },
+    {
+      "lane": 2,
+      "lanes": 5,
+      "row": 49,
+      "seed": 817294
+    },
+    {
+      "lane": 2,
+      "lanes": 5,
+      "row": 999,
+      "seed": 817294
+    },
+    {
+      "lane": 2,
+      "lanes": 5,
+      "row": 1000000,
+      "seed": 817294
+    },
+    {
+      "lane": 0,
+      "lanes": 3,
+      "row": 0,
+      "seed": 2147483645
+    },
+    {
+      "lane": 1,
+      "lanes": 3,
+      "row": 1,
+      "seed": 2147483645
+    },
+    {
+      "lane": 2,
+      "lanes": 3,
+      "row": 9,
+      "seed": 2147483645
+    },
+    {
+      "lane": 2,
+      "lanes": 3,
+      "row": 49,
+      "seed": 2147483645
+    },
+    {
+      "lane": 1,
+      "lanes": 3,
+      "row": 999,
+      "seed": 2147483645
+    },
+    {
+      "lane": 1,
+      "lanes": 3,
+      "row": 1000000,
+      "seed": 2147483645
+    },
+    {
+      "lane": 0,
+      "lanes": 4,
+      "row": 0,
+      "seed": 2147483645
+    },
+    {
+      "lane": 1,
+      "lanes": 4,
+      "row": 1,
+      "seed": 2147483645
+    },
+    {
+      "lane": 0,
+      "lanes": 4,
+      "row": 9,
+      "seed": 2147483645
+    },
+    {
+      "lane": 3,
+      "lanes": 4,
+      "row": 49,
+      "seed": 2147483645
+    },
+    {
+      "lane": 1,
+      "lanes": 4,
+      "row": 999,
+      "seed": 2147483645
+    },
+    {
+      "lane": 1,
+      "lanes": 4,
+      "row": 1000000,
+      "seed": 2147483645
+    },
+    {
+      "lane": 1,
+      "lanes": 5,
+      "row": 0,
+      "seed": 2147483645
+    },
+    {
+      "lane": 3,
+      "lanes": 5,
+      "row": 1,
+      "seed": 2147483645
+    },
+    {
+      "lane": 1,
+      "lanes": 5,
+      "row": 9,
+      "seed": 2147483645
+    },
+    {
+      "lane": 2,
+      "lanes": 5,
+      "row": 49,
+      "seed": 2147483645
+    },
+    {
+      "lane": 4,
+      "lanes": 5,
+      "row": 999,
+      "seed": 2147483645
+    },
+    {
+      "lane": 1,
+      "lanes": 5,
+      "row": 1000000,
+      "seed": 2147483645
+    }
+  ],
+  "routes": [
+    {
+      "home": "US",
+      "route": [
+        "US",
+        "FR",
+        "TR",
+        "EG",
+        "JP"
+      ],
+      "seed": 0
+    },
+    {
+      "home": "FR",
+      "route": [
+        "FR",
+        "TR",
+        "EG",
+        "US",
+        "JP"
+      ],
+      "seed": 0
+    },
+    {
+      "home": "EG",
+      "route": [
+        "EG",
+        "TR",
+        "FR",
+        "US",
+        "JP"
+      ],
+      "seed": 0
+    },
+    {
+      "home": "TR",
+      "route": [
+        "TR",
+        "EG",
+        "FR",
+        "US",
+        "JP"
+      ],
+      "seed": 0
+    },
+    {
+      "home": "JP",
+      "route": [
+        "JP",
+        "FR",
+        "TR",
+        "US",
+        "EG"
+      ],
+      "seed": 0
+    },
+    {
+      "home": "US",
+      "route": [
+        "US",
+        "FR",
+        "TR",
+        "EG",
+        "JP"
+      ],
+      "seed": 1
+    },
+    {
+      "home": "FR",
+      "route": [
+        "FR",
+        "TR",
+        "EG",
+        "US",
+        "JP"
+      ],
+      "seed": 1
+    },
+    {
+      "home": "EG",
+      "route": [
+        "EG",
+        "TR",
+        "FR",
+        "US",
+        "JP"
+      ],
+      "seed": 1
+    },
+    {
+      "home": "TR",
+      "route": [
+        "TR",
+        "EG",
+        "FR",
+        "US",
+        "JP"
+      ],
+      "seed": 1
+    },
+    {
+      "home": "JP",
+      "route": [
+        "JP",
+        "TR",
+        "FR",
+        "US",
+        "EG"
+      ],
+      "seed": 1
+    },
+    {
+      "home": "US",
+      "route": [
+        "US",
+        "FR",
+        "TR",
+        "JP",
+        "EG"
+      ],
+      "seed": 88
+    },
+    {
+      "home": "FR",
+      "route": [
+        "FR",
+        "US",
+        "JP",
+        "TR",
+        "EG"
+      ],
+      "seed": 88
+    },
+    {
+      "home": "EG",
+      "route": [
+        "EG",
+        "US",
+        "FR",
+        "JP",
+        "TR"
+      ],
+      "seed": 88
+    },
+    {
+      "home": "TR",
+      "route": [
+        "TR",
+        "US",
+        "FR",
+        "JP",
+        "EG"
+      ],
+      "seed": 88
+    },
+    {
+      "home": "JP",
+      "route": [
+        "JP",
+        "US",
+        "FR",
+        "TR",
+        "EG"
+      ],
+      "seed": 88
+    },
+    {
+      "home": "US",
+      "route": [
+        "US",
+        "FR",
+        "JP",
+        "EG",
+        "TR"
+      ],
+      "seed": 817294
+    },
+    {
+      "home": "FR",
+      "route": [
+        "FR",
+        "TR",
+        "JP",
+        "US",
+        "EG"
+      ],
+      "seed": 817294
+    },
+    {
+      "home": "EG",
+      "route": [
+        "EG",
+        "TR",
+        "JP",
+        "US",
+        "FR"
+      ],
+      "seed": 817294
+    },
+    {
+      "home": "TR",
+      "route": [
+        "TR",
+        "EG",
+        "JP",
+        "US",
+        "FR"
+      ],
+      "seed": 817294
+    },
+    {
+      "home": "JP",
+      "route": [
+        "JP",
+        "FR",
+        "TR",
+        "US",
+        "EG"
+      ],
+      "seed": 817294
+    },
+    {
+      "home": "US",
+      "route": [
+        "US",
+        "FR",
+        "TR",
+        "EG",
+        "JP"
+      ],
+      "seed": 2147483645
+    },
+    {
+      "home": "FR",
+      "route": [
+        "FR",
+        "TR",
+        "EG",
+        "US",
+        "JP"
+      ],
+      "seed": 2147483645
+    },
+    {
+      "home": "EG",
+      "route": [
+        "EG",
+        "TR",
+        "FR",
+        "US",
+        "JP"
+      ],
+      "seed": 2147483645
+    },
+    {
+      "home": "TR",
+      "route": [
+        "TR",
+        "EG",
+        "FR",
+        "US",
+        "JP"
+      ],
+      "seed": 2147483645
+    },
+    {
+      "home": "JP",
+      "route": [
+        "JP",
+        "TR",
+        "FR",
+        "US",
+        "EG"
+      ],
+      "seed": 2147483645
+    }
+  ]
+}

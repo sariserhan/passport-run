@@ -2,3 +2,10 @@
 exports/
 *.tmp
 .DS_Store
+
+node_modules/
+.env*
+.convex/
+
+__pycache__/
+*.pyc

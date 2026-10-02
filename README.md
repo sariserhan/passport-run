@@ -1,6 +1,6 @@
 # Passport Run
 
-A playable **Godot 4.5.2 / GDScript offline memory adventure**, built from `spec.md` and the two supplied image references. iPhone is the first mobile test target.
+A playable **Godot 4.5.2 / GDScript memory adventure**, built from `spec.md` and the two supplied image references. iPhone is the first mobile test target. Offline play works independently; optional competition uses the local Convex backend.
 
 **Continuing agent: read [HANDOFF.md](HANDOFF.md) first.** It covers user decisions, everything implemented, remaining milestones, file ownership, tests, and the next work in order.
 
@@ -16,7 +16,7 @@ Modes: **World Tour**, **Infinite Memory**, **Daily World Tour**, and **Kids Adv
 
 ![France path preview](artifacts/12-france-preview.png)
 
-The art and audio are original temporary prototype assets. This is not the finished commercial game. Online leaderboards, Convex sync, ads, purchases, public challenge URLs, native sharing, and device validation remain unfinished. Current scores and Daily runs are explicitly local.
+The art and audio are original temporary prototype assets. Illustrated travel, Kids stickers/facts and share cards are included. Authenticated server manifests, replay-verified rankings and passport discovery sync work against a real local Convex backend; see [backend setup](backend/README.md). Online buttons appear only when a backend URL is configured. Hosted deployment, ads, purchases, public challenge URLs, native sharing and device acceptance remain unfinished.
 
 ## Checks
 
@@ -53,12 +53,12 @@ The report covers the last 500 local events; it is not a population retention da
 The user confirmed access to a Mac and physical iPhone. On the Mac:
 
 1. Install Godot 4.5.2's matching export templates via **Editor → Manage Export Templates**.
-2. Use the included **iPhone** export preset. Set your Apple Team ID and a bundle identifier you control.
+2. Use the included **iPhone** export preset. It uses the verified local development Team ID and `com.serhansari.passportrun`; replace these for another developer account.
 3. Export to an empty folder outside the source tree, using a filename such as `PassportRun` without spaces.
 4. Open the exported Xcode project, configure signing, choose the connected iPhone, and build/run.
 5. Check safe areas, one-handed taps, all difficulty previews, repeated retries/transitions, frame time, audio, and background/resume behavior.
 
-No signing credentials are committed. See the [official Godot iOS export instructions](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_ios.html). The macOS continuation installed Godot and its iOS template and verified desktop tests. Native export still needs the Apple Team ID and bundle identifier; see [current iPhone validation status](docs/iphone-validation.md).
+No private signing credentials are committed. Godot export and unsigned Xcode compilation succeeded on this Mac. See the [official Godot iOS export instructions](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_ios.html) and [current iPhone validation status](docs/iphone-validation.md) for device/signing evidence.
 
 ## Useful files
 

@@ -1,0 +1,60 @@
+import { describe, expect, test } from "vitest";
+import { BALANCE, boardKey, dailySeed, derivedSeed, laneAt, manifestFor, routeFrom, verifyReplay } from "../convex/competition";
+import type { Difficulty, Manifest, Selection } from "../convex/competition";
+import fixtures from "./fixtures/v1.json";
+
+function validRun(manifest: Manifest, rows = 20): { events: Selection[]; end: number } {
+  const balance = BALANCE[manifest.difficulty];
+  const events: Selection[] = [];
+  let atMs = balance.previewMs;
+  for (let index = 0; index < rows; index++) {
+    const countryIndex = manifest.mode === "daily" ? Math.floor(index / balance.rows) : 0;
+    const row = manifest.mode === "daily" ? index % balance.rows : index;
+    const seed = manifest.mode === "daily" ? derivedSeed(manifest.seed, countryIndex) : manifest.seed;
+    events.push({ countryIndex, row, lane: laneAt(seed, balance.lanes, row), atMs });
+    atMs += balance.jumpMs;
+    if ((index + 1) % balance.rows === 0) atMs += balance.previewMs + (manifest.mode === "daily" ? 500 : 0);
+  }
+  return { events, end: atMs };
+}
+describe("v1 cross-language compatibility", () => {
+  for (const fixture of fixtures.lanes) test(`lane ${fixture.seed}/${fixture.lanes}/${fixture.row}`, () => expect(laneAt(fixture.seed, fixture.lanes, fixture.row)).toBe(fixture.lane));
+  for (const fixture of fixtures.routes) test(`route ${fixture.home}/${fixture.seed}`, () => expect(routeFrom(fixture.home, fixture.seed)).toEqual(fixture.route));
+  for (const fixture of fixtures.daily) test(`daily ${fixture.date}/${fixture.difficulty}`, () => expect(dailySeed(fixture.date, fixture.difficulty as Difficulty)).toBe(fixture.seed));
+  test("immutable balance matches Godot", () => expect(BALANCE).toEqual(fixtures.balance));
+});
+describe("replay validation", () => {
+  const manifest = manifestFor("daily", "easy", Date.UTC(2026, 9, 2));
+  test("full daily score comes from selections", () => {
+    const { events, end } = validRun(manifest, 50);
+    expect(verifyReplay(manifest, events, end, end)).toEqual({score: 50, countries: 5});
+  });
+  test("infinite section previews are enforced", () => {
+    const infinite = manifestFor("infinite", "hard", 0);
+    const { events, end } = validRun(infinite, 50);
+    expect(verifyReplay(infinite, events, end, end).score).toBe(50);
+    events[20].atMs -= BALANCE.hard.previewMs;
+    expect(() => verifyReplay(infinite, events, end, end)).toThrow();
+  });
+  test.each(["skip", "duplicate", "lane", "fraction", "speed", "future", "after-failure", "overflow"])("rejects %s", (kind) => {
+    const { events, end } = validRun(manifest, 20);
+    if (kind === "skip") events[1].row++;
+    if (kind === "duplicate") events[1].row--;
+    if (kind === "lane") events[1].lane = 3;
+    if (kind === "fraction") events[1].atMs += 0.5;
+    if (kind === "speed") events[1].atMs = events[0].atMs + 1;
+    if (kind === "after-failure") events[0].lane = (events[0].lane + 1) % 3;
+    if (kind === "overflow") while (events.length <= 4096) events.push(events[0]);
+    expect(() => verifyReplay(manifest, events, end, kind === "future" ? end - 1000 : end)).toThrow();
+  });
+  test("failure contributes no safe score", () => {
+    const { events, end } = validRun(manifest, 1);
+    events[0].lane = (events[0].lane + 1) % 3;
+    expect(verifyReplay(manifest, events, end, end)).toEqual({score: 0, countries: 0});
+  });
+  test("boards separate all identities", () => {
+    expect(boardKey(manifest)).not.toBe(boardKey(manifestFor("daily", "hard", Date.UTC(2026, 9, 2))));
+    expect(boardKey(manifest)).not.toBe(boardKey(manifestFor("daily", "easy", Date.UTC(2026, 9, 3))));
+    expect(boardKey(manifest)).not.toBe(boardKey(manifestFor("infinite", "easy", 0)));
+  });
+});

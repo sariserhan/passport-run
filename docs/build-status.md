@@ -1,49 +1,30 @@
-# Build status — expanded offline prototype
+# Build status — 2026-10-02
 
-The user's latest instruction authorized continuing beyond the original M0–M2-only first build. [HANDOFF.md](../HANDOFF.md) is now the authoritative continuation document. The primary target is iPhone; Mac/Xcode/device access exists with the user but was unavailable to this Linux session.
+The five-country game is a playable prototype. Online competition now works against a real local Convex instance; no hosted service or commercial release is claimed. [HANDOFF.md](../HANDOFF.md) contains continuation instructions.
 
-| Milestone | Current implementation | Remaining acceptance/work |
+| Milestone | Implemented | Remaining acceptance/work |
 | --- | --- | --- |
-| M0 Foundation | Godot 4.5.2, portrait, modular scene, configurable resources | Native iPhone launch/performance; no mobile PASS claimed |
-| M1 Tile gameplay | Touch-driven jump/landing/crack/fall, results and clean retry | Physical touch comfort and profiling |
-| M2 Reveal | Preview timer, one checked safe tile per row, hiding, unchanged path | Human readability and memory-load testing |
-| M3 Difficulty | Easy/Moderate/Hard presets and menu, separate local records | Competitive leaderboard segregation when backend exists |
-| M4 Infinite | Random-access seeded generation, bounded row sections, same-path retry | Device memory/FPS testing; final preview-loop playtest |
-| M5 Countries | Five procedural placeholder variants; completion and stamp award | Production art/animation and richer transition sequence |
-| M6 Home/route | Explicit searchable home choice, configurable demo graph preference, choices | Geographic dataset beyond demo; optional active-run persistence |
-| M7 World Tour | Complete five-country non-repeating journey, choices, totals, failure | Region badges, production travel transitions, validation |
-| M8 Passport | Unique stamps, history and local persistence | Artwork polish and eventual sync |
-| M9 Daily | Deterministic UTC start/route/path per difficulty; local bests | Backend manifests and authoritative date/rankings |
-| M10 Leaderboards | Honest local records screen only | Auth/session handling, submissions, replay validation, real boards |
-| M11 Ads | Not implemented | Provider, callbacks, frequency, checkpoint continue and fallback |
-| M12 Purchases | Not implemented | Product setup, verified purchase/restore and sync |
-| M13 Kids | Simpler slower paths, friendly failure, no sharing/profile/chat | Kid-friendly character, verified facts/stickers, device review |
-| M14 Audio/polish | Original synthesized music/cues, volumes, pause/resume, accessibility | Listening QA, polished art/animations/production audio |
-| M15 Challenges | Validated portable seeded route codes and manual import | Public links, hosting, native opening, verified comparison |
-| M16 Share cards | Real local 720×1000 PNG + clipboard code | Character/backdrop art, native iPhone share sheet |
-| M17 Analytics | Bounded local event log + summary script | Complete event coverage, remote retention/funnel dashboard and player study |
-
-## macOS continuation (2026-10-02)
-
-See [iPhone validation](iphone-validation.md). Godot 4.5.2 and its iOS template are installed; Xcode detects an available paired physical iPhone. An iPhone-only Xcode-project preset and original temporary icon are prepared. Export preflight is blocked only by the missing Team ID and bundle identifier; no native build/device PASS is claimed.
-
-Safe-area initialization and side insets are shared by menu/HUD. Result/pause cards wrap and scroll inside safe margins; focused primary buttons retain readable dark text. All five headless suites passed (new mobile UI suite: 20 checks), and rendered modes passed at 375×667 (348 checks). Rendered long-dialog checks passed at four sizes down to 320×568. Physical-device performance, touch and mobile services remain unverified.
+| M0–M2 Foundation/gameplay/reveal | Portrait Godot, touch movement, jumps/falls, results/retry, timed hidden paths | Physical iPhone touch, readability, FPS and thermal testing |
+| M3 Difficulty | Three immutable presets, segregated local and server boards | Human balance testing |
+| M4 Infinite | Bounded tile windows, random-access generation, same-path retry, verified online submissions | Device profiling, final memory-loop validation |
+| M5 Countries | Five procedural environments, stamps, illustrated travel transition with skip/pause | Production 3D assets and animation |
+| M6 Home/route | Searchable explicit home, demo graph and long-haul choices | Curated geography; optional active-run persistence |
+| M7 World Tour | Five non-repeating destinations, totals, travel, collection badge | Real regional rewards after geographic expansion |
+| M8 Passport | Durable local stamps/history, sticker album, online discovery union | Account recovery and broader sync policy |
+| M9 Daily | Offline deterministic Daily plus authenticated canonical server manifests, pinned retries | Hosted deployment and device integration |
+| M10 Leaderboards | Replay reconstruction, authenticated ownership, atomic personal bests, sanitized segregated boards, Godot client | Hosted validation, abuse prevention, account linking |
+| M11 Ads | Unimplemented | Provider setup and verified rewards/continuation |
+| M12 Purchases | Unimplemented | Store product, transaction verification and restoration |
+| M13 Kids | Slower paths, robot explorer, verified facts and illustrated stickers | Device/human/parental review |
+| M14 Polish | Original prototype audio/art, pauseable travel, safe-area scrolling, reduced motion/high contrast | Final visual/audio fidelity and device listening/haptics QA |
+| M15 Challenges | Validated local PR1 codes and identical-path replay | Hosted links and native link handling |
+| M16 Share cards | Illustrated 720×1000 PNG and clipboard code | Native iPhone share sheet |
+| M17 Analytics | Local bounded events, session/run timing and scoped funnel report | Consent-aware remote analytics and real retention/revenue study |
 
 ## Verification
 
-Four headless suites pass: original core (1,143 checks), scene (149), progression (3,487), and modes (346 or more depending on destination option counts). Tests use isolated save files. Corrupt-save recovery, finite/random-access parity, daily identity, invalid challenge data, whole-tour completion, unique passport stamps, records, infinite streaming and retries were exercised.
+Six headless Godot suites passed: core 1,143; scene 149; progression 3,487; modes 350; mobile UI 20; polish 16. Python reporting checks passed (3). Rendered mode tests passed at 375×667 and 390×844; mobile dialogs were also checked down to 320×568. Illustrated cards and Kids rewards were inspected. Desktop rendering does not establish iPhone performance.
 
-Rendered mode tests passed at 480×900, 390×844 and 375×667. Share-card creation and dimensions were validated in rendered runs. Final 480×900 render exited without script, texture, or object-leak errors; the virtual display reports an expected unsupported-VSync warning. The test runtime uses Mesa software rendering and is not performance evidence for an iPhone.
+Backend typecheck and 144 tests passed. Tests cover Godot-generated compatibility fixtures, ownership, revoked sessions, malformed and impossible replays, score reconstruction, duplicate submissions, passport isolation, and retry manifests across midnight. Real local HTTP smoke tests exercised sign-in, submit, board, sync, refresh and sign-out. Godot's real-backend integration suite passed 16 checks, including actual in-game verified score display. These use development users, not customer evidence.
 
-Screenshots were visually inspected for menu overflow, preview row visibility at each difficulty, country cues, completion actions, passport and record layouts, Kids rewards, and the exported card. Temporary art deliberately falls short of the reference images' final fidelity.
-
-Fixed during this iteration: corrupt JSON logging noise, malformed challenge handling, difficulty-dependent camera fit, resource teardown warnings, single-country grammar, and inability to leave a ready screen using the pause control.
-
-## Deferred decisions
-
-- Keep the five-country validation scope; do not respond to poor retention by adding 195 environments.
-- Infinite currently reveals a fresh section after each section is crossed; retries always start at row 1 with the same route. Confirm this loop with players.
-- Current active runs are not resumed after process termination; earned stamps/preferences/local records persist.
-- Daily and challenge data are local and unverified. No online rank or percentile claims are shown.
-- UI shows 5 available passport destinations, not a misleading 195-country playable count.
-- All path/route/balance versions must be preserved when online competition and migrations are added.
+See [iPhone validation](iphone-validation.md) for native export/build status. Keep the five-country validation scope from spec section 91. Active runs do not resume after process termination. Client replay verification does not establish human play or prevent automated bots. Online playback is opt-in; the default exported game stays offline.

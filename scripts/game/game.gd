@@ -1,6 +1,7 @@
 extends Node3D
 
 @export var save_path: String = "user://profile.json"
+@export var backend_session_path: String = "user://online-session.json"
 var config: DifficultyConfig
 var run := RunState.new()
 var session := JourneySession.new()
@@ -22,6 +23,12 @@ var segment_start: int = 0
 var country_awarded: bool = false
 var imported_challenge: Dictionary = {}
 var sharing: bool = false
+var travel: TravelTransition
+var backend: BackendClient
+var replay := ReplayRecorder.new()
+var online := false
+var network_busy := false
+var retry_run_id := ""
 
 func _ready() -> void:
 	config = GameCatalog.difficulty("easy")
@@ -46,7 +53,19 @@ func _ready() -> void:
 	add_child(hud)
 	menu = MenuUI.new()
 	add_child(menu)
+	backend = BackendClient.new()
+	add_child(backend)
+	backend.session_path = backend_session_path
+	backend.setup(str(ProjectSettings.get_setting("network/backend_url", "")))
+	menu.online_available = backend.configured()
+	menu.online_records_requested.connect(show_online_records)
+	menu.home_country_selected.connect(func(id: String): telemetry.track("home_country_selected", {"country": id}))
+	menu.difficulty_selected.connect(func(key: String): telemetry.track("difficulty_selected", {"difficulty": key}))
 	menu.setup(profile, hud)
+	travel = TravelTransition.new()
+	add_child(travel)
+	travel.setup(hud)
+	travel.arrived.connect(func(): load_country(true))
 	menu.start_requested.connect(start_game)
 	menu.challenge_requested.connect(func(data: Dictionary): imported_challenge = data; start_game("challenge", data.difficulty))
 	menu.settings_changed.connect(func(): audio.apply_settings(profile.settings))
@@ -66,6 +85,31 @@ func _ready() -> void:
 	)
 
 func start_game(mode: String, difficulty_key: String) -> void:
+	if network_busy:
+		return
+	var requested_online := mode.begins_with("online_")
+	mode = mode.trim_prefix("online_") if requested_online else mode
+	var issued: Dictionary = {}
+	if requested_online:
+		if mode not in ["daily", "infinite"]:
+			return
+		network_busy = true
+		cancel_motion()
+		menu.root.hide()
+		hud.show_journey_result("Preparing your run…", "Connecting to the score server.", [{"text": "BACK TO OFFLINE PLAY", "callback": return_to_menu}])
+		var token := generation
+		issued = await backend.begin_run(mode, difficulty_key, retry_run_id)
+		if token != generation:
+			return
+		if issued.is_empty():
+			return_to_menu()
+			menu.copy(backend.last_error if not backend.last_error.is_empty() else "Online run unavailable. Offline play is ready.")
+			return
+		await sync_online_passport()
+		if token != generation:
+			return
+		network_busy = false
+	online = requested_online
 	if mode not in ["world", "infinite", "daily", "kids", "tutorial", "challenge"]:
 		return
 	if mode in ["world", "kids"] and profile.home_country.is_empty():
@@ -75,6 +119,14 @@ func start_game(mode: String, difficulty_key: String) -> void:
 	if mode == "challenge" and imported_challenge.is_empty():
 		return
 	session.begin(mode, difficulty_key, profile.home_country, randi_range(1, PathGenerator.MODULUS - 2), imported_challenge)
+	if online:
+		session.seed_value = int(issued.seed)
+		session.date = issued.date
+		session.fixed_route.assign(issued.route)
+		replay.begin(issued.runId)
+	else:
+		replay.begin("")
+	retry_run_id = ""
 	config = GameCatalog.difficulty(session.difficulty)
 	if mode == "tutorial":
 		config = GameCatalog.difficulty("easy")
@@ -86,6 +138,8 @@ func start_game(mode: String, difficulty_key: String) -> void:
 		telemetry.track(mode + "_started", metadata())
 
 func cancel_motion() -> void:
+	if travel:
+		travel.cancel()
 	generation += 1
 	paused = false
 	for tween in [active_tween, camera_tween]:
@@ -94,6 +148,10 @@ func cancel_motion() -> void:
 	audio.set_paused(false)
 
 func restart(new_path: bool = false, auto_preview: bool = true) -> void:
+	if online:
+		retry_run_id = replay.run_id
+		start_game("online_" + session.mode, session.difficulty)
+		return
 	var next_seed: int = session.seed_value
 	if session.mode == "practice":
 		next_seed = run.path_seed
@@ -108,7 +166,8 @@ func restart(new_path: bool = false, auto_preview: bool = true) -> void:
 		session.seed_value = next_seed
 		session.fixed_route = old_route
 	load_country(auto_preview)
-	telemetry.track("run_retried", metadata())
+	if session.mode != "practice":
+		telemetry.track("run_retried", metadata())
 
 func load_country(auto_preview: bool) -> void:
 	cancel_motion()
@@ -122,6 +181,7 @@ func load_country(auto_preview: bool) -> void:
 		remove_child(traveler)
 		traveler.queue_free()
 	traveler = Traveler.new()
+	traveler.kids = session.mode == "kids"
 	traveler.name = "Player"
 	add_child(traveler)
 	traveler.position = Vector3(0, 0.03, 0.6)
@@ -163,7 +223,7 @@ func set_overview() -> void:
 	camera.size = maxf(37.0, depth * 0.7072 / 0.51)
 
 func start_preview() -> void:
-	if paused or not run.begin_preview():
+	if paused or travel.active or not run.begin_preview():
 		return
 	preview_remaining = config.preview_seconds
 	grid.reveal_run(run, segment_start, profile.settings.high_contrast)
@@ -220,8 +280,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		choose_tile(tile.row, tile.lane)
 
 func choose_tile(row: int, lane: int) -> bool:
-	if paused or not run.select(row, lane, config.lane_count):
+	if paused or travel.active or not run.select(row, lane, config.lane_count):
 		return false
+	replay.select(0 if session.mode == "infinite" else session.country_index, row, lane)
 	telemetry.track("tile_selected", {"row": row, "lane": lane, "mode": session.mode})
 	audio.play_cue("jump")
 	var start := traveler.position
@@ -317,6 +378,8 @@ func fall(tile: PathTile) -> void:
 			telemetry.track("run_failed", metadata())
 			telemetry.flush()
 			show_failure()
+			if online:
+				submit_online()
 	)
 
 func show_failure() -> void:
@@ -378,7 +441,11 @@ func complete_country() -> void:
 		actions.append({"text": ("FLY TO " if options.size() > 1 else "CONTINUE TO ") + GameCatalog.country_name(id).to_upper(), "primary": true, "callback": func(): travel_to(id)})
 	var title := "Passport stamped!"
 	var body := "%s\n%d %s · %d tiles" % [GameCatalog.country_name(session.current_country()), session.completed_countries, "country" if session.completed_countries == 1 else "countries", session.banked_tiles]
+	if session.mode == "kids":
+		body += "\nSticker collected!\n" + CountryRewards.fact(session.current_country())
 	if options.is_empty():
+		telemetry.track("run_completed", metadata())
+		telemetry.flush()
 		title = "Journey complete!"
 		body += "\nYou crossed the whole route."
 		if session.mode == "challenge":
@@ -388,12 +455,20 @@ func complete_country() -> void:
 		actions.append({"text": "COPY CODE + SAVE CARD", "callback": share_challenge})
 	actions.append({"text": "MAIN MENU", "callback": return_to_menu})
 	hud.show_journey_result(title, body, actions)
+	if options.is_empty() and online:
+		submit_online()
 
 func travel_to(id: String) -> void:
-	if run.phase != RunState.Phase.COMPLETE or not country_awarded or not session.travel_to(id):
+	if travel.active or run.phase != RunState.Phase.COMPLETE or not country_awarded or id not in session.choices():
+		return
+	var departure := session.current_country()
+	if not session.travel_to(id):
 		return
 	telemetry.track("destination_selected", {"country": id, "mode": session.mode})
-	load_country(true)
+	if id not in GameCatalog.COUNTRIES[departure].neighbors:
+		telemetry.track("long_haul_selected", {"country": id, "mode": session.mode})
+	audio.play_cue("travel")
+	travel.begin(departure, id, profile.settings.reduced_motion)
 
 func total_score() -> int:
 	return session.banked_tiles + (0 if country_awarded else run.completed_rows)
@@ -433,6 +508,8 @@ func vibrate(milliseconds: int) -> void:
 		Input.vibrate_handheld(milliseconds)
 
 func return_to_menu() -> void:
+	network_busy = false
+	online = false
 	save_record()
 	telemetry.track("run_ended", metadata())
 	telemetry.flush()
@@ -442,9 +519,10 @@ func return_to_menu() -> void:
 	menu.show_main()
 
 func pause_game() -> void:
-	if paused or menu.root.visible or run.phase in [RunState.Phase.FAILED, RunState.Phase.COMPLETE]:
+	if paused or menu.root.visible or (run.phase in [RunState.Phase.FAILED, RunState.Phase.COMPLETE] and not travel.active):
 		return
 	paused = true
+	travel.set_paused(true)
 	for tween in [active_tween, camera_tween]:
 		if tween and tween.is_valid():
 			tween.pause()
@@ -455,6 +533,7 @@ func resume_game() -> void:
 	if not paused:
 		return
 	paused = false
+	travel.set_paused(false)
 	hud.overlay.hide()
 	for tween in [active_tween, camera_tween]:
 		if tween and tween.is_valid():
@@ -476,3 +555,49 @@ func _notification(what: int) -> void:
 		if profile:
 			profile.save()
 			telemetry.flush()
+
+func submit_online() -> void:
+	var submission := replay.submission()
+	if submission.is_empty():
+		hud.modal_body.text += "\nThis run exceeded the ranking recorder limit. Your local score is saved."
+		return
+	var token := generation
+	if not await backend.authenticate():
+		if token == generation and online:
+			hud.modal_body.text += "\nScore saved locally; online verification unavailable."
+		return
+	var response := await backend.call_function("mutation", "runs:submit", submission)
+	if token != generation or not online:
+		return
+	var value: Variant = response.get("value")
+	if value is Dictionary and value.get("score") == total_score():
+		hud.modal_body.text += "\nServer verified: %d tiles" % int(value.score)
+	else:
+		hud.modal_body.text += "\nScore saved locally; online verification unavailable."
+
+func show_online_records() -> void:
+	menu.clear("Online rankings", "Server-verified scores. Difficulty and mode have separate boards.")
+	menu.action("BACK", true, menu.show_main)
+	var token := generation
+	var revision := menu.revision
+	for mode in ["daily", "infinite"]:
+		for key in GameCatalog.DIFFICULTIES:
+			var response := await backend.call_function("query", "runs:leaderboard", {"mode": mode, "difficulty": key}, false)
+			if token != generation or not menu.root.visible or revision != menu.revision:
+				return
+			menu.copy("%s · %s" % [mode.capitalize(), key.capitalize()], 23)
+			var rows: Variant = response.get("value")
+			if rows is Array and not rows.is_empty():
+				for index in rows.size():
+					menu.copy("%d. %s · %d tiles" % [index + 1, rows[index].displayName, int(rows[index].score)])
+			else:
+				menu.copy("No verified scores yet." if rows is Array else "Rankings unavailable.")
+
+func sync_online_passport() -> void:
+	var response := await backend.call_function("mutation", "players:syncPassport", {"homeCountry": profile.home_country, "discoveries": profile.discoveries})
+	var value: Variant = response.get("value")
+	if value is Dictionary and value.get("discoveries") is Array:
+		for id in value.discoveries:
+			if id is String and id in GameCatalog.COUNTRIES and id not in profile.discoveries:
+				profile.discoveries.append(id)
+		profile.save()

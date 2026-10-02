@@ -4,6 +4,11 @@ extends CanvasLayer
 signal start_requested(mode: String, difficulty: String)
 signal challenge_requested(data: Dictionary)
 signal settings_changed
+signal home_country_selected(id: String)
+signal difficulty_selected(key: String)
+signal online_records_requested
+var online_available := false
+var revision := 0
 
 var profile: PlayerProfile
 var style: GameHUD
@@ -49,6 +54,7 @@ func update_safe_area() -> void:
 	SafeAreaMargins.apply(safe_margin, root.size, Vector4i(28, 48, 28, 38))
 
 func clear(title: String, subtitle: String) -> void:
+	revision += 1
 	root.show()
 	for child in content.get_children():
 		content.remove_child(child)
@@ -86,6 +92,7 @@ func show_main() -> void:
 	difficulty_picker.select(GameCatalog.DIFFICULTIES.find(profile.difficulty))
 	difficulty_picker.item_selected.connect(func(index: int):
 		profile.difficulty = GameCatalog.DIFFICULTIES[index]
+		difficulty_selected.emit(profile.difficulty)
 		profile.save()
 	)
 	content.add_child(difficulty_picker)
@@ -95,6 +102,11 @@ func show_main() -> void:
 		var mode: String = item[0]
 		mode_buttons[mode] = action(item[1], mode == "world", func(): request_mode(mode))
 	copy("Daily: same UTC date + difficulty = same route. Scores are local until online rankings are connected.", 15)
+	if online_available:
+		copy("Online play uses an anonymous account and syncs your passport.", 15)
+		action("ONLINE DAILY", false, func(): start_requested.emit("online_daily", profile.difficulty))
+		action("ONLINE INFINITE", false, func(): start_requested.emit("online_infinite", profile.difficulty))
+		action("ONLINE RANKINGS", false, func(): online_records_requested.emit())
 	action("MY PASSPORT", false, show_passport)
 	action("LOCAL RECORDS", false, show_records)
 	action("PLAY A CHALLENGE CODE", false, show_challenge)
@@ -121,6 +133,7 @@ func show_countries() -> void:
 		var country: String = id
 		var control := action(country + "   " + GameCatalog.country_name(country), country == profile.home_country, func():
 			profile.home_country = country
+			home_country_selected.emit(country)
 			profile.save()
 			if not pending_mode.is_empty():
 				var mode := pending_mode
@@ -145,14 +158,33 @@ func show_passport() -> void:
 		panel.add_theme_stylebox_override("panel", style.panel_style(Color("fff6df") if visited else Color("28546b"), 12))
 		var text_label := style.label("  %s   %s\n  %s" % [id, GameCatalog.country_name(id), "STAMPED · " + str(GameCatalog.COUNTRIES[id].region) if visited else "Waiting to be discovered"], 19, GameHUD.INK if visited else Color("c4dce5"))
 		text_label.custom_minimum_size.y = 82
+		text_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		panel.add_child(text_label)
 		content.add_child(panel)
+	if profile.discoveries.size() == GameCatalog.COUNTRIES.size():
+		copy("WORLD EXPLORER · All five destination stickers collected!", 21)
+	action("MY TRAVEL STICKERS", false, show_stickers)
 	copy("Recent journey", 22)
 	var names: Array[String] = []
 	for id in profile.history.slice(-12):
 		names.append(GameCatalog.country_name(id))
 	copy(" → ".join(names) if not names.is_empty() else "Complete a country to collect your first stamp.")
 	action("BACK", true, show_main)
+
+func show_stickers() -> void:
+	clear("Travel stickers", "Your discoveries become a little collection of the world.")
+	for id in GameCatalog.COUNTRIES:
+		copy(GameCatalog.country_name(id), 23)
+		if id in profile.discoveries:
+			var artwork := TravelArtwork.new()
+			artwork.country_id = id
+			artwork.show_traveler = false
+			artwork.custom_minimum_size.y = 170
+			content.add_child(artwork)
+			copy(CountryRewards.fact(id))
+		else:
+			copy("Complete this destination to collect its sticker.")
+	action("BACK TO PASSPORT", true, show_passport)
 
 func show_records() -> void:
 	clear("Local records", "Your best scores on this device. Different difficulties are scored separately.")
@@ -183,7 +215,7 @@ func show_settings() -> void:
 		toggle.button_pressed = profile.settings[setting]
 		toggle.toggled.connect(func(value: bool): profile.settings[setting] = value; profile.save(); settings_changed.emit())
 		content.add_child(toggle)
-	copy("Progress and a bounded gameplay log stay on this device. No accounts, chat, advertisements, or remote analytics are active.", 15)
+	copy("Progress and a bounded gameplay log stay on this device. Online modes connect only when configured. No chat, advertisements, or remote analytics are active.", 15)
 	if not OS.has_feature("mobile"):
 		action("OPEN USER DATA FOLDER", false, func(): OS.shell_open(ProjectSettings.globalize_path("user://")))
 	action("CHANGE HOME COUNTRY", false, show_countries)

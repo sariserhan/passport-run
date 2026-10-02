@@ -81,6 +81,8 @@ func run_all() -> void:
 	while not game.session.choices().is_empty():
 		var destination: String = game.session.choices()[0]
 		game.travel_to(destination)
+		expect(game.travel.active, "Country choice opens a skippable travel sequence")
+		game.travel.finish()
 		seen.append(destination)
 		await wait()
 		await capture("country-" + destination)

@@ -1,0 +1,91 @@
+class_name TravelTransition
+extends CanvasLayer
+
+signal arrived
+var active := false
+var root: ColorRect
+var artwork: TravelArtwork
+var flight: ProgressBar
+var animation: Tween
+var skip_button: Button
+var margins: MarginContainer
+
+func setup(style: GameHUD) -> void:
+	layer = 4
+	root = ColorRect.new()
+	root.color = Color("153e57")
+	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	add_child(root)
+	margins = MarginContainer.new()
+	margins.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	root.add_child(margins)
+	var scroll := ScrollContainer.new()
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	margins.add_child(scroll)
+	var stack := VBoxContainer.new()
+	stack.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	stack.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	stack.add_theme_constant_override("separation", 22)
+	scroll.add_child(stack)
+	var heading := style.label("NEXT STOP", 20, Color("a6e771"))
+	stack.add_child(heading)
+	var destination := style.label("", 36, GameHUD.CREAM)
+	destination.name = "Destination"
+	destination.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	stack.add_child(destination)
+	artwork = TravelArtwork.new()
+	artwork.custom_minimum_size.y = 220
+	stack.add_child(artwork)
+	var route := style.label("", 19, GameHUD.CREAM)
+	route.name = "Route"
+	route.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	stack.add_child(route)
+	flight = ProgressBar.new()
+	flight.custom_minimum_size.y = 12
+	flight.max_value = 1
+	flight.show_percentage = false
+	flight.add_theme_stylebox_override("fill", style.panel_style(Color("a6e771"), 6))
+	stack.add_child(flight)
+	skip_button = style.button("LAND NOW", true)
+	skip_button.pressed.connect(finish)
+	stack.add_child(skip_button)
+	root.resized.connect(func(): SafeAreaMargins.apply(margins, root.size, Vector4i(28, 48, 28, 38)))
+	root.hide()
+
+func begin(from: String, to: String, reduced_motion: bool) -> void:
+	cancel()
+	active = true
+	root.show()
+	SafeAreaMargins.apply(margins, root.size, Vector4i(28, 48, 28, 38))
+	artwork.country_id = to
+	artwork.queue_redraw()
+	root.find_child("Destination", true, false).text = GameCatalog.country_name(to)
+	root.find_child("Route", true, false).text = "%s → %s" % [GameCatalog.country_name(from), GameCatalog.country_name(to)]
+	flight.value = 0
+	skip_button.grab_focus.call_deferred()
+	animation = create_tween()
+	animation.tween_property(flight, "value", 1.0, 0.15 if reduced_motion else 2.0)
+	animation.tween_callback(finish)
+
+func finish() -> void:
+	if not active:
+		return
+	cancel()
+	arrived.emit()
+
+func cancel() -> void:
+	active = false
+	if animation and animation.is_valid():
+		animation.kill()
+	if root:
+		root.hide()
+
+func set_paused(value: bool) -> void:
+	if not active:
+		return
+	if value:
+		animation.pause()
+		root.hide()
+	else:
+		animation.play()
+		root.show()
