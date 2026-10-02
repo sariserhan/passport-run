@@ -25,6 +25,9 @@ var modal_title: Label
 var modal_body: Label
 var modal_actions: VBoxContainer
 var pause_button: Button
+var modal_margin: MarginContainer
+var modal_scroll: ScrollContainer
+var modal_card: PanelContainer
 
 func _ready() -> void:
 	root = Control.new()
@@ -121,12 +124,19 @@ func _ready() -> void:
 	overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	overlay.color = Color(0.035, 0.12, 0.2, 0.78)
 	root.add_child(overlay)
+	modal_margin = MarginContainer.new()
+	modal_margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	overlay.add_child(modal_margin)
+	modal_scroll = ScrollContainer.new()
+	modal_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	modal_scroll.follow_focus = true
+	modal_margin.add_child(modal_scroll)
 	var center := CenterContainer.new()
-	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	center.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	overlay.add_child(center)
-	var card := PanelContainer.new()
-	card.custom_minimum_size.x = 364
+	center.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	center.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	modal_scroll.add_child(center)
+	modal_card = PanelContainer.new()
+	var card := modal_card
 	card.add_theme_stylebox_override("panel", panel_style(CREAM, 24))
 	center.add_child(card)
 	var margin := MarginContainer.new()
@@ -137,9 +147,11 @@ func _ready() -> void:
 	stack.add_theme_constant_override("separation", 18)
 	margin.add_child(stack)
 	modal_title = label("Great try!", 32, INK)
+	modal_title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	modal_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	stack.add_child(modal_title)
 	modal_body = label("", 19, INK)
+	modal_body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	modal_body.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	stack.add_child(modal_body)
 	modal_actions = VBoxContainer.new()
@@ -148,20 +160,13 @@ func _ready() -> void:
 	overlay.hide()
 	root.resized.connect(update_safe_area)
 	update_safe_area()
+	update_safe_area.call_deferred()
 
 func update_safe_area() -> void:
-	var top: int = 24
-	var bottom: int = 26
-	if OS.has_feature("mobile"):
-		var safe := DisplayServer.get_display_safe_area()
-		var screen := DisplayServer.screen_get_size()
-		var factor: float = root.size.y / maxf(screen.y, 1)
-		top = maxi(top, int(safe.position.y * factor) + 12)
-		bottom = maxi(bottom, int((screen.y - safe.end.y) * factor) + 12)
-	safe_margin.add_theme_constant_override("margin_top", top)
-	safe_margin.add_theme_constant_override("margin_bottom", bottom)
-	safe_margin.add_theme_constant_override("margin_left", 24)
-	safe_margin.add_theme_constant_override("margin_right", 24)
+	SafeAreaMargins.apply(safe_margin, root.size, Vector4i(24, 24, 24, 26))
+	SafeAreaMargins.apply(modal_margin, root.size, Vector4i(20, 24, 20, 26))
+	var available_width := root.size.x - modal_margin.get_theme_constant("margin_left") - modal_margin.get_theme_constant("margin_right")
+	modal_card.custom_minimum_size.x = maxf(1, minf(364, available_width))
 
 func show_ready(lanes: int, rows: int) -> void:
 	footer_panel.offset_top = -158
@@ -216,6 +221,7 @@ func show_pause() -> void:
 	overlay.show()
 
 func clear_actions() -> void:
+	modal_scroll.scroll_vertical = 0
 	for child in modal_actions.get_children():
 		modal_actions.remove_child(child)
 		child.queue_free()
@@ -224,7 +230,8 @@ func add_action(text: String, primary: bool, callback: Callable) -> void:
 	var action := button(text, primary)
 	action.pressed.connect(callback)
 	modal_actions.add_child(action)
-	action.grab_focus.call_deferred()
+	if modal_actions.get_child_count() == 1:
+		action.grab_focus.call_deferred()
 
 func label(text: String, size: int, color: Color) -> Label:
 	var node := Label.new()
@@ -241,6 +248,7 @@ func button(text: String, primary: bool) -> Button:
 	node.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	node.add_theme_font_size_override("font_size", 19)
 	node.add_theme_color_override("font_color", Color("163e39") if primary else CREAM)
+	node.add_theme_color_override("font_focus_color", INK if primary else CREAM)
 	node.add_theme_color_override("font_hover_color", INK if primary else CREAM)
 	node.add_theme_color_override("font_pressed_color", INK if primary else CREAM)
 	var base := Color("a6e771") if primary else Color("28546b")

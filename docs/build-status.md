@@ -23,6 +23,12 @@ The user's latest instruction authorized continuing beyond the original M0–M2-
 | M16 Share cards | Real local 720×1000 PNG + clipboard code | Character/backdrop art, native iPhone share sheet |
 | M17 Analytics | Bounded local event log + summary script | Complete event coverage, remote retention/funnel dashboard and player study |
 
+## macOS continuation (2026-10-02)
+
+See [iPhone validation](iphone-validation.md). Godot 4.5.2 and its iOS template are installed; Xcode detects an available paired physical iPhone. An iPhone-only Xcode-project preset and original temporary icon are prepared. Export preflight is blocked only by the missing Team ID and bundle identifier; no native build/device PASS is claimed.
+
+Safe-area initialization and side insets are shared by menu/HUD. Result/pause cards wrap and scroll inside safe margins; focused primary buttons retain readable dark text. All five headless suites passed (new mobile UI suite: 20 checks), and rendered modes passed at 375×667 (348 checks). Rendered long-dialog checks passed at four sizes down to 320×568. Physical-device performance, touch and mobile services remain unverified.
+
 ## Verification
 
 Four headless suites pass: original core (1,143 checks), scene (149), progression (3,487), and modes (346 or more depending on destination option counts). Tests use isolated save files. Corrupt-save recovery, finite/random-access parity, daily identity, invalid challenge data, whole-tour completion, unique passport stamps, records, infinite streaming and retries were exercised.

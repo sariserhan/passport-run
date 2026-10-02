@@ -2,6 +2,12 @@
 
 Start here. Read `spec.md`, then this file, then run the project before changing it.
 
+## macOS continuation update — 2026-10-02
+
+Read [docs/iphone-validation.md](docs/iphone-validation.md) for the latest evidence and exact next action. Godot 4.5.2 and its matching iOS template are now installed on this Mac. Xcode detects a paired available physical iPhone. The inherited four suites passed here; after safe-area/result-layout fixes, all five headless suites and rendered mode/mobile UI checks passed.
+
+An iPhone-only Xcode export preset and temporary original app icon now exist. Export preflight is blocked by the missing Apple Team ID and bundle identifier, which have been requested from the user. No native build, device run, signing, or TestFlight validation has occurred. The historical Linux evidence and remaining milestone scope below still apply.
+
 ## User intent and authorization
 
 The user wants Passport Run built from the supplied specification and two reference images. The first iteration followed spec section 93 and stopped at M0–M2. The user subsequently asked: **“you finish what you can and write a passover to an agent where they should continue and what's been completed.”** That instruction authorized continued offline implementation beyond the original first-build boundary. Do not reimpose the superseded M0–M2-only stop.

@@ -11,6 +11,8 @@ config_version=5
 [application]
 
 config/name="Passport Run"
+config/icon="res://assets/icon.svg"
+config/version="0.1.0"
 config/description="Remember the path. Travel the world."
 run/main_scene="res://scenes/game.tscn"
 config/quit_on_go_back=false

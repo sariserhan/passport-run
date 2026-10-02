@@ -16,6 +16,7 @@ var home_button: Button
 var challenge_input: TextEdit
 var pending_mode: String = ""
 var status: Label
+var safe_margin: MarginContainer
 
 func setup(saved_profile: PlayerProfile, hud_style: GameHUD) -> void:
 	profile = saved_profile
@@ -25,7 +26,8 @@ func setup(saved_profile: PlayerProfile, hud_style: GameHUD) -> void:
 	root.color = Color("153e57")
 	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(root)
-	var margins := MarginContainer.new()
+	safe_margin = MarginContainer.new()
+	var margins := safe_margin
 	margins.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	for edge in ["left", "right"]:
 		margins.add_theme_constant_override("margin_" + edge, 28)
@@ -39,13 +41,12 @@ func setup(saved_profile: PlayerProfile, hud_style: GameHUD) -> void:
 	content.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	content.add_theme_constant_override("separation", 14)
 	scroll.add_child(content)
-	root.resized.connect(func():
-		if OS.has_feature("mobile"):
-			var safe := DisplayServer.get_display_safe_area()
-			var factor: float = root.size.y / maxf(DisplayServer.screen_get_size().y, 1)
-			margins.add_theme_constant_override("margin_top", maxi(48, int(safe.position.y * factor) + 12))
-			margins.add_theme_constant_override("margin_bottom", maxi(38, int((DisplayServer.screen_get_size().y - safe.end.y) * factor) + 12))
-	)
+	root.resized.connect(update_safe_area)
+	update_safe_area()
+	update_safe_area.call_deferred()
+
+func update_safe_area() -> void:
+	SafeAreaMargins.apply(safe_margin, root.size, Vector4i(28, 48, 28, 38))
 
 func clear(title: String, subtitle: String) -> void:
 	root.show()

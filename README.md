@@ -53,12 +53,12 @@ The report covers the last 500 local events; it is not a population retention da
 The user confirmed access to a Mac and physical iPhone. On the Mac:
 
 1. Install Godot 4.5.2's matching export templates via **Editor → Manage Export Templates**.
-2. Add an **iOS** export preset. Set your Apple Team ID and a bundle identifier you control.
+2. Use the included **iPhone** export preset. Set your Apple Team ID and a bundle identifier you control.
 3. Export to an empty folder outside the source tree, using a filename such as `PassportRun` without spaces.
 4. Open the exported Xcode project, configure signing, choose the connected iPhone, and build/run.
 5. Check safe areas, one-handed taps, all difficulty previews, repeated retries/transitions, frame time, audio, and background/resume behavior.
 
-No signing credentials are committed. See the [official Godot iOS export instructions](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_ios.html). This Linux session has not built or tested a native iPhone app.
+No signing credentials are committed. See the [official Godot iOS export instructions](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_ios.html). The macOS continuation installed Godot and its iOS template and verified desktop tests. Native export still needs the Apple Team ID and bundle identifier; see [current iPhone validation status](docs/iphone-validation.md).
 
 ## Useful files
 
