@@ -1,6 +1,8 @@
 class_name PassportPage
 extends Control
 
+# Hold the drawn backdrop: GameCatalog's bounded cache may evict it before this frame renders.
+var drawn_backdrop: Texture2D
 var destination_id := "FR"
 var page_number := 1
 var profile: PlayerProfile
@@ -30,6 +32,7 @@ func _draw() -> void:
 		font_size -= 1
 	draw_string(font, Vector2(36, 91), name, HORIZONTAL_ALIGNMENT_LEFT, width, font_size, Color("233f50"))
 	var texture := GameCatalog.backdrop(destination_id)
+	drawn_backdrop = texture
 	var photo := Rect2(36, 108, width, 155)
 	draw_texture_rect_region(texture, photo, Rect2(0, texture.get_height() * 0.1, texture.get_width(), texture.get_width() * photo.size.y / photo.size.x))
 	draw_rect(photo, Color("b7a887"), false, 2)

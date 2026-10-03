@@ -1,5 +1,7 @@
 class_name TravelPhoto
 extends Control
+# Hold the drawn backdrop: GameCatalog's bounded cache may evict it before this frame renders.
+var drawn_backdrop: Texture2D
 var profile: PlayerProfile
 var destination_id := "FR"
 var caption := ""
@@ -23,6 +25,7 @@ func _draw() -> void:
  draw_rect(Rect2(Vector2.ZERO, size), border)
  var photo := Rect2(12, 50, size.x - 24, size.y - 150)
  var texture := GameCatalog.backdrop(destination_id)
+ drawn_backdrop = texture
  draw_texture_rect_region(texture, photo, Rect2(0, texture.get_height() * 0.06, texture.get_width(), texture.get_width() * photo.size.y / photo.size.x))
  var explorer := preload("res://assets/realistic/memory-explorer.png")
  var pose_index: int = {"wave": 0, "jump": 4, "cheer": 8}.get(pose, 0)

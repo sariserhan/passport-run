@@ -79,6 +79,24 @@ func check_globe_swipe() -> void:
 	expect(is_equal_approx(globe.longitude, 100.0 / maxf(100, globe.size.x) * 4), "One touch swipe rotates the globe once")
 	globe.queue_free()
 
+func check_backdrop_lifetime() -> void:
+	# The backdrop cache holds 8; a page drawing more destinations in one frame used to
+	# free an early card's texture before the frame rendered, leaving a white card.
+	GameCatalog.backdrop_cache.clear()
+	var box := VBoxContainer.new()
+	root.add_child(box)
+	box.size = Vector2(300, 400)
+	var ids := ["FR", "JP", "EG", "BR", "IT", "ES", "DE", "IN", "MX", "AU"]
+	for id in ids:
+		var art := TravelArtwork.new()
+		art.country_id = id
+		art.custom_minimum_size.y = 20
+		box.add_child(art)
+	var first: WeakRef = weakref(GameCatalog.backdrop(ids[0]))
+	await settle()
+	expect(first.get_ref() != null, "Drawn destination artwork stays loaded while its card is on screen")
+	box.queue_free()
+
 func run_tests() -> void:
 	var defaults := Vector4i(24, 24, 24, 26)
 	var insets := SafeAreaMargins.calculate(Vector2(390, 844), Vector2i(1170, 2532), Rect2i(0, 177, 1170, 2253), defaults)
@@ -95,6 +113,7 @@ func run_tests() -> void:
 	await settle()
 	expect(menu.safe_margin.get_theme_constant("margin_top") == 48, "Menu padding initialized without requiring a resize")
 	await check_touch_scroll(menu)
+	await check_backdrop_lifetime()
 	menu.root.hide()
 	await check_globe_swipe()
 	for viewport_size in [Vector2i(480, 900), Vector2i(390, 844), Vector2i(375, 667), Vector2i(320, 568)]:

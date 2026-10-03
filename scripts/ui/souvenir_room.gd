@@ -1,6 +1,8 @@
 class_name SouvenirRoom
 extends Control
 
+# Hold the drawn backdrop: GameCatalog's bounded cache may evict it before this frame renders.
+var drawn_backdrops: Array[Texture2D] = []
 signal souvenir_selected(id: String)
 var profile: PlayerProfile
 var card_origin := Vector2.ZERO
@@ -110,10 +112,12 @@ func _draw() -> void:
  for x in [size.x * 0.25, size.x * 0.75]:
   draw_circle(Vector2(x, 10), 38, Color(1, 0.86, 0.56, 0.12))
   draw_circle(Vector2(x, 7), 4, Color("ffdf8a"))
+ drawn_backdrops.clear()
  for index in postcards.size():
   var frame := Rect2(12 + index * (size.x - 24) / 3, 18, (size.x - 36) / 3, 70)
   draw_rect(frame.grow(3), Color("fff2d6"))
   var texture := GameCatalog.backdrop(postcards[index])
+  drawn_backdrops.append(texture)
   var crop := Vector2(texture.get_width(), texture.get_width() * frame.size.y / frame.size.x)
   draw_texture_rect_region(texture, frame, Rect2((Vector2(texture.get_size()) - crop) / 2, crop))
   draw_line(Vector2(frame.get_center().x, 6), Vector2(frame.get_center().x, 15), Color("b49155"), 2)

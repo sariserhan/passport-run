@@ -1,6 +1,8 @@
 class_name SouvenirCard
 extends Control
 
+# Hold the drawn backdrop: GameCatalog's bounded cache may evict it before this frame renders.
+var drawn_backdrop: Texture2D
 var destination_id := "FR"
 var compact := false
 var quantity := 1
@@ -39,6 +41,7 @@ func _draw() -> void:
  frame.set_corner_radius_all(12)
  draw_style_box(frame, Rect2(Vector2.ZERO, size))
  var texture := GameCatalog.backdrop(destination_id)
+ drawn_backdrop = texture
  var photo := Rect2(6, 6, size.x - 12, 60) if compact else Rect2(6, 6, 100, size.y - 12)
  var source_size := Vector2(texture.get_size())
  var crop := source_size

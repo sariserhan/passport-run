@@ -1,6 +1,8 @@
 class_name PassportStamp
 extends CanvasLayer
 
+# Hold the drawn backdrop: GameCatalog's bounded cache may evict it before this frame renders.
+var drawn_backdrop: Texture2D
 signal stamped
 signal finished
 var ink_color := Color("a24c40")
@@ -31,6 +33,7 @@ func draw_book() -> void:
 	var font := ThemeDB.fallback_font
 	book.draw_string(font, Vector2(20, 36), "MY PASSPORT", HORIZONTAL_ALIGNMENT_LEFT, -1, 18, GameHUD.INK)
 	var texture: Texture2D = GameCatalog.backdrop(country_id)
+	drawn_backdrop = texture
 	book.draw_texture_rect(texture, Rect2(20, 52, 132, 126), false)
 	book.draw_string(font, Vector2(20, 207), GameCatalog.country_name(country_id), HORIZONTAL_ALIGNMENT_LEFT, 135, 16, GameHUD.INK)
 	for index in 6:

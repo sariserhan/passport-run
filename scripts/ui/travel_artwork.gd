@@ -1,6 +1,8 @@
 class_name TravelArtwork
 extends Control
 
+# Hold the drawn backdrop: GameCatalog's bounded cache may evict it before this frame renders.
+var drawn_backdrop: Texture2D
 var country_id := "FR"
 var show_traveler := true
 var revealed := true
@@ -25,6 +27,7 @@ func _draw() -> void:
 		draw_set_transform(Vector2.ZERO)
 		return
 	var texture := GameCatalog.backdrop(country_id)
+	drawn_backdrop = texture
 	var width := float(texture.get_width())
 	# Crop the portrait scenery around its landmarks for wide travel cards.
 	draw_texture_rect_region(texture, Rect2(0, 0, 720, 360), Rect2((width - width / zoom) / 2, texture.get_height() * 0.10, width / zoom, width / zoom / 2))
