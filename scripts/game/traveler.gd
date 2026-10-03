@@ -1,6 +1,8 @@
 class_name Traveler
 extends Node3D
 
+static var pose_bounds: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://resources/jumping-explorer.json"))
+
 var kids := false
 var body: Node3D
 var contact_shadow: MeshInstance3D
@@ -38,11 +40,23 @@ func _ready() -> void:
 	portrait.hframes = 4
 	portrait.vframes = 4
 	portrait.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-	portrait.pixel_size = 2.8 / (portrait.texture.get_height() / 4.0)
-	portrait.position.y = 1.28
+	var idle: Array = pose_bounds["robot" if kids else "human"][0]
+	portrait.pixel_size = 2.65 / (idle[3] - idle[1] - 4)
+	portrait.region_enabled = true
+	portrait.frame_changed.connect(align_portrait)
+	align_portrait()
 	portrait.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	body.add_child(portrait)
 	if not kids: apply_customization()
+
+func align_portrait() -> void:
+	var bounds: Array = pose_bounds["robot" if kids else "human"][portrait.frame]
+	var origin := Vector2(bounds[0], bounds[1])
+	var extent := Vector2(bounds[2] - bounds[0], bounds[3] - bounds[1])
+	# Sprite3D divides region_rect by its frame grid. Offset that grid so the
+	# selected frame shows the entire measured pose, including hands and boots.
+	portrait.region_rect = Rect2(origin - Vector2(portrait.frame % 4, portrait.frame / 4) * extent, extent * 4)
+	portrait.position.y = (extent.y / 2 - 2) * portrait.pixel_size + 0.02
 
 func play_animation(next: String) -> void:
 	animation = next

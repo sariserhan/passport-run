@@ -1,5 +1,9 @@
 # Passport Run — agent handoff (2026-10-03)
 
+## Latest correction: jumping characters face forward
+
+The jumping/memory game uses front-facing human and Kids robot sheets. Balloon Arcade keeps its separate side-facing explorer. `Traveler.align_portrait()` uses measured full-pose bounds from `resources/jumping-explorer.json` to avoid clipping generated frames and align boots. Existing pose indices and jump/scoring rules remain. The bounds JSON is explicitly included in iPhone export. Built-in edit prompts are in `docs/jumping-character-prompts.json`; preview is `artifacts/realistic-memory-front-jump.png`. Headless/rendered animation checks passed 53 each, polish passed 208, and the new `/private/tmp/passport-front-facing.pck` passed 582 exported-artwork/startup checks. Previous native Xcode builds predate this correction.
+
 ## Current continuation: mastery and photorealistic graphics
 
 This section supersedes older illustrated-art descriptions below. The user approved all six proposed features plus a strong realistic graphics pass. `ArcadeProgress` defines three medal tiers, three UTC daily goals and the 22-entry mystery journal. `PlayerProfile` atomically saves validated medals per destination/difficulty/solo-co-op, bounded goal counts, revealed drop keys and touch preferences. Practice does not award any of these. Old checkpoints are compatible: missing country time is -1, so legacy destinations cannot retroactively earn Silver/Gold.

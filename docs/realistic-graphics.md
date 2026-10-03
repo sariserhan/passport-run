@@ -9,8 +9,8 @@ The user requested realistic graphics throughout the game. This pass replaces th
 | `assets/realistic/details/scenery-00.png` through `scenery-68.png` | 69 four-cell atlases: 276 distinct destination scenes, approximately 512×768 per scene |
 | `assets/realistic/backdrops/{FR,TR,US,JP,EG,AF}.png` | Six dedicated full-resolution portrait scenes |
 | `assets/realistic/explorer.png` | Adult arcade explorer, planted side-profile idle/walk/shoot/death poses |
-| `assets/realistic/memory-explorer.png` | Adult memory-game thinking, jump, celebration, passport and fall poses |
-| `assets/realistic/robot-explorer.png` | Kids explorer with physically textured metal, rubber, canvas and matching memory poses |
+| `assets/realistic/memory-explorer.png` | Front-facing adult memory-game thinking, jump, celebration, passport and fall poses |
+| `assets/realistic/robot-explorer.png` | Front-facing Kids explorer with physically textured metal, rubber, canvas and matching memory poses |
 | `assets/realistic/objects.png` | Three latex balloon colors, brass boss, anonymous sealed capsule and three weapon/projectile sprites |
 | `assets/realistic/materials.png` | Limestone, sandstone, frosted ice and oak surfaces |
 | `assets/realistic/medals.png` | Bronze, silver and gold compass medallions |
@@ -49,3 +49,13 @@ The selected source images remain lossless. Material mipmap generation follows [
 Latest local native project: `/private/tmp/passport-native-realistic/PassportRun.xcodeproj`. Current build is unsigned. The packaged game is `PassportRun.pck`; `tools/verify_exported_art.gd` verifies all 282 backdrops, the eight shared realistic assets, four textured 3D surfaces, alignment data and actual menu startup. It also checks that the superseded illustrated cover is absent. Physical-device acceptance remains pending.
 
 Selected previews: [arcade play](../artifacts/realistic-gameplay.png), [bounce boss](../artifacts/realistic-bounce-boss.png), [destination result](../artifacts/realistic-destination-results.png), [memory path](../artifacts/realistic-memory-france.png), [Kids explorer](../artifacts/realistic-kids-explorer.png), [landscape controls](../artifacts/realistic-large-landscape-controls.png).
+
+## Jumping-game facing correction
+
+The user requested the jumping-game character face forward rather than sideways. Both memory-game sheets now face the viewer throughout standing, jumping, landing, celebration, passport and falling poses. The balloon-game sheet remains side-facing. The built-in image generator edited the two PNGs in place; [the submitted prompts](jumping-character-prompts.json) record the original reference commit and edits.
+
+`resources/jumping-explorer.json` measures the 32 complete silhouettes. `Traveler.align_portrait()` selects each measured pose and places its boots at the local ground level, preserving the existing frame numbers and actual game jump motion. This prevents clipping and neighboring-frame fragments where the generated standing poses cross a nominal grid boundary. Alpha analysis wrote coordinate data without modifying any PNG pixels. The data is explicitly included in export.
+
+Current preview: [front-facing mid-jump](../artifacts/realistic-memory-front-jump.png). The previous Xcode app build predates this orientation correction.
+
+Facing-correction verification passed 53 animation/timer checks both headlessly and rendered, 208 polish checks, actual standing/mid-jump/Kids/Infinite captures, and 582 standalone checks of `/private/tmp/passport-front-facing.pck`. No balloon-game source or sprite was changed.

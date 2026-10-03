@@ -477,7 +477,7 @@
     "file": "assets/realistic/memory-explorer.png",
     "width": 1254,
     "height": 1254,
-    "sha256": "0e6dfa57a9abb98feddf2b0a57995f765d7b59a4a9c416c05254e6b5b5548f02"
+    "sha256": "053cfbb61eec13bd850c53aff4a1c2b6b1ade5aefedf3ba57b292ca24095c987"
   },
   {
     "file": "assets/realistic/menu.png",
@@ -495,6 +495,6 @@
     "file": "assets/realistic/robot-explorer.png",
     "width": 1254,
     "height": 1254,
-    "sha256": "27bc0ffb2e9b32d0322adb888817a2a077ba937f06467408f7e9edf5c288e1e3"
+    "sha256": "b86c2b3e448e909109ad46c09100cd5b4f69fe63d2d0414cc8daf396f60b5e96"
   }
 ]
