@@ -26,6 +26,8 @@ func _ready() -> void:
 	if not existing: write("unix_time,scene,fps,worst_frame_ms,static_mb,video_mb,objects,window")
 
 func _process(delta: float) -> void:
+	if delta > 0.05: # individual hitches; the 5 s averages hide them
+		write("%d,hitch@%.2fs,,%.1f,,,," % [Time.get_unix_time_from_system(), Time.get_ticks_msec() / 1000.0, delta * 1000.0])
 	frames += 1
 	worst = maxf(worst, delta)
 	elapsed += delta
