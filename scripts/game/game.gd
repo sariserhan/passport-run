@@ -927,7 +927,7 @@ func start_arcade(kind: String) -> void:
 
 func close_arcade() -> void:
 	if not is_instance_valid(arcade): return
-	profile.record("balloon", profile.difficulty, arcade.score)
+	profile.record("balloon-coop" if arcade.coop else "balloon", profile.difficulty, arcade.score)
 	var layer := arcade.get_parent()
 	arcade = null
 	layer.queue_free()

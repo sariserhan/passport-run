@@ -536,7 +536,7 @@ func show_room() -> void:
 	action("BACK", false, show_main)
 
 func show_arcade() -> void:
-	clear("Balloon Tour", "Move left and right. Shoot upward to split bouncing balloons. Clear three rounds per destination to stamp your passport.\nKeyboard: arrows or A/D + Space. Phone: hold the movement and FIRE buttons.")
+	clear("Balloon Tour", "Split balloons, survive destination challenges and defeat armored bosses to stamp your passport. Mystery drops upgrade and combine weapons—or curse you. Dodge them or turn collection off in Pause.\nSolo: arrows or A/D + Space. Local co-op: choose it before START; P2 uses J/L + K, or their own touch buttons. Stay near a fallen teammate for 2 seconds to revive.")
 	action("WORLD BALLOON TOUR · 250 DESTINATIONS", true, func(): arcade_requested.emit("world"))
 	action("SPECIAL BALLOON TOUR · EXPEDITIONS PACK", false, func(): arcade_requested.emit("special"))
 	action("CINEMA BALLOON TOUR · CINEMA PACK", false, func(): arcade_requested.emit("cinema"))

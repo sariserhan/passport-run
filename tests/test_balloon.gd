@@ -117,8 +117,9 @@ func run() -> void:
  await capture("play")
  for stage in 3:
   arcade.balls.clear()
+  if arcade.challenge in ["swarm", "no_fire"]: arcade.remaining = 0
   arcade.simulate(0.01)
-  expect(arcade.phase == BalloonArcade.Phase.CLEAR, "No balloons means a completed round")
+  expect(arcade.phase == BalloonArcade.Phase.CLEAR, "Clearing balloons or surviving the challenge completes its round")
   expect(("AF" in game.profile.discoveries) == (stage == 2), "Only all three rounds award a destination stamp")
   if stage < 2: arcade.next_round()
  await capture("stamped")

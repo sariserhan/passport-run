@@ -15,6 +15,7 @@ func capture(name: String) -> void:
  root.get_texture().get_image().save_png("res://artifacts/arcade-rich-" + name + ".png")
 func reset() -> void:
  arcade.begin_round()
+ arcade.mechanic = "stone"
  arcade.set_physics_process(false)
  arcade.freeze = 30
  arcade.invincible = 30
