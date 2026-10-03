@@ -8,6 +8,7 @@ signal home_country_selected(id: String)
 signal difficulty_selected(key: String)
 signal trip_requested(id: String)
 signal adventure_requested(id: String)
+signal arcade_requested(kind: String)
 signal cinema_requested(id: String)
 signal special_requested(id: String)
 signal online_records_requested
@@ -134,6 +135,7 @@ func show_main() -> void:
 		action("LEARN THE PATH", true, func(): start_requested.emit("tutorial", "easy"))
 	action("SHORT ADVENTURES · 3 COUNTRIES", true, show_trips)
 	action("ADVENTURE PLAY · SPECIAL MECHANICS", false, show_adventures)
+	action("BALLOON TOUR · ARCADE", true, show_arcade)
 	for item in [["world", "WORLD TOUR"], ["infinite", "INFINITE MEMORY"], ["daily", "DAILY WORLD TOUR"], ["kids", "KIDS ADVENTURE"]]:
 		var mode: String = item[0]
 		mode_buttons[mode] = action(item[1], mode == "world", func(): request_mode(mode))
@@ -250,9 +252,10 @@ func show_passport() -> void:
 	action("BACK", true, show_main)
 
 func show_world_map() -> void:
-	clear("My world map", "Gold pins mark countries and territories you have completed.")
+	clear("My world map", "Gold pins mark completed destinations. Lines follow your recent travel history.")
 	var map := PassportWorldMap.new()
 	map.discoveries = profile.discoveries.duplicate()
+	map.route = profile.history.duplicate()
 	content.add_child(map)
 	var cleared: Array = profile.discoveries.filter(func(id: String): return id in GameCatalog.FREE_DESTINATIONS)
 	copy("%d / %d countries and territories stamped" % [cleared.size(), GameCatalog.FREE_DESTINATIONS.size()], 20)
@@ -530,4 +533,12 @@ func show_room() -> void:
 			show_room()
 		)
 	action("MY SOUVENIRS", false, show_souvenirs)
+	action("BACK", false, show_main)
+
+func show_arcade() -> void:
+	clear("Balloon Tour", "Move left and right. Shoot upward to split bouncing balloons. Clear three rounds per destination to stamp your passport.\nKeyboard: arrows or A/D + Space. Phone: hold the movement and FIRE buttons.")
+	action("WORLD BALLOON TOUR · 250 DESTINATIONS", true, func(): arcade_requested.emit("world"))
+	action("SPECIAL BALLOON TOUR · EXPEDITIONS PACK", false, func(): arcade_requested.emit("special"))
+	action("CINEMA BALLOON TOUR · CINEMA PACK", false, func(): arcade_requested.emit("cinema"))
+	action("CHOOSE STARTING COUNTRY", false, show_countries)
 	action("BACK", false, show_main)

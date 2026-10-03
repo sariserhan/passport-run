@@ -92,3 +92,17 @@ The user requires a unique image for every destination. Afghanistan had incorrec
 Unique-art validation: all 282 destination images are distinct in both desktop and exported native-pack checks. Eight country/polar scenes and passport rendered successfully. Updated development-signed generic-iPhone build passed at `/private/tmp/passport-native-travel-expansion`; no physical-device installation or performance acceptance is claimed.
 
 Destination progression regression passed: 5,676 checks, zero failures.
+
+## Balloon Tour arcade and connected map — 2026-10-03
+
+Added **BALLOON TOUR · ARCADE** to the main menu, inspired by [Pang's balloon-splitting world tour and connected map](https://gamingpicks.wordpress.com/2014/05/31/classic-games-pang-arcade-1989/). The reference article, gameplay image and `pana_map.png` were inspected. No reference screenshots, music or original sprites were copied into the game.
+
+This separate single-player mode uses left/right movement and upward harpoons. Large balloons split into two medium ones; medium into two small ones; small balloons pop. Three rounds per destination introduce additional balloons and a blocking platform. Lives, hit grace, a 90-second round timer, shield/freeze/double-wire pickups, pause, retry and local scores are implemented. Retry rolls back failed-round points. Keyboard arrows/A/D and Space work; independent touch indices support holding movement and FIRE together. Responsive geometry keeps balloons circular in portrait and landscape.
+
+World route uses the existing border/flight planner and includes all 250 free countries/territories, beginning at the chosen home. Special (24) and Cinema (8) routes keep their independent verified-entitlement gates, including ownership revocation during arcade play. Every round uses `GameCatalog.backdrop` and existing destination music. Three successful rounds earn the shared passport stamp, souvenir/cosmetic progress and daily destination mission; a damaged/timed-out country cannot receive the flawless mission. Arcade records use `balloon:<difficulty>` and are local, separate from verified memory scores. Active arcade runs do not resume after app termination.
+
+The passport map connects recent saved completion history. Arcade arrival/results show a connected upcoming itinerary with the current destination highlighted. Routes wrap at the date line instead of drawing across the map. Fantasy/paid locations without geographic pins remain in the passport rather than receiving invented map coordinates. Other gameplay retains its memory rules.
+
+This is a playable original adaptation with three pickup types, not a complete reproduction of Pang's weapons, animals or two-player mode. Those extra mechanics and multiplayer are outside this first arcade implementation. User physical-device testing remains pending.
+
+Balloon Tour validation: all 14 Godot regression suites and four Python checks passed. The arcade/route-map suite passed 46 checks headlessly, rendered at 390×844 and against the exported native pack. Existing real local Godot/backend integration passed 19 checks. Updated development-signed generic-iPhone build passed at `/private/tmp/passport-native-travel-expansion`; no device installation performed. Screenshots: `artifacts/balloon-*.png`.

@@ -81,3 +81,5 @@ Adventure and paid destinations have skippable, pauseable cinematic artwork arri
 Rendered feature checks passed (37); screenshots are `artifacts/expansion-*.png`. Signed generic-iPhone build passed. All 12 Godot regression suites and four Python checks passed; the real local Godot/backend integration passed 19 checks. Exported native resource-pack loading passed.
 
 Unique-art validation: all 282 destination images are distinct in both desktop and exported native-pack checks. Eight country/polar scenes and passport rendered successfully. Updated development-signed generic-iPhone build passed at `/private/tmp/passport-native-travel-expansion`; no physical-device installation or performance acceptance is claimed.
+
+Balloon Tour validation: all 14 Godot regression suites and four Python checks passed. The arcade/route-map suite passed 46 checks headlessly, rendered at 390×844 and against the exported native pack. Existing real local Godot/backend integration passed 19 checks. Updated development-signed generic-iPhone build passed at `/private/tmp/passport-native-travel-expansion`; no device installation performed. Screenshots: `artifacts/balloon-*.png`.

@@ -45,6 +45,7 @@ var friend_steps: Array[int] = []
 var selected_decision_ms := 0
 var ghost: FriendGhost
 var link_poll := 0.0
+var arcade: BalloonArcade
 
 func _ready() -> void:
 	config = GameCatalog.difficulty("easy")
@@ -110,6 +111,7 @@ func _ready() -> void:
 	menu.trip_requested.connect(func(id: String): trip_id = id; start_game("trip", profile.difficulty))
 	menu.cinema_requested.connect(func(id: String): cinema_start = id; start_game("cinema", profile.difficulty))
 	menu.special_requested.connect(func(id: String): special_start = id; start_game("special", profile.difficulty))
+	menu.arcade_requested.connect(start_arcade)
 	menu.start_requested.connect(start_game)
 	menu.challenge_requested.connect(func(data: Dictionary): imported_challenge = data; start_game("challenge", data.difficulty))
 	menu.settings_changed.connect(func(): audio.apply_settings(profile.settings))
@@ -403,6 +405,7 @@ func update_play_hud() -> void:
 		hud.phase_title.text = GameCatalog.country_name(session.current_country())
 
 func _unhandled_input(event: InputEvent) -> void:
+	if is_instance_valid(arcade): return
 	if menu.root.visible:
 		return
 	if event.is_action_pressed("ui_cancel"):
@@ -741,6 +744,8 @@ func share_challenge() -> void:
 	sharing = false
 
 func has_paid_access() -> bool:
+	if is_instance_valid(arcade):
+		return (arcade.route_kind != "special" or purchase.unlocked) and (arcade.route_kind != "cinema" or cinema_purchase.unlocked)
 	if session.mode == "adventure":
 		var id := session.current_country()
 		if id in GameCatalog.PREMIUM_DESTINATIONS and not purchase.unlocked: return false
@@ -760,6 +765,7 @@ func vibrate(milliseconds: int) -> void:
 		Input.vibrate_handheld(milliseconds)
 
 func return_to_menu() -> void:
+	close_arcade()
 	if celebrating:
 		finish_celebration()
 	network_busy = false
@@ -773,6 +779,9 @@ func return_to_menu() -> void:
 	menu.show_main()
 
 func pause_game() -> void:
+	if is_instance_valid(arcade):
+		arcade.set_paused(true)
+		return
 	if paused or menu.root.visible or (run.phase in [RunState.Phase.FAILED, RunState.Phase.COMPLETE] and not travel.active and not celebrating):
 		return
 	paused = true
@@ -786,6 +795,9 @@ func pause_game() -> void:
 	hud.show_pause()
 
 func resume_game() -> void:
+	if is_instance_valid(arcade):
+		arcade.set_paused(false)
+		return
 	if not paused:
 		return
 	paused = false
@@ -874,3 +886,49 @@ func open_challenge_link(link: String) -> bool:
 	menu.show_challenge()
 	menu.challenge_input.text = link
 	return true
+
+func start_arcade(kind: String) -> void:
+	if kind not in ["world", "special", "cinema"]: return
+	if kind == "special" and not purchase.unlocked:
+		menu.show_special_route()
+		return
+	if kind == "cinema" and not cinema_purchase.unlocked:
+		menu.show_cinema_route()
+		return
+	return_to_menu()
+	paused = true
+	menu.root.hide()
+	hud.hide()
+	audio.set_paused(false)
+	var layer := CanvasLayer.new()
+	layer.layer = 6
+	add_child(layer)
+	arcade = BalloonArcade.new()
+	arcade.profile = profile
+	arcade.audio = audio
+	arcade.style = hud
+	arcade.route_kind = kind
+	if kind == "world":
+		var planner := RoutePlanner.new()
+		planner.include_territories = true
+		planner.start(profile.home_country if profile.home_country in GameCatalog.FREE_DESTINATIONS else "FR", GameCatalog.daily_seed("balloon", profile.difficulty))
+		while planner.route.size() < planner.catalog().size():
+			planner.complete_current()
+			var options := planner.choices()
+			if options.is_empty(): break
+			planner.travel_to(options[0])
+		arcade.route = planner.route.duplicate()
+	else:
+		arcade.route.assign(GameCatalog.PREMIUM_DESTINATIONS.keys() if kind == "special" else GameCatalog.CINEMA_DESTINATIONS.keys())
+	arcade.exited.connect(return_to_menu)
+	layer.add_child(arcade)
+
+func close_arcade() -> void:
+	if not is_instance_valid(arcade): return
+	profile.record("balloon", profile.difficulty, arcade.score)
+	var layer := arcade.get_parent()
+	arcade = null
+	layer.queue_free()
+	paused = false
+	hud.show()
+	audio.set_paused(false)

@@ -7,3 +7,7 @@ The map uses an equirectangular projection and simplified [Natural Earth 1:110m 
 All 250 destination pin coordinates come from the existing mledoze/countries snapshot, under the bundled ODbL license. The adapted geometry/coordinate asset is `resources/geography/world-map.json`, exported with the game. Geography license and source attribution remain bundled.
 
 **MY PASSPORT** displays a bound paper page with the completed destination's name, scenery image, visa page number and rotated completion stamp. Previous/Next turn pages; search filters earned pages. Empty or unmatched collections never show a completed stamp. Pages are derived from durable discoveries, so ordinary profile reload preserves them. Existing travel stickers and history remain accessible.
+
+## Connected travel routes
+
+The map draws connections in saved completion-history order, behind earned pins. Balloon Tour also provides a short upcoming itinerary and green current-location marker. Lines split across the date line; repeated or invalid destinations add no zero-length/bogus connections. History remains bounded to the existing last 200 completions. This records actual completion order rather than inferring a route from country proximity.

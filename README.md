@@ -84,3 +84,7 @@ Your standing stone progressively cracks during the ten-second decision window. 
 Adventure Play adds ice, moving bridges and low-gravity/buoyant jumps. MY TRAVEL ROOM and WARDROBE save earned decorations and cosmetics. Friend challenge links include a local ghost replay; cinematic arrivals introduce adventure and paid destinations. See [handoff](HANDOFF.md) for verification and limits.
 
 For the iPhone project with challenge-link support, run `python3 tools/export_iphone.py /private/tmp/passport-native-travel-expansion`. Device testing is deferred to you.
+
+## Balloon Tour
+
+Choose **BALLOON TOUR · ARCADE** from the main menu. Move with arrows or A/D and fire with Space; on phone, hold ◀/▶ and FIRE together. Split and clear every balloon in three rounds to stamp a destination. World, Special and Cinema tours reuse each destination's unique background and music; paid routes retain their pack gates. **WORLD MAP** now links pins in recent travel order. Arcade scores are local and separate from memory-game rankings.
