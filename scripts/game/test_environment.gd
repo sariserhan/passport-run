@@ -8,7 +8,7 @@ var reduced_motion := false
 var atmosphere: WorldAtmosphere
 var finish_position := Vector3.ZERO
 var starting_tile: PathTile
-const INFINITE_BACKDROP := preload("res://assets/infinite-backdrop.png")
+const INFINITE_BACKDROP := preload("res://assets/realistic/infinite.png")
 
 # Lighting and physical platforms over an illustrated destination matte.
 func _ready() -> void:

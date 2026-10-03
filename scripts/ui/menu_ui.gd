@@ -43,7 +43,7 @@ func setup(saved_profile: PlayerProfile, hud_style: GameHUD) -> void:
 	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(root)
 	var artwork := TextureRect.new()
-	artwork.texture = preload("res://assets/menu-key-art.png")
+	artwork.texture = preload("res://assets/realistic/menu.png")
 	artwork.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	artwork.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 	artwork.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -113,7 +113,7 @@ func show_main() -> void:
 	title.add_theme_font_size_override("font_size", 48)
 	title.add_theme_color_override("font_color", Color("ffda65"))
 	var hero := TextureRect.new()
-	hero.texture = preload("res://assets/menu-key-art.png")
+	hero.texture = preload("res://assets/realistic/menu.png")
 	hero.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	hero.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 	hero.custom_minimum_size.y = 210
@@ -333,7 +333,7 @@ func show_settings() -> void:
 		var setting: String = key
 		slider.value_changed.connect(func(value: float): profile.settings[setting] = value; profile.save(); settings_changed.emit())
 		content.add_child(slider)
-	for item in [["reduced_motion", "Reduced motion"], ["high_contrast", "High-contrast path preview"], ["haptics", "Vibration on supported devices"]]:
+	for item in [["reduced_motion", "Reduced motion"], ["high_contrast", "High-contrast path preview"], ["haptics", "Vibration on supported devices"], ["arcade_swap", "Balloon fire button on the left"], ["arcade_large", "Larger balloon touch controls"]]:
 		var setting: String = item[0]
 		var toggle := CheckButton.new()
 		toggle.text = item[1]
@@ -577,6 +577,9 @@ func show_arcade() -> void:
 	action("CINEMA BALLOON TOUR · CINEMA PACK", false, func(): arcade_requested.emit("cinema"))
 	action("PRACTICE VISITED DESTINATIONS", false, show_arcade_practice)
 	action("BALLOON ACHIEVEMENTS", false, show_arcade_achievements)
+	action("BALLOON DAILY GOALS", false, show_arcade_daily_goals)
+	action("MYSTERY-DROP JOURNAL", false, show_arcade_drop_journal)
+	action("DESTINATION MASTERY", false, show_arcade_mastery)
 	if profile.home_country not in GameCatalog.FREE_DESTINATIONS:
 		action("CHOOSE STARTING COUNTRY · ONE TIME", false, show_countries)
 	action("BACK", false, show_main)
@@ -606,6 +609,50 @@ func show_arcade_achievements() -> void:
 		copy(badge.description, 17)
 		copy("Reward: " + CharacterStyle.OUTFITS[badge.outfit].name, 16)
 	action("EXPLORER WARDROBE", true, show_wardrobe)
+	action("BACK", false, show_arcade)
+
+func show_arcade_daily_goals() -> void:
+	var progress := profile.arcade_daily_progress()
+	clear("Balloon daily goals", "Three goals for " + progress.date + " UTC. Tour attempts count; practice does not. New goals reset at midnight UTC.")
+	var complete := 0
+	for key in ArcadeProgress.DAILY:
+		var goal: Array = ArcadeProgress.DAILY[key]
+		var done: bool = progress[key] >= goal[1]
+		complete += int(done)
+		copy(("★ " if done else "○ ") + goal[0], 22)
+		copy("%d / %d" % [progress[key], goal[1]], 18)
+	copy("DAILY EXPLORER · All three complete" if complete == 3 else "%d of 3 completed" % complete, 21)
+	action("BACK", false, show_arcade)
+
+func show_arcade_drop_journal() -> void:
+	clear("Mystery-drop journal", "%d / %d discovered. Collect a mystery drop during your tour to reveal its effects here. Every falling drop keeps the same sealed appearance." % [profile.arcade_drop_journal.size(), ArcadeProgress.DROPS.size()])
+	for kind in ArcadeProgress.DROPS:
+		if kind in profile.arcade_drop_journal:
+			copy(ArcadeProgress.DROPS[kind][0], 22)
+			copy(ArcadeProgress.DROPS[kind][1], 17)
+		else:
+			copy("? · Undiscovered drop", 20)
+	action("BACK", false, show_arcade)
+
+func show_arcade_mastery() -> void:
+	clear("Destination mastery", "Medals are saved separately for each difficulty and solo/co-op. Bronze: clear three rounds. Silver: at most 2 retries, 3:30 total play time and a ×3 combo. Gold: zero retries, 2:30 total play time and a ×5 combo. Failed-attempt time counts. Practice gives feedback without awarding medals.")
+	if profile.discoveries.is_empty(): copy("Your first destination medal awaits.")
+	for id in profile.discoveries:
+		copy(GameCatalog.country_name(id), 23)
+		var highest := 0
+		for key in profile.arcade_mastery:
+			if key.begins_with(id + ":"): highest = maxi(highest, profile.arcade_mastery[key])
+		if highest > 0:
+			var medal_image := TextureRect.new()
+			medal_image.texture = RealisticArt.medal(highest)
+			medal_image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			medal_image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+			medal_image.custom_minimum_size.y = 100
+			content.add_child(medal_image)
+		for difficulty in GameCatalog.DIFFICULTIES:
+			var solo: int = profile.arcade_mastery.get(ArcadeProgress.mastery_key(id, difficulty, false), 0)
+			var team: int = profile.arcade_mastery.get(ArcadeProgress.mastery_key(id, difficulty, true), 0)
+			copy("%s · Solo: %s · Co-op: %s" % [difficulty.capitalize(), ArcadeProgress.MEDALS[solo], ArcadeProgress.MEDALS[team]], 16)
 	action("BACK", false, show_arcade)
 
 func show_locked_destination() -> void:

@@ -1,4 +1,12 @@
-# iPhone validation — 2026-10-02
+# iPhone validation — 2026-10-03
+
+## Current graphics build
+
+The photorealistic/mastery continuation exported successfully to `/private/tmp/passport-native-realistic/PassportRun.xcodeproj`. Xcode compilation passed with `CODE_SIGNING_ALLOWED=NO`; this latest app is unsigned. Earlier signed builds below predate these graphics. The actual iPhone resource pack passed 581 standalone checks from outside the source tree: all 282 unique high-detail scenes, eight shared realistic assets, four 3D materials with mipmaps, the required sprite-alignment JSON, absence of the superseded illustrated cover and game-menu startup. All 25 Godot suites plus four Python tests passed; rendered mastery/graphics and turn checks passed 99/110 checks. See [current assets and exact prompts](realistic-graphics.md).
+
+No physical-phone installation, launch, frame-rate, heat or battery acceptance was performed in this continuation. Build and pack checks do not establish those results.
+
+## Earlier signed build history
 
 Latest native project: `/private/tmp/passport-native-enrichment/PassportRun.xcodeproj`. Export and development-signed build succeeded for destination themes, souvenirs, daily missions, fuller music/crossfades and character personality. Desktop rendered checks cover Hard themed paths/touch targets and collection screens at 390×844/320×568. Installation was attempted with `devicectl`; CoreDevice error 10003 reports that the paired device is locked, so the developer disk image could not mount (12040). No physical install/launch/performance PASS is claimed.
 

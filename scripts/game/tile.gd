@@ -54,6 +54,7 @@ func add_fissure(from: Vector3, to: Vector3, material: Material) -> void:
 
 func apply_destination(id: String) -> void:
 	theme = DestinationTheme.style(id)
+	for surface in [neutral, green, landed, broken]: surface.albedo_texture = RealisticArt.surface_3d(theme)
 	neutral.albedo_color = DestinationTheme.color(id)
 	neutral.roughness = 0.25 if theme in ["ice", "ocean"] else 0.85
 	if theme in ["space", "magic", "lava"]:

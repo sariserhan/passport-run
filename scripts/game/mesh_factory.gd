@@ -5,20 +5,21 @@ static var stone_texture: NoiseTexture2D
 static var beveled_meshes: Dictionary = {}
 
 static func stone_material(color: Color) -> StandardMaterial3D:
+	var mat := material(color)
+	mat.albedo_texture = RealisticArt.surface_3d("stone")
 	if not stone_texture:
 		var noise := FastNoiseLite.new()
 		noise.seed = 742
-		noise.frequency = 0.12
-		var tones := Gradient.new()
-		tones.set_color(0, Color("a6a6a6"))
-		tones.set_color(1, Color("f2f2f2"))
+		noise.frequency = 0.09
 		stone_texture = NoiseTexture2D.new()
 		stone_texture.width = 128
 		stone_texture.height = 128
 		stone_texture.noise = noise
-		stone_texture.color_ramp = tones
-	var mat := material(color)
-	mat.albedo_texture = stone_texture
+		stone_texture.as_normal_map = true
+		stone_texture.bump_strength = 2.0
+	mat.normal_enabled = true
+	mat.normal_texture = stone_texture
+	mat.normal_scale = 0.35
 	return mat
 
 static func material(color: Color, roughness: float = 0.85) -> StandardMaterial3D:

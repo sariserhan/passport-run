@@ -4,8 +4,8 @@ extends RefCounted
 const VERSION := 1
 const MAX_BYTES := 131072
 const MAX_ENCODED := 32768
-const NEW_FIELDS := ["country_drops", "best_before", "best_initialized", "best_beaten"]
-const FIELDS := ["country_index", "round_index", "score", "round_score", "coins", "round_coins", "remaining", "player_x", "partner_x", "coop", "country_failed", "cooldown", "partner_cooldown", "freeze", "double_wire", "weapon", "weapon_time", "weapon_level", "weapon_trait", "starting_weapon", "starting_freeze", "starting_time", "accept_drops", "travel_choice", "pops", "mystery_chain", "clock", "round_elapsed", "wave_clock", "mechanic", "challenge", "slide_speed", "partner_slide", "facing", "visual_facing", "partner_facing", "partner_visual_facing", "walk_clock", "partner_walk", "combo", "combo_time", "team_charge", "last_shooter", "last_shot_at", "country_drops", "best_before", "best_initialized", "best_beaten"]
+const NEW_FIELDS := ["country_drops", "best_before", "best_initialized", "best_beaten", "country_time", "country_retries", "country_combo", "country_pops", "country_start_score"]
+const FIELDS := ["country_index", "round_index", "score", "round_score", "coins", "round_coins", "remaining", "player_x", "partner_x", "coop", "country_failed", "cooldown", "partner_cooldown", "freeze", "double_wire", "weapon", "weapon_time", "weapon_level", "weapon_trait", "starting_weapon", "starting_freeze", "starting_time", "accept_drops", "travel_choice", "pops", "mystery_chain", "clock", "round_elapsed", "wave_clock", "mechanic", "challenge", "slide_speed", "partner_slide", "facing", "visual_facing", "partner_facing", "partner_visual_facing", "walk_clock", "partner_walk", "combo", "combo_time", "team_charge", "last_shooter", "last_shot_at", "country_drops", "best_before", "best_initialized", "best_beaten", "country_time", "country_retries", "country_combo", "country_pops", "country_start_score"]
 
 static func capture(game: Node) -> String:
 	var state := {"version": VERSION, "home": game.profile.home_country, "kind": game.route_kind, "day": game.daily_day, "country": game.route[game.country_index], "difficulty": game.profile.difficulty, "floor": game.floor_y, "phase": game.pause_from if game.phase == game.Phase.PAUSED else game.phase, "rng": game.rng.state, "supplies": game.panel.has_meta("travel"), "effects": game.effects.duplicate(), "balls": game.balls.duplicate(true), "wires": game.wires.duplicate(true), "pickups": game.pickups.duplicate(true), "platforms": game.platforms.duplicate()}
@@ -36,12 +36,13 @@ static func decode(encoded: String, game: Node) -> Dictionary:
 	if not state.get("floor") is float or state.floor <= 0 or not is_finite(state.floor): return {}
 	# Saves made before achievements cannot prove that no drops were collected.
 	for field in NEW_FIELDS:
-		if not state.has(field): state[field] = -1 if field == "country_drops" else game.get(field)
+		if not state.has(field): state[field] = -1 if field == "country_drops" else -1.0 if field == "country_time" else game.get(field)
 	for field in FIELDS:
 		if not state.has(field) or typeof(state[field]) != typeof(game.get(field)): return {}
 		if state[field] is float and (not is_finite(state[field]) or absf(state[field]) > 10000000): return {}
 	if state.score < 0 or state.score > 10000000 or state.coins < 0 or state.coins > 10000000 or state.round_score < 0 or state.round_score > state.score or state.round_coins < 0 or state.round_coins > 10000000 or state.remaining < 0 or state.remaining > 110: return {}
 	if game.route_kind == "daily" and state.coop: return {}
+	if state.country_time < -1 or state.country_retries < 0 or state.country_retries > 10000000 or state.country_combo < 0 or state.country_combo > 10000000 or state.country_pops < 0 or state.country_pops > 10000000 or state.country_start_score < 0 or state.country_start_score > 10000000: return {}
 	if state.country_drops < -1 or state.country_drops > 10000000 or state.best_before < 0 or state.best_before > 10000000: return {}
 	if state.weapon not in ["wire"] + game.WEAPONS or state.starting_weapon not in ["wire"] + game.WEAPONS or state.weapon_level not in [1, 2, 3] or state.travel_choice not in ["safe", "detour"]: return {}
 	if not state.get("rng") is int or not state.get("supplies") is bool or not state.get("effects") is Dictionary: return {}
@@ -57,6 +58,9 @@ static func decode(encoded: String, game: Node) -> Dictionary:
 		if ball.get("boss", false):
 			if not ball.get("warning", 0.0) is float or not is_finite(ball.get("warning", 0.0)) or ball.get("warning", 0.0) < 0 or ball.get("warning", 0.0) > 0.85: return {}
 			if not ball.get("charge_pending", false) is bool or not ball.get("minions_pending", 0) is int or ball.get("minions_pending", 0) not in [0, 1, 2, 3, 4]: return {}
+			if ball.get("pattern", "charge") not in ["charge", "bounce", "summoner"] or not ball.get("bounce_pending", false) is bool: return {}
+			for key in ["base_speed", "dash_time"]:
+				if not ball.get(key, 0.0) is float or not is_finite(ball.get(key, 0.0)) or ball.get(key, 0.0) < 0 or ball.get(key, 0.0) > (520.0 if key == "base_speed" else 0.65): return {}
 	for wire in state.wires:
 		if not wire is Dictionary or wire.get("kind") not in ["wire"] + game.WEAPONS: return {}
 		for key in ["x", "top", "bottom", "age", "vx", "hold"]:

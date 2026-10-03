@@ -27,6 +27,7 @@ func run() -> void:
  for suffix in ["", ".bak", ".tmp"]: DirAccess.remove_absolute(game.save_path + suffix)
  root.add_child(game)
  await process_frame
+ if DisplayServer.get_name() != "headless": await create_timer(1.0).timeout
  game.profile.choose_start_country("FR")
  game.start_arcade("world")
  var arcade: BalloonArcade = game.arcade
@@ -38,19 +39,16 @@ func run() -> void:
  expect(is_equal_approx(arcade.side_scale(1), 1) and is_equal_approx(arcade.side_scale(-1), -1), "Side profile is mirrored at completed turns")
  expect(is_equal_approx(arcade.side_scale(0), 1), "Direction changes never squash the character")
  expect(arcade.side_scale(0.25) > 0 and arcade.side_scale(-0.25) < 0, "Turn mirrors the side profile without changing its pose")
- var walk_cell := Vector2(arcade.WALK.get_size()) / Vector2(4, 2)
- for step in 8:
+ for step in range(0, 9):
   for direction in [-1.0, 1.0]:
-   var anchor: Vector2 = arcade.WALK_ANCHORS[step]
-   var target := arcade.side_target(360, direction, walk_cell, anchor, arcade.WALK_SOLES[step], 116.0 / 140.0)
-   expect(is_equal_approx(target.position.x + (walk_cell.x - anchor.x if direction < 0 else anchor.x) / walk_cell.x * absf(target.size.x), 360), "Every walking frame keeps its body at the player position")
-   expect(is_equal_approx(target.position.y + arcade.WALK_SOLES[step] / walk_cell.y * target.size.y, arcade.floor_y), "Every walking frame stays on the floor")
-   expect(is_equal_approx(target.position.y + anchor.y / walk_cell.y * target.size.y, arcade.floor_y - 132), "Walking frames have no vertical bob")
- var idle_cell := Vector2(arcade.TURN.get_size()) / Vector2(5, 1)
- for direction in [-1.0, 1.0]:
-  var target := arcade.side_target(360, direction, idle_cell, arcade.IDLE_ANCHOR, arcade.IDLE_SOLE)
-  expect(is_equal_approx(target.position.x + (idle_cell.x - arcade.IDLE_ANCHOR.x if direction < 0 else arcade.IDLE_ANCHOR.x) / idle_cell.x * absf(target.size.x), 360), "Idle and walking share the same body anchor")
-  expect(is_equal_approx(target.position.y + arcade.IDLE_ANCHOR.y / idle_cell.y * target.size.y, arcade.floor_y - 132), "Stopping does not move the character vertically")
+   var data := RealisticArt.explorer_frame(step)
+   var source := arcade.realistic_source(step)
+   var target := arcade.realistic_target(step, 360, direction)
+   var anchor := Vector2(data.anchor_x - data.bounds[0], data.head_top - data.bounds[1])
+   var sole: float = data.sole - data.bounds[1]
+   expect(is_equal_approx(target.position.x + (source.size.x - anchor.x if direction < 0 else anchor.x) / source.size.x * absf(target.size.x), 360), "Every realistic frame keeps its body at the player position")
+   expect(is_equal_approx(target.position.y + sole / source.size.y * target.size.y, arcade.floor_y), "Every realistic walking frame stays on the floor")
+   expect(is_equal_approx(target.position.y + anchor.y / source.size.y * target.size.y, arcade.floor_y - 132), "Realistic walking and idle frames have no vertical bob")
  arcade.set_control("▶",true)
  arcade.simulate(0.1)
  arcade.set_control("▶",false)
@@ -105,7 +103,11 @@ func run() -> void:
   for index in 72:
    if index == 24: arcade.set_control("▶",false); arcade.set_control("◀",true)
    if index == 48: arcade.set_control("◀",false); arcade.set_control("▶",true)
+   if arcade.phase == BalloonArcade.Phase.PAUSED:
+    arcade.set_paused(false)
+    arcade.simulate(3.0)
    arcade.simulate(1.0/60)
+   arcade.queue_redraw()
    await process_frame
    await RenderingServer.frame_post_draw
    var capture := root.get_texture().get_image()
@@ -121,7 +123,7 @@ func run() -> void:
   var play := arcade.arena()
   var world_scale := play.size / Vector2(arcade.WORLD.x, arcade.world_height)
   var expected_x := play.position.x + 360 * world_scale.x
-  var head_region := Rect2i(Vector2i(play.position + Vector2(280, arcade.floor_y - 132) * world_scale), Vector2i(Vector2(160, 60) * world_scale))
+  var head_region := Rect2i(Vector2i(play.position + Vector2(280, arcade.floor_y - 132) * world_scale), Vector2i(Vector2(160, 22) * world_scale))
   arcade.player_x = 360
   for direction in [-1.0, -0.5, 0.0, 0.5, 1.0]:
    arcade.visual_facing = direction

@@ -1,0 +1,1400 @@
+{
+  "TH": {
+    "atlas": 0,
+    "cell": 0,
+    "columns": 2
+  },
+  "IN": {
+    "atlas": 0,
+    "cell": 1,
+    "columns": 2
+  },
+  "GB": {
+    "atlas": 0,
+    "cell": 2,
+    "columns": 2
+  },
+  "IT": {
+    "atlas": 0,
+    "cell": 3,
+    "columns": 2
+  },
+  "BR": {
+    "atlas": 1,
+    "cell": 0,
+    "columns": 2
+  },
+  "CA": {
+    "atlas": 1,
+    "cell": 1,
+    "columns": 2
+  },
+  "AU": {
+    "atlas": 1,
+    "cell": 2,
+    "columns": 2
+  },
+  "CH": {
+    "atlas": 1,
+    "cell": 3,
+    "columns": 2
+  },
+  "IS": {
+    "atlas": 2,
+    "cell": 0,
+    "columns": 2
+  },
+  "NZ": {
+    "atlas": 2,
+    "cell": 1,
+    "columns": 2
+  },
+  "AL": {
+    "atlas": 2,
+    "cell": 2,
+    "columns": 2
+  },
+  "DZ": {
+    "atlas": 2,
+    "cell": 3,
+    "columns": 2
+  },
+  "AD": {
+    "atlas": 3,
+    "cell": 0,
+    "columns": 2
+  },
+  "AO": {
+    "atlas": 3,
+    "cell": 1,
+    "columns": 2
+  },
+  "AG": {
+    "atlas": 3,
+    "cell": 2,
+    "columns": 2
+  },
+  "AR": {
+    "atlas": 3,
+    "cell": 3,
+    "columns": 2
+  },
+  "AM": {
+    "atlas": 4,
+    "cell": 0,
+    "columns": 2
+  },
+  "AT": {
+    "atlas": 4,
+    "cell": 1,
+    "columns": 2
+  },
+  "AZ": {
+    "atlas": 4,
+    "cell": 2,
+    "columns": 2
+  },
+  "BS": {
+    "atlas": 4,
+    "cell": 3,
+    "columns": 2
+  },
+  "BH": {
+    "atlas": 5,
+    "cell": 0,
+    "columns": 2
+  },
+  "BD": {
+    "atlas": 5,
+    "cell": 1,
+    "columns": 2
+  },
+  "BB": {
+    "atlas": 5,
+    "cell": 2,
+    "columns": 2
+  },
+  "BY": {
+    "atlas": 5,
+    "cell": 3,
+    "columns": 2
+  },
+  "BE": {
+    "atlas": 6,
+    "cell": 0,
+    "columns": 2
+  },
+  "BZ": {
+    "atlas": 6,
+    "cell": 1,
+    "columns": 2
+  },
+  "BJ": {
+    "atlas": 6,
+    "cell": 2,
+    "columns": 2
+  },
+  "BT": {
+    "atlas": 6,
+    "cell": 3,
+    "columns": 2
+  },
+  "BO": {
+    "atlas": 7,
+    "cell": 0,
+    "columns": 2
+  },
+  "BA": {
+    "atlas": 7,
+    "cell": 1,
+    "columns": 2
+  },
+  "BW": {
+    "atlas": 7,
+    "cell": 2,
+    "columns": 2
+  },
+  "BN": {
+    "atlas": 7,
+    "cell": 3,
+    "columns": 2
+  },
+  "BG": {
+    "atlas": 8,
+    "cell": 0,
+    "columns": 2
+  },
+  "BF": {
+    "atlas": 8,
+    "cell": 1,
+    "columns": 2
+  },
+  "BI": {
+    "atlas": 8,
+    "cell": 2,
+    "columns": 2
+  },
+  "KH": {
+    "atlas": 8,
+    "cell": 3,
+    "columns": 2
+  },
+  "CM": {
+    "atlas": 9,
+    "cell": 0,
+    "columns": 2
+  },
+  "CV": {
+    "atlas": 9,
+    "cell": 1,
+    "columns": 2
+  },
+  "CF": {
+    "atlas": 9,
+    "cell": 2,
+    "columns": 2
+  },
+  "TD": {
+    "atlas": 9,
+    "cell": 3,
+    "columns": 2
+  },
+  "CL": {
+    "atlas": 10,
+    "cell": 0,
+    "columns": 2
+  },
+  "CN": {
+    "atlas": 10,
+    "cell": 1,
+    "columns": 2
+  },
+  "CO": {
+    "atlas": 10,
+    "cell": 2,
+    "columns": 2
+  },
+  "KM": {
+    "atlas": 10,
+    "cell": 3,
+    "columns": 2
+  },
+  "CG": {
+    "atlas": 11,
+    "cell": 0,
+    "columns": 2
+  },
+  "CR": {
+    "atlas": 11,
+    "cell": 1,
+    "columns": 2
+  },
+  "HR": {
+    "atlas": 11,
+    "cell": 2,
+    "columns": 2
+  },
+  "CU": {
+    "atlas": 11,
+    "cell": 3,
+    "columns": 2
+  },
+  "CY": {
+    "atlas": 12,
+    "cell": 0,
+    "columns": 2
+  },
+  "CZ": {
+    "atlas": 12,
+    "cell": 1,
+    "columns": 2
+  },
+  "CD": {
+    "atlas": 12,
+    "cell": 2,
+    "columns": 2
+  },
+  "DK": {
+    "atlas": 12,
+    "cell": 3,
+    "columns": 2
+  },
+  "DJ": {
+    "atlas": 13,
+    "cell": 0,
+    "columns": 2
+  },
+  "DM": {
+    "atlas": 13,
+    "cell": 1,
+    "columns": 2
+  },
+  "DO": {
+    "atlas": 13,
+    "cell": 2,
+    "columns": 2
+  },
+  "EC": {
+    "atlas": 13,
+    "cell": 3,
+    "columns": 2
+  },
+  "SV": {
+    "atlas": 14,
+    "cell": 0,
+    "columns": 2
+  },
+  "GQ": {
+    "atlas": 14,
+    "cell": 1,
+    "columns": 2
+  },
+  "ER": {
+    "atlas": 14,
+    "cell": 2,
+    "columns": 2
+  },
+  "EE": {
+    "atlas": 14,
+    "cell": 3,
+    "columns": 2
+  },
+  "SZ": {
+    "atlas": 15,
+    "cell": 0,
+    "columns": 2
+  },
+  "ET": {
+    "atlas": 15,
+    "cell": 1,
+    "columns": 2
+  },
+  "FJ": {
+    "atlas": 15,
+    "cell": 2,
+    "columns": 2
+  },
+  "FI": {
+    "atlas": 15,
+    "cell": 3,
+    "columns": 2
+  },
+  "GA": {
+    "atlas": 16,
+    "cell": 0,
+    "columns": 2
+  },
+  "GM": {
+    "atlas": 16,
+    "cell": 1,
+    "columns": 2
+  },
+  "GE": {
+    "atlas": 16,
+    "cell": 2,
+    "columns": 2
+  },
+  "DE": {
+    "atlas": 16,
+    "cell": 3,
+    "columns": 2
+  },
+  "GH": {
+    "atlas": 17,
+    "cell": 0,
+    "columns": 2
+  },
+  "GR": {
+    "atlas": 17,
+    "cell": 1,
+    "columns": 2
+  },
+  "GD": {
+    "atlas": 17,
+    "cell": 2,
+    "columns": 2
+  },
+  "GT": {
+    "atlas": 17,
+    "cell": 3,
+    "columns": 2
+  },
+  "GN": {
+    "atlas": 18,
+    "cell": 0,
+    "columns": 2
+  },
+  "GW": {
+    "atlas": 18,
+    "cell": 1,
+    "columns": 2
+  },
+  "GY": {
+    "atlas": 18,
+    "cell": 2,
+    "columns": 2
+  },
+  "HT": {
+    "atlas": 18,
+    "cell": 3,
+    "columns": 2
+  },
+  "HN": {
+    "atlas": 19,
+    "cell": 0,
+    "columns": 2
+  },
+  "HU": {
+    "atlas": 19,
+    "cell": 1,
+    "columns": 2
+  },
+  "ID": {
+    "atlas": 19,
+    "cell": 2,
+    "columns": 2
+  },
+  "IR": {
+    "atlas": 19,
+    "cell": 3,
+    "columns": 2
+  },
+  "IQ": {
+    "atlas": 20,
+    "cell": 0,
+    "columns": 2
+  },
+  "IE": {
+    "atlas": 20,
+    "cell": 1,
+    "columns": 2
+  },
+  "IL": {
+    "atlas": 20,
+    "cell": 2,
+    "columns": 2
+  },
+  "CI": {
+    "atlas": 20,
+    "cell": 3,
+    "columns": 2
+  },
+  "JM": {
+    "atlas": 21,
+    "cell": 0,
+    "columns": 2
+  },
+  "JO": {
+    "atlas": 21,
+    "cell": 1,
+    "columns": 2
+  },
+  "KZ": {
+    "atlas": 21,
+    "cell": 2,
+    "columns": 2
+  },
+  "KE": {
+    "atlas": 21,
+    "cell": 3,
+    "columns": 2
+  },
+  "KI": {
+    "atlas": 22,
+    "cell": 0,
+    "columns": 2
+  },
+  "XK": {
+    "atlas": 22,
+    "cell": 1,
+    "columns": 2
+  },
+  "KW": {
+    "atlas": 22,
+    "cell": 2,
+    "columns": 2
+  },
+  "KG": {
+    "atlas": 22,
+    "cell": 3,
+    "columns": 2
+  },
+  "LA": {
+    "atlas": 23,
+    "cell": 0,
+    "columns": 2
+  },
+  "LV": {
+    "atlas": 23,
+    "cell": 1,
+    "columns": 2
+  },
+  "LB": {
+    "atlas": 23,
+    "cell": 2,
+    "columns": 2
+  },
+  "LS": {
+    "atlas": 23,
+    "cell": 3,
+    "columns": 2
+  },
+  "LR": {
+    "atlas": 24,
+    "cell": 0,
+    "columns": 2
+  },
+  "LY": {
+    "atlas": 24,
+    "cell": 1,
+    "columns": 2
+  },
+  "LI": {
+    "atlas": 24,
+    "cell": 2,
+    "columns": 2
+  },
+  "LT": {
+    "atlas": 24,
+    "cell": 3,
+    "columns": 2
+  },
+  "LU": {
+    "atlas": 25,
+    "cell": 0,
+    "columns": 2
+  },
+  "MG": {
+    "atlas": 25,
+    "cell": 1,
+    "columns": 2
+  },
+  "MW": {
+    "atlas": 25,
+    "cell": 2,
+    "columns": 2
+  },
+  "MY": {
+    "atlas": 25,
+    "cell": 3,
+    "columns": 2
+  },
+  "MV": {
+    "atlas": 26,
+    "cell": 0,
+    "columns": 2
+  },
+  "ML": {
+    "atlas": 26,
+    "cell": 1,
+    "columns": 2
+  },
+  "MT": {
+    "atlas": 26,
+    "cell": 2,
+    "columns": 2
+  },
+  "MH": {
+    "atlas": 26,
+    "cell": 3,
+    "columns": 2
+  },
+  "MR": {
+    "atlas": 27,
+    "cell": 0,
+    "columns": 2
+  },
+  "MU": {
+    "atlas": 27,
+    "cell": 1,
+    "columns": 2
+  },
+  "MX": {
+    "atlas": 27,
+    "cell": 2,
+    "columns": 2
+  },
+  "FM": {
+    "atlas": 27,
+    "cell": 3,
+    "columns": 2
+  },
+  "MD": {
+    "atlas": 28,
+    "cell": 0,
+    "columns": 2
+  },
+  "MC": {
+    "atlas": 28,
+    "cell": 1,
+    "columns": 2
+  },
+  "MN": {
+    "atlas": 28,
+    "cell": 2,
+    "columns": 2
+  },
+  "ME": {
+    "atlas": 28,
+    "cell": 3,
+    "columns": 2
+  },
+  "MA": {
+    "atlas": 29,
+    "cell": 0,
+    "columns": 2
+  },
+  "MZ": {
+    "atlas": 29,
+    "cell": 1,
+    "columns": 2
+  },
+  "MM": {
+    "atlas": 29,
+    "cell": 2,
+    "columns": 2
+  },
+  "NA": {
+    "atlas": 29,
+    "cell": 3,
+    "columns": 2
+  },
+  "NR": {
+    "atlas": 30,
+    "cell": 0,
+    "columns": 2
+  },
+  "NP": {
+    "atlas": 30,
+    "cell": 1,
+    "columns": 2
+  },
+  "NL": {
+    "atlas": 30,
+    "cell": 2,
+    "columns": 2
+  },
+  "NI": {
+    "atlas": 30,
+    "cell": 3,
+    "columns": 2
+  },
+  "NE": {
+    "atlas": 31,
+    "cell": 0,
+    "columns": 2
+  },
+  "NG": {
+    "atlas": 31,
+    "cell": 1,
+    "columns": 2
+  },
+  "KP": {
+    "atlas": 31,
+    "cell": 2,
+    "columns": 2
+  },
+  "MK": {
+    "atlas": 31,
+    "cell": 3,
+    "columns": 2
+  },
+  "NO": {
+    "atlas": 32,
+    "cell": 0,
+    "columns": 2
+  },
+  "OM": {
+    "atlas": 32,
+    "cell": 1,
+    "columns": 2
+  },
+  "PK": {
+    "atlas": 32,
+    "cell": 2,
+    "columns": 2
+  },
+  "PW": {
+    "atlas": 32,
+    "cell": 3,
+    "columns": 2
+  },
+  "PS": {
+    "atlas": 33,
+    "cell": 0,
+    "columns": 2
+  },
+  "PA": {
+    "atlas": 33,
+    "cell": 1,
+    "columns": 2
+  },
+  "PG": {
+    "atlas": 33,
+    "cell": 2,
+    "columns": 2
+  },
+  "PY": {
+    "atlas": 33,
+    "cell": 3,
+    "columns": 2
+  },
+  "PE": {
+    "atlas": 34,
+    "cell": 0,
+    "columns": 2
+  },
+  "PH": {
+    "atlas": 34,
+    "cell": 1,
+    "columns": 2
+  },
+  "PL": {
+    "atlas": 34,
+    "cell": 2,
+    "columns": 2
+  },
+  "PT": {
+    "atlas": 34,
+    "cell": 3,
+    "columns": 2
+  },
+  "QA": {
+    "atlas": 35,
+    "cell": 0,
+    "columns": 2
+  },
+  "RO": {
+    "atlas": 35,
+    "cell": 1,
+    "columns": 2
+  },
+  "RU": {
+    "atlas": 35,
+    "cell": 2,
+    "columns": 2
+  },
+  "RW": {
+    "atlas": 35,
+    "cell": 3,
+    "columns": 2
+  },
+  "KN": {
+    "atlas": 36,
+    "cell": 0,
+    "columns": 2
+  },
+  "LC": {
+    "atlas": 36,
+    "cell": 1,
+    "columns": 2
+  },
+  "VC": {
+    "atlas": 36,
+    "cell": 2,
+    "columns": 2
+  },
+  "WS": {
+    "atlas": 36,
+    "cell": 3,
+    "columns": 2
+  },
+  "SM": {
+    "atlas": 37,
+    "cell": 0,
+    "columns": 2
+  },
+  "SA": {
+    "atlas": 37,
+    "cell": 1,
+    "columns": 2
+  },
+  "SN": {
+    "atlas": 37,
+    "cell": 2,
+    "columns": 2
+  },
+  "RS": {
+    "atlas": 37,
+    "cell": 3,
+    "columns": 2
+  },
+  "SC": {
+    "atlas": 38,
+    "cell": 0,
+    "columns": 2
+  },
+  "SL": {
+    "atlas": 38,
+    "cell": 1,
+    "columns": 2
+  },
+  "SG": {
+    "atlas": 38,
+    "cell": 2,
+    "columns": 2
+  },
+  "SK": {
+    "atlas": 38,
+    "cell": 3,
+    "columns": 2
+  },
+  "SI": {
+    "atlas": 39,
+    "cell": 0,
+    "columns": 2
+  },
+  "SB": {
+    "atlas": 39,
+    "cell": 1,
+    "columns": 2
+  },
+  "SO": {
+    "atlas": 39,
+    "cell": 2,
+    "columns": 2
+  },
+  "ZA": {
+    "atlas": 39,
+    "cell": 3,
+    "columns": 2
+  },
+  "KR": {
+    "atlas": 40,
+    "cell": 0,
+    "columns": 2
+  },
+  "SS": {
+    "atlas": 40,
+    "cell": 1,
+    "columns": 2
+  },
+  "ES": {
+    "atlas": 40,
+    "cell": 2,
+    "columns": 2
+  },
+  "LK": {
+    "atlas": 40,
+    "cell": 3,
+    "columns": 2
+  },
+  "SD": {
+    "atlas": 41,
+    "cell": 0,
+    "columns": 2
+  },
+  "SR": {
+    "atlas": 41,
+    "cell": 1,
+    "columns": 2
+  },
+  "SE": {
+    "atlas": 41,
+    "cell": 2,
+    "columns": 2
+  },
+  "SY": {
+    "atlas": 41,
+    "cell": 3,
+    "columns": 2
+  },
+  "ST": {
+    "atlas": 42,
+    "cell": 0,
+    "columns": 2
+  },
+  "TW": {
+    "atlas": 42,
+    "cell": 1,
+    "columns": 2
+  },
+  "TJ": {
+    "atlas": 42,
+    "cell": 2,
+    "columns": 2
+  },
+  "TZ": {
+    "atlas": 42,
+    "cell": 3,
+    "columns": 2
+  },
+  "TL": {
+    "atlas": 43,
+    "cell": 0,
+    "columns": 2
+  },
+  "TG": {
+    "atlas": 43,
+    "cell": 1,
+    "columns": 2
+  },
+  "TO": {
+    "atlas": 43,
+    "cell": 2,
+    "columns": 2
+  },
+  "TT": {
+    "atlas": 43,
+    "cell": 3,
+    "columns": 2
+  },
+  "TN": {
+    "atlas": 44,
+    "cell": 0,
+    "columns": 2
+  },
+  "TM": {
+    "atlas": 44,
+    "cell": 1,
+    "columns": 2
+  },
+  "TV": {
+    "atlas": 44,
+    "cell": 2,
+    "columns": 2
+  },
+  "UG": {
+    "atlas": 44,
+    "cell": 3,
+    "columns": 2
+  },
+  "UA": {
+    "atlas": 45,
+    "cell": 0,
+    "columns": 2
+  },
+  "AE": {
+    "atlas": 45,
+    "cell": 1,
+    "columns": 2
+  },
+  "UY": {
+    "atlas": 45,
+    "cell": 2,
+    "columns": 2
+  },
+  "UZ": {
+    "atlas": 45,
+    "cell": 3,
+    "columns": 2
+  },
+  "VU": {
+    "atlas": 46,
+    "cell": 0,
+    "columns": 2
+  },
+  "VA": {
+    "atlas": 46,
+    "cell": 1,
+    "columns": 2
+  },
+  "VE": {
+    "atlas": 46,
+    "cell": 2,
+    "columns": 2
+  },
+  "VN": {
+    "atlas": 46,
+    "cell": 3,
+    "columns": 2
+  },
+  "YE": {
+    "atlas": 47,
+    "cell": 0,
+    "columns": 2
+  },
+  "ZM": {
+    "atlas": 47,
+    "cell": 1,
+    "columns": 2
+  },
+  "ZW": {
+    "atlas": 47,
+    "cell": 2,
+    "columns": 2
+  },
+  "AS": {
+    "atlas": 47,
+    "cell": 3,
+    "columns": 2
+  },
+  "AI": {
+    "atlas": 48,
+    "cell": 0,
+    "columns": 2
+  },
+  "AQ": {
+    "atlas": 48,
+    "cell": 1,
+    "columns": 2
+  },
+  "AW": {
+    "atlas": 48,
+    "cell": 2,
+    "columns": 2
+  },
+  "BM": {
+    "atlas": 48,
+    "cell": 3,
+    "columns": 2
+  },
+  "BV": {
+    "atlas": 49,
+    "cell": 0,
+    "columns": 2
+  },
+  "IO": {
+    "atlas": 49,
+    "cell": 1,
+    "columns": 2
+  },
+  "VG": {
+    "atlas": 49,
+    "cell": 2,
+    "columns": 2
+  },
+  "BQ": {
+    "atlas": 49,
+    "cell": 3,
+    "columns": 2
+  },
+  "KY": {
+    "atlas": 50,
+    "cell": 0,
+    "columns": 2
+  },
+  "CX": {
+    "atlas": 50,
+    "cell": 1,
+    "columns": 2
+  },
+  "CC": {
+    "atlas": 50,
+    "cell": 2,
+    "columns": 2
+  },
+  "CK": {
+    "atlas": 50,
+    "cell": 3,
+    "columns": 2
+  },
+  "CW": {
+    "atlas": 51,
+    "cell": 0,
+    "columns": 2
+  },
+  "FK": {
+    "atlas": 51,
+    "cell": 1,
+    "columns": 2
+  },
+  "FO": {
+    "atlas": 51,
+    "cell": 2,
+    "columns": 2
+  },
+  "GF": {
+    "atlas": 51,
+    "cell": 3,
+    "columns": 2
+  },
+  "PF": {
+    "atlas": 52,
+    "cell": 0,
+    "columns": 2
+  },
+  "TF": {
+    "atlas": 52,
+    "cell": 1,
+    "columns": 2
+  },
+  "GI": {
+    "atlas": 52,
+    "cell": 2,
+    "columns": 2
+  },
+  "GL": {
+    "atlas": 52,
+    "cell": 3,
+    "columns": 2
+  },
+  "GP": {
+    "atlas": 53,
+    "cell": 0,
+    "columns": 2
+  },
+  "GU": {
+    "atlas": 53,
+    "cell": 1,
+    "columns": 2
+  },
+  "GG": {
+    "atlas": 53,
+    "cell": 2,
+    "columns": 2
+  },
+  "HM": {
+    "atlas": 53,
+    "cell": 3,
+    "columns": 2
+  },
+  "HK": {
+    "atlas": 54,
+    "cell": 0,
+    "columns": 2
+  },
+  "IM": {
+    "atlas": 54,
+    "cell": 1,
+    "columns": 2
+  },
+  "JE": {
+    "atlas": 54,
+    "cell": 2,
+    "columns": 2
+  },
+  "MO": {
+    "atlas": 54,
+    "cell": 3,
+    "columns": 2
+  },
+  "MQ": {
+    "atlas": 55,
+    "cell": 0,
+    "columns": 2
+  },
+  "YT": {
+    "atlas": 55,
+    "cell": 1,
+    "columns": 2
+  },
+  "MS": {
+    "atlas": 55,
+    "cell": 2,
+    "columns": 2
+  },
+  "NC": {
+    "atlas": 55,
+    "cell": 3,
+    "columns": 2
+  },
+  "NU": {
+    "atlas": 56,
+    "cell": 0,
+    "columns": 2
+  },
+  "NF": {
+    "atlas": 56,
+    "cell": 1,
+    "columns": 2
+  },
+  "MP": {
+    "atlas": 56,
+    "cell": 2,
+    "columns": 2
+  },
+  "PN": {
+    "atlas": 56,
+    "cell": 3,
+    "columns": 2
+  },
+  "PR": {
+    "atlas": 57,
+    "cell": 0,
+    "columns": 2
+  },
+  "RE": {
+    "atlas": 57,
+    "cell": 1,
+    "columns": 2
+  },
+  "BL": {
+    "atlas": 57,
+    "cell": 2,
+    "columns": 2
+  },
+  "SH": {
+    "atlas": 57,
+    "cell": 3,
+    "columns": 2
+  },
+  "MF": {
+    "atlas": 58,
+    "cell": 0,
+    "columns": 2
+  },
+  "PM": {
+    "atlas": 58,
+    "cell": 1,
+    "columns": 2
+  },
+  "SX": {
+    "atlas": 58,
+    "cell": 2,
+    "columns": 2
+  },
+  "GS": {
+    "atlas": 58,
+    "cell": 3,
+    "columns": 2
+  },
+  "SJ": {
+    "atlas": 59,
+    "cell": 0,
+    "columns": 2
+  },
+  "TK": {
+    "atlas": 59,
+    "cell": 1,
+    "columns": 2
+  },
+  "TC": {
+    "atlas": 59,
+    "cell": 2,
+    "columns": 2
+  },
+  "UM": {
+    "atlas": 59,
+    "cell": 3,
+    "columns": 2
+  },
+  "VI": {
+    "atlas": 60,
+    "cell": 0,
+    "columns": 2
+  },
+  "WF": {
+    "atlas": 60,
+    "cell": 1,
+    "columns": 2
+  },
+  "EH": {
+    "atlas": 60,
+    "cell": 2,
+    "columns": 2
+  },
+  "AX": {
+    "atlas": 60,
+    "cell": 3,
+    "columns": 2
+  },
+  "EVEREST": {
+    "atlas": 61,
+    "cell": 0,
+    "columns": 2
+  },
+  "SAHARA": {
+    "atlas": 61,
+    "cell": 1,
+    "columns": 2
+  },
+  "GRAND_CANYON": {
+    "atlas": 61,
+    "cell": 2,
+    "columns": 2
+  },
+  "MACHU_PICCHU": {
+    "atlas": 61,
+    "cell": 3,
+    "columns": 2
+  },
+  "PETRA": {
+    "atlas": 62,
+    "cell": 0,
+    "columns": 2
+  },
+  "TAJ_MAHAL": {
+    "atlas": 62,
+    "cell": 1,
+    "columns": 2
+  },
+  "ANGKOR_WAT": {
+    "atlas": 62,
+    "cell": 2,
+    "columns": 2
+  },
+  "NORTHERN_LIGHTS": {
+    "atlas": 62,
+    "cell": 3,
+    "columns": 2
+  },
+  "GREAT_BARRIER_REEF": {
+    "atlas": 63,
+    "cell": 0,
+    "columns": 2
+  },
+  "VICTORIA_FALLS": {
+    "atlas": 63,
+    "cell": 1,
+    "columns": 2
+  },
+  "SALAR_UYUNI": {
+    "atlas": 63,
+    "cell": 2,
+    "columns": 2
+  },
+  "SERENGETI": {
+    "atlas": 63,
+    "cell": 3,
+    "columns": 2
+  },
+  "AMAZON": {
+    "atlas": 64,
+    "cell": 0,
+    "columns": 2
+  },
+  "VENICE": {
+    "atlas": 64,
+    "cell": 1,
+    "columns": 2
+  },
+  "STONEHENGE": {
+    "atlas": 64,
+    "cell": 2,
+    "columns": 2
+  },
+  "SANTORINI": {
+    "atlas": 64,
+    "cell": 3,
+    "columns": 2
+  },
+  "UNDERWATER": {
+    "atlas": 65,
+    "cell": 0,
+    "columns": 2
+  },
+  "SPACE": {
+    "atlas": 65,
+    "cell": 1,
+    "columns": 2
+  },
+  "MOON": {
+    "atlas": 65,
+    "cell": 2,
+    "columns": 2
+  },
+  "MARS": {
+    "atlas": 65,
+    "cell": 3,
+    "columns": 2
+  },
+  "SATURN": {
+    "atlas": 66,
+    "cell": 0,
+    "columns": 2
+  },
+  "CRYSTAL_CAVERN": {
+    "atlas": 66,
+    "cell": 1,
+    "columns": 2
+  },
+  "CLOUD_CITY": {
+    "atlas": 66,
+    "cell": 2,
+    "columns": 2
+  },
+  "DRAGON_ISLAND": {
+    "atlas": 66,
+    "cell": 3,
+    "columns": 2
+  },
+  "HOBBIT_VILLAGE": {
+    "atlas": 67,
+    "cell": 0,
+    "columns": 2
+  },
+  "ELVEN_VALLEY": {
+    "atlas": 67,
+    "cell": 1,
+    "columns": 2
+  },
+  "VOLCANIC_REALM": {
+    "atlas": 67,
+    "cell": 2,
+    "columns": 2
+  },
+  "WIZARD_CASTLE": {
+    "atlas": 67,
+    "cell": 3,
+    "columns": 2
+  },
+  "WIZARD_VILLAGE": {
+    "atlas": 68,
+    "cell": 0,
+    "columns": 2
+  },
+  "ENCHANTED_FOREST": {
+    "atlas": 68,
+    "cell": 1,
+    "columns": 2
+  },
+  "DINOSAUR_ISLAND": {
+    "atlas": 68,
+    "cell": 2,
+    "columns": 2
+  },
+  "WONDERLAND": {
+    "atlas": 68,
+    "cell": 3,
+    "columns": 2
+  },
+  "FR": {
+    "path": "res://assets/realistic/backdrops/FR.png"
+  },
+  "TR": {
+    "path": "res://assets/realistic/backdrops/TR.png"
+  },
+  "US": {
+    "path": "res://assets/realistic/backdrops/US.png"
+  },
+  "JP": {
+    "path": "res://assets/realistic/backdrops/JP.png"
+  },
+  "EG": {
+    "path": "res://assets/realistic/backdrops/EG.png"
+  },
+  "AF": {
+    "path": "res://assets/realistic/backdrops/AF.png"
+  }
+}

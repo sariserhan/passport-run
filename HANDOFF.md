@@ -1,4 +1,15 @@
-# Passport Run — agent handoff (2026-10-02)
+# Passport Run — agent handoff (2026-10-03)
+
+## Current continuation: mastery and photorealistic graphics
+
+This section supersedes older illustrated-art descriptions below. The user approved all six proposed features plus a strong realistic graphics pass. `ArcadeProgress` defines three medal tiers, three UTC daily goals and the 22-entry mystery journal. `PlayerProfile` atomically saves validated medals per destination/difficulty/solo-co-op, bounded goal counts, revealed drop keys and touch preferences. Practice does not award any of these. Old checkpoints are compatible: missing country time is -1, so legacy destinations cannot retroactively earn Silver/Gold.
+
+`BalloonArcade` accumulates destination play time across rounds and retries, retry count, best combo, pops and starting-score baseline. Clear panels show destination results and a photographic medal. Boss patterns alternate charge/bounce/summoner, warn for 0.85 seconds, freeze with pause/countdown/freeze, persist through recovery, and cancel with boss death. Summoner minions have distinct spawn markers. FIRE can swap sides and touch targets expand to 88 pixels via Pause or Settings; both persist. One contact still kills, including frozen balloons. The free starting country stays permanently locked, route order stays stable, future destination art stays hidden, and practice stays separate.
+
+`RealisticArt` caches atlas regions and cropped material textures. All 282 destination backdrops, arcade explorer/objects, memory explorer, menu/Infinite backgrounds, medals and path materials use generated photorealistic artwork. Arcade gait/idle/turn geometry keeps feet on the floor and the head at a constant height; rendering regression checks inspect real frames. `GameCatalog` bounds backdrop/atlas caches to 8/4 entries. `resources/realistic-explorer.json` is explicitly included in iPhone export: it is essential for frame alignment. Original illustrated files stay in source history but are excluded from export. Prompt provenance and current validation are in [realistic graphics](docs/realistic-graphics.md).
+
+Validation passed all 25 Godot suites plus four Python tests, 99 rendered mastery/graphics checks, 110 rendered turn checks, 581 exported-pack checks and unsigned Xcode compilation. Latest native project is `/private/tmp/passport-native-realistic/PassportRun.xcodeproj`. New coverage: `tests/test_arcade_mastery.gd`, updated unique-artwork and rendered turn suites. Run `tools/check.sh` for the complete offline checks. Current screenshots are `artifacts/realistic-*.png`; older screenshots below predate this pass. Physical-device FPS, thermal behavior and human visual acceptance are still deferred. No backend, purchase products or hosted deployment changed.
+
 
 ## Latest destination enjoyment expansion
 

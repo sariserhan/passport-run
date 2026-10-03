@@ -6,15 +6,7 @@ const WORLD := Vector2(720, 600)
 var floor_y := 570.0
 var world_height := 600.0
 var touches: Dictionary = {}
-const TURN := preload("res://assets/arcade-turn.png")
-const WALK := preload("res://assets/arcade-walk-v2.png")
-# Head centers, top edges, and soles measured in each atlas cell. The atlas
-# frames have different padding; align the artwork, not the cell rectangle.
-const WALK_ANCHORS := [Vector2(261.5, 16), Vector2(238.5, 16), Vector2(228.5, 16), Vector2(238, 14), Vector2(240.5, 0), Vector2(231.5, 10), Vector2(232, 11), Vector2(241, 11)]
-const WALK_SOLES := [443.0, 443.0, 443.0, 443.0, 436.0, 437.0, 435.0, 436.0]
-const IDLE_ANCHOR := Vector2(230.5, 28)
-const IDLE_SOLE := 699.0
-const PORTRAIT := preload("res://assets/arcade-poses.png")
+const EXPLORER := preload("res://assets/realistic/explorer.png")
 const DROPS := ["double", "sticky", "gun", "triple", "spread", "laser", "rocket", "rapid", "freeze", "slow", "boots", "upgrade", "time", "coin", "bomb", "magnet", "speed", "multiply", "heavy", "reverse", "jam", "shrink_time"]
 const WEAPONS := ["double", "sticky", "gun", "triple", "spread", "laser", "rocket"]
 enum Phase { READY, PLAY, CLEAR, FAILED, PAUSED, TRAVEL, COUNTDOWN }
@@ -122,6 +114,23 @@ var earned_badges: Array[String] = []
 var best_before := 0
 var best_initialized := false
 var best_beaten := false
+var country_time := 0.0
+var country_retries := 0
+var country_combo := 0
+var country_pops := 0
+var country_start_score := 0
+var progress_dirty := false
+
+func record_difficulty() -> String:
+ return "moderate" if route_kind == "daily" else profile.difficulty
+
+func control_height() -> float:
+ return 88.0 if profile.settings.arcade_large else 72.0
+
+func destination_result() -> String:
+ var medal := ArcadeProgress.medal(country_time, country_retries, country_combo)
+ if country_time < 0: return "BRONZE MEDAL\nDestination totals unavailable for this older save.\nNew destinations track time, retries and combos."
+ return "%s MEDAL%s\nClear time: %s · Retries: %d\nBest combo: ×%d · Balloons popped: %d\nDestination score: %d pts" % [ArcadeProgress.MEDALS[medal].to_upper(), " · PRACTICE" if route_kind == "practice" else "", "%d:%02d" % [int(country_time) / 60, int(country_time) % 60] if country_time >= 0 else "unavailable for older save", country_retries, country_combo, country_pops, maxi(0, score - country_start_score)]
 
 func initialize_best() -> void:
  if best_initialized: return
@@ -289,7 +298,7 @@ func _ready() -> void:
  stats = style.label("", 17, GameHUD.CREAM)
  add_child(heading)
  add_child(stats)
- notice = style.label("Mystery drops can help—or hurt.", 14, GameHUD.CREAM)
+ notice = style.label("Mystery drops can help—or hurt.", 13, GameHUD.CREAM)
  add_child(notice)
  pause_button = style.button("Ⅱ", false)
  pause_button.pressed.connect(func(): set_paused(true))
@@ -382,7 +391,7 @@ func update_control_feedback() -> void:
   var active: bool = phase == Phase.PLAY and (held or key in touches.values() or keyboard.get(key, false))
   if button.get_meta("control_active", false) == active: continue
   button.set_meta("control_active", active)
-  var color := Color("ffdf80") if active else Color("58d887") if "FIRE" in key else Color("117caf")
+  var color := Color("e8c68a") if active else Color("bfa477") if "FIRE" in key else Color("263a43")
   var surface := style.panel_style(color, 14)
   if active:
    surface.border_color = Color("fff6df")
@@ -405,17 +414,19 @@ func layout() -> void:
  stats.position = Vector2(margins.x, margins.y + 48)
  stats.size.x = size.x - margins.x - margins.z
  stats.clip_text = true
- notice.position = Vector2(margins.x, margins.y + 98)
+ notice.position = Vector2(margins.x, margins.y + 96)
  notice.size.x = size.x - margins.x - margins.z
- notice.clip_text = true
+ notice.clip_text = false
+ notice.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
  pause_button.position = Vector2(size.x - margins.z - 50, margins.y)
  pause_button.size = Vector2(50, 50)
  partner_controls.visible = coop and phase != Phase.TRAVEL
- partner_controls.position = Vector2(margins.x, size.y - margins.w - 72)
- partner_controls.size = Vector2(size.x - margins.x - margins.z, 72)
- controls.position = Vector2(margins.x, size.y - margins.w - 72)
- controls.position.y -= 80 if coop else 0
- controls.size = Vector2(size.x - margins.x - margins.z, 72)
+ var button_height := control_height()
+ partner_controls.position = Vector2(margins.x, size.y - margins.w - button_height)
+ partner_controls.size = Vector2(size.x - margins.x - margins.z, button_height)
+ controls.position = Vector2(margins.x, size.y - margins.w - button_height)
+ controls.position.y -= button_height + 8 if coop else 0
+ controls.size = Vector2(size.x - margins.x - margins.z, button_height)
  if coop_side_by_side():
   var row_width := (size.x - margins.x - margins.z - 16) / 2
   controls.position.y = partner_controls.position.y
@@ -427,10 +438,12 @@ func layout() -> void:
   var arrow_width: float = (row.size.x - gap - 8) / 4
   for index in 3:
    var button := row.get_child(index) as Button
-   button.position = Vector2(0 if index == 0 else arrow_width + 8 if index == 1 else arrow_width * 2 + 8 + gap, 0)
-   button.size = Vector2(arrow_width if index < 2 else arrow_width * 2, 72)
+   var positions := [0.0, arrow_width + 8, arrow_width * 2 + 8 + gap]
+   if profile.settings.arcade_swap: positions = [arrow_width * 2 + gap, arrow_width * 3 + gap + 8, 0.0]
+   button.position = Vector2(positions[index], 0)
+   button.size = Vector2(arrow_width if index < 2 else arrow_width * 2, button_height)
  quick_retry.position = Vector2(margins.x, controls.position.y)
- quick_retry.size = Vector2(size.x - margins.x - margins.z, 72)
+ quick_retry.size = Vector2(size.x - margins.x - margins.z, button_height)
  countdown.position = area.position
  countdown.size = area.size
  feedback.position = area.position + Vector2(10, 10)
@@ -438,8 +451,8 @@ func layout() -> void:
  queue_redraw()
 
 func arena() -> Rect2:
- var top := margins.y + 128
- var height := maxf(90, size.y - top - margins.w - (184 if coop and not coop_side_by_side() else 104))
+ var top := margins.y + 140
+ var height := maxf(90, size.y - top - margins.w - ((control_height() + 8) * 2 + 24 if coop and not coop_side_by_side() else control_height() + 32))
  var width := minf(size.x - margins.x - margins.z, height * 2.1)
  return Rect2(margins.x + (size.x - margins.x - margins.z - width) / 2, top, width, height)
 
@@ -474,6 +487,14 @@ func show_panel(message: String, action_text: String, callback: Callable) -> voi
  var label := style.label(message, 23, GameHUD.CREAM)
  label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
  box.add_child(label)
+ if phase == Phase.CLEAR and round_index == 2 and "MEDAL" in message:
+  var medal_image := TextureRect.new()
+  medal_image.texture = RealisticArt.medal(ArcadeProgress.medal(country_time, country_retries, country_combo))
+  medal_image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+  medal_image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+  medal_image.custom_minimum_size = Vector2(120, 120)
+  medal_image.mouse_filter = Control.MOUSE_FILTER_IGNORE
+  box.add_child(medal_image)
  var map := PassportWorldMap.new()
  map.discoveries = profile.discoveries.duplicate()
  map.route.assign(route.slice(maxi(0, country_index - 2), country_index + 1))
@@ -489,6 +510,13 @@ func show_panel(message: String, action_text: String, callback: Callable) -> voi
  var drops_button := style.button("? DROPS: COLLECT" if accept_drops else "? DROPS: AVOID", false)
  drops_button.pressed.connect(func(): accept_drops = not accept_drops; drops_button.text = "? DROPS: COLLECT" if accept_drops else "? DROPS: AVOID")
  box.add_child(drops_button)
+ if phase == Phase.PAUSED or phase == Phase.READY:
+  var swap_button := style.button("FIRE BUTTON: LEFT" if profile.settings.arcade_swap else "FIRE BUTTON: RIGHT", false)
+  swap_button.pressed.connect(func(): profile.settings.arcade_swap = not profile.settings.arcade_swap; profile.save(); layout(); swap_button.text = "FIRE BUTTON: LEFT" if profile.settings.arcade_swap else "FIRE BUTTON: RIGHT")
+  box.add_child(swap_button)
+  var size_button := style.button("CONTROLS: LARGE" if profile.settings.arcade_large else "CONTROLS: STANDARD", false)
+  size_button.pressed.connect(func(): profile.settings.arcade_large = not profile.settings.arcade_large; profile.save(); layout(); size_button.text = "CONTROLS: LARGE" if profile.settings.arcade_large else "CONTROLS: STANDARD")
+  box.add_child(size_button)
  var back := style.button("MAIN MENU", false)
  back.pressed.connect(exit_game)
  box.add_child(back)
@@ -586,14 +614,19 @@ func begin_round() -> void:
   boss.hp = 7 if route_kind == "daily" else 5 if profile.difficulty == "easy" else 7 if profile.difficulty == "moderate" else 9
   boss.hp += 0 if route_kind == "daily" else mini(12, country_index / 3)
   boss.max_hp = boss.hp
+  boss.pattern = ["charge", "bounce", "summoner"][posmod(GameCatalog.daily_seed(daily_day, "arcade-boss") if route_kind == "daily" else country_index, 3)]
+  boss.base_speed = absf(boss.velocity.x)
+  boss.dash_time = 0.0
+  boss.bounce_pending = false
   balls.append(boss)
  save_checkpoint()
  update_stats()
  queue_redraw()
 
 func round_brief() -> String:
- var rule: String = {"swarm": "SURVIVE THE SWARM · 25s", "no_fire": "DODGE ONLY · No firing · 25s", "flood": "RISING WATER · Clear before it floods"}.get(challenge, "ARMORED BOSS · Break armor, dodge its swarm" if round_index == 2 else "Mystery drops: collect or avoid them in Pause")
- return ("DAILY " + daily_modifier.to_upper() + " · " if route_kind == "daily" else "LEVEL %d · " % (country_index * 3 + round_index + 1)) + mechanic.to_upper() + " · " + rule
+ var boss_rule: String = {"charge": "SWEEP BOSS · Watch the charge arrow", "bounce": "BOUNCE BOSS · Watch for high jumps", "summoner": "SWARM BOSS · Clear its minions"}[["charge", "bounce", "summoner"][posmod(GameCatalog.daily_seed(daily_day, "arcade-boss") if route_kind == "daily" else country_index, 3)]]
+ var rule: String = {"swarm": "SURVIVE THE SWARM · 25s", "no_fire": "DODGE ONLY · No firing · 25s", "flood": "RISING WATER · Clear before it floods"}.get(challenge, boss_rule if round_index == 2 else "Mystery drops · Collect / avoid in Pause")
+ return ("DAILY " + daily_modifier.to_upper() + " · " if route_kind == "daily" else "LEVEL %d · " % (country_index * 3 + round_index + 1)) + mechanic.to_upper() + "\n" + rule
 
 func make_ball(position_value: Vector2, tier: int, direction: int, behavior_value: String = "normal") -> Dictionary:
  var speed := (115.0 + tour_pressure() * 150 + round_index * 15) * (1.1 if route_kind == "daily" else 1.25 if profile.difficulty == "hard" else 0.95 if profile.difficulty == "easy" else 1.1)
@@ -637,10 +670,20 @@ func fire(origin: float = -1) -> bool:
  audio.play_cue("team" if special_fired else "shot_" + equipped)
  return true
 
-func queue_boss_attack(boss: Dictionary, charge: bool, minions: int) -> void:
+func queue_boss_attack(boss: Dictionary, charge: bool, minions: int, bounce: bool = false) -> void:
  boss.warning = 0.85
  boss.charge_pending = boss.get("charge_pending", false) or charge
  boss.minions_pending = mini(4, int(boss.get("minions_pending", 0)) + minions)
+ boss.bounce_pending = boss.get("bounce_pending", false) or bounce
+
+func queue_boss_pattern(boss: Dictionary, cracked: bool = false, enraged: bool = false) -> void:
+ var pattern: String = boss.get("pattern", "charge")
+ queue_boss_attack(boss, pattern == "charge", 4 if pattern == "summoner" and cracked else 3 if pattern == "summoner" else 2 if cracked or enraged else 1, pattern == "bounce")
+
+func boss_minion_position(boss: Dictionary, index: int) -> Vector2:
+ var direction := -1 if index % 2 == 0 else 1
+ var band := index / 2
+ return Vector2(clampf(boss.position.x + direction * (44 + band * 36), 20, 700), clampf(minf(boss.position.y, floor_y - 160) - band * 32, 20, maxf(20, floor_y - 160)))
 
 func update_boss_attacks(delta: float) -> void:
  for boss in balls:
@@ -649,12 +692,15 @@ func update_boss_attacks(delta: float) -> void:
   if boss.warning > 0: continue
   if boss.get("charge_pending", false):
    boss.velocity.x = clampf(-boss.velocity.x * 1.25, -520, 520)
+   boss.dash_time = 0.65
+  if boss.get("bounce_pending", false): boss.velocity.y = -minf(650, sqrt(maxf(100, floor_y) * 600))
   for index in int(boss.get("minions_pending", 0)):
    if balls.size() >= 20: break
    var direction := -1 if index % 2 == 0 else 1
-   var spawn := Vector2(clampf(boss.position.x + direction * 44, 20, 700), minf(boss.position.y, floor_y - 160))
-   balls.append(make_ball(spawn, 0, direction))
+   var spawn := boss_minion_position(boss, index)
+   balls.append(make_ball(spawn, 0, direction, "dodge" if boss.get("pattern", "") == "summoner" else "normal"))
   boss.charge_pending = false
+  boss.bounce_pending = false
   boss.minions_pending = 0
   audio.play_cue("armor")
 
@@ -673,25 +719,32 @@ func pop_ball(index: int) -> void:
   burst(ball.position, Color("ffc75b"))
   if ball.hp > 0:
    if ball.hp == int(ball.max_hp) - 2 or ball.hp == int(ball.max_hp) / 2:
-    queue_boss_attack(ball, true, 2)
+    queue_boss_pattern(ball, true)
    notice.text = "BOSS ARMOR CRACKED · %d hits left" % ball.hp
    return
  balls.remove_at(index)
  combo = combo + 1 if combo_time > 0 else 1
  combo_time = 2.5
+ country_combo = maxi(country_combo, combo)
  score += (3 - int(ball.tier)) * 100 + mini(5, combo - 1) * 20
  burst(ball.position, Color("ffe8a4"))
  pops += 1
+ country_pops += 1
  var pop_badge := route_kind != "practice" and profile.note_arcade_pop()
+ var daily_goal := false
+ if route_kind != "practice":
+  daily_goal = profile.note_arcade_goal("pops")
+  if ball.get("boss", false): daily_goal = profile.note_arcade_goal("bosses") or daily_goal
  if pop_badge:
   show_feedback("ACHIEVEMENT · 100 Pops\nSky Balloon outfit unlocked")
+ elif daily_goal: show_feedback("DAILY GOAL COMPLETE!\nSee Balloon daily goals")
  coins += 2 if travel_choice == "detour" and country_index > 0 else 1
  audio.play_cue("burst")
  if int(ball.tier) > 0 and not ball.get("boss", false):
   for direction in [-1, 1]: balls.append(make_ball(ball.position, int(ball.tier) - 1, direction))
  if pickups.size() < 10 and (pops % 3 == 0 or rng.randf() < 0.22):
   pickups.append({"position": ball.position, "kind": DROPS[rng.randi_range(0, DROPS.size() - 1)], "age": 0.0})
- if pop_badge: save_checkpoint()
+ if pop_badge or daily_goal: save_checkpoint()
 
 func burst(point: Vector2, color: Color) -> void:
  for index in 18:
@@ -700,6 +753,7 @@ func burst(point: Vector2, color: Color) -> void:
 
 func collect(kind: String) -> void:
  if kind not in DROPS: return
+ if route_kind != "practice" and profile.discover_arcade_drop(kind): progress_dirty = true
  if country_drops >= 0: country_drops += 1
  if kind in WEAPONS:
   if kind == weapon and weapon_time > 0: weapon_level = mini(3, weapon_level + 1)
@@ -750,6 +804,7 @@ func boost_time(seconds: float) -> void:
 func fail_round(reason: String) -> void:
  phase = Phase.FAILED
  country_failed = true
+ country_retries += 1
  movement = 0
  partner_movement = 0
  walk_speed = 0
@@ -787,6 +842,8 @@ func clear_round() -> void:
  profile.record(record_mode(), "moderate" if route_kind == "daily" else profile.difficulty, score)
  earned_badges.clear()
  if round_index == 2 and route_kind != "practice":
+  profile.award_arcade_medal(route[country_index], record_difficulty(), coop, ArcadeProgress.medal(country_time, country_retries, country_combo))
+  if country_drops == 0 and profile.note_arcade_goal("no_drops"): show_feedback("DAILY GOAL COMPLETE!\nNo-drop destination cleared")
   profile.discover(route[country_index])
   profile.advance_missions(route[country_index], not country_failed, false)
   for id in ["arcade:clean_boss", "arcade:no_drops"]:
@@ -807,6 +864,7 @@ func finish_stamp() -> void:
 
 func show_clear_panel() -> void:
  var message := ("PRACTICE COMPLETE!" if round_index == 2 and route_kind == "practice" else "DESTINATION STAMPED!" if round_index == 2 else "ROUND CLEARED!") + "\n" + GameCatalog.country_name(route[country_index]) + " · Score %d" % score
+ if round_index == 2: message += "\n\n" + destination_result()
  if best_beaten: message += "\nNEW PERSONAL BEST!"
  for id in earned_badges: message += "\n★ " + ArcadeAchievements.BADGES[id].name + " · Wardrobe reward unlocked"
  show_panel(message, "FINISH PRACTICE" if round_index == 2 and route_kind == "practice" else "NEXT DESTINATION" if round_index == 2 else "NEXT ROUND", next_round)
@@ -842,6 +900,11 @@ func finish_arrival() -> void:
  country_index += 1
  country_failed = false
  country_drops = 0
+ country_time = 0.0
+ country_retries = 0
+ country_combo = 0
+ country_pops = 0
+ country_start_score = score
  round_index = 0
  controls.show()
  partner_controls.visible = coop
@@ -969,6 +1032,7 @@ func simulate(delta: float) -> void:
  hit_flash = maxf(0, hit_flash - delta)
  partner_cooldown = maxf(0, partner_cooldown - delta)
  round_elapsed += delta
+ if country_time >= 0: country_time += delta
  partner_shot = maxf(0, partner_shot - delta)
  shot_time = maxf(0, shot_time - delta)
  hurt_time = maxf(0, hurt_time - delta)
@@ -1023,7 +1087,7 @@ func simulate(delta: float) -> void:
   wave_clock = 0
   if round_index == 2:
    for boss in balls:
-    if boss.get("boss", false): queue_boss_attack(boss, false, 2 if enraged else 1)
+    if boss.get("boss", false): queue_boss_pattern(boss, false, enraged)
   else:
    if balls.size() < 20: balls.append(make_ball(Vector2(rng.randf_range(40,680), 40), 0, 1 if rng.randf() > 0.5 else -1))
  if freeze <= 0: update_boss_attacks(delta)
@@ -1032,6 +1096,9 @@ func simulate(delta: float) -> void:
  if freeze <= 0:
   for ball in balls:
    ball.age = float(ball.get("age", 0)) + delta
+   if ball.get("boss", false) and ball.get("dash_time", 0.0) > 0:
+    ball.dash_time = maxf(0, ball.dash_time - delta)
+    if ball.dash_time == 0: ball.velocity.x = signf(ball.velocity.x) * float(ball.get("base_speed", absf(ball.velocity.x)))
    if ball.get("behavior", "") == "zigzag": ball.position.x += sin(ball.age * 7) * delta * 95
    if ball.get("behavior", "") == "dodge":
     for wire in wires:
@@ -1121,6 +1188,9 @@ func simulate(delta: float) -> void:
    if mystery_chain > 0 and mystery_chain % 3 == 0: notice.text += " · LUCKY STREAK +500"
    pickups.remove_at(index)
   elif pickup.age > 12: pickups.remove_at(index)
+ if progress_dirty:
+  progress_dirty = false
+  save_checkpoint()
  update_stats()
  if challenge in ["swarm", "no_fire"]:
   if remaining <= 0: clear_round()
@@ -1141,16 +1211,29 @@ func update_stats() -> void:
  if best_beaten: stats.text += " · BEST!"
  stats.add_theme_font_size_override("font_size", 14)
 
+func draw_surface(rect: Rect2) -> void:
+ draw_rect(Rect2(rect.position + Vector2(0, 5), rect.size), Color(0, 0, 0, 0.35))
+ var texture := RealisticArt.surface(mechanic)
+ var count := maxi(1, ceili(rect.size.x / 100))
+ for index in count:
+  var width := rect.size.x / count
+  draw_texture_rect(texture, Rect2(rect.position + Vector2(index * width, 0), Vector2(width, rect.size.y)), false, Color(0.65, 0.68, 0.68))
+ draw_line(rect.position, Vector2(rect.end.x, rect.position.y), Color(1, 0.97, 0.88, 0.7), 2, true)
+ draw_line(Vector2(rect.position.x, rect.end.y), rect.end, Color(0.03, 0.04, 0.04, 0.55), 3, true)
+
 func _draw() -> void:
  if not backdrop: return
- draw_texture_rect(backdrop, Rect2(Vector2.ZERO, size), false)
+ var cover_scale := maxf(size.x / backdrop.get_width(), size.y / backdrop.get_height())
+ var source_size := size / cover_scale
+ var source_start := Vector2((backdrop.get_width() - source_size.x) / 2, (backdrop.get_height() - source_size.y) * 0.2)
+ draw_texture_rect_region(backdrop, Rect2(Vector2.ZERO, size), Rect2(source_start, source_size))
  draw_rect(Rect2(Vector2.ZERO, Vector2(size.x, arena().position.y - 4)), Color(0.04, 0.15, 0.22, 0.85))
  var play := arena()
  var jitter := Vector2(sin(clock * 93), cos(clock * 77)) * shake * 12 if not profile.settings.reduced_motion else Vector2.ZERO
  draw_set_transform(play.position + jitter, 0, play.size / Vector2(WORLD.x, world_height))
  for platform in platforms:
-  draw_style_box(style.panel_style(Color("a18a68"), 8), platform)
- draw_style_box(style.panel_style(DestinationTheme.color(route[country_index]), 8), Rect2(0, floor_y, WORLD.x, 30))
+  draw_surface(platform)
+ draw_surface(Rect2(0, floor_y, WORLD.x, 30))
  if mechanic == "sand":
   for index in 6:
    var x := fmod(index * 140 + clock * 55, WORLD.x)
@@ -1158,21 +1241,19 @@ func _draw() -> void:
  for wire in wires:
   var kind: String = wire.get("kind", "wire")
   if kind in ["gun", "spread", "rocket"]:
-   draw_style_box(style.panel_style(Color("ff9a5b") if kind == "rocket" else Color("fff2ab"), 4), Rect2(wire.x - 5, wire.top, 10, 20))
+   draw_texture_rect(RealisticArt.object(6 if kind == "rocket" else 7), Rect2(wire.x - 8, wire.top, 16, 30), false)
    draw_line(Vector2(wire.x, wire.top + 22), Vector2(wire.x, wire.top + 34), Color(1, 0.7, 0.25, 0.6), 3, true)
   else:
    draw_line(Vector2(wire.x, wire.bottom), Vector2(wire.x, wire.top), Color("9df7ef") if kind == "laser" else Color("ffe5a1"), 8 if kind == "laser" else 4, true)
-   draw_colored_polygon(PackedVector2Array([Vector2(wire.x, wire.top - 8), Vector2(wire.x - 7, wire.top + 5), Vector2(wire.x + 7, wire.top + 5)]), Color("fff5da"))
+   draw_texture_rect(RealisticArt.object(5), Rect2(wire.x - 9, wire.top - 12, 18, 30), false)
  for ball in balls:
-  var color: Color = [Color("63d9f4"), Color("ffbf58"), Color("f57583")][int(ball.tier)]
   draw_circle(ball.position + Vector2(3, 5), ball.radius, Color(0, 0, 0, 0.24))
-  draw_circle(ball.position, ball.radius, Color.WHITE if ball.get("flash", 0) > 0 else color)
+  draw_texture_rect(RealisticArt.object(3 if ball.get("boss", false) else ball.tier), Rect2(ball.position - Vector2.ONE * ball.radius * 1.12, Vector2.ONE * ball.radius * 2.24), false, Color(1.25, 1.25, 1.25) if ball.get("flash", 0) > 0 else Color.WHITE)
   var behavior: String = ball.get("behavior", "normal")
   if behavior != "normal" and not ball.get("boss", false):
    draw_string(ThemeDB.fallback_font, ball.position + Vector2(-7, 5), {"zigzag": "Z", "armored": "A", "timed": "5", "dodge": "D"}.get(behavior, ""), HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color("143e55"))
   if int(ball.get("armor", 1)) > 1: draw_arc(ball.position, ball.radius + 4, 0, TAU, 32, Color("a4ddff"), 4, true)
-  draw_arc(ball.position, ball.radius - 2, 0, TAU, 32, color.darkened(0.35), 3, true)
-  draw_circle(ball.position - Vector2(ball.radius * 0.28, ball.radius * 0.3), ball.radius * 0.25, Color(1, 1, 1, 0.65))
+
   if ball.get("boss", false):
    draw_arc(ball.position,ball.radius+5,0,TAU,40,Color("ffdd79"),6 if ball.hp > int(ball.max_hp)-2 else 2,true)
    draw_rect(Rect2(ball.position.x-45,ball.position.y-ball.radius-15,90,7),Color("193b52"))
@@ -1180,18 +1261,23 @@ func _draw() -> void:
    if ball.get("warning", 0.0) > 0:
     var pulse_size := 0.0 if profile.settings.reduced_motion else sin(clock * 14) * 3.0
     draw_arc(ball.position, ball.radius + 12 + pulse_size, 0, TAU, 48, Color("fff5aa"), 5, true)
-    var message := "CHARGE + MINIONS!" if ball.get("charge_pending", false) else "MINIONS INCOMING!"
-    draw_string(ThemeDB.fallback_font, ball.position + Vector2(-115, ball.radius + 32), message, HORIZONTAL_ALIGNMENT_CENTER, 230, 20, Color("fff5aa"))
+    var message := "CHARGE INCOMING" if ball.get("charge_pending", false) else "HIGH BOUNCE" if ball.get("bounce_pending", false) else "MINION SWARM"
+    draw_string(ThemeDB.fallback_font, Vector2(clampf(ball.position.x - 140, 4, WORLD.x - 284), ball.position.y + ball.radius + 32), message, HORIZONTAL_ALIGNMENT_CENTER, 280, 24, Color("fff5aa"))
     if ball.get("charge_pending", false):
      var direction := -signf(ball.velocity.x)
      var tip: Vector2 = ball.position + Vector2(direction * (ball.radius + 65), 0)
      draw_line(ball.position + Vector2(direction * (ball.radius + 15), 0), tip, Color("fff5aa"), 5, true)
      draw_line(tip, tip + Vector2(-direction * 16, -12), Color("fff5aa"), 5, true)
      draw_line(tip, tip + Vector2(-direction * 16, 12), Color("fff5aa"), 5, true)
-    for direction in [-1, 1]:
-     draw_arc(ball.position + Vector2(direction * 44, 0), 18, 0, TAU, 24, Color("fff5aa"), 3, true)
+    if ball.get("bounce_pending", false):
+     var tip: Vector2 = ball.position + Vector2(0, -ball.radius - 62)
+     draw_line(ball.position + Vector2(0, -ball.radius - 15), tip, Color("fff5aa"), 5, true)
+     draw_line(tip, tip + Vector2(-12, 16), Color("fff5aa"), 5, true)
+     draw_line(tip, tip + Vector2(12, 16), Color("fff5aa"), 5, true)
+    for index in int(ball.get("minions_pending", 0)):
+     draw_arc(boss_minion_position(ball, index), 18, 0, TAU, 24, Color("fff5aa"), 3, true)
  for pickup in pickups:
-  draw_style_box(style.panel_style(Color("ffda79"), 7), Rect2(pickup.position - Vector2(19, 19), Vector2(38, 38)))
+  draw_texture_rect(RealisticArt.object(4), Rect2(pickup.position - Vector2(22, 22), Vector2(44, 44)), false)
   draw_string(ThemeDB.fallback_font, pickup.position + Vector2(-7, 7), "?", HORIZONTAL_ALIGNMENT_LEFT, -1, 24, Color("143e55"))
  for particle in particles:
   var color: Color = particle.color
@@ -1246,35 +1332,42 @@ func draw_anchored_sprite(texture: Texture2D, target: Rect2, source: Rect2, tint
  for index in 4: uv[index] /= Vector2(texture.get_size())
  draw_polygon(corners, PackedColorArray([tint]), uv, texture)
 
+func realistic_source(index: int) -> Rect2:
+ var cell := Vector2(EXPLORER.get_size()) / 4
+ var data := RealisticArt.explorer_frame(index)
+ var bounds: Array = data.bounds
+ return Rect2(Vector2(index % 4, index / 4) * cell + Vector2(bounds[0], bounds[1]), Vector2(bounds[2] - bounds[0], bounds[3] - bounds[1]))
+
+func realistic_target(index: int, x: float, direction: float) -> Rect2:
+ var data := RealisticArt.explorer_frame(index)
+ var source := realistic_source(index)
+ var anchor := Vector2(data.anchor_x - data.bounds[0], data.head_top - data.bounds[1])
+ return side_target(x, direction, source.size, anchor, data.sole - data.bounds[1])
+
 func draw_turn(x: float, direction: float, tint: Color) -> void:
- var cell := Vector2(TURN.get_size()) / Vector2(5, 1)
- var target := side_target(x, direction, cell, IDLE_ANCHOR, IDLE_SOLE)
- draw_anchored_sprite(TURN, target, Rect2(Vector2.ZERO, cell), tint, x, direction)
+ draw_anchored_sprite(EXPLORER, realistic_target(0, x, direction), realistic_source(0), tint, x, direction)
 
 func walking_frame(gait: float) -> int:
  return posmod(int(gait), 8)
 
 func draw_explorer(frame: int, gait: float, speed: float, direction: float, x: float, tint: Color, incapacitated: bool) -> void:
- # Plant briefly at the midpoint; retain one solid sprite throughout the pivot.
  if not incapacitated and absf(direction) < 0.35: speed = 0
- if not incapacitated and speed <= 1:
-  draw_turn(x, direction, tint)
- elif speed > 1 and not incapacitated:
-  var cell := Vector2(WALK.get_size()) / Vector2(4, 2)
-  var step := walking_frame(gait)
-  var source := Rect2(Vector2(step % 4, step / 4) * cell, cell)
-  var target := side_target(x, direction, cell, WALK_ANCHORS[step], WALK_SOLES[step], 116.0 / 140.0)
-  draw_anchored_sprite(WALK, target, source, tint, x, direction)
-  if frame in range(4, 12):
-   var grip := Vector2(x + side_scale(direction) * 16, floor_y - 66)
-   draw_line(grip, grip + Vector2(0, -18), Color("72543c"), 6, true)
-   draw_line(grip + Vector2(0, -18), grip + Vector2(0, -25), Color("ffe5a1"), 4, true)
- else:
-  var cell := Vector2(PORTRAIT.get_size()) / 4
-  var target := Rect2(x - 52, floor_y - 120, 104, 124)
-  if direction < 0:
-   target.size.x *= -1
-  draw_texture_rect_region(PORTRAIT, target, Rect2(Vector2(frame % 4, frame / 4) * cell, cell), tint)
+ var index := frame if incapacitated and frame >= 12 else walking_frame(gait) + 1 if speed > 1 else 0
+ var target := realistic_target(index, x, direction)
+ if incapacitated:
+  var source := realistic_source(index)
+  var scale: float = 132.0 / (RealisticArt.explorer_frame(0).sole - RealisticArt.explorer_frame(0).head_top)
+  target.size = Vector2(source.size.x * scale * side_scale(direction), source.size.y * scale)
+  target.position = Vector2(x - absf(target.size.x) / 2, floor_y - target.size.y)
+ # A soft contact shadow and one solid side profile keep feet grounded.
+ var shadow := PackedVector2Array()
+ for point in 20: shadow.append(Vector2(x, floor_y + 2) + Vector2(cos(point * TAU / 20) * 22, sin(point * TAU / 20) * 4))
+ draw_colored_polygon(shadow, Color(0, 0, 0, 0.28))
+ draw_anchored_sprite(EXPLORER, target, realistic_source(index), tint, x, direction)
+ if frame in range(4, 12) and not incapacitated:
+  var grip := Vector2(x + side_scale(direction) * 12, floor_y - 78)
+  var head := RealisticArt.object(7 if weapon in ["gun", "spread", "laser"] else 6 if weapon == "rocket" else 5)
+  draw_texture_rect(head, Rect2(grip + Vector2(-8, -30), Vector2(16, 30)), false)
 
 func character_frame() -> int:
  if phase == Phase.FAILED and death_time > 0: return 12 + mini(3, int((0.9 - death_time) / 0.9 * 4))

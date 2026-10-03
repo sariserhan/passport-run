@@ -8,7 +8,7 @@ A playable **Godot 4.5.2 / GDScript memory adventure**, built from `spec.md` and
 
 1. Install Godot 4.5.2 (standard edition).
 2. Import `project.godot` and press **F5**.
-3. Try **Learn the Path**, select your home country and difficulty, then start a mode.
+3. Try **Learn the Path**, choose your starting country once and select a difficulty, then start a mode.
 4. Remember the checked tiles during preview. When they disappear, choose a tile in the next row within 10 seconds. Landing safely resets the clock; pauses and jumps freeze it.
 5. Retry after falling to replay the same path. Infinite also offers a new path. Pause or Escape suspends the run; End Run returns to the menu.
 
@@ -16,7 +16,7 @@ Modes: **World Tour**, **Infinite Memory**, **Daily World Tour**, and **Kids Adv
 
 ![France path preview](artifacts/12-france-preview-375x667.png)
 
-The visuals now follow the supplied references with illustrated destinations, a detailed backpacker sprite, rounded stone tiles and a perspective camera. See [visual assets and remaining animation limits](docs/visual-assets.md). Audio uses original destination-specific instrumental loops with layered arrangements and smooth transitions. Country/theme stones, gentle curves, bridge details, elevation, and character pressure reactions add variety. Find saved daily goals under DAILY TRAVEL MISSIONS, and earned keepsakes under MY PASSPORT → MY SOUVENIRS. Thinking/jumping/falling character poses, country celebration with a passport-stamping sequence, illustrated travel, Kids stickers/facts and share cards are included. Authenticated server manifests, replay-verified rankings and passport discovery sync work against a real local Convex backend; see [backend setup](backend/README.md). Online buttons appear only when a backend URL is configured. Hosted deployment, ads, live App Store product setup, public challenge URLs, native sharing and device acceptance remain unfinished.
+The current visuals use generated photorealistic destination scenery, human explorer sprites, latex balloons, brass equipment and textured 3D path stones. See [current graphics and asset prompts](docs/realistic-graphics.md); the earlier illustrated pass is documented in [visual assets and animation limits](docs/visual-assets.md). Audio uses original destination-specific instrumental loops with layered arrangements and smooth transitions. Country/theme stones, gentle curves, bridge details, elevation, and character pressure reactions add variety. Find saved daily goals under DAILY TRAVEL MISSIONS, and earned keepsakes under MY PASSPORT → MY SOUVENIRS. Thinking/jumping/falling character poses, country celebration with a passport-stamping sequence, photographic travel, Kids stickers/facts and share cards are included. Authenticated server manifests, replay-verified rankings and passport discovery sync work against a real local Convex backend; see [backend setup](backend/README.md). Online buttons appear only when a backend URL is configured. Hosted deployment, ads, live App Store product setup, public challenge URLs, native sharing and device acceptance remain unfinished.
 
 ## Checks
 
@@ -73,7 +73,7 @@ No private signing credentials are committed. Godot export and unsigned Xcode co
 
 Destination coverage, unique artwork, data attribution and update instructions: [world destinations](docs/destinations.md).
 
-New games memorize the path for **3 seconds**. Infinite has its own dreamscape. **WORLD MAP** pins cleared countries, and **MY PASSPORT** shows illustrated stamped pages with navigation/search. Earlier challenges retain their original preview timing. See [map and passport notes](docs/world-map.md).
+New games memorize the path for **3 seconds**. Infinite has its own dreamscape. **WORLD MAP** pins cleared countries, and **MY PASSPORT** shows stamped photo pages with navigation/search. Earlier challenges retain their original preview timing. See [map and passport notes](docs/world-map.md).
 
 **SHORT ADVENTURES** offers three-country trips with finish badges. **COLLECTION GOALS** unlocks cosmetic passport covers as you collect countries. Correct-jump streaks add rising notes and visual feedback; failures reveal the missed tile. Scenery has subtle motion, and the world map tracks regional completion. These rewards preserve gameplay and competitive scoring.
 
@@ -83,7 +83,7 @@ Your standing stone progressively cracks during the ten-second decision window. 
 
 Adventure Play adds ice, moving bridges and low-gravity/buoyant jumps. MY TRAVEL ROOM and WARDROBE save earned decorations and cosmetics. Friend challenge links include a local ghost replay; cinematic arrivals introduce adventure and paid destinations. See [handoff](HANDOFF.md) for verification and limits.
 
-For the iPhone project with challenge-link support, run `python3 tools/export_iphone.py /private/tmp/passport-native-travel-expansion`. Device testing is deferred to you.
+For the iPhone project with challenge-link support, run `python3 tools/export_iphone.py /private/tmp/passport-native-realistic`. Device testing is deferred to you.
 
 ## Balloon Tour
 
@@ -114,3 +114,11 @@ Balloon deaths expose **RETRY ROUND** immediately, even while the death pose pla
 Boss armor thresholds and reinforcement waves show a yellow ring, minion markers and a charge-direction arrow before attacking. The 0.85-second warning freezes with gameplay and survives saved-round recovery. Defeating the boss cancels its pending attacks; remaining minions still need clearing. Reduced Motion keeps the warning steady.
 
 Under **BALLOON TOUR → PRACTICE VISITED DESTINATIONS**, replay any stamped destination in three rounds. Paid scenery retains its pack gate. Practice uses separate local records and never changes the journey checkpoint, passport history, missions, tour coins or achievements. First Clean Boss (a destination without a failed round), 100 Pops (lifetime tour-attempt pops) and No Drops Collected (all three rounds without a mystery pickup) unlock three outfit colors in the existing Explorer wardrobe. Find progress under **BALLOON ACHIEVEMENTS**. Previously saved rounds remain compatible; an old save cannot retroactively prove a no-drops clear. Personal-best feedback compares against the previous record for the same mode and difficulty; retries establish a new comparison after saving the failed attempt's record. Verification and rendered examples: `tests/test_arcade_features.gd`, `artifacts/arcade-features-*.png`.
+
+## Destination mastery and realistic graphics — 2026-10-03
+
+Balloon bosses rotate between warned sweep charges, high bounces and summoner waves. Every destination result reports active play time across all three rounds and failed attempts, retries, best combo, pops and destination points. Gold requires at most 150 seconds, no retry and a five-pop combo; Silver requires at most 210 seconds, at most two retries and a three-pop combo. Other clears earn Bronze. The best medal persists separately for each difficulty and solo/co-op. Older saves retain progress but cannot establish Silver/Gold without complete timing data.
+
+**BALLOON DAILY GOALS** tracks 30 pops, one defeated boss and one destination cleared without collecting drops; goals reset at UTC midnight. **MYSTERY-DROP JOURNAL** reveals an effect only after its drop is collected during a tour. **DESTINATION MASTERY** shows medals for stamped places. Practice remains separate from these saved rewards. Pause or Settings can put FIRE on the left and enlarge touch targets from 72 to 88 pixels; preferences persist.
+
+The graphics pass supplies separate photorealistic scenery for all 282 destinations, realistic side-profile explorer animation, latex balloons, armored brass bosses, sealed mystery capsules, weapon sprites, metal medals, natural path materials and new menu/Infinite scenery. The character remains planted and side-facing during arcade walking and turns. Next-stop scenery still stays hidden until the current destination is cleared. Assets are generated imagery, and the game remains a 2D/3D hybrid. See [asset inventory, exact prompts and verification](docs/realistic-graphics.md). Physical iPhone visual/performance acceptance remains pending.

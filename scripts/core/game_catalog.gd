@@ -15,12 +15,11 @@ static var PREMIUM_DESTINATIONS: Dictionary = premium_catalog()
 static var CINEMA_DESTINATIONS: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://resources/geography/cinema.json"))
 static var FREE_DESTINATIONS: Dictionary = destination_catalog(false)
 static var DESTINATIONS: Dictionary = destination_catalog(true)
+const BACKDROP_CACHE_LIMIT := 8
+const ATLAS_CACHE_LIMIT := 4
 static var backdrop_cache: Dictionary = {}
-static var artwork: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://resources/geography/artwork.json"))
+static var artwork: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://resources/geography/realistic-artwork.json"))
 static var country_atlases: Dictionary = {}
-static var fantasy_backdrops := [preload("res://assets/fantasy-0.png"), preload("res://assets/fantasy-1.png")]
-static var cinema_backdrops := [preload("res://assets/cinema-0.png"), preload("res://assets/cinema-1.png")]
-static var landmark_backdrops := [preload("res://assets/landmarks-0.png"), preload("res://assets/landmarks-1.png"), preload("res://assets/landmarks-2.png"), preload("res://assets/landmarks-3.png")]
 
 static func premium_catalog() -> Dictionary:
 	var result: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://resources/geography/landmarks.json"))
@@ -46,14 +45,15 @@ static func backdrop(id: String) -> Texture2D:
 	if id not in DESTINATIONS:
 		id = "FR"
 	if id not in backdrop_cache:
-		var dedicated := "res://assets/backdrops/" + id + ".png"
-		if ResourceLoader.exists(dedicated):
-			backdrop_cache[id] = load(dedicated)
-		elif id in artwork:
-			var entry: Dictionary = artwork[id]
+		if backdrop_cache.size() >= BACKDROP_CACHE_LIMIT: backdrop_cache.erase(backdrop_cache.keys()[0])
+		var entry: Dictionary = artwork[id]
+		if entry.has("path"):
+			backdrop_cache[id] = load(entry.path)
+		else:
 			var atlas_id := int(entry.atlas)
 			if atlas_id not in country_atlases:
-				country_atlases[atlas_id] = load("res://assets/countries-%02d.png" % atlas_id)
+				if country_atlases.size() >= ATLAS_CACHE_LIMIT: country_atlases.erase(country_atlases.keys()[0])
+				country_atlases[atlas_id] = load("res://assets/realistic/details/scenery-%02d.png" % atlas_id)
 			var texture := AtlasTexture.new()
 			texture.atlas = country_atlases[atlas_id]
 			var columns := int(entry.columns)
@@ -62,21 +62,7 @@ static func backdrop(id: String) -> Texture2D:
 			texture.region = Rect2(Vector2(index % columns, index / columns) * cell, cell)
 			texture.filter_clip = true
 			backdrop_cache[id] = texture
-		else:
-			var texture := AtlasTexture.new()
-			var destination: Dictionary = DESTINATIONS[id]
-			var columns: int = 2 if destination.has("landmark_atlas") or destination.has("fantasy_atlas") or destination.has("cinema_atlas") else 4
-			if destination.has("cinema_atlas"):
-				texture.atlas = cinema_backdrops[int(destination.cinema_atlas)]
-			elif destination.has("fantasy_atlas"):
-				texture.atlas = fantasy_backdrops[int(destination.fantasy_atlas)]
-			else:
-				texture.atlas = landmark_backdrops[int(destination.landmark_atlas)]
-			var cell := Vector2(texture.atlas.get_size()) / columns
-			var index := int(destination.art)
-			texture.region = Rect2(Vector2(index % columns, index / columns) * cell, cell)
-			texture.filter_clip = true
-			backdrop_cache[id] = texture
+
 	return backdrop_cache[id]
 
 static func sorted_destinations(premium: bool = false) -> Array:

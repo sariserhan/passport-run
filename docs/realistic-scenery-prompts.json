@@ -1,0 +1,761 @@
+[
+  {
+    "file": "assets/realistic/details/scenery-00.png",
+    "ids": [
+      "TH",
+      "IN",
+      "GB",
+      "IT"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Thailand (South-Eastern Asia; TH Prathet Thai Kingdom of Thailand ราชอาณาจักรไทย Ratcha Anachak Thai); 2: India (Southern Asia; IN Bhārat Republic of India Bharat Ganrajya இந்தியா); 3: United Kingdom (Northern Europe; GB UK Great Britain); 4: Italy (Southern Europe; IT Italian Republic Repubblica italiana).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-63b58d6e-97f7-4c91-91b2-aaf0d84460e8.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-01.png",
+    "ids": [
+      "BR",
+      "CA",
+      "AU",
+      "CH"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Brazil (South America; BR Brasil Federative Republic of Brazil República Federativa do Brasil); 2: Canada (North America; CA); 3: Australia (Australia and New Zealand; AU); 4: Switzerland (Western Europe; CH Swiss Confederation Schweiz Suisse Svizzera Svizra).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-865eb7fe-7b33-4b2d-81b7-df56c7c3f338.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-02.png",
+    "ids": [
+      "IS",
+      "NZ",
+      "AL",
+      "DZ"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Iceland (Northern Europe; IS Island Republic of Iceland Lýðveldið Ísland); 2: New Zealand (Australia and New Zealand; NZ Aotearoa); 3: Albania (Southeast Europe; AL Shqipëri Shqipëria Shqipnia); 4: Algeria (Northern Africa; DZ Dzayer Algérie).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-71d0b009-a177-4f4f-87fb-9bd6a6b966b6.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-03.png",
+    "ids": [
+      "AD",
+      "AO",
+      "AG",
+      "AR"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Andorra (Southern Europe; AD Principality of Andorra Principat d'Andorra); 2: Angola (Middle Africa; AO República de Angola ʁɛpublika de an'ɡɔla); 3: Antigua and Barbuda (Caribbean; AG); 4: Argentina (South America; AR Argentine Republic República Argentina).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-93d8daf3-99fc-4b1f-a0fb-4b2ed9b373bf.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-04.png",
+    "ids": [
+      "AM",
+      "AT",
+      "AZ",
+      "BS"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Armenia (Western Asia; AM Hayastan Republic of Armenia Հայաստանի Հանրապետություն); 2: Austria (Central Europe; AT Osterreich Oesterreich); 3: Azerbaijan (Western Asia; AZ Republic of Azerbaijan Azərbaycan Respublikası); 4: Bahamas (Caribbean; BS Commonwealth of the Bahamas).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-a2550ff3-f44f-425d-82e3-d9cffe65d25b.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-05.png",
+    "ids": [
+      "BH",
+      "BD",
+      "BB",
+      "BY"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Bahrain (Western Asia; BH Kingdom of Bahrain Mamlakat al-Baḥrayn); 2: Bangladesh (Southern Asia; BD People's Republic of Bangladesh Gônôprôjatôntri Bangladesh); 3: Barbados (Caribbean; BB); 4: Belarus (Eastern Europe; BY Bielaruś Republic of Belarus Белоруссия Республика Белоруссия).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-91275e5a-efd7-40a8-9a51-0e3e1c075685.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-06.png",
+    "ids": [
+      "BE",
+      "BZ",
+      "BJ",
+      "BT"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Belgium (Western Europe; BE België Belgie Belgien Belgique Kingdom of Belgium Koninkrijk België Royaume de Belgique Königreich Belgien); 2: Belize (Central America; BZ); 3: Benin (Western Africa; BJ Republic of Benin République du Bénin); 4: Bhutan (Southern Asia; BT Kingdom of Bhutan).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-e9a1ba49-8166-4b4c-98b7-d89cb669cf2e.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-07.png",
+    "ids": [
+      "BO",
+      "BA",
+      "BW",
+      "BN"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Bolivia (South America; BO Buliwya Wuliwya Bolivia, Plurinational State of Plurinational State of Bolivia Estado Plurinacional de Bolivia Buliwy); 2: Bosnia and Herzegovina (Southeast Europe; BA Bosnia-Herzegovina Босна и Херцеговина); 3: Botswana (Southern Africa; BW Republic of Botswana Lefatshe la Botswana); 4: Brunei (South-Eastern Asia; BN Brunei Darussalam Nation of Brunei the Abode of Peace).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-1114e8a4-755b-4e2d-affa-44f300414656.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-08.png",
+    "ids": [
+      "BG",
+      "BF",
+      "BI",
+      "KH"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Bulgaria (Southeast Europe; BG Republic of Bulgaria Република България); 2: Burkina Faso (Western Africa; BF); 3: Burundi (Eastern Africa; BI Republic of Burundi Republika y'Uburundi République du Burundi); 4: Cambodia (South-Eastern Asia; KH Kingdom of Cambodia).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-bd22b0d7-01d6-4bdf-8e0b-3b92c51675d0.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-09.png",
+    "ids": [
+      "CM",
+      "CV",
+      "CF",
+      "TD"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Cameroon (Middle Africa; CM Republic of Cameroon République du Cameroun); 2: Cape Verde (Western Africa; CV Republic of Cabo Verde República de Cabo Verde); 3: Central African Republic (Middle Africa; CF Central African Republic République centrafricaine); 4: Chad (Middle Africa; TD Tchad Republic of Chad République du Tchad).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-a50b1359-7acf-42ae-8f82-72a7d3af3436.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-10.png",
+    "ids": [
+      "CL",
+      "CN",
+      "CO",
+      "KM"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Chile (South America; CL Republic of Chile República de Chile); 2: China (Eastern Asia; CN Zhōngguó Zhongguo Zhonghua People's Republic of China 中华人民共和国 Zhōnghuá Rénmín Gònghéguó); 3: Colombia (South America; CO Republic of Colombia República de Colombia); 4: Comoros (Eastern Africa; KM Union of the Comoros Union des Comores Udzima wa Komori al-Ittiḥād al-Qumurī).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-7b0c1ebd-de23-480a-9667-5625457fc0c7.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-11.png",
+    "ids": [
+      "CG",
+      "CR",
+      "HR",
+      "CU"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Congo (Middle Africa; CG Congo Congo-Brazzaville); 2: Costa Rica (Central America; CR Republic of Costa Rica República de Costa Rica); 3: Croatia (Southeast Europe; HR Hrvatska Republic of Croatia Republika Hrvatska); 4: Cuba (Caribbean; CU Republic of Cuba República de Cuba).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-664efe6f-5ddc-4d2e-a89c-3544e44d9304.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-12.png",
+    "ids": [
+      "CY",
+      "CZ",
+      "CD",
+      "DK"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Cyprus (Southern Europe; CY Kýpros Kıbrıs Republic of Cyprus Κυπριακή Δημοκρατία Kıbrıs Cumhuriyeti); 2: Czechia (Central Europe; CZ Česká republika Česko); 3: DR Congo (Middle Africa; CD DR Congo Congo-Kinshasa Congo, the Democratic Republic of the Democratic Republic of Congo DRC); 4: Denmark (Northern Europe; DK Danmark Kingdom of Denmark Kongeriget Danmark).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-1db22385-19d6-441a-8443-e9f0e2a7561f.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-13.png",
+    "ids": [
+      "DJ",
+      "DM",
+      "DO",
+      "EC"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Djibouti (Eastern Africa; DJ Jabuuti Gabuuti Republic of Djibouti République de Djibouti Gabuutih Ummuuno Jamhuuriyadda Jabuuti); 2: Dominica (Caribbean; DM Dominique Wai‘tu kubuli Commonwealth of Dominica); 3: Dominican Republic (Caribbean; DO); 4: Ecuador (South America; EC Republic of Ecuador República del Ecuador).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-b365dced-50c8-4b4b-a91c-38c12ab03651.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-14.png",
+    "ids": [
+      "SV",
+      "GQ",
+      "ER",
+      "EE"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: El Salvador (Central America; SV Republic of El Salvador República de El Salvador); 2: Equatorial Guinea (Middle Africa; GQ Republic of Equatorial Guinea República de Guinea Ecuatorial République de Guinée équatoriale República da Guiné Equa); 3: Eritrea (Eastern Africa; ER State of Eritrea ሃገረ ኤርትራ Dawlat Iritriyá ʾErtrā Iritriyā); 4: Estonia (Northern Europe; EE Eesti Republic of Estonia Eesti Vabariik).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-bebb483b-0463-409c-b4cb-a29785b1786f.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-15.png",
+    "ids": [
+      "SZ",
+      "ET",
+      "FJ",
+      "FI"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Eswatini (Southern Africa; SZ Swaziland weSwatini Swatini Ngwane Kingdom of Eswatini Umbuso weSwatini); 2: Ethiopia (Eastern Africa; ET ʾĪtyōṗṗyā Federal Democratic Republic of Ethiopia የኢትዮጵያ ፌዴራላዊ ዲሞክራሲያዊ ሪፐብሊክ); 3: Fiji (Melanesia; FJ Viti Republic of Fiji Matanitu ko Viti Fijī Gaṇarājya); 4: Finland (Northern Europe; FI Suomi Republic of Finland Suomen tasavalta Republiken Finland).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-3d4a8e5e-1b19-4ac9-919d-c6a3d814a71a.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-16.png",
+    "ids": [
+      "GA",
+      "GM",
+      "GE",
+      "DE"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Gabon (Middle Africa; GA Gabonese Republic République Gabonaise); 2: Gambia (Western Africa; GM Republic of the Gambia); 3: Georgia (Western Asia; GE Sakartvelo); 4: Germany (Western Europe; DE Federal Republic of Germany Bundesrepublik Deutschland).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-bf7849ae-bad4-484d-a51b-380d08483c4a.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-17.png",
+    "ids": [
+      "GH",
+      "GR",
+      "GD",
+      "GT"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Ghana (Western Africa; GH); 2: Greece (Southern Europe; GR Elláda Hellenic Republic Ελληνική Δημοκρατία); 3: Grenada (Caribbean; GD); 4: Guatemala (Central America; GT).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-7c82dfc2-cba3-49e6-9adc-adb7c5027190.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-18.png",
+    "ids": [
+      "GN",
+      "GW",
+      "GY",
+      "HT"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Guinea (Western Africa; GN Republic of Guinea République de Guinée); 2: Guinea-Bissau (Western Africa; GW Republic of Guinea-Bissau República da Guiné-Bissau); 3: Guyana (South America; GY Co-operative Republic of Guyana); 4: Haiti (Caribbean; HT Republic of Haiti République d'Haïti Repiblik Ayiti).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-5f84ce71-3de7-4490-a47e-7da97f44d307.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-19.png",
+    "ids": [
+      "HN",
+      "HU",
+      "ID",
+      "IR"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Honduras (Central America; HN Republic of Honduras República de Honduras); 2: Hungary (Central Europe; HU); 3: Indonesia (South-Eastern Asia; ID Republic of Indonesia Republik Indonesia); 4: Iran (Southern Asia; IR Islamic Republic of Iran Iran, Islamic Republic of Jomhuri-ye Eslāmi-ye Irān).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-e7f58ced-329c-4909-be99-b842794643aa.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-20.png",
+    "ids": [
+      "IQ",
+      "IE",
+      "IL",
+      "CI"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Iraq (Western Asia; IQ Republic of Iraq Jumhūriyyat al-‘Irāq); 2: Ireland (Northern Europe; IE Éire Republic of Ireland Poblacht na hÉireann); 3: Israel (Western Asia; IL State of Israel Medīnat Yisrā'el); 4: Ivory Coast (Western Africa; CI Côte d'Ivoire Cote d'Ivoire Ivory Coast Republic of Côte d'Ivoire République de Côte d'Ivoire).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-ae6a21bd-38d7-4e8f-95b2-13e33fe66dcd.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-21.png",
+    "ids": [
+      "JM",
+      "JO",
+      "KZ",
+      "KE"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Jamaica (Caribbean; JM); 2: Jordan (Western Asia; JO Hashemite Kingdom of Jordan al-Mamlakah al-Urdunīyah al-Hāshimīyah); 3: Kazakhstan (Central Asia; KZ Qazaqstan Казахстан Republic of Kazakhstan Қазақстан Республикасы Qazaqstan Respublïkası Республика Казахстан Respubl); 4: Kenya (Eastern Africa; KE Republic of Kenya Jamhuri ya Kenya).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-bd141b11-c10d-4ae2-b5ad-26a721428fe9.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-22.png",
+    "ids": [
+      "KI",
+      "XK",
+      "KW",
+      "KG"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Kiribati (Micronesia; KI Republic of Kiribati Ribaberiki Kiribati); 2: Kosovo (Southeast Europe; XK Република Косово); 3: Kuwait (Western Asia; KW State of Kuwait Dawlat al-Kuwait); 4: Kyrgyzstan (Central Asia; KG Киргизия Kyrgyz Republic Кыргыз Республикасы Kyrgyz Respublikasy).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-d3c05eff-62c9-466c-9dc5-d44fe321f7f4.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-23.png",
+    "ids": [
+      "LA",
+      "LV",
+      "LB",
+      "LS"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Laos (South-Eastern Asia; LA Lao Lao People's Democratic Republic Sathalanalat Paxathipatai Paxaxon Lao); 2: Latvia (Northern Europe; LV Republic of Latvia Latvijas Republika); 3: Lebanon (Western Asia; LB Lebanese Republic Al-Jumhūrīyah Al-Libnānīyah); 4: Lesotho (Southern Africa; LS Kingdom of Lesotho Muso oa Lesotho).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-3842b54f-eb3c-47a0-897e-1dad7803b3b4.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-24.png",
+    "ids": [
+      "LR",
+      "LY",
+      "LI",
+      "LT"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Liberia (Western Africa; LR Republic of Liberia); 2: Libya (Northern Africa; LY State of Libya Dawlat Libya); 3: Liechtenstein (Western Europe; LI Principality of Liechtenstein Fürstentum Liechtenstein); 4: Lithuania (Northern Europe; LT Republic of Lithuania Lietuvos Respublika).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-5df205d2-8a46-4329-8275-b67410665cca.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-25.png",
+    "ids": [
+      "LU",
+      "MG",
+      "MW",
+      "MY"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Luxembourg (Western Europe; LU Grand Duchy of Luxembourg Grand-Duché de Luxembourg Großherzogtum Luxemburg Groussherzogtum Lëtzebuerg); 2: Madagascar (Eastern Africa; MG Republic of Madagascar Repoblikan'i Madagasikara République de Madagascar); 3: Malawi (Eastern Africa; MW Republic of Malawi); 4: Malaysia (South-Eastern Asia; MY).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-3d48e7c4-5967-49a0-b2f3-50bca9360eec.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-26.png",
+    "ids": [
+      "MV",
+      "ML",
+      "MT",
+      "MH"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Maldives (Southern Asia; MV Maldive Islands Republic of the Maldives Dhivehi Raajjeyge Jumhooriyya); 2: Mali (Western Africa; ML Republic of Mali République du Mali); 3: Malta (Southern Europe; MT Republic of Malta Repubblika ta' Malta); 4: Marshall Islands (Micronesia; MH Republic of the Marshall Islands Aolepān Aorōkin M̧ajeļ).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-686d48df-06a1-4b80-bc0a-c4cbbb339bfa.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-27.png",
+    "ids": [
+      "MR",
+      "MU",
+      "MX",
+      "FM"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Mauritania (Western Africa; MR Islamic Republic of Mauritania al-Jumhūriyyah al-ʾIslāmiyyah al-Mūrītāniyyah); 2: Mauritius (Eastern Africa; MU Republic of Mauritius République de Maurice); 3: Mexico (North America; MX Mexicanos United Mexican States Estados Unidos Mexicanos); 4: Micronesia (Micronesia; FM Federated States of Micronesia Micronesia, Federated States of).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-9d2aad95-6f69-4782-a293-51f57560eadc.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-28.png",
+    "ids": [
+      "MD",
+      "MC",
+      "MN",
+      "ME"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Moldova (Eastern Europe; MD Moldova, Republic of Republic of Moldova Republica Moldova); 2: Monaco (Western Europe; MC Principality of Monaco Principauté de Monaco); 3: Mongolia (Eastern Asia; MN); 4: Montenegro (Southeast Europe; ME Crna Gora).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-a2ef0bee-cdc4-4460-ac7e-a361b27b43ff.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-29.png",
+    "ids": [
+      "MA",
+      "MZ",
+      "MM",
+      "NA"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Morocco (Northern Africa; MA Kingdom of Morocco Al-Mamlakah al-Maġribiyah); 2: Mozambique (Eastern Africa; MZ Republic of Mozambique República de Moçambique); 3: Myanmar (South-Eastern Asia; MM Burma Republic of the Union of Myanmar Pyidaunzu Thanmăda Myăma Nainngandaw); 4: Namibia (Southern Africa; NA Namibië Republic of Namibia).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-0dd0aad1-42bc-434b-b5cc-631a27be01cf.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-30.png",
+    "ids": [
+      "NR",
+      "NP",
+      "NL",
+      "NI"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Nauru (Micronesia; NR Naoero Pleasant Island Republic of Nauru Ripublik Naoero); 2: Nepal (Southern Asia; NP Federal Democratic Republic of Nepal Loktāntrik Ganatantra Nepāl); 3: Netherlands (Western Europe; NL Holland Nederland The Netherlands); 4: Nicaragua (Central America; NI Republic of Nicaragua República de Nicaragua).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-050974a9-ce5c-4730-8735-df3c2fd79e69.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-31.png",
+    "ids": [
+      "NE",
+      "NG",
+      "KP",
+      "MK"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Niger (Western Africa; NE Nijar); 2: Nigeria (Western Africa; NG Nijeriya Naíjíríà Federal Republic of Nigeria); 3: North Korea (Eastern Asia; KP Democratic People's Republic of Korea DPRK 조선민주주의인민공화국 Chosŏn Minjujuŭi Inmin Konghwaguk Korea, Democratic People's R); 4: North Macedonia (Southeast Europe; MK The former Yugoslav Republic of Macedonia Republic of North Macedonia Macedonia, The Former Yugoslav Republic of Репу).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-717eb367-0e6d-4beb-9057-d746346224d6.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-32.png",
+    "ids": [
+      "NO",
+      "OM",
+      "PK",
+      "PW"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Norway (Northern Europe; NO Norge Noreg Kingdom of Norway Kongeriket Norge Kongeriket Noreg); 2: Oman (Western Asia; OM Sultanate of Oman Salṭanat ʻUmān); 3: Pakistan (Southern Asia; PK Pākistān Islamic Republic of Pakistan Islāmī Jumhūriya'eh Pākistān); 4: Palau (Micronesia; PW Republic of Palau Beluu er a Belau).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-ce840173-8691-4356-add7-3eaa34a0c9b5.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-33.png",
+    "ids": [
+      "PS",
+      "PA",
+      "PG",
+      "PY"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Palestine (Western Asia; PS Palestine, State of State of Palestine Dawlat Filasṭin); 2: Panama (Central America; PA Republic of Panama República de Panamá); 3: Papua New Guinea (Melanesia; PG Independent State of Papua New Guinea Independen Stet bilong Papua Niugini); 4: Paraguay (South America; PY Republic of Paraguay República del Paraguay Tetã Paraguái).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-6dcfda28-07ea-420f-8c3a-4a454c63c9fb.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-34.png",
+    "ids": [
+      "PE",
+      "PH",
+      "PL",
+      "PT"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Peru (South America; PE Republic of Peru República del Perú); 2: Philippines (South-Eastern Asia; PH Republic of the Philippines Repúblika ng Pilipinas); 3: Poland (Central Europe; PL Republic of Poland Rzeczpospolita Polska); 4: Portugal (Southern Europe; PT Portuguesa Portuguese Republic República Portuguesa).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-f7b2d8d7-72fc-4560-8467-f4c2ecf5d49c.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-35.png",
+    "ids": [
+      "QA",
+      "RO",
+      "RU",
+      "RW"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Qatar (Western Asia; QA State of Qatar Dawlat Qaṭar); 2: Romania (Southeast Europe; RO Rumania Roumania România); 3: Russia (Eastern Europe; RU Russian Federation Российская Федерация); 4: Rwanda (Eastern Africa; RW Republic of Rwanda Repubulika y'u Rwanda République du Rwanda).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-77d64117-19c3-4a9d-b67b-7afc660e40d1.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-36.png",
+    "ids": [
+      "KN",
+      "LC",
+      "VC",
+      "WS"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Saint Kitts and Nevis (Caribbean; KN Federation of Saint Christopher and Nevis); 2: Saint Lucia (Caribbean; LC); 3: Saint Vincent and the Grenadines (Caribbean; VC); 4: Samoa (Polynesia; WS Independent State of Samoa Malo Saʻoloto Tutoʻatasi o Sāmoa).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-e0d532d8-780e-44a7-9635-731efd4788ba.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-37.png",
+    "ids": [
+      "SM",
+      "SA",
+      "SN",
+      "RS"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: San Marino (Southern Europe; SM Republic of San Marino Repubblica di San Marino); 2: Saudi Arabia (Western Asia; Saudi SA Kingdom of Saudi Arabia Al-Mamlakah al-‘Arabiyyah as-Su‘ūdiyyah); 3: Senegal (Western Africa; SN Republic of Senegal République du Sénégal); 4: Serbia (Southeast Europe; RS Srbija Republika Srbija Србија Република Србија Republic of Serbia).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-22e1995a-fd63-4fc1-a712-9764dcbf0ea8.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-38.png",
+    "ids": [
+      "SC",
+      "SL",
+      "SG",
+      "SK"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Seychelles (Eastern Africa; SC Republic of Seychelles Repiblik Sesel République des Seychelles); 2: Sierra Leone (Western Africa; SL Republic of Sierra Leone); 3: Singapore (South-Eastern Asia; SG Singapura Republik Singapura 新加坡共和国); 4: Slovakia (Central Europe; SK Slovak Republic Slovenská republika).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-38347908-7c90-439f-a121-e3571087a6a2.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-39.png",
+    "ids": [
+      "SI",
+      "SB",
+      "SO",
+      "ZA"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Slovenia (Central Europe; SI Republic of Slovenia Republika Slovenija); 2: Solomon Islands (Melanesia; SB); 3: Somalia (Eastern Africa; SO aṣ-Ṣūmāl Federal Republic of Somalia Jamhuuriyadda Federaalka Soomaaliya Jumhūriyyat aṣ-Ṣūmāl al-Fiderāliyya); 4: South Africa (Southern Africa; ZA RSA Suid-Afrika Republic of South Africa).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-299937d1-5494-4cf6-ba30-7ea236d127f1.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-40.png",
+    "ids": [
+      "KR",
+      "SS",
+      "ES",
+      "LK"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: South Korea (Eastern Asia; KR Korea, Republic of Republic of Korea 남한 남조선); 2: South Sudan (Middle Africa; SS); 3: Spain (Southern Europe; ES Kingdom of Spain Reino de España); 4: Sri Lanka (Southern Asia; LK ilaṅkai Democratic Socialist Republic of Sri Lanka).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-17c70bed-70c8-480e-830a-8f218df551af.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-41.png",
+    "ids": [
+      "SD",
+      "SR",
+      "SE",
+      "SY"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Sudan (Northern Africa; SD Republic of the Sudan Jumhūrīyat as-Sūdān); 2: Suriname (South America; SR Sarnam Sranangron Republic of Suriname Republiek Suriname); 3: Sweden (Northern Europe; SE Kingdom of Sweden Konungariket Sverige); 4: Syria (Western Asia; SY Syrian Arab Republic Al-Jumhūrīyah Al-ʻArabīyah As-Sūrīyah).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-20601605-8a8f-43ca-8bee-70541eaca99f.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-42.png",
+    "ids": [
+      "ST",
+      "TW",
+      "TJ",
+      "TZ"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: São Tomé and Príncipe (Middle Africa; ST Democratic Republic of São Tomé and Príncipe Sao Tome and Principe República Democrática de São Tomé e Príncipe); 2: Taiwan (Eastern Asia; TW Táiwān Republic of China 中華民國 Zhōnghuá Mínguó Chinese Taipei); 3: Tajikistan (Central Asia; TJ Toçikiston Republic of Tajikistan Ҷумҳурии Тоҷикистон Çumhuriyi Toçikiston); 4: Tanzania (Eastern Africa; TZ Tanzania, United Republic of United Republic of Tanzania Jamhuri ya Muungano wa Tanzania).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-0b8ad100-225b-401b-a461-9118ed7a18d7.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-43.png",
+    "ids": [
+      "TL",
+      "TG",
+      "TO",
+      "TT"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Timor-Leste (South-Eastern Asia; TL East Timor Timor Democratic Republic of Timor-Leste República Democrática de Timor-Leste Repúblika Demokrátika Timór-); 2: Togo (Western Africa; TG Togolese Togolese Republic République Togolaise); 3: Tonga (Polynesia; TO); 4: Trinidad and Tobago (Caribbean; TT Republic of Trinidad and Tobago).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-8f947bf8-da4b-4517-837b-592ab5e5ecec.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-44.png",
+    "ids": [
+      "TN",
+      "TM",
+      "TV",
+      "UG"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Tunisia (Northern Africa; TN Republic of Tunisia al-Jumhūriyyah at-Tūnisiyyah); 2: Turkmenistan (Central Asia; TM); 3: Tuvalu (Polynesia; TV); 4: Uganda (Eastern Africa; UG Republic of Uganda Jamhuri ya Uganda).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-31ebf9c7-610f-4c2f-96db-6dff13be1c8c.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-45.png",
+    "ids": [
+      "UA",
+      "AE",
+      "UY",
+      "UZ"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Ukraine (Eastern Europe; UA Ukrayina); 2: United Arab Emirates (Dubai) (Western Asia; AE UAE Emirates); 3: Uruguay (South America; UY Oriental Republic of Uruguay República Oriental del Uruguay); 4: Uzbekistan (Central Asia; UZ Republic of Uzbekistan O‘zbekiston Respublikasi Ўзбекистон Республикаси).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-1241d714-ba6d-4bee-bc11-526a8078d1b9.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-46.png",
+    "ids": [
+      "VU",
+      "VA",
+      "VE",
+      "VN"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Vanuatu (Melanesia; VU Republic of Vanuatu Ripablik blong Vanuatu République de Vanuatu); 2: Vatican City (Southern Europe; VA Holy See (Vatican City State) Vatican City State Vatican Stato della Città del Vaticano); 3: Venezuela (South America; VE Bolivarian Republic of Venezuela Venezuela, Bolivarian Republic of República Bolivariana de Venezuela); 4: Vietnam (South-Eastern Asia; VN Socialist Republic of Vietnam Cộng hòa Xã hội chủ nghĩa Việt Nam Viet Nam).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-42f463f0-9848-4662-8964-ce4704b413e3.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-47.png",
+    "ids": [
+      "YE",
+      "ZM",
+      "ZW",
+      "AS"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Yemen (Western Asia; YE Yemeni Republic al-Jumhūriyyah al-Yamaniyyah); 2: Zambia (Eastern Africa; ZM Republic of Zambia); 3: Zimbabwe (Eastern Africa; ZW Republic of Zimbabwe); 4: American Samoa (Polynesia; AS Amerika Sāmoa Amelika Sāmoa Sāmoa Amelika).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-ee49164f-d8cf-49b1-bc47-01cbc68e301f.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-48.png",
+    "ids": [
+      "AI",
+      "AQ",
+      "AW",
+      "BM"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Anguilla (Caribbean; AI); 2: Antarctica (Antarctic; AQ); 3: Aruba (Caribbean; AW); 4: Bermuda (North America; BM The Islands of Bermuda The Bermudas Somers Isles).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-42c66b04-2590-457f-a037-57d2a765f141.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-49.png",
+    "ids": [
+      "BV",
+      "IO",
+      "VG",
+      "BQ"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Bouvet Island (Antarctic; BV Bouvetøya Bouvet-øya); 2: British Indian Ocean Territory (Eastern Africa; IO); 3: British Virgin Islands (Caribbean; VG Virgin Islands, British); 4: Caribbean Netherlands (Caribbean; BES islands Bonaire Sint Eustatius and Saba).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-6f0a1e6f-7680-4172-8a27-01b621dd8146.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-50.png",
+    "ids": [
+      "KY",
+      "CX",
+      "CC",
+      "CK"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Cayman Islands (Caribbean; KY); 2: Christmas Island (Australia and New Zealand; CX Territory of Christmas Island); 3: Cocos (Keeling) Islands (Australia and New Zealand; CC Keeling Islands Cocos Islands); 4: Cook Islands (Polynesia; CK Kūki 'Āirani).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-d793e052-d4d2-4cf5-8849-123885a0776e.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-51.png",
+    "ids": [
+      "CW",
+      "FK",
+      "FO",
+      "GF"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Curaçao (Caribbean; CW Curacao Kòrsou Country of Curaçao Land Curaçao Pais Kòrsou); 2: Falkland Islands (South America; FK Islas Malvinas Falkland Islands (Malvinas)); 3: Faroe Islands (Northern Europe; FO Føroyar Færøerne Faeroe Islands); 4: French Guiana (South America; GF Guiana Guyane).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-52c7fbba-ce0a-41b6-8e37-8fb616f90b86.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-52.png",
+    "ids": [
+      "PF",
+      "TF",
+      "GI",
+      "GL"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: French Polynesia (Polynesia; PF Polynésie française French Polynesia Pōrīnetia Farāni); 2: French Southern and Antarctic Lands (Antarctic; TF French Southern Territories); 3: Gibraltar (Southern Europe; GI); 4: Greenland (North America; GL Grønland).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-8ab13036-419b-420e-b41b-ad455c2c28e7.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-53.png",
+    "ids": [
+      "GP",
+      "GU",
+      "GG",
+      "HM"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Guadeloupe (Caribbean; GP Gwadloup); 2: Guam (Micronesia; GU Guåhån); 3: Guernsey (Northern Europe; GG Bailiwick of Guernsey Bailliage de Guernesey); 4: Heard Island and McDonald Islands (Antarctic; HM Heard Island and McDonald Islands).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-2bab0de4-b76c-4f2a-8f67-e047e52d04f8.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-54.png",
+    "ids": [
+      "HK",
+      "IM",
+      "JE",
+      "MO"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Hong Kong (Eastern Asia; HK); 2: Isle of Man (Northern Europe; IM Ellan Vannin Mann Mannin); 3: Jersey (Northern Europe; JE Bailiwick of Jersey Bailliage de Jersey Bailliage dé Jèrri); 4: Macau (Eastern Asia; MO 澳门 Macao Macao Special Administrative Region of the People's Republic of China 中華人民共和國澳門特別行政區 Região Administrativa E).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-40d581e4-dfd2-4eee-aea4-c86e1e8a1c8d.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-55.png",
+    "ids": [
+      "MQ",
+      "YT",
+      "MS",
+      "NC"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Martinique (Caribbean; MQ); 2: Mayotte (Eastern Africa; YT Department of Mayotte Département de Mayotte); 3: Montserrat (Caribbean; MS); 4: New Caledonia (Melanesia; NC).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-788b6b7c-b982-4e0b-a967-13eee2170735.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-56.png",
+    "ids": [
+      "NU",
+      "NF",
+      "MP",
+      "PN"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Niue (Polynesia; NU); 2: Norfolk Island (Australia and New Zealand; NF Territory of Norfolk Island Teratri of Norf'k Ailen); 3: Northern Mariana Islands (Micronesia; MP Commonwealth of the Northern Mariana Islands Sankattan Siha Na Islas Mariånas); 4: Pitcairn Islands (Polynesia; PN Pitcairn Pitcairn Henderson Ducie and Oeno Islands).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-d1419a54-0ffd-4762-a565-75c056bf2318.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-57.png",
+    "ids": [
+      "PR",
+      "RE",
+      "BL",
+      "SH"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Puerto Rico (Caribbean; PR Commonwealth of Puerto Rico Estado Libre Asociado de Puerto Rico); 2: Réunion (Eastern Africa; RE Reunion); 3: Saint Barthélemy (Caribbean; BL St. Barthelemy Collectivity of Saint Barthélemy Collectivité de Saint-Barthélemy); 4: Saint Helena, Ascension and Tristan da Cunha (Western Africa; Saint Helena St. Helena, Ascension and Tristan da Cunha).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-f139b39f-2937-4800-85df-1e681e8a99af.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-58.png",
+    "ids": [
+      "MF",
+      "PM",
+      "SX",
+      "GS"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Saint Martin (Caribbean; MF Collectivity of Saint Martin Collectivité de Saint-Martin Saint Martin (French part)); 2: Saint Pierre and Miquelon (North America; PM Collectivité territoriale de Saint-Pierre-et-Miquelon); 3: Sint Maarten (Caribbean; SX Sint Maarten (Dutch part)); 4: South Georgia (Antarctic; GS South Georgia and the South Sandwich Islands).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-4448dfd9-d2ed-42c2-9c2f-9c6259b0fb39.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-59.png",
+    "ids": [
+      "SJ",
+      "TK",
+      "TC",
+      "UM"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Svalbard and Jan Mayen (Northern Europe; SJ Svalbard and Jan Mayen Islands); 2: Tokelau (Polynesia; TK); 3: Turks and Caicos Islands (Caribbean; TC); 4: United States Minor Outlying Islands (North America; UM).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-54ab967e-c036-41c9-8377-47cc59815ef1.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-60.png",
+    "ids": [
+      "VI",
+      "WF",
+      "EH",
+      "AX"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: United States Virgin Islands (Caribbean; VI Virgin Islands, U.S.); 2: Wallis and Futuna (Polynesia; WF Territory of the Wallis and Futuna Islands Territoire des îles Wallis et Futuna); 3: Western Sahara (Northern Africa; EH Taneẓroft Tutrimt); 4: Åland Islands (Northern Europe; AX Aaland Aland Ahvenanmaa).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-d48cba45-b1ef-4d48-a0d2-ed6cbf9d7ef8.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-61.png",
+    "ids": [
+      "EVEREST",
+      "SAHARA",
+      "GRAND_CANYON",
+      "MACHU_PICCHU"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Mount Everest (Himalayas; Sagarmatha Chomolungma mountain snow Nepal China); 2: Sahara Desert (North Africa; desert dunes oasis sand Africa); 3: Grand Canyon (Arizona · United States; canyon Arizona Colorado America); 4: Machu Picchu (Andes · Peru; Inca ruins Andes Peru mountains).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-68b5b277-5b35-48e7-b879-c8c8b8534d5f.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-62.png",
+    "ids": [
+      "PETRA",
+      "TAJ_MAHAL",
+      "ANGKOR_WAT",
+      "NORTHERN_LIGHTS"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Petra (Jordan; Treasury Al Khazneh Jordan ruins desert); 2: Taj Mahal (Agra · India; Agra India palace marble); 3: Angkor Wat (Siem Reap · Cambodia; Khmer temple Cambodia jungle ruins); 4: Northern Lights (Iceland; Aurora Borealis arctic polar Iceland snow).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-8af81fbd-2acf-40e7-996b-ae59c4fdf556.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-63.png",
+    "ids": [
+      "GREAT_BARRIER_REEF",
+      "VICTORIA_FALLS",
+      "SALAR_UYUNI",
+      "SERENGETI"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Great Barrier Reef (Queensland · Australia; coral reef ocean diving Queensland Australia); 2: Victoria Falls (Zambia · Zimbabwe; Mosi oa Tunya waterfall Zambia Zimbabwe); 3: Salar de Uyuni (Bolivia; salt flat mirror desert Bolivia Uyuni); 4: Serengeti (Tanzania; safari savanna grassland wildlife Tanzania Africa).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-ead6ef09-df15-4c49-b79a-ba98451f47aa.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-64.png",
+    "ids": [
+      "AMAZON",
+      "VENICE",
+      "STONEHENGE",
+      "SANTORINI"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Amazon Rainforest (South America; rainforest jungle river Brazil Peru Colombia); 2: Venice Canals (Venice · Italy; Venice Venezia Grand Canal gondola Italy); 3: Stonehenge (Wiltshire · United Kingdom; England Britain UK ancient stones circle); 4: Santorini (Cyclades · Greece; Thera Oia Greece blue domes island volcano).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-94adb01d-3eb2-431f-8266-dde91a876eb8.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-65.png",
+    "ids": [
+      "UNDERWATER",
+      "SPACE",
+      "MOON",
+      "MARS"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Underwater World (Deep Ocean; ocean underwater coral fish diving); 2: Space Station (Earth Orbit; space orbit Earth station stars); 3: Moon (Lunar Frontier; moon lunar craters space); 4: Mars (Martian Frontier; mars red planet space).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-7a96f699-c80e-4c81-a1f0-12fdd79884ac.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-66.png",
+    "ids": [
+      "SATURN",
+      "CRYSTAL_CAVERN",
+      "CLOUD_CITY",
+      "DRAGON_ISLAND"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Saturn Rings (Outer Space; saturn rings planet space); 2: Crystal Cavern (Crystal Depths; crystal cavern cave underground magic); 3: Cloud City (Sky Kingdom; cloud city sky floating island fantasy); 4: Dragon Island (Ember Isles; dragon island volcano fantasy castle).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-cfc8865c-8435-4216-9c70-59afb9867480.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-67.png",
+    "ids": [
+      "HOBBIT_VILLAGE",
+      "ELVEN_VALLEY",
+      "VOLCANIC_REALM",
+      "WIZARD_CASTLE"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Hobbit Village (Cinema Worlds; Lord of the Rings Shire round doors); 2: Elven Valley (Cinema Worlds; Lord of the Rings Rivendell waterfalls); 3: Volcanic Realm (Cinema Worlds; Lord of the Rings Mordor Mount Doom); 4: Wizard Castle (Cinema Worlds; Harry Potter Hogwarts magic school).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-6b36965a-12f4-4b63-a439-bb2cfec61bdd.png"
+  },
+  {
+    "file": "assets/realistic/details/scenery-68.png",
+    "ids": [
+      "WIZARD_VILLAGE",
+      "ENCHANTED_FOREST",
+      "DINOSAUR_ISLAND",
+      "WONDERLAND"
+    ],
+    "prompt": "Use case: photorealistic-natural. A production cinematic travel game scenery atlas containing EXACTLY FOUR highly detailed hyper realistic travel photographs in an EXACT 2 columns by 2 rows arrangement. Four equal portrait cells, no borders, no gutters, NO TEXT. Overall portrait 2:3 aspect ratio, 1024x1536 or highest portrait resolution. Each cell must be its own sharp cinematic photograph of the specific DIFFERENT named place. Camera-quality architecture, individually detailed natural rocks, foliage and physically plausible water, fine photographic surface detail. Natural exposure, varied location-specific light, atmospheric depth, elegant rich but believable color, never painting or illustration. Real geographic landscapes and local architecture, no reused scenes or generic templated mountains, no misplaced Thai temples. Polar destinations have correct ice and tundra or volcanic island coasts. Fantasy/cinema places are original film-set environments with physically realistic rock, plants, water and architecture, no recognizable copyrighted characters or insignia. Upper half of EACH cell has its primary scenery and architecture; lower half has quiet open water or terrain for gameplay. NO people, flags, tiles, balloons, letters, labels, UI, cartoon, low-poly or watermarks. Strict ROW-MAJOR cell order (top left, top right, bottom left, bottom right): 1: Wizard Village (Cinema Worlds; Harry Potter Hogsmeade snow); 2: Enchanted Forest (Cinema Worlds; Harry Potter Forbidden Forest); 3: Dinosaur Island (Cinema Worlds; Jurassic Park dinosaurs); 4: Wonderland (Cinema Worlds; Alice in Wonderland tea garden).",
+    "generated_source": "/Users/serhansari/.codex/generated_images/01a1007b-96ab-7ac0-b57e-0c84d664e0b3/exec-573f2513-1a52-4f15-8cbf-08aa573aac08.png"
+  }
+]

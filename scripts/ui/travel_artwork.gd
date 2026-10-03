@@ -5,7 +5,7 @@ var country_id := "FR"
 var show_traveler := true
 var revealed := true
 var zoom := 1.0
-const BACKPACKER := preload("res://assets/backpacker.png")
+static var BACKPACKER := RealisticArt.region(RealisticArt.EXPLORER, 0, Vector2i(4, 4))
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -24,7 +24,7 @@ func _draw() -> void:
 		return
 	var texture := GameCatalog.backdrop(country_id)
 	var width := float(texture.get_width())
-	# Crop the portrait painting around its landmarks for wide travel cards.
+	# Crop the portrait scenery around its landmarks for wide travel cards.
 	draw_texture_rect_region(texture, Rect2(0, 0, 720, 360), Rect2((width - width / zoom) / 2, texture.get_height() * 0.10, width / zoom, width / zoom / 2))
 	if show_traveler:
 		draw_texture_rect(BACKPACKER, Rect2(15, 50, 185, 310), false)

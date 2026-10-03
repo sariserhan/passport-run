@@ -1,0 +1,38 @@
+[
+  {
+    "key": "objects",
+    "file": "assets/realistic/objects.png",
+    "transparent": true,
+    "prompt": "Use case: product-mockup. A transparent game object sprite atlas, EXACT 4 columns by 2 rows, eight equal square cells, 2048x1024. Eight isolated photorealistic objects, straight on orthographic view, consistent soft light from upper left and environmental reflections, no shadows on background. Row-major cells: 1 round inflated coral-red latex balloon with tiny tied knot, realistic thin rubber translucency, specular reflections; 2 identical shape royal blue latex balloon; 3 identical shape warm amber latex balloon; 4 dark crimson round boss balloon with segmented weathered brass armored panels and believable metal fasteners; 5 sealed small weathered brass mystery capsule/box with subtle pale glowing center, NO labels or text, identical anonymous exterior; 6 steel upward harpoon arrowhead and short rope attachment; 7 small realistic steel rocket pointing straight upward with orange exhaust; 8 glowing pale projectile pointing upward. Objects completely contained inside own cell, clean transparent background, NO humans, NO text, NO interface, NO cartoon, NO illustrations."
+  },
+  {
+    "key": "materials",
+    "file": "assets/realistic/materials.png",
+    "transparent": false,
+    "prompt": "Use case: photorealistic-natural. Production game physically realistic surface albedo atlas EXACT 2 columns by 2 rows of four equal square cells, no borders. Overall square 2048x2048. Straight top-down macro photographs of surface materials with full edge-to-edge coverage, consistent soft neutral light, no perspective objects. Row-major: 1 weathered limestone pavement, subtle grain and hairline stone seams; 2 warm fine sandstone and tiny sand grains; 3 blue-gray frosted ice with natural fractures and delicate frost crystals; 4 dark worn oak planks, wood grain and fine joints. Photographic realism, fine roughness detail, muted earthy colors, no painted illustration, no text, no grass, no decorative objects, no humans, no shadows from outside scene."
+  },
+  {
+    "key": "menu",
+    "file": "assets/realistic/menu.png",
+    "transparent": false,
+    "prompt": "Use case: photorealistic-natural. Portrait mobile travel game cover background, 1024x1536 or highest portrait resolution. Hyper realistic cinematic travel photography: a young adult curly brown-haired backpacker with weathered canvas backpack, white cotton shirt, navy shorts and brown leather boots seen from the BACK or strict SIDE standing on a real limestone terrace overlooking a broad alpine lake and layered mountains at early morning. Natural anatomy and realistic fabric, golden sunlight, soft atmospheric depth, detailed natural stone and calm water. Upper half generous calm sky and distant mountains for interface typography. Lower half traveler off center and terrace. Sophisticated filmic photographic colors, no cartoon, no illustration, no oversized head, no writing, no flags, no UI, no watermark, no border."
+  },
+  {
+    "key": "infinite",
+    "file": "assets/realistic/infinite.png",
+    "transparent": false,
+    "prompt": "Use case: photorealistic-natural. Portrait mobile game dreamscape backdrop. Hyper realistic cinematic environment, physically plausible rock and water materials: floating dark stone islands above a vast quiet cloud ocean, subtle distant nebula stars against dusk blue sky, believable atmospheric depth and natural soft light. High detail film-set environment, restrained color, upper-half vista and lower-half quiet space for game tiles overlay. Original fantasy scene, no people, no cartoon, no illustration, no lettering, no platforms for gameplay, no UI, no watermark. Highest portrait resolution."
+  },
+  {
+    "key": "memory-explorer",
+    "file": "assets/realistic/memory-explorer.png",
+    "transparent": true,
+    "prompt": "Use case: photorealistic-natural. Transparent game character animation sprite sheet EXACT 4 columns by 4 rows, sixteen equal square cells, 2048x2048 preferred. Same young adult male backpacker in every frame: short curly brown hair, white cotton T-shirt, navy hiking shorts, brown weathered leather boots, tan canvas backpack. Hyper realistic photographic cutouts, real human proportions, individual hair, skin and fabric detail, consistent light and scale, never cartoon or oversized head. Strict right-facing side profile or rear three-quarter looking away from viewer, NEVER front-facing to camera. One whole person per cell, transparent empty background, no floor. Row-major frame order: 0 relaxed standing; 1 thoughtful standing hand on chin; 2 thoughtful standing with hand near forehead; 3 worried standing glance toward path; 4 bending knees preparing jump; 5 rising jump knees slightly tucked; 6 mid jump legs stepping forward; 7 landing bent knees; 8 planted-foot happy celebration with one arm raised; 9 reaching back to trouser pocket; 10 holding an open passport; 11 pressing a small stamp into passport; 12 beginning loss of balance; 13 stumbling forward; 14 dropping downward arms extended; 15 crumpled side fall. Frames 0-3 and 8-11 share grounded boot baseline and stable head position. Frames contained in equal cells with transparent margins. No typography, no interface, no illustration, no blood."
+  },
+  {
+    "key": "robot-explorer",
+    "file": "assets/realistic/robot-explorer.png",
+    "transparent": true,
+    "prompt": "Use case: game-asset photorealistic-character. Create a transparent PNG 4 by 4 sprite sheet, EXACT 16 equal cells, 1254 square or highest square resolution, no grid lines. A friendly SMALL ROBOT explorer for a children's travel memory game, physical movie-quality practical robot with brushed cream metal and dark navy enamel, realistic rubber joints, two small subtle amber visor lights, brown hiking boots, tan canvas backpack. Friendly round proportions but PHOTOREALISTIC real physical manufactured surfaces, never cartoon drawing, rendered like premium cinema VFX. Every frame same robot, same lighting, same size. Strict right-facing 90-degree SIDE PROFILE in all poses, never front-facing or looking at viewer. Whole figure isolated inside every cell with padding, no cropped feet, no adjacent overlaps. Row-major: 0 planted upright calm thinking, 1 planted thinking hand at chin, 2 planted thinking glance to right, 3 planted concerned looking right; 4 crouch before jump, 5 side-profile rising jump feet raised, 6 side-profile midair jump, 7 side-profile landing crouch; 8 planted modest celebrating fist lift, 9 side-profile taking small passport out of backpack pocket, 10 side-profile holding open passport, 11 side-profile stamping passport with hand; 12 stumbling backwards, 13 losing balance backwards, 14 side-profile falling backwards, 15 lying on side after a fall. Photographic canvas weave, weathered metal, physical shadows only on robot, natural soft neutral studio light. Transparent background, no ground plane, no labels, no writing, no logos, no watermarks."
+  }
+]

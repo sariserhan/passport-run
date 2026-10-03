@@ -256,8 +256,6 @@ func label(text: String, size: int, color: Color) -> Label:
 	var node := Label.new()
 	node.text = text
 	node.add_theme_font_size_override("font_size", size)
-	if size >= 28:
-		node.add_theme_font_override("font", preload("res://assets/fonts/LilitaOne-Regular.ttf"))
 	node.add_theme_color_override("font_color", color)
 	node.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return node
@@ -270,11 +268,11 @@ func button(text: String, primary: bool) -> Button:
 	node.custom_minimum_size.y = 56
 	node.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	node.add_theme_font_size_override("font_size", 19)
-	node.add_theme_color_override("font_color", Color("073914") if primary else CREAM)
-	node.add_theme_color_override("font_focus_color", Color("073914") if primary else CREAM)
-	node.add_theme_color_override("font_hover_color", Color("073914") if primary else CREAM)
-	node.add_theme_color_override("font_pressed_color", Color("073914") if primary else CREAM)
-	var base := Color("51df65") if primary else Color("117eb9")
+	node.add_theme_color_override("font_color", Color("18262c") if primary else CREAM)
+	node.add_theme_color_override("font_focus_color", Color("18262c") if primary else CREAM)
+	node.add_theme_color_override("font_hover_color", Color("18262c") if primary else CREAM)
+	node.add_theme_color_override("font_pressed_color", Color("18262c") if primary else CREAM)
+	var base := Color("cdb07c") if primary else Color("263a43")
 	node.add_theme_stylebox_override("normal", panel_style(base, 12))
 	node.add_theme_stylebox_override("hover", panel_style(base.lightened(0.08), 12))
 	node.add_theme_stylebox_override("pressed", panel_style(base.darkened(0.08), 12))

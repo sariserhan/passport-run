@@ -18,9 +18,12 @@ var room_display: Array[String] = []
 var arcade_saves: Dictionary = {}
 var arcade_pops := 0
 var arcade_practice_records: Dictionary = {}
+var arcade_mastery: Dictionary = {}
+var arcade_drop_journal: Array[String] = []
+var arcade_daily: Dictionary = {}
 var cached_home := ""
 var cached_tour: Array[String] = []
-var settings: Dictionary = {"music": 0.35, "sound": 0.65, "reduced_motion": false, "high_contrast": false, "haptics": true}
+var settings: Dictionary = {"music": 0.35, "sound": 0.65, "reduced_motion": false, "high_contrast": false, "haptics": true, "arcade_swap": false, "arcade_large": false}
 var last_error: String = ""
 
 func _init(path: String = "user://profile.json") -> void:
@@ -43,6 +46,13 @@ func load_profile() -> void:
 	tutorial_done = data.get("tutorial_done", false) == true
 	if data.get("arcade_pops") is float or data.get("arcade_pops") is int:
 		arcade_pops = clampi(int(data.arcade_pops), 0, 10000000)
+	arcade_daily = ArcadeProgress.clean_daily(data.get("arcade_daily"), GameCatalog.today_utc())
+	if data.get("arcade_drop_journal") is Array:
+		for kind in data.arcade_drop_journal:
+			if kind is String and kind in ArcadeProgress.DROPS and kind not in arcade_drop_journal: arcade_drop_journal.append(kind)
+	if data.get("arcade_mastery") is Dictionary:
+		for key in data.arcade_mastery.keys().slice(0, 1692):
+			if key is String and ArcadeProgress.valid_mastery_key(key) and (data.arcade_mastery[key] is int or data.arcade_mastery[key] is float): arcade_mastery[key] = clampi(int(data.arcade_mastery[key]), 0, 3)
 	if data.get("arcade_saves") is Dictionary:
 		for key in data.arcade_saves:
 			if key is String and key in ["world", "special", "cinema", "daily:" + GameCatalog.today_utc()] and data.arcade_saves[key] is String and data.arcade_saves[key].length() <= ArcadeCheckpoint.MAX_ENCODED:
@@ -109,6 +119,9 @@ func save() -> bool:
 	var data := {"version": SCHEMA_VERSION, "anonymous_id": anonymous_id, "home_country": home_country, "difficulty": difficulty, "tutorial_done": tutorial_done, "discoveries": discoveries, "history": history, "records": records, "badges": badges, "passport_cover": passport_cover, "daily_missions": daily_missions, "character_style": character_style, "room_display": room_display, "settings": settings, "arcade_saves": arcade_saves}
 	data["arcade_pops"] = arcade_pops
 	data["arcade_practice_records"] = arcade_practice_records
+	data["arcade_mastery"] = arcade_mastery
+	data["arcade_drop_journal"] = arcade_drop_journal
+	data["arcade_daily"] = arcade_daily
 	var file := FileAccess.open(file_path + ".tmp", FileAccess.WRITE)
 	if file == null:
 		last_error = "Progress could not be saved on this device."
@@ -180,6 +193,28 @@ func valid_badge(id: String) -> bool:
 func note_arcade_pop() -> bool:
 	arcade_pops = mini(10000000, arcade_pops + 1)
 	return arcade_pops >= 100 and award_badge("arcade:100_pops", false)
+
+func arcade_daily_progress() -> Dictionary:
+	arcade_daily = ArcadeProgress.clean_daily(arcade_daily, GameCatalog.today_utc())
+	return arcade_daily
+
+func note_arcade_goal(key: String) -> bool:
+	if key not in ArcadeProgress.DAILY: return false
+	var progress := arcade_daily_progress()
+	var target: int = ArcadeProgress.DAILY[key][1]
+	var previous: int = progress[key]
+	progress[key] = mini(target, previous + 1)
+	return previous < target and progress[key] == target
+
+func discover_arcade_drop(kind: String) -> bool:
+	if kind not in ArcadeProgress.DROPS or kind in arcade_drop_journal: return false
+	arcade_drop_journal.append(kind)
+	return true
+
+func award_arcade_medal(id: String, key: String, coop: bool, medal: int) -> void:
+	if id not in GameCatalog.DESTINATIONS or key not in GameCatalog.DIFFICULTIES: return
+	var record_key := ArcadeProgress.mastery_key(id, key, coop)
+	arcade_mastery[record_key] = maxi(int(arcade_mastery.get(record_key, 0)), clampi(medal, 1, 3))
 
 func award_badge(id: String, persist: bool = true) -> bool:
 	if not valid_badge(id) or id in badges: return false
