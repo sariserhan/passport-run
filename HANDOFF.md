@@ -65,7 +65,7 @@ Relevant artifacts: `artifacts/batch-*.png`, `artifacts/extras-*.png`, `artifact
 
 ## What remains
 
-1. **Run the complete updated game on the physical iPhone.** Sign the latest native project using the existing development setup, preserve/back up the installed save, and validate the actual game. The previous phone unlock was used for the isolated sharing test; do not assume the latest game was installed.
+1. **Done (install/launch only):** full `tools/check.sh` passed with zero failures at `4bd13f0`. That build was exported, development-signed and installed on the iPhone 14 Pro (`00008120-001E28663CE3C01E`) at `/private/tmp/passport-native-device`. It launched and kept running; it wrote the GLES3 shader cache to `Documents`. The app was not previously installed, so no save was overwritten. This is not gameplay acceptance; items 2–5 still need a person holding the phone.
 2. **Device acceptance:** Denmark → Germany failure/retry and menu resume; touch controls across difficulties; portrait/landscape and safe areas; larger text; background/lock/resume; performance, heat, audio/mute/haptics; save persistence and backup recovery.
 3. **Real sharing acceptance:** use the full game to share room/album pictures, GIF movies, and passport backups; verify actual recipient delivery or Photos saving. Prior synthetic cancellation callbacks are not this evidence.
 4. **Branding acceptance:** check the home-screen icon and cold-launch splash on the phone, including possible cached old assets.
