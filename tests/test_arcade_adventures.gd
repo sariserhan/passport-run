@@ -162,18 +162,12 @@ func run() -> void:
  arcade.shield = false
  arcade.invincible = 0
  arcade.hit()
- expect(arcade.player_down and arcade.phase==BalloonArcade.Phase.PLAY, "Co-op teammate falls without ending the run")
- arcade.partner_x = arcade.player_x
- arcade.simulate(2.1)
- expect(not arcade.player_down and arcade.invincible>0, "Nearby teammate revives after two seconds")
- arcade.invincible = 0
- arcade.hit()
- arcade.partner_down = true
- arcade.hit()
- # Collision route handles both-down explicitly; revive deadline also prevents deadlock.
- arcade.down_time = 0.01
- arcade.simulate(0.1)
- expect(arcade.phase==BalloonArcade.Phase.FAILED, "Both down cannot deadlock a run")
+ expect(arcade.phase == BalloonArcade.Phase.FAILED, "First co-op collision ends the run")
+ arcade.begin_round()
+ arcade.freeze = 0
+ arcade.balls.assign([arcade.make_ball(Vector2(arcade.partner_x, arcade.floor_y - 35), 0, 1)])
+ arcade.simulate(0.01)
+ expect(arcade.phase == BalloonArcade.Phase.FAILED, "P2 collision ends the run even during starting grace")
  arcade.begin_round()
  arcade.freeze=30
  await capture("coop-landscape")

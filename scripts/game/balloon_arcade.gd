@@ -22,7 +22,7 @@ var country_index := 0
 var round_index := 0
 var score := 0
 var round_score := 0
-var lives := 3
+var lives := 1
 var remaining := 90.0
 var player_x := 360.0
 var invincible := 0.0
@@ -193,7 +193,7 @@ func _ready() -> void:
  resized.connect(layout)
  layout()
  load_destination()
- show_panel(("DAILY ARCADE · " + daily_day + "\n" + starting_weapon.to_upper() + " · " + daily_modifier.to_upper() + "\nBest today: %d pts\n" % int(profile.records.get(record_mode() + ":moderate", 0)) if route_kind == "daily" else "") + "BALLOON TOUR\nMove ◀ ▶ and FIRE ↑.\nSplit balloons; clear 3 rounds.\n? drops may help or hurt.", "START", begin_round)
+ show_panel(("DAILY ARCADE · " + daily_day + "\n" + starting_weapon.to_upper() + " · " + daily_modifier.to_upper() + "\nBest today: %d pts\n" % int(profile.records.get(record_mode() + ":moderate", 0)) if route_kind == "daily" else "") + "BALLOON TOUR\nMove ◀ ▶ and FIRE ↑.\nSplit balloons; clear 3 rounds.\nOne balloon hit ends the game.\n? drops may help or hurt.", "START", begin_round)
 
 func set_control(key: String, pressed: bool) -> void:
  if key == "◀": left_held = pressed
@@ -315,7 +315,7 @@ func begin_round() -> void:
  phase = Phase.PLAY
  panel.hide()
  load_destination()
- lives = 3 + extra_hearts
+ lives = 1
  remaining = 80.0 if route_kind == "daily" else 85.0 if profile.difficulty == "easy" else 80.0 if profile.difficulty == "moderate" else 75.0
  remaining -= tour_pressure() * 20
  player_x = 280 if coop else 360
@@ -530,34 +530,17 @@ func fail_round(reason: String) -> void:
  queue_redraw()
 
 func hit() -> void:
- if invincible <= 0 and not player_down:
-  hit_flash = 0.3
-  shake = 0.22
-  notice.text = "SHIELD BLOCKED!" if shield else "HIT! · Find cover"
- if coop:
-  if invincible <= 0 and not player_down:
-   if shield: shield = false; invincible = 2; return
-   if lives > 3:
-    lives -= 1
-    invincible = 3
-    notice.text = "EXTRA HEART SAVED P1!"
-    return
-   player_down = true
-   country_failed = true
-   down_time = 15
-   if partner_down: fail_round("BOTH EXPLORERS DOWN")
-  return
- if invincible > 0: return
- if shield: shield = false
- else:
-  lives -= 1
-  country_failed = true
- invincible = 2
+ if phase != Phase.PLAY or player_down: return
+ hit_flash = 0.3
+ shake = 0.22
+ lives = 0
+ shield = false
+ country_failed = true
  hurt_time = 0.5
  combo = 0
  combo_time = 0
  audio.play_cue("fall")
- if lives <= 0: fail_round("OUT OF LIVES")
+ fail_round("BALLOON HIT · GAME OVER")
 
 func clear_round() -> void:
  if phase != Phase.PLAY: return
@@ -759,26 +742,12 @@ func simulate(delta: float) -> void:
    var body := Rect2(player_x - 17, floor_y - 65, 34, 65)
    var nearest := Vector2(clampf(ball.position.x, body.position.x, body.end.x), clampf(ball.position.y, body.position.y, body.end.y))
    if nearest.distance_squared_to(ball.position) <= radius * radius: hit()
-   if coop and not partner_down and partner_grace <= 0:
+   if coop and not partner_down:
     var partner_body := Rect2(partner_x - 17, floor_y - 65, 34, 65)
     var partner_near := Vector2(clampf(ball.position.x, partner_body.position.x, partner_body.end.x), clampf(ball.position.y, partner_body.position.y, partner_body.end.y))
     if partner_near.distance_squared_to(ball.position) <= radius * radius:
-     hit_flash = 0.3
-     shake = 0.22
-     audio.play_cue("fall")
-     if shield:
-      shield = false
-      partner_grace = 2
-     elif lives > 3:
-      lives -= 1
-      partner_grace = 3
-      notice.text = "EXTRA HEART SAVED P2!"
-     else:
-      partner_down = true
-      partner_slide = 0
-      country_failed = true
-      down_time = 15
-      if player_down: fail_round("BOTH EXPLORERS DOWN")
+     invincible = 0
+     hit()
    if phase != Phase.PLAY: return
  for index in range(balls.size() - 1, -1, -1):
   var timed: Dictionary = balls[index]

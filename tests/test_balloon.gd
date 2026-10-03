@@ -43,7 +43,7 @@ func run() -> void:
  arcade.set_physics_process(false)
  expect(arcade.fire(), "Harpoon launches")
  expect(not arcade.fire(), "Basic wire is limited while active")
- arcade.balls.assign([arcade.make_ball(Vector2(arcade.player_x, arcade.floor_y - 50), 2, 1)])
+ arcade.balls.assign([arcade.make_ball(Vector2(arcade.player_x, arcade.floor_y - 120), 2, 1)])
  arcade.simulate(0.01)
  expect(arcade.balls.size() == 2 and arcade.balls[0].tier == 1, "A wire splits a large balloon into two medium balloons")
  expect(arcade.wires.is_empty(), "A hit consumes the harpoon")
@@ -92,22 +92,18 @@ func run() -> void:
  arcade.set_paused(false)
  arcade.invincible = 0
  arcade.shield = true
- arcade.hit()
- expect(arcade.lives == 3 and not arcade.shield, "Shield absorbs one collision")
- arcade.hit()
- expect(arcade.lives == 3, "Damage grace prevents repeated hits")
- arcade.invincible = 0
  arcade.balls.assign([arcade.make_ball(Vector2(arcade.player_x, arcade.floor_y - 35), 0, 1)])
  arcade.wires.clear()
  arcade.freeze = 0
  arcade.simulate(0.01)
- expect(arcade.lives == 2, "Actual balloon-player collision removes one life")
- arcade.invincible = 0
- arcade.lives = 1
- arcade.hit()
- expect(arcade.phase == BalloonArcade.Phase.FAILED, "Last hit ends the round")
+ expect(arcade.lives == 0 and arcade.phase == BalloonArcade.Phase.FAILED, "First balloon collision ends the game even with a shield")
  arcade.begin_round()
- expect(arcade.score == arcade.round_score and arcade.lives == 3, "Retry rolls back failed-round score")
+ expect(arcade.score == arcade.round_score and arcade.lives == 1, "Retry rolls back failed-round score and restores one life")
+ arcade.invincible = 0
+ arcade.lives = 5
+ arcade.hit()
+ expect(arcade.phase == BalloonArcade.Phase.FAILED and arcade.lives == 0, "Extra hearts cannot prevent a fatal hit")
+ arcade.begin_round()
  arcade.remaining = 0.001
  arcade.simulate(0.01)
  expect(arcade.phase == BalloonArcade.Phase.FAILED, "Timeout ends the round")

@@ -40,7 +40,7 @@ func run() -> void:
  expect(not arcade.buy_upgrade("heart"), "Insufficient balance rejected")
  arcade.travel_choice = "detour"
  arcade.next_round()
- expect(arcade.country_index == 1 and arcade.lives == 4 and arcade.shield and arcade.weapon == "laser", "Travel starts destination with bought supplies")
+ expect(arcade.country_index == 1 and arcade.lives == 1 and arcade.shield and arcade.weapon == "laser", "Travel starts destination with bought supplies")
  expect(arcade.balls[0].armor == 2, "Hard detour has armor")
  arcade.balls.assign([arcade.make_ball(Vector2(200,100),0,1)])
  arcade.balls[0].armor = 1
