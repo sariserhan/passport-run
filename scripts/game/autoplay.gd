@@ -47,7 +47,8 @@ func _process(delta: float) -> void:
 		play_arcade(delta)
 	else:
 		play_memory()
-	var state := "%s/%d/%s" % [game.run.phase, game.run.completed_rows, game.arcade.phase if is_instance_valid(game.arcade) else -1]
+	var state := "%s/%d" % [game.run.phase, game.run.completed_rows]
+	if is_instance_valid(game.arcade): state = "%s/%d/%d/%d" % [game.arcade.phase, game.arcade.round_index, game.arcade.score, game.arcade.balls.size()]
 	stuck = 0.0 if state != last_state else stuck + delta
 	last_state = state
 	if stuck > 25: # an unexpected screen; start over rather than wedge the soak
@@ -97,6 +98,7 @@ func play_arcade(delta: float) -> void:
 		arcade.retry_round()
 	elif memory_turn():
 		game.close_arcade()
+		game.return_to_menu()
 	else:
 		var buttons := arcade.panel.find_children("*", "Button", true, false)
 		if arcade.panel.visible and not buttons.is_empty(): buttons[0].pressed.emit()

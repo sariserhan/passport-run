@@ -12,6 +12,7 @@ xcrun devicectl device process launch --terminate-existing --device "$DEVICE" "$
 echo "Soaking for $MINUTES minutes; keep the phone unlocked and on power."
 deadline=$((SECONDS + MINUTES * 60 + 120))
 # Autoplay deletes its trigger and quits when finished.
-while [ $SECONDS -lt $deadline ] && xcrun devicectl device info processes --device "$DEVICE" 2>/dev/null | grep -q PassportRun.app; do sleep 30; done
+# Not grep -q: its early exit SIGPIPEs devicectl, which pipefail reports as "not running".
+while [ $SECONDS -lt $deadline ] && xcrun devicectl device info processes --device "$DEVICE" 2>/dev/null | grep PassportRun.app >/dev/null; do sleep 30; done
 copy from --source Documents/autoplay-profile.json.perf.csv --destination "$OUT"
 echo "Saved $OUT"

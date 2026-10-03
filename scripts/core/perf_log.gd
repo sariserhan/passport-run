@@ -19,9 +19,11 @@ func _init(log_path: String, scene_label: Callable) -> void:
 
 func _ready() -> void:
 	# ponytail: one rotated backup is enough to cover a long play session.
-	if FileAccess.file_exists(path) and FileAccess.open(path, FileAccess.READ).get_length() > MAX_BYTES:
+	var existing := FileAccess.open(path, FileAccess.READ)
+	if existing and existing.get_length() > MAX_BYTES:
+		existing = null
 		DirAccess.rename_absolute(path, path + ".old")
-	write("unix_time,scene,fps,worst_frame_ms,static_mb,video_mb,objects,window")
+	if not existing: write("unix_time,scene,fps,worst_frame_ms,static_mb,video_mb,objects,window")
 
 func _process(delta: float) -> void:
 	frames += 1

@@ -3,7 +3,7 @@ extends ScrollContainer
 
 # Godot forwards wheel events past MOUSE_FILTER_STOP children, but not touch drags,
 # so a phone swipe starting on a button never scrolls. Plain controls inside switch
-# to PASS; scripted controls (globe, map, room) keep their own drag handling.
+# to PASS; scripted widgets (globe, map, room) keep their own drag handling.
 
 func _enter_tree() -> void:
 	horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
@@ -16,5 +16,11 @@ func _exit_tree() -> void:
 	get_tree().node_added.disconnect(_pass_touch)
 
 func _pass_touch(node: Node) -> void:
-	if node is Control and node.mouse_filter == Control.MOUSE_FILTER_STOP and node.get_script() == null and is_ancestor_of(node):
-		node.mouse_filter = Control.MOUSE_FILTER_PASS
+	# Sliders and text fields keep their own drags; so do children of scripted widgets.
+	if not node is Control or node.mouse_filter != Control.MOUSE_FILTER_STOP or node is Range or node is LineEdit or node is TextEdit or not is_ancestor_of(node):
+		return
+	var current := node
+	while current != self:
+		if current.get_script() != null: return
+		current = current.get_parent()
+	node.mouse_filter = Control.MOUSE_FILTER_PASS

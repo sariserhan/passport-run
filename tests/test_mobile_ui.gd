@@ -54,6 +54,12 @@ func check_touch_scroll(menu: MenuUI) -> void:
 	expect(presses[0] == 1, "A swipe does not press the button it started on")
 	Input.emulate_touch_from_mouse = false
 	probe.queue_free()
+	menu.show_settings()
+	await settle()
+	var sliders := menu.content.find_children("*", "HSlider", true, false)
+	expect(not sliders.is_empty() and sliders.all(func(slider): return slider.mouse_filter == Control.MOUSE_FILTER_STOP), "Settings sliders keep their drag instead of scrolling the page")
+	menu.show_main()
+	await settle()
 
 func check_globe_swipe() -> void:
 	# Phones send a touch plus an emulated mouse event; the globe must rotate once per swipe.

@@ -435,7 +435,8 @@ func layout() -> void:
   stats.position = Vector2(margins.x + row * 0.24 + 12, margins.y)
   stats.size.x = row * 0.36
   notice.position = Vector2(margins.x + row * 0.6 + 24, margins.y)
-  notice.size.x = row * 0.4 - 12
+  notice.clip_text = true # before sizing: trims long notices to the header row instead of covering the arena
+  notice.size = Vector2(row * 0.4 - 12, 56)
  pause_button.position = Vector2(size.x - margins.z - 50, margins.y)
  pause_button.size = Vector2(50, 50)
  partner_controls.visible = coop and phase != Phase.TRAVEL
@@ -445,12 +446,6 @@ func layout() -> void:
  controls.position = Vector2(margins.x, size.y - margins.w - button_height)
  controls.position.y -= button_height + 8 if coop else 0
  controls.size = Vector2(size.x - margins.x - margins.z, button_height)
- if coop_side_by_side():
-  var row_width := (size.x - margins.x - margins.z - 16) / 2
-  controls.position.y = partner_controls.position.y
-  controls.size.x = row_width
-  partner_controls.size.x = row_width
-  partner_controls.position.x = controls.position.x + row_width + 16
  for row in [controls, partner_controls]:
   var gap := clampf(row.size.x * 0.08, 20, 42)
   var arrow_width: float = (row.size.x - gap - 8) / 4
@@ -505,15 +500,12 @@ func arena() -> Rect2:
   var tall := maxf(90, size.y - top - margins.w)
   var wide := minf(size.x - margins.x - margins.z - (edge_gutter() + 12) * 2, tall * 2.1)
   return Rect2((size.x - wide) / 2, top, wide, tall)
- var height := maxf(90, size.y - top - margins.w - ((control_height() + 8) * 2 + 24 if coop and not coop_side_by_side() else control_height() + 32))
+ var height := maxf(90, size.y - top - margins.w - ((control_height() + 8) * 2 + 24 if coop else control_height() + 32))
  var width := minf(size.x - margins.x - margins.z, height * 2.1)
  return Rect2(margins.x + (size.x - margins.x - margins.z - width) / 2, top, width, height)
 
 func landscape() -> bool:
  return size.x > size.y
-
-func coop_side_by_side() -> bool:
- return coop and size.x >= 650 and size.x > size.y
 
 func load_destination() -> void:
  backdrop = GameCatalog.backdrop(route[country_index])
