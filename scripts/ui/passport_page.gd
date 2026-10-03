@@ -3,6 +3,7 @@ extends Control
 
 var destination_id := "FR"
 var page_number := 1
+var profile: PlayerProfile
 var cover_id := "classic"
 
 func _ready() -> void:
@@ -22,7 +23,7 @@ func _draw() -> void:
 		draw_line(Vector2(17, y), Vector2(24, y), Color("877555"), 1)
 	var width := size.x - 66
 	draw_string(font, Vector2(36, 38), "PASSPORT", HORIZONTAL_ALIGNMENT_LEFT, width, 22, Color("233f50"))
-	draw_string(font, Vector2(36, 58), "TRAVEL VISAS · %03d" % page_number, HORIZONTAL_ALIGNMENT_LEFT, width, 12, Color("7c705d"))
+	draw_string(font, Vector2(36, 58), "TRAVEL VISAS · %03d" % page_number if not profile else profile.activities.custom.nickname + " · " + profile.activities.custom.motto.left(25), HORIZONTAL_ALIGNMENT_LEFT, width, 12, Color("7c705d"))
 	var name := GameCatalog.country_name(destination_id)
 	var font_size := 21
 	while font_size > 12 and font.get_string_size(name, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x > width:
@@ -34,7 +35,7 @@ func _draw() -> void:
 	draw_rect(photo, Color("b7a887"), false, 2)
 	var center := Vector2(size.x * 0.58, 326)
 	draw_set_transform(center, -0.13)
-	var ink := Color("a24c40")
+	var ink := Color("276e62") if profile and profile.activities.custom.ink == "jade" else Color("285f86") if profile and profile.activities.custom.ink == "ocean" else Color("a24c40")
 	draw_arc(Vector2.ZERO, 49, 0, TAU, 64, ink, 3, true)
 	draw_arc(Vector2.ZERO, 43, 0, TAU, 64, ink, 1, true)
 	draw_string(font, Vector2(-41, -4), GameCatalog.stamp_code(destination_id), HORIZONTAL_ALIGNMENT_CENTER, 82, 27, ink)

@@ -1,5 +1,6 @@
 class_name WorldCelebration
 extends Control
+var palette := "gold"
 var reduced_motion := false
 var elapsed := 0.0
 func _ready() -> void:
@@ -16,4 +17,4 @@ func _draw() -> void:
  draw_string(ThemeDB.fallback_font, center + Vector2(-24, 14), "★", HORIZONTAL_ALIGNMENT_CENTER, 48, 42, Color("ecc35a"))
  for i in 44:
   var point := Vector2(fmod(i * 61.0, maxf(size.x, 1)), fmod(i * 31.0 + elapsed * (18 + i % 5 * 5), 145))
-  draw_rect(Rect2(point, Vector2(4, 7)), [Color("ecc35a"), Color("a6e771"), Color("86d7ed"), Color("f39b8e")][i % 4])
+  draw_rect(Rect2(point, Vector2(4, 7)), [Color("86d7ed"), Color("fff2d6"), Color("c0e7ed")] [i % 3] if palette == "ocean" else [Color("9bddbb"), Color("d4edb1"), Color("f0e4b0")][i % 3] if palette == "forest" else [Color("ecc35a"), Color("a6e771"), Color("86d7ed"), Color("f39b8e")][i % 4])

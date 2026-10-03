@@ -147,3 +147,8 @@ Adventure validation: all 17 Godot regression suites and four Python checks pass
 - Journey replay uses first-completion order, an animated geographic route, destination images and keepsakes. It supports play/pause, 1×/2×/4× speeds and scrubbing. Reduced motion starts paused with static routes. Special expeditions without geographic pins are labeled beyond the world map.
 - `tests/test_travel_stories.gd` verifies milestone gating, rare reward uniqueness/persistence, complete archive reload, room persistence and replay controls, and captures rendered exports when a display is available.
 - `python3 tools/check_iphone_sharing.py` creates and removes an isolated temporary simulator and verifies that the exact native bridge presents `UIActivityViewController` and handles cancellation. Export integration and Objective-C compilation are also checked; physical-device and actual recipient delivery remain unverified.
+
+
+### Creative travel activities batch
+
+See [travel-activities.md](travel-activities.md) for the 19-feature inventory, progression rules, storage bounds and validation. The native sharing bridge passed on a physical iPhone 14 Pro using a separate temporary test app; actual recipient delivery and a full physical-device Godot build remain unverified.

@@ -3,6 +3,9 @@ extends Node3D
 
 static var pose_bounds: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://resources/jumping-explorer.json"))
 
+var weather := "clear"
+var buddy_accessory := false
+var victory_pose := "wave"
 var buddy_kind := "none"
 var buddy: Node3D
 var buddy_face: Label3D
@@ -43,6 +46,8 @@ func _ready() -> void:
 		buddy_face.pixel_size = 0.005
 		buddy_face.position.y = 0.55
 		buddy.add_child(buddy_face)
+		if buddy_accessory:
+			MeshFactory.box(buddy, Vector3(0.4, 0.08, 0.25), Vector3(0, 0.35, 0), MeshFactory.material(Color("f4cc66")))
 		buddy.position = Vector3(0.8, 1.7, 0)
 	body = Node3D.new()
 	add_child(body)
@@ -106,6 +111,7 @@ func play_animation(next: String) -> void:
 func _process(delta: float) -> void:
 	if buddy:
 		buddy_face.text = BuddyPersonality.message(buddy_kind, animation, animation_clock, pressure)
+		if animation == "thinking" and pressure < 0.65 and weather != "clear": buddy_face.text = "Snow!" if weather == "snow" else {"bird": "Drip!", "robot": "Rain scan", "dragon": "Cozy?"}[buddy_kind]
 		if not animation_paused and not reduced_motion:
 			buddy.position = Vector3(0.8, 1.7, 0) + BuddyPersonality.offset(buddy_kind, animation, animation_clock)
 			buddy.rotation.z = sin(animation_clock * (8 if buddy_kind == "bird" else 2)) * 0.1
@@ -139,6 +145,11 @@ func _process(delta: float) -> void:
 		else:
 			body.position.y = absf(sin(animation_clock * 7)) * 0.06
 			body.rotation.z = sin(animation_clock * 9) * 0.055
+
+	if animation == "celebrate":
+		if victory_pose == "jump": body.position.y = absf(sin(animation_clock * 5)) * 0.25
+		elif victory_pose == "cheer": body.rotation.z = sin(animation_clock * 4) * 0.12
+		elif victory_pose == "wave": body.rotation.y = sin(animation_clock * 2) * 0.1
 
 func pose_jump(progress: float) -> void:
 	if kids or character_id == "classic": portrait.frame = 4 + mini(3, int(progress * 4))

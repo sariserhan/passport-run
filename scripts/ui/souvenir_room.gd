@@ -1,6 +1,9 @@
 class_name SouvenirRoom
 extends Control
 
+signal souvenir_selected(id: String)
+var profile: PlayerProfile
+var card_origin := Vector2.ZERO
 signal arrangement_changed(positions: Dictionary)
 var destinations: Array[String] = []
 var postcards: Array[String] = []
@@ -57,6 +60,7 @@ func begin_drag(point: Vector2) -> void:
   var child: Control = get_child(index)
   if Rect2(child.position, child.size).has_point(point):
    dragging = child
+   card_origin = child.position
    move_child(child, get_child_count() - 1)
    drag_origin = point - child.position
    accept_event()
@@ -67,8 +71,10 @@ func finish_drag() -> void:
  var bounds := bounds_for_cards()
  var normalized := (dragging.position - bounds.position) / bounds.size
  positions[dragging.destination_id] = [clampf(normalized.x, 0, 1), clampf(normalized.y, 0, 1)]
+ var selected: String = dragging.destination_id if dragging.position.distance_to(card_origin) < 6 else ""
  dragging = null
  arrangement_changed.emit(positions.duplicate(true))
+ if not selected.is_empty(): souvenir_selected.emit(selected)
  accept_event()
 
 func _draw() -> void:
@@ -159,13 +165,28 @@ func _draw() -> void:
   draw_arc(pos + Vector2(0, 10), 35, 0, PI, 24, color.lightened(0.35), 4)
   if buddy_kind in BuddyPersonality.FRIENDS:
    draw_circle(pos + Vector2(0, -3), 17, Color(BuddyPersonality.FRIENDS[buddy_kind].color))
-   draw_string(ThemeDB.fallback_font, pos + Vector2(-13, -25), "Zzz", HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("263e60"))
+   draw_string(ThemeDB.fallback_font, pos + Vector2(-13, -25), "Zzz" if not profile or profile.activities.room.resting else "Hi!", HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("263e60"))
  if decor.trophy != "none":
   var pos := Vector2(size.x * 0.74, floor_y + 101)
   draw_rect(Rect2(pos + Vector2(-5, -27), Vector2(10, 30)), Color("f4cc66"))
   draw_circle(pos + Vector2(0, -35), 13, Color("f4cc66"))
   draw_rect(Rect2(pos + Vector2(-20, 0), Vector2(40, 8)), Color("785743"))
   draw_string(ThemeDB.fallback_font, Vector2(10, floor_y + 199), decor.trophy + " explorer trophy", HORIZONTAL_ALIGNMENT_CENTER, size.x - 20, 15, Color("263e60"))
+ if profile:
+  var state: Dictionary = profile.activities.room
+  if not state.lamp: draw_rect(Rect2(Vector2.ZERO, size), Color(0.02, 0.04, 0.13, 0.25))
+  if state.seated and decor.furniture == "armchair":
+   draw_circle(Vector2(70, floor_y + 103), 14, Color("ddbb94"))
+   draw_rect(Rect2(55, floor_y + 117, 30, 25), Color("426e86"))
+  if state.space == "balcony":
+   draw_rect(Rect2(12, 14, size.x - 24, 73), Color("94cbdc"))
+   for x in range(20, int(size.x), 26): draw_line(Vector2(x, 20), Vector2(x, 85), Color("f3e4c8"), 3)
+   draw_string(ThemeDB.fallback_font, Vector2(20, 66), "My travel balcony", HORIZONTAL_ALIGNMENT_CENTER, size.x - 40, 20, Color("183f55"))
+  elif state.space == "nook":
+   draw_rect(Rect2(14, 17, size.x - 28, 68), Color("785743"))
+   for i in 14: draw_rect(Rect2(24 + i * (size.x - 48) / 14, 27, (size.x - 48) / 18, 48), [Color("9bb991"), Color("ca9a76"), Color("dcc47d")][i % 3])
+  elif state.space == "gallery":
+   draw_string(ThemeDB.fallback_font, Vector2(18, 65), "EXPEDITION GALLERY · %d treasures" % profile.discoveries.size(), HORIZONTAL_ALIGNMENT_CENTER, size.x - 36, 18, Color("183f55"))
  if decor.lighting != "day":
   draw_rect(Rect2(Vector2.ZERO, size), Color(0.75, 0.35, 0.06, 0.1) if decor.lighting == "warm" else Color(0.03, 0.1, 0.3, 0.22))
   for x in [size.x * 0.25, size.x * 0.75]: draw_circle(Vector2(x, 16), 62, Color(1, 0.83, 0.45, 0.12) if decor.lighting == "warm" else Color(0.7, 0.86, 1, 0.13))

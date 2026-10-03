@@ -34,7 +34,7 @@ func begin(selected_mode: String, selected_difficulty: String, home: String, new
 		fixed_route.assign(places.slice(start) + places.slice(0, start))
 	elif mode == "adventure":
 		fixed_route.assign([home])
-	elif mode == "trip":
+	elif mode in ["trip", "expedition"]:
 		fixed_route.assign(challenge.get("route", []))
 	elif mode == "challenge":
 		seed_value = int(challenge.seed)

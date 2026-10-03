@@ -27,7 +27,10 @@
     [NSTimer scheduledTimerWithTimeInterval:3 repeats:NO block:^(NSTimer *timer) {
         UIViewController *shown = self.window.rootViewController.presentedViewController;
         BOOL sheet = [shown isKindOfClass:UIActivityViewController.class];
-        if (sheet) ((UIActivityViewController *)shown).completionWithItemsHandler(nil, NO, nil, nil);
+        if (sheet) {
+            ((UIActivityViewController *)shown).completionWithItemsHandler(nil, NO, nil, nil);
+            [shown dismissViewControllerAnimated:NO completion:nil];
+        }
         NSData *result = [NSData dataWithContentsOfFile:[passportShareDirectory() stringByAppendingPathComponent:@"passport-share-result.json"]];
         NSDictionary *status = result ? [NSJSONSerialization JSONObjectWithData:result options:0 error:nil] : @{};
         NSDictionary *report = @{@"sheet_presented": @(sheet), @"cancel_handled": @([status[@"state"] isEqualToString:@"cancelled"]), @"busy_reset": @(!passportShareBusy)};

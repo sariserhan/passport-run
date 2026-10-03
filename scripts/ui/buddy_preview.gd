@@ -1,5 +1,6 @@
 class_name BuddyPreview
 extends Control
+var weather := "clear"
 var kind := "bird"
 var reduced_motion := false
 var elapsed := 0.0
@@ -30,7 +31,7 @@ func _draw() -> void:
   draw_line(center + Vector2(side * 20, 5), center + Vector2(side * 42, 5 + sin(elapsed * (9 if kind == "bird" else 2)) * 10), color, 7)
  if kind == "dragon" and state == "celebrate":
   for i in 3: draw_circle(center + Vector2(30 + i * 10, -6 - i * 5), 3, Color("f6c968"))
- draw_string(ThemeDB.fallback_font, Vector2(0, 112), BuddyPersonality.FRIENDS[kind].name + " · " + (BuddyPersonality.FRIENDS[kind].cheer if state == "celebrate" else BuddyPersonality.FRIENDS[kind].idle), HORIZONTAL_ALIGNMENT_CENTER, size.x, 18, Color("fff2d6"))
+ draw_string(ThemeDB.fallback_font, Vector2(0, 112), BuddyPersonality.FRIENDS[kind].name + " · " + (BuddyPersonality.FRIENDS[kind].cheer if state == "celebrate" else ("Snow!" if weather == "snow" else "Drip!" if weather == "rain" else BuddyPersonality.FRIENDS[kind].idle)), HORIZONTAL_ALIGNMENT_CENTER, size.x, 18, Color("fff2d6"))
 func panel(color: Color) -> StyleBoxFlat:
  var result := StyleBoxFlat.new()
  result.bg_color = color

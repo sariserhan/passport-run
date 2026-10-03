@@ -83,6 +83,7 @@ func _ready() -> void:
 	menu.setup(profile, hud)
 	travel = TravelTransition.new()
 	add_child(travel)
+	travel.profile = profile
 	travel.setup(hud)
 	travel.arrived.connect(func(): load_country(true))
 	parcel = SouvenirParcel.new()
@@ -91,7 +92,7 @@ func _ready() -> void:
 	passport_stamp = PassportStamp.new()
 	add_child(passport_stamp)
 	passport_stamp.setup(hud)
-	passport_stamp.stamped.connect(func(): traveler.play_animation("stamp"); audio.play_cue("stamp"))
+	passport_stamp.stamped.connect(func(): traveler.play_animation("stamp"); audio.play_cue(profile.activities.custom.sound))
 	passport_stamp.finished.connect(finish_celebration)
 	purchase = RoutePurchase.new()
 	add_child(purchase)
@@ -120,6 +121,11 @@ func _ready() -> void:
 		if menu.root.visible and menu.wardrobe_page: menu.show_wardrobe()
 	)
 	menu.adventure_requested.connect(func(id: String): adventure_start = id; start_game("adventure", profile.difficulty))
+	menu.activity_sound_requested.connect(func(key: String):
+		if key.begins_with("destination:"): audio.play_destination(key.trim_prefix("destination:"))
+		else: audio.play_cue(key)
+	)
+	menu.activity_route_requested.connect(func(data: Dictionary): imported_challenge = data; start_game("expedition", profile.difficulty))
 	menu.trip_requested.connect(func(id: String): trip_id = id; start_game("trip", profile.difficulty))
 	menu.cinema_requested.connect(func(id: String): cinema_start = id; start_game("cinema", profile.difficulty))
 	menu.special_requested.connect(func(id: String): special_start = id; start_game("special", profile.difficulty))
@@ -172,15 +178,15 @@ func start_game(mode: String, difficulty_key: String) -> void:
 	friend_steps.clear()
 	online = requested_online
 	if mode == "adventure" and adventure_start not in GameCatalog.DESTINATIONS: return
-	if mode == "special" or (mode == "adventure" and adventure_start in GameCatalog.PREMIUM_DESTINATIONS) or (mode == "challenge" and imported_challenge.get("route", []).any(func(id): return id in GameCatalog.PREMIUM_DESTINATIONS)):
+	if mode == "special" or (mode == "adventure" and adventure_start in GameCatalog.PREMIUM_DESTINATIONS) or (mode in ["challenge", "expedition"] and imported_challenge.get("route", []).any(func(id): return id in GameCatalog.PREMIUM_DESTINATIONS)):
 		if not purchase.unlocked:
 			menu.show_special_route()
 			return
-	if mode == "cinema" or (mode == "adventure" and adventure_start in GameCatalog.CINEMA_DESTINATIONS) or (mode == "challenge" and imported_challenge.get("route", []).any(func(id): return id in GameCatalog.CINEMA_DESTINATIONS)):
+	if mode == "cinema" or (mode == "adventure" and adventure_start in GameCatalog.CINEMA_DESTINATIONS) or (mode in ["challenge", "expedition"] and imported_challenge.get("route", []).any(func(id): return id in GameCatalog.CINEMA_DESTINATIONS)):
 		if not cinema_purchase.unlocked:
 			menu.show_cinema_route()
 			return
-	if mode not in ["world", "infinite", "daily", "kids", "tutorial", "challenge", "special", "cinema", "trip", "adventure"]:
+	if mode not in ["world", "infinite", "daily", "kids", "tutorial", "challenge", "special", "cinema", "trip", "adventure", "expedition"]:
 		return
 	if mode in ["world", "kids"] and profile.home_country not in GameCatalog.FREE_DESTINATIONS:
 		menu.pending_mode = mode
@@ -192,7 +198,7 @@ func start_game(mode: String, difficulty_key: String) -> void:
 		failed_countries.clear()
 	session.begin(mode, difficulty_key, adventure_start if mode == "adventure" else special_start if mode == "special" else (cinema_start if mode == "cinema" else profile.home_country), randi_range(1, PathGenerator.MODULUS - 2), {"route": TravelGoals.TRIPS[trip_id].route} if mode == "trip" else imported_challenge)
 	var requested_route: Array = issued.route if requested_online else session.fixed_route
-	if mode in ["daily", "challenge", "trip"] and not profile.can_visit_route(requested_route):
+	if mode in ["daily", "challenge", "trip", "expedition"] and not profile.can_visit_route(requested_route):
 		reject_locked_destination()
 		return
 	if mode in ["special", "cinema", "adventure"] and not profile.can_visit(session.current_country()):
@@ -212,7 +218,7 @@ func start_game(mode: String, difficulty_key: String) -> void:
 		config = GameCatalog.difficulty("easy")
 		config.row_count = 3
 	load_country(false)
-	if mode in ["special", "cinema", "adventure"]:
+	if mode in ["expedition", "special", "cinema", "adventure"]:
 		travel.begin("", session.current_country(), profile.settings.reduced_motion, true)
 	telemetry.track("run_started", metadata())
 	if mode in ["tutorial", "infinite", "daily", "kids"]:
@@ -286,6 +292,10 @@ func load_country(auto_preview: bool) -> void:
 	traveler.buddy_kind = profile.travel_buddy
 	traveler.kids = session.mode == "kids"
 	traveler.reduced_motion = profile.settings.reduced_motion
+	passport_stamp.ink_color = Color("276e62") if profile.activities.custom.ink == "jade" else Color("285f86") if profile.activities.custom.ink == "ocean" else Color("a24c40")
+	traveler.weather = profile.activities.custom.weather
+	traveler.buddy_accessory = profile.activities.accessories.get(profile.travel_buddy, false)
+	traveler.victory_pose = profile.activities.custom.pose
 	traveler.character_id = profile.equipped_character()
 	traveler.customization = profile.character_style.duplicate()
 	traveler.destination_theme = DestinationTheme.style(grid.destination_id)
@@ -311,6 +321,8 @@ func load_country(auto_preview: bool) -> void:
 		hud.phase_hint.text = "Same path after every fall. Go a little farther."
 	elif session.mode == "trip":
 		hud.phase_hint.text = "%s · Country %d of 3" % [TravelGoals.TRIPS[trip_id].name, session.country_index + 1]
+	elif session.mode == "expedition":
+		hud.phase_hint.text = "%s · Stop %d / %d" % [imported_challenge.get("name", "Expedition"), session.country_index + 1, session.fixed_route.size()]
 	elif session.mode == "tutorial":
 		hud.phase_title.text = "Your first three steps"
 	telemetry.track("country_started", metadata())
@@ -330,6 +342,9 @@ func rebuild_environment() -> void:
 	environment.endless = session.mode in ["infinite", "tutorial", "practice"]
 	environment.name = "EnvironmentRoot"
 	add_child(environment)
+	environment.atmosphere.weather = profile.activities.custom.weather
+	environment.atmosphere.time_of_day = profile.activities.custom.time
+	environment.atmosphere.confetti_color = profile.activities.custom.confetti
 	if session.mode == "infinite":
 		environment.position.z = -segment_start * config.row_spacing
 
@@ -689,6 +704,7 @@ func complete_country() -> void:
 	session.complete_country(config.row_count)
 	profile.discover(session.current_country())
 	profile.record_destination(session.current_country(), "jump", config.row_count)
+	profile.note_completion(session.current_country(), session.difficulty, session.current_country() not in failed_countries, session.mode == "expedition" and imported_challenge.get("kind") == "weekly" and imported_challenge.get("week") == TravelActivities.week_key())
 	if session.current_country() not in failed_countries:
 		profile.award_badge("perfect:" + session.current_country())
 		rare_earned = profile.earn_rare(session.current_country(), "gold")
@@ -787,7 +803,7 @@ func has_paid_access() -> bool:
 		var id := session.current_country()
 		if id in GameCatalog.PREMIUM_DESTINATIONS and not purchase.unlocked: return false
 		if id in GameCatalog.CINEMA_DESTINATIONS and not cinema_purchase.unlocked: return false
-	var route: Array = session.fixed_route if session.mode == "challenge" else []
+	var route: Array = session.fixed_route if session.mode in ["challenge", "expedition"] else []
 	if (session.mode == "special" or route.any(func(id): return id in GameCatalog.PREMIUM_DESTINATIONS)) and not purchase.unlocked:
 		return false
 	if (session.mode == "cinema" or route.any(func(id): return id in GameCatalog.CINEMA_DESTINATIONS)) and not cinema_purchase.unlocked:
@@ -830,6 +846,7 @@ func pause_game() -> void:
 			tween.pause()
 	audio.set_paused(true)
 	hud.show_pause()
+	if not session.current_country().is_empty(): hud.add_action("PHOTO MODE", false, open_photo_mode)
 
 func resume_game() -> void:
 	if is_instance_valid(arcade):
@@ -985,3 +1002,8 @@ func close_arcade() -> void:
 func reject_locked_destination() -> void:
 	return_to_menu()
 	menu.show_locked_destination()
+
+func open_photo_mode() -> void:
+	if not paused: pause_game()
+	menu.photo_return = func(): menu.root.hide(); hud.overlay.show(); menu.photo_return = Callable()
+	TravelActivityUI.new(menu).show("photo", session.current_country())

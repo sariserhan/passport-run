@@ -1,6 +1,10 @@
 class_name MenuUI
 extends CanvasLayer
 
+signal activity_route_requested(data: Dictionary)
+signal activity_sound_requested(key: String)
+var photo_draft: Dictionary = {}
+var photo_return := Callable()
 signal start_requested(mode: String, difficulty: String)
 signal challenge_requested(data: Dictionary)
 signal settings_changed
@@ -156,6 +160,8 @@ func show_main() -> void:
 		if mode == "daily" and not profile.can_visit_route(GameCatalog.COUNTRIES.keys()):
 			mode_buttons[mode].text = "? · DAILY WORLD TOUR · REACH ITS STOPS FIRST"
 			mode_buttons[mode].disabled = true
+	action("MORE ADVENTURES & CREATIVE TOOLS", false, func(): TravelActivityUI.new(self).show("hub"))
+	action("DEPARTURE LOUNGE", false, func(): TravelActivityUI.new(self).show("lounge"))
 	action("COLLECTION GOALS", false, show_goals)
 	action("MY TRAVEL ROOM", false, show_room)
 	action("MY TRAVEL ALBUM", false, show_album)
@@ -249,6 +255,7 @@ func show_passport() -> void:
 	var pages: Array[String] = profile.discoveries.duplicate()
 	var state := {"index": 0, "ids": pages}
 	var book := PassportPage.new()
+	book.profile = profile
 	book.cover_id = profile.passport_cover
 	content.add_child(book)
 	var empty := copy("Complete a destination to receive your first stamped page.")
@@ -610,9 +617,19 @@ func show_room() -> void:
 	room.decor = profile.room_decor.duplicate()
 	room.rare_keepsakes = profile.rare_keepsakes.duplicate(true)
 	room.buddy_kind = profile.travel_buddy
+	room.profile = profile
 	room.positions = profile.room_positions.duplicate(true)
+	room.souvenir_selected.connect(func(id: String): TravelActivityUI.new(self).show("souvenirs", id))
 	room.arrangement_changed.connect(func(points: Dictionary): profile.room_positions = points; profile.save())
 	content.add_child(room)
+	copy("Room spaces", 23)
+	for space in [["main", "Travel room", 0], ["balcony", "Balcony", 6], ["nook", "Reading nook", 12], ["gallery", "Expedition gallery", 20]]:
+		var key: String = space[0]
+		var button := action(("✓ " if profile.activities.room.space == key else "") + space[1] + (" · %d destinations" % space[2] if profile.discoveries.size() < space[2] else ""), false, func(): profile.switch_room_space(key); show_room())
+		button.disabled = profile.discoveries.size() < space[2]
+	action("SWITCH THE LAMPS", false, func(): profile.room_interact("lamp"); room.queue_redraw())
+	if profile.room_decor.furniture == "armchair": action("SIT / STAND", false, func(): profile.room_interact("seated"); room.queue_redraw())
+	if profile.room_decor.buddy_bed != "none": action("WAKE / REST MY BUDDY", false, func(): profile.room_interact("resting"); room.queue_redraw())
 	action("EXPORT ROOM PICTURE", false, func(): export_picture("room"))
 	copy("Souvenir sets", 23)
 	for key in TravelCollections.SETS:
@@ -873,6 +890,7 @@ func show_champion() -> void:
 	clear("WORLD CHAMPION", "Every country and territory in the free World Tour completed. Your passport tells an extraordinary story.")
 	var celebration := WorldCelebration.new()
 	celebration.reduced_motion = profile.settings.reduced_motion
+	celebration.palette = profile.activities.custom.confetti
 	content.add_child(celebration)
 	var art := TravelArtwork.new()
 	art.country_id = profile.history.back() if not profile.history.is_empty() else "FR"
@@ -891,6 +909,7 @@ func show_champion() -> void:
 	room.decor = profile.room_decor.duplicate()
 	room.rare_keepsakes = profile.rare_keepsakes.duplicate(true)
 	room.buddy_kind = profile.travel_buddy
+	room.profile = profile
 	room.positions = profile.room_positions.duplicate(true)
 	content.add_child(room)
 	action("CELEBRATE & CONTINUE", true, func(): profile.champion_seen = true; profile.save(); show_main())
@@ -901,7 +920,11 @@ func export_picture(kind: String, id: String = "") -> void:
 	var message := copy("Preparing your picture…", 17)
 	var filename := "passport-run-" + kind + ".png"
 	var path := "user://" + filename
-	var error: Error = await TravelPicture.save_picture(self, profile, kind, id, path)
+	var error: Error = await TravelPicture.save_picture(self, profile, kind, id, path, photo_draft)
+	if error == OK and kind == "photo":
+		profile.activity_tick("photo")
+		profile.timeline_note("Travel photo · " + GameCatalog.country_name(id))
+		profile.save()
 	if error == OK and OS.get_name() == "iOS":
 		var state: String = await NativePictureShare.request(self, filename)
 		if is_instance_valid(message): message.text = "Choose an app in the share sheet." if state == "opened" else "Picture shared." if state == "shared" else "Sharing cancelled. Your picture is saved." if state == "cancelled" else "Picture saved. The share sheet could not open; try sharing again."
@@ -933,6 +956,7 @@ func show_region_celebration(name: String) -> void:
 	clear(name + " EXPLORER", "Every country and territory in " + name + " completed. Your explorer trophy is ready for your room!")
 	var celebration := WorldCelebration.new()
 	celebration.reduced_motion = profile.settings.reduced_motion
+	celebration.palette = profile.activities.custom.confetti
 	content.add_child(celebration)
 	var map := PassportWorldMap.new()
 	map.discoveries.assign(profile.discoveries.filter(func(id): return id in GameCatalog.FREE_DESTINATIONS and TravelMilestones.continent(id) == name))

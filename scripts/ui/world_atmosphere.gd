@@ -5,6 +5,9 @@ var clock := 0.0
 var frozen := false
 var reduced_motion := false
 var celebration_remaining := 0.0
+var weather := "clear"
+var time_of_day := "day"
+var confetti_color := "gold"
 var cosmic := false
 var underwater := false
 var destination_theme := "stone"
@@ -20,6 +23,11 @@ func _process(delta: float) -> void:
  queue_redraw()
 
 func _draw() -> void:
+ if time_of_day != "day": draw_rect(Rect2(0, 0, size.x, size.y * 0.22), Color(0.9, 0.36, 0.08, 0.12) if time_of_day in ["sunrise", "sunset"] else Color(0.05, 0.1, 0.2, 0.22))
+ for i in 24:
+  var point := Vector2(fmod(i * 59.0 + (0 if reduced_motion else clock * 15), maxf(1, size.x)), fmod(i * 53.0 + (0 if reduced_motion else clock * 25), maxf(1, size.y * 0.18)))
+  if weather == "rain": draw_line(point, point + Vector2(-4, 12), Color(0.8, 0.9, 1, 0.4), 1)
+  elif weather == "snow": draw_circle(point, 2, Color(1, 1, 1, 0.6))
  if reduced_motion: return
  # Decorative motion stays behind the 3D path and never reveals safe tiles.
  for i in 7:
@@ -55,4 +63,4 @@ func _draw() -> void:
  if celebration_remaining > 0:
   for i in 18:
    var point := Vector2(size.x * (0.05 + fmod(i * 0.137, 0.9)), size.y * (0.05 + fmod(i * 0.073 + (2 - celebration_remaining) * 0.12, 0.35)))
-   draw_circle(point, 2.0 + i % 3, Color(1, 0.82, 0.25, minf(celebration_remaining, 0.7)))
+   draw_circle(point, 2.0 + i % 3, Color(Color("86d7ed") if confetti_color == "ocean" else Color("9bddbb") if confetti_color == "forest" else Color("ffda65"), minf(celebration_remaining, 0.7)))

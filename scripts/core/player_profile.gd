@@ -39,6 +39,7 @@ var travel_journal: Dictionary = {}
 var journal_pages: Dictionary = {}
 var regions_seen: Array[String] = []
 var rare_keepsakes: Dictionary = {}
+var activities: Dictionary = TravelActivities.clean({})
 var last_error: String = ""
 
 func _init(path: String = "user://profile.json") -> void:
@@ -58,6 +59,7 @@ func load_profile() -> void:
 		difficulty = data.difficulty
 	if data.get("anonymous_id") is String and data.anonymous_id.length() == 32 and data.anonymous_id.is_valid_hex_number():
 		anonymous_id = data.anonymous_id
+	activities = TravelActivities.clean(data.get("activities"))
 	travel_buddy = data.get("travel_buddy", "bird") if data.get("travel_buddy", "bird") in ["none", "bird", "robot", "dragon"] else "bird"
 	if data.get("regions_seen") is Array:
 		for name in data.regions_seen:
@@ -78,7 +80,7 @@ func load_profile() -> void:
 				var clean := {"date": date, "countries": [], "moments": [], "rewards": []}
 				for field in ["countries", "moments", "rewards"]:
 					if page.get(field) is Array:
-						for value in page[field].slice(0, 100):
+						for value in page[field].slice(0, GameCatalog.DESTINATIONS.size() if field == "countries" else 100):
 							if value is String and (field != "countries" or value in GameCatalog.DESTINATIONS): clean[field].append(value.left(160))
 				journal_pages[date] = clean
 	champion_seen = data.get("champion_seen", false) == true
@@ -176,6 +178,9 @@ func load_profile() -> void:
 			elif value is bool and key not in ["music", "sound"]:
 				settings[key] = value
 
+	for id in discoveries: activities.mastery[id] = maxi(1, int(activities.mastery.get(id, 0)))
+	for id in activities.mastery.keys():
+		if id not in discoveries: activities.mastery.erase(id)
 	for id in rare_keepsakes.keys():
 		if id not in discoveries: rare_keepsakes.erase(id)
 	if world_champion() and "world:champion" not in badges: badges.append("world:champion")
@@ -203,6 +208,7 @@ func save() -> bool:
 	data["journal_pages"] = journal_pages
 	data["regions_seen"] = regions_seen
 	data["rare_keepsakes"] = rare_keepsakes
+	data["activities"] = activities
 	data["character_id"] = character_id
 	data["souvenir_counts"] = souvenir_counts
 	data["room_decor"] = room_decor
@@ -274,8 +280,12 @@ func discover(id: String) -> void:
 			last_unlocked_characters.append(character)
 			journal_note("rewards", "Traveler: " + CharacterStyle.CHARACTERS[character].name)
 	for name in TravelMilestones.earned(discoveries):
-		if name not in previous_regions: journal_note("rewards", name + " explorer trophy")
-	if first_visit: journal_note("rewards", DestinationTheme.souvenir(id))
+		if name not in previous_regions:
+			journal_note("rewards", name + " explorer trophy")
+			timeline_note(name + " explorer trophy earned")
+	if first_visit:
+		journal_note("rewards", DestinationTheme.souvenir(id))
+		timeline_note("Passport stamped · " + GameCatalog.country_name(id))
 	for collection in TravelCollections.earned(discoveries):
 		if collection not in previous_sets: journal_note("rewards", TravelCollections.SETS[collection].name)
 	if world_champion() and "world:champion" not in badges: award_badge("world:champion", false)
@@ -404,3 +414,116 @@ func earn_rare(id: String, variant: String) -> bool:
 	journal_note("rewards", GameCatalog.country_name(id) + (" · Golden keepsake" if variant == "gold" else " · Crystal keepsake"))
 	save()
 	return true
+
+func timeline_note(text: String) -> void:
+	activities.timeline.append({"date": GameCatalog.today_utc(), "text": text.left(160)})
+	while activities.timeline.size() > 500: activities.timeline.pop_front()
+
+func bingo_today() -> Dictionary:
+	if activities.bingo.get("week") != TravelActivities.week_key():
+		activities.bingo = {"week": TravelActivities.week_key(), "lines": []}
+	return activities.bingo
+
+func activity_tick(key: String) -> void:
+	var board := bingo_today()
+	for goal in TravelActivities.BINGO:
+		if goal[0] == key: board[key] = mini(goal[2], int(board.get(key, 0)) + 1)
+	for index in TravelActivities.LINES.size():
+		if index not in board.lines and TravelActivities.LINES[index].all(func(cell): return int(board.get(TravelActivities.BINGO[cell][0], 0)) >= TravelActivities.BINGO[cell][2]):
+			board.lines.append(index)
+			activities.rewards["bingo:" + TravelActivities.week_key() + ":" + str(index)] = "Travel bingo · Line %d sticker" % (index + 1)
+			journal_note("rewards", "Travel bingo · Line %d sticker" % (index + 1))
+			timeline_note("Travel bingo line completed")
+
+func note_completion(id: String, key: String, flawless: bool, weekly_run: bool = false, arcade_medal: int = 0) -> void:
+	if id not in discoveries: return
+	var medal := arcade_medal if arcade_medal > 0 else (3 if key == "hard" and flawless else 2 if key == "moderate" and flawless else 1)
+	var old := int(activities.mastery.get(id, 0))
+	activities.mastery[id] = maxi(old, medal)
+	if medal > old:
+		journal_note("rewards", GameCatalog.country_name(id) + " · " + ["", "Bronze", "Silver", "Gold"][medal] + " mastery")
+		timeline_note(GameCatalog.country_name(id) + " mastery reached " + ["", "Bronze", "Silver", "Gold"][medal])
+	activity_tick("countries")
+	if flawless:
+		activity_tick("flawless")
+		if not activities.timeline.any(func(event): return event.text == "My first flawless finish"): timeline_note("My first flawless finish")
+	if medal >= 2: activity_tick("mastery")
+	if travel_buddy in TravelActivities.BUDDY_QUESTS:
+		activity_tick("buddy")
+		var quest: Dictionary = TravelActivities.BUDDY_QUESTS[travel_buddy]
+		var completed: Array = activities.buddy_progress.get(travel_buddy, [])
+		if id in quest.route and id not in completed: completed.append(id)
+		activities.buddy_progress[travel_buddy] = completed
+		if completed.size() == quest.route.size() and not activities.accessories.get(travel_buddy, false):
+			activities.accessories[travel_buddy] = true
+			activities.rewards["buddy:" + travel_buddy] = quest.reward
+			journal_note("rewards", BuddyPersonality.FRIENDS[travel_buddy].name + " · " + quest.reward)
+			timeline_note(quest.name + " completed")
+	var hunt_index: int = activities.hunt
+	if hunt_index < TravelActivities.HUNTS.size() and activities.hunt_solved and id == TravelActivities.HUNTS[hunt_index].id:
+		activities.rewards["hunt:" + str(hunt_index)] = TravelActivities.HUNTS[hunt_index].reward
+		var treasure: String = TravelActivities.HUNTS[hunt_index].reward
+		journal_note("rewards", treasure)
+		timeline_note("Treasure found · " + treasure)
+		activity_tick("hunt")
+		activities.hunt += 1
+		activities.hunt_solved = false
+	if weekly_run:
+		if activities.weekly.get("week") != TravelActivities.week_key(): activities.weekly = {"week": TravelActivities.week_key(), "countries": [], "rewarded": false}
+		var week := TravelActivities.expedition()
+		if id in week.route and id not in activities.weekly.countries: activities.weekly.countries.append(id)
+		if week.route.all(func(place): return place in activities.weekly.countries) and not activities.weekly.rewarded:
+			activities.weekly.rewarded = true
+			activities.rewards["weekly:" + TravelActivities.week_key()] = week.reward
+			journal_note("rewards", week.reward)
+			timeline_note(week.name + " expedition completed")
+			activity_tick("expedition")
+	save()
+
+func answer_hunt(id: String) -> bool:
+	if activities.hunt >= TravelActivities.HUNTS.size() or id != TravelActivities.HUNTS[activities.hunt].id: return false
+	activities.hunt_solved = true
+	save()
+	return true
+
+func answer_knowledge(id: String, answer: String) -> bool:
+	var question := TravelActivities.question(id)
+	if id not in discoveries or question.is_empty() or answer != question.answer: return false
+	if id not in activities.knowledge:
+		activities.knowledge.append(id)
+		journal_note("rewards", GameCatalog.country_name(id) + " knowledge sticker")
+		timeline_note("Knowledge sticker · " + GameCatalog.country_name(id))
+		activity_tick("knowledge")
+		save()
+	return true
+
+func room_interact(action: String) -> void:
+	if action not in ["lamp", "seated", "resting"]: return
+	activities.room[action] = not activities.room[action]
+	activity_tick("room")
+	save()
+
+func switch_room_space(space: String) -> bool:
+	var required := {"main": 0, "balcony": 6, "nook": 12, "gallery": 20}
+	if space not in required or discoveries.size() < required[space]: return false
+	activities.spaces[activities.room.space] = {"decor": room_decor.duplicate(), "display": room_display.duplicate(), "postcards": room_postcards.duplicate(), "positions": room_positions.duplicate(true)}
+	activities.room.space = space
+	var slot: Dictionary = activities.spaces.get(space, {})
+	room_decor = RoomDecor.DEFAULTS.duplicate()
+	if slot.get("decor") is Dictionary:
+		for key in room_decor:
+			var value: Variant = slot.decor.get(key)
+			if value is String and RoomDecor.unlocked(key, value, discoveries): room_decor[key] = value
+	room_display.clear()
+	room_postcards.clear()
+	room_positions.clear()
+	for field in ["display", "postcards"]:
+		if slot.get(field) is Array:
+			var target: Array = room_display if field == "display" else room_postcards
+			for id in slot[field]:
+				if id is String and id in discoveries and id not in target and target.size() < (6 if field == "display" else 3): target.append(id)
+	if slot.get("positions") is Dictionary:
+		for id in room_display:
+			var point: Variant = slot.positions.get(id)
+			if point is Array and point.size() == 2 and point.all(func(value): return (value is int or value is float) and is_finite(float(value))): room_positions[id] = [clampf(point[0], 0, 1), clampf(point[1], 0, 1)]
+	return save()

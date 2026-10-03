@@ -368,6 +368,7 @@ func _ready() -> void:
  stamp.finished.connect(finish_stamp)
  arrival = TravelTransition.new()
  add_child(arrival)
+ arrival.profile = profile
  arrival.setup(style)
  arrival.layer = 7
  arrival.arrived.connect(finish_arrival)
@@ -853,6 +854,7 @@ func clear_round() -> void:
   if country_drops == 0 and profile.note_arcade_goal("no_drops"): show_feedback("DAILY GOAL COMPLETE!\nNo-drop destination cleared")
   profile.discover(route[country_index])
   profile.record_destination(route[country_index], "arcade", maxi(0, score - country_start_score))
+  profile.note_completion(route[country_index], record_difficulty(), not country_failed, false, ArcadeProgress.medal(country_time, country_retries, country_combo))
   profile.advance_missions(route[country_index], not country_failed, false)
   if not country_failed and country_drops == 0: rare_earned = profile.earn_rare(route[country_index], "crystal")
   for id in ["arcade:clean_boss", "arcade:no_drops"]:
@@ -862,6 +864,7 @@ func clear_round() -> void:
  if round_index == 2 and route_kind != "practice":
   stamp_pending = true
   panel.hide()
+  stamp.ink_color = Color("276e62") if profile.activities.custom.ink == "jade" else Color("285f86") if profile.activities.custom.ink == "ocean" else Color("a24c40")
   stamp.present(route[country_index], Vector2(size.x / 2, size.y / 2), profile.settings.reduced_motion)
  else: show_clear_panel()
 
@@ -1247,6 +1250,11 @@ func _draw() -> void:
  var source_size := size / cover_scale
  var source_start := Vector2((backdrop.get_width() - source_size.x) / 2, (backdrop.get_height() - source_size.y) * 0.2)
  draw_texture_rect_region(backdrop, Rect2(Vector2.ZERO, size), Rect2(source_start, source_size))
+ if profile.activities.custom.time != "day": draw_rect(Rect2(0, arena().position.y, size.x, arena().size.y * 0.12), Color(0.9, 0.4, 0.1, 0.15) if profile.activities.custom.time in ["sunrise", "sunset"] else Color(0.03, 0.05, 0.18, 0.22))
+ for i in 18:
+  var point := Vector2(fmod(i * 61.0 + (0 if profile.settings.reduced_motion else buddy_clock * 15), maxf(1, size.x)), arena().position.y + fmod(i * 37.0 + (0 if profile.settings.reduced_motion else buddy_clock * 20), maxf(1, arena().size.y * 0.1)))
+  if profile.activities.custom.weather == "rain": draw_line(point, point + Vector2(-3, 12), Color(0.8, 0.9, 1, 0.5), 1)
+  elif profile.activities.custom.weather == "snow": draw_circle(point, 2, Color("e4f7ff"))
  draw_rect(Rect2(Vector2.ZERO, Vector2(size.x, arena().position.y - 4)), Color(0.04, 0.15, 0.22, 0.85))
  var play := arena()
  var jitter := Vector2(sin(clock * 93), cos(clock * 77)) * shake * 12 if not profile.settings.reduced_motion else Vector2.ZERO

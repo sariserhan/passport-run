@@ -2,6 +2,8 @@ class_name TravelTransition
 extends CanvasLayer
 
 signal arrived
+var profile: PlayerProfile
+var buddy: BuddyPreview
 var active := false
 var root: ColorRect
 var artwork: TravelArtwork
@@ -27,7 +29,7 @@ func setup(style: GameHUD) -> void:
 	stack.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	stack.add_theme_constant_override("separation", 22)
 	scroll.add_child(stack)
-	var heading := style.label("NEXT STOP", 20, Color("a6e771"))
+	var heading := style.label("WELCOME TO YOUR NEXT ADVENTURE", 20, Color("a6e771"))
 	stack.add_child(heading)
 	var destination := style.label("", 36, GameHUD.CREAM)
 	destination.name = "Destination"
@@ -36,6 +38,9 @@ func setup(style: GameHUD) -> void:
 	artwork = TravelArtwork.new()
 	artwork.custom_minimum_size.y = 220
 	stack.add_child(artwork)
+	buddy = BuddyPreview.new()
+	buddy.custom_minimum_size.y = 130
+	stack.add_child(buddy)
 	var route := style.label("", 19, GameHUD.CREAM)
 	route.name = "Route"
 	route.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -57,6 +62,14 @@ func begin(from: String, to: String, reduced_motion: bool, cinematic: bool = fal
 	active = true
 	root.show()
 	SafeAreaMargins.apply(margins, root.size, Vector4i(28, 48, 28, 38))
+	if profile:
+		artwork.weather = profile.activities.custom.weather
+		artwork.time_of_day = profile.activities.custom.time
+		buddy.weather = profile.activities.custom.weather
+		buddy.kind = profile.travel_buddy if profile.travel_buddy in BuddyPersonality.FRIENDS else "bird"
+		buddy.visible = profile.travel_buddy != "none"
+		buddy.reduced_motion = reduced_motion
+		buddy.elapsed = 7
 	artwork.revealed = not mystery
 	artwork.country_id = to
 	artwork.show_traveler = not cinematic

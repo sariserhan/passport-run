@@ -3,6 +3,7 @@ extends CanvasLayer
 
 signal stamped
 signal finished
+var ink_color := Color("a24c40")
 var active := false
 var book: Control
 var tween: Tween
@@ -35,7 +36,7 @@ func draw_book() -> void:
 	for index in 6:
 		book.draw_line(Vector2(188, 45 + index * 27), Vector2(320, 45 + index * 27), Color("e8dcc2"), 1)
 	if mark > 0:
-		var ink := Color(0.78, 0.16, 0.13, mark)
+		var ink := Color(ink_color, mark)
 		book.draw_set_transform(Vector2(252, 122), -0.14, Vector2.ONE * lerpf(1.25, 1.0, mark))
 		book.draw_arc(Vector2.ZERO, 62, 0, TAU, 48, ink, 4, true)
 		book.draw_arc(Vector2.ZERO, 55, 0, TAU, 48, ink, 1, true)

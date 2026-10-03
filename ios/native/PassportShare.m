@@ -21,7 +21,7 @@ static void passportPollShare(void) {
     NSString *identifier = request[@"id"];
     NSString *filename = request[@"filename"];
     if (![identifier isKindOfClass:NSString.class] || identifier.length != 24) return;
-    if (![filename isKindOfClass:NSString.class] || ![@[@"passport-run-room.png", @"passport-run-album.png", @"passport-run-journal.png"] containsObject:filename] || ![request[@"expires"] isKindOfClass:NSNumber.class] || [request[@"expires"] doubleValue] < NSDate.date.timeIntervalSince1970) {
+    if (![filename isKindOfClass:NSString.class] || ![@[@"passport-run-room.png", @"passport-run-album.png", @"passport-run-journal.png", @"passport-run-photo.png", @"passport-run-scrapbook.png"] containsObject:filename] || ![request[@"expires"] isKindOfClass:NSNumber.class] || [request[@"expires"] doubleValue] < NSDate.date.timeIntervalSince1970) {
         passportShareResult(identifier, @"error"); return;
     }
     NSString *picturePath = [passportShareDirectory() stringByAppendingPathComponent:filename];
