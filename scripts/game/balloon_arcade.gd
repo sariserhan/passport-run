@@ -290,6 +290,14 @@ func show_panel(message: String, action_text: String, callback: Callable) -> voi
  panel.show()
  queue_redraw()
 
+func tour_pressure() -> float:
+ # Smooth escalation keeps every later destination faster, with a playable ceiling.
+ return 0.0 if route_kind == "daily" else float(country_index) / (country_index + 25.0)
+
+func wave_interval(enraged: bool) -> float:
+ var base := 4.0 if challenge != "" else 3.0 if enraged else 6.0
+ return base * (1.0 - tour_pressure() * 0.5)
+
 func begin_round() -> void:
  if phase == Phase.FAILED:
   score = round_score
@@ -302,6 +310,7 @@ func begin_round() -> void:
  load_destination()
  lives = 3 + extra_hearts
  remaining = 80.0 if route_kind == "daily" else 85.0 if profile.difficulty == "easy" else 80.0 if profile.difficulty == "moderate" else 75.0
+ remaining -= tour_pressure() * 20
  player_x = 280 if coop else 360
  partner_x = 440
  partner_down = false
@@ -350,25 +359,26 @@ func begin_round() -> void:
  platforms.clear()
  pops = 0
  if round_index > 0: platforms.append(Rect2(250, floor_y * 0.5, 220, 18))
- var count := round_index + 1 + mini(2, country_index / 12)
+ var count := round_index + 1 + (0 if route_kind == "daily" else mini(5, country_index / 4))
  for index in count:
-  balls.append(make_ball(Vector2(90 + index * 115, floor_y * 0.3), 2, -1 if index % 2 else 1, ["normal", "zigzag", "armored", "timed", "dodge"][posmod(country_index + round_index + index, 5)]))
+  balls.append(make_ball(Vector2(60 + (index + 0.5) * 600.0 / count, floor_y * (0.22 + index % 2 * 0.12)), 2, -1 if index % 2 else 1, ["normal", "zigzag", "armored", "timed", "dodge"][posmod(country_index + round_index + index, 5)]))
  if round_index == 2:
   balls.clear()
   var boss := make_ball(Vector2(360, maxf(85, floor_y * 0.3)), 2, 1)
   boss.radius = 68.0
   boss.boss = true
   boss.hp = 7 if route_kind == "daily" else 5 if profile.difficulty == "easy" else 7 if profile.difficulty == "moderate" else 9
+  boss.hp += 0 if route_kind == "daily" else mini(12, country_index / 3)
   boss.max_hp = boss.hp
   balls.append(boss)
  queue_redraw()
 
 func round_brief() -> String:
  var rule: String = {"swarm": "SURVIVE THE SWARM · 25s", "no_fire": "DODGE ONLY · No firing · 25s", "flood": "RISING WATER · Clear before it floods"}.get(challenge, "ARMORED BOSS · Break armor, dodge its swarm" if round_index == 2 else "Mystery drops: collect or avoid them in Pause")
- return ("DAILY " + daily_modifier.to_upper() + " · " if route_kind == "daily" else "") + mechanic.to_upper() + " · " + rule
+ return ("DAILY " + daily_modifier.to_upper() + " · " if route_kind == "daily" else "LEVEL %d · " % (country_index * 3 + round_index + 1)) + mechanic.to_upper() + " · " + rule
 
 func make_ball(position_value: Vector2, tier: int, direction: int, behavior_value: String = "normal") -> Dictionary:
- var speed := (115.0 + mini(country_index, 20) * 4 + round_index * 15) * (1.1 if route_kind == "daily" else 1.25 if profile.difficulty == "hard" else 0.95 if profile.difficulty == "easy" else 1.1)
+ var speed := (115.0 + tour_pressure() * 150 + round_index * 15) * (1.1 if route_kind == "daily" else 1.25 if profile.difficulty == "hard" else 0.95 if profile.difficulty == "easy" else 1.1)
  var behavior: String = daily_modifier if route_kind == "daily" else behavior_value
  if travel_choice == "detour" and country_index > 0:
   speed *= 1.25
@@ -692,7 +702,7 @@ func simulate(delta: float) -> void:
   if phase != Phase.PLAY: return
  wave_clock += delta
  var enraged := balls.any(func(ball): return ball.get("boss", false) and ball.hp <= int(ball.max_hp) / 2)
- if (challenge in ["swarm", "no_fire"] or round_index == 2) and wave_clock >= (4.0 if challenge != "" else 3.0 if enraged else 6.0):
+ if (challenge in ["swarm", "no_fire"] or round_index == 2) and wave_clock >= wave_interval(enraged):
   wave_clock = 0
   for wave in (2 if enraged else 1):
    if balls.size() < 20: balls.append(make_ball(Vector2(rng.randf_range(40,680), 40), 0, 1 if rng.randf() > 0.5 else -1))
