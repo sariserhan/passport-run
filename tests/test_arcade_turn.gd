@@ -6,6 +6,19 @@ func expect(value: bool, message: String) -> void:
  if not value:
   failures += 1
   push_error(message)
+func rendered_head_center(rendered: Image, background: Image, region: Rect2i) -> float:
+ region = region.intersection(Rect2i(Vector2i.ZERO, rendered.get_size()))
+ var left := region.end.x
+ var right := region.position.x - 1
+ for y in range(region.position.y, region.end.y):
+  for x in range(region.position.x, region.end.x):
+   var actual := rendered.get_pixel(x, y)
+   var original := background.get_pixel(x, y)
+   if absf(actual.r - original.r) + absf(actual.g - original.g) + absf(actual.b - original.b) > 0.15:
+    left = mini(left, x)
+    right = maxi(right, x)
+ return float(left + right) / 2 if right >= left else -1.0
+
 func _initialize() -> void:
  run.call_deferred()
 func run() -> void:
@@ -21,14 +34,27 @@ func run() -> void:
  arcade.invincible = 100
  arcade.mechanic = "stone"
  expect(is_equal_approx(arcade.side_scale(1), 1) and is_equal_approx(arcade.side_scale(-1), -1), "Side profile is mirrored at completed turns")
- expect(is_equal_approx(arcade.side_scale(0), 0.85), "Mid-turn keeps the side profile visible without displaying a front pose")
+ expect(is_equal_approx(arcade.side_scale(0), 1), "Direction changes never squash the character")
  expect(arcade.side_scale(0.25) > 0 and arcade.side_scale(-0.25) < 0, "Turn mirrors the side profile without changing its pose")
+ var walk_cell := Vector2(arcade.WALK.get_size()) / Vector2(4, 2)
+ for step in 8:
+  for direction in [-1.0, 1.0]:
+   var anchor: Vector2 = arcade.WALK_ANCHORS[step]
+   var target := arcade.side_target(360, direction, walk_cell, anchor, arcade.WALK_SOLES[step], 116.0 / 140.0)
+   expect(is_equal_approx(target.position.x + (walk_cell.x - anchor.x if direction < 0 else anchor.x) / walk_cell.x * absf(target.size.x), 360), "Every walking frame keeps its body at the player position")
+   expect(is_equal_approx(target.position.y + arcade.WALK_SOLES[step] / walk_cell.y * target.size.y, arcade.floor_y), "Every walking frame stays on the floor")
+   expect(is_equal_approx(target.position.y + anchor.y / walk_cell.y * target.size.y, arcade.floor_y - 132), "Walking frames have no vertical bob")
+ var idle_cell := Vector2(arcade.TURN.get_size()) / Vector2(5, 1)
+ for direction in [-1.0, 1.0]:
+  var target := arcade.side_target(360, direction, idle_cell, arcade.IDLE_ANCHOR, arcade.IDLE_SOLE)
+  expect(is_equal_approx(target.position.x + (idle_cell.x - arcade.IDLE_ANCHOR.x if direction < 0 else arcade.IDLE_ANCHOR.x) / idle_cell.x * absf(target.size.x), 360), "Idle and walking share the same body anchor")
+  expect(is_equal_approx(target.position.y + arcade.IDLE_ANCHOR.y / idle_cell.y * target.size.y, arcade.floor_y - 132), "Stopping does not move the character vertically")
  arcade.set_control("▶",true)
  arcade.simulate(0.1)
  arcade.set_control("▶",false)
  arcade.set_control("◀",true)
  arcade.simulate(1.0/60)
- expect(arcade.facing < 0 and arcade.visual_facing > 0 and arcade.visual_facing < 1, "Reversal starts intermediate turn instead of snapping")
+ expect(arcade.facing < 0 and arcade.visual_facing == -1, "Reversal mirrors the side profile immediately")
  expect(arcade.slide_speed > 0 and arcade.slide_speed < 240, "Reversal brakes existing momentum before moving left")
  var turning := arcade.visual_facing
  arcade.set_paused(true)
@@ -45,7 +71,7 @@ func run() -> void:
  arcade.set_control("▶",false)
  arcade.set_control("◀",true)
  arcade.simulate(0.02)
- expect(arcade.visual_facing < partial and arcade.visual_facing > -1, "Rapid direction change reverses an ongoing turn smoothly")
+ expect(partial == 1 and arcade.visual_facing == -1, "Rapid direction changes have no delayed turn animation")
  game.profile.settings.reduced_motion = true
  arcade.set_control("◀",false)
  arcade.set_control("▶",true)
@@ -58,11 +84,13 @@ func run() -> void:
  arcade.freeze = 100
  arcade.set_control("P2 ◀",true)
  arcade.simulate(0.02)
- expect(arcade.partner_visual_facing > -1 and arcade.partner_visual_facing < 1, "P2 also smoothly flips its side profile")
+ expect(arcade.partner_visual_facing == -1, "P2 also mirrors without a turn animation")
  arcade.simulate(0.3)
  expect(arcade.partner_visual_facing == -1, "P2 turn completes")
  if DisplayServer.get_name() != "headless":
   root.size = Vector2i(390,844)
+  root.content_scale_size = Vector2i(390,844)
+  await process_frame
   arcade.coop = false
   arcade.layout()
   arcade.begin_round()
@@ -80,6 +108,29 @@ func run() -> void:
    var capture := root.get_texture().get_image()
    capture.save_png("/tmp/passport-turn-frames/%03d.png" % index)
    if index == 30: capture.save_png("res://artifacts/arcade-turning.png")
+  # Render every atlas frame at one fixed world position in both directions.
+  arcade.player_x = -1000
+  arcade.shot_time = 0
+  arcade.queue_redraw()
+  await process_frame
+  await RenderingServer.frame_post_draw
+  var background := root.get_texture().get_image()
+  var play := arcade.arena()
+  var world_scale := play.size / Vector2(arcade.WORLD.x, arcade.world_height)
+  var expected_x := play.position.x + 360 * world_scale.x
+  var head_region := Rect2i(Vector2i(play.position + Vector2(280, arcade.floor_y - 132) * world_scale), Vector2i(Vector2(160, 60) * world_scale))
+  arcade.player_x = 360
+  for direction in [-1.0, 1.0]:
+   arcade.visual_facing = direction
+   for step in 9:
+    arcade.walk_clock = step % 8
+    arcade.walk_speed = 0 if step == 8 else 120
+    arcade.queue_redraw()
+    await process_frame
+    await RenderingServer.frame_post_draw
+    var anchored := root.get_texture().get_image()
+    expect(absf(rendered_head_center(anchored, background, head_region) - expected_x) <= 2, "Rendered character stays at the same position across every frame and mirror")
+    anchored.save_png("/tmp/passport-turn-frames/anchored-%s-%d.png" % ["left" if direction < 0 else "right", step])
  game.queue_free()
  await process_frame
  print("Arcade turn checks: ", checks, "; failures: ", failures)

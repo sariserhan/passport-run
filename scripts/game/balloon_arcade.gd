@@ -8,6 +8,12 @@ var world_height := 600.0
 var touches: Dictionary = {}
 const TURN := preload("res://assets/arcade-turn.png")
 const WALK := preload("res://assets/arcade-walk-v2.png")
+# Head centers, top edges, and soles measured in each atlas cell. The atlas
+# frames have different padding; align the artwork, not the cell rectangle.
+const WALK_ANCHORS := [Vector2(261.5, 16), Vector2(238.5, 16), Vector2(228.5, 16), Vector2(238, 14), Vector2(240.5, 0), Vector2(231.5, 10), Vector2(232, 11), Vector2(241, 11)]
+const WALK_SOLES := [443.0, 443.0, 443.0, 443.0, 436.0, 437.0, 435.0, 436.0]
+const IDLE_ANCHOR := Vector2(230.5, 28)
+const IDLE_SOLE := 699.0
 const PORTRAIT := preload("res://assets/arcade-poses.png")
 const DROPS := ["double", "sticky", "gun", "triple", "spread", "laser", "rocket", "shield", "freeze", "slow", "boots", "heart", "time", "coin", "bomb", "magnet", "speed", "multiply", "heavy", "reverse", "jam", "shrink_time"]
 const WEAPONS := ["double", "sticky", "gun", "triple", "spread", "laser", "rocket"]
@@ -887,19 +893,23 @@ func movement_acceleration(velocity: float, desired: float) -> float:
  if mechanic == "ice": return 260.0
  return 1800.0 if velocity * desired < 0 else 4000.0
 
-func update_turn(current: float, target: float, delta: float) -> float:
- return target if profile.settings.reduced_motion else move_toward(current, target, delta * 16.0)
+func update_turn(_current: float, target: float, _delta: float) -> float:
+ return target
 
 func side_scale(direction: float) -> float:
- # Keep the side profile visible throughout a quick, gently compressed flip.
- var width := 0.85 + 0.15 * sin(absf(clampf(direction, -1.0, 1.0)) * PI / 2.0)
- return -width if direction < 0 else width
+ return -1.0 if direction < 0 else 1.0
+
+func side_target(x: float, direction: float, cell: Vector2, anchor: Vector2, sole: float, width_ratio: float = 1.0) -> Rect2:
+ var scale := 132.0 / (sole - anchor.y)
+ var width := cell.x * scale * width_ratio * side_scale(direction)
+ # Godot flips a negative-width texture inside its rectangle; its position
+ # remains the left edge. Mirror the anchor inside those same bounds.
+ var anchor_x := cell.x - anchor.x if direction < 0 else anchor.x
+ return Rect2(x - anchor_x / cell.x * absf(width), floor_y - sole * scale, width, cell.y * scale)
 
 func draw_turn(x: float, direction: float, tint: Color) -> void:
  var cell := Vector2(TURN.get_size()) / Vector2(5, 1)
- var width := 140.0 * cell.x / cell.y * side_scale(direction)
- if absf(width) < 0.001: return
- var target := Rect2(x - width / 2, floor_y - 131.6, width, 140)
+ var target := side_target(x, direction, cell, IDLE_ANCHOR, IDLE_SOLE)
  draw_texture_rect_region(TURN, target, Rect2(Vector2.ZERO, cell), tint)
 
 func walking_frame(gait: float) -> int:
@@ -912,24 +922,16 @@ func draw_explorer(frame: int, gait: float, speed: float, direction: float, x: f
   var cell := Vector2(WALK.get_size()) / Vector2(4, 2)
   var step := walking_frame(gait)
   var source := Rect2(Vector2(step % 4, step / 4) * cell, cell)
-  var width := 116.0 * side_scale(direction)
-  if absf(width) < 0.001: return
-  var target := Rect2(x - width / 2, floor_y - 131.6, width, 140)
-  # Separate torso and legs so recoil never replaces the locomotion cycle.
-  var waist := 0.66
-  var bob := -absf(sin(gait * TAU / 8)) * 1.5 if not profile.settings.reduced_motion else 0.0
-  var recoil := 1.5 if frame in range(4, 12) else 0.0
-  draw_texture_rect_region(WALK, Rect2(target.position + Vector2(0, target.size.y * waist), Vector2(target.size.x, target.size.y * (1 - waist))), Rect2(source.position + Vector2(0, cell.y * waist), Vector2(cell.x, cell.y * (1 - waist))), tint)
-  draw_texture_rect_region(WALK, Rect2(target.position + Vector2(-direction * recoil, bob), Vector2(target.size.x, target.size.y * waist)), Rect2(source.position, Vector2(cell.x, cell.y * waist)), tint)
-  if recoil > 0:
-   var grip := Vector2(x + direction * 16, floor_y - 66)
+  var target := side_target(x, direction, cell, WALK_ANCHORS[step], WALK_SOLES[step], 116.0 / 140.0)
+  draw_texture_rect_region(WALK, target, source, tint)
+  if frame in range(4, 12):
+   var grip := Vector2(x + side_scale(direction) * 16, floor_y - 66)
    draw_line(grip, grip + Vector2(0, -18), Color("72543c"), 6, true)
    draw_line(grip + Vector2(0, -18), grip + Vector2(0, -25), Color("ffe5a1"), 4, true)
  else:
   var cell := Vector2(PORTRAIT.get_size()) / 4
   var target := Rect2(x - 52, floor_y - 120, 104, 124)
   if direction < 0:
-   target.position.x += target.size.x
    target.size.x *= -1
   draw_texture_rect_region(PORTRAIT, target, Rect2(Vector2(frame % 4, frame / 4) * cell, cell), tint)
 
