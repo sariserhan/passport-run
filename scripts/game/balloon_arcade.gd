@@ -893,8 +893,9 @@ func movement_acceleration(velocity: float, desired: float) -> float:
  if mechanic == "ice": return 260.0
  return 1800.0 if velocity * desired < 0 else 4000.0
 
-func update_turn(_current: float, target: float, _delta: float) -> float:
- return target
+func update_turn(current: float, target: float, delta: float) -> float:
+ # Brief side-profile transition; no front-facing pose or scale deformation.
+ return target if profile.settings.reduced_motion else move_toward(current, target, delta * 20.0)
 
 func side_scale(direction: float) -> float:
  return -1.0 if direction < 0 else 1.0
@@ -907,15 +908,29 @@ func side_target(x: float, direction: float, cell: Vector2, anchor: Vector2, sol
  var anchor_x := cell.x - anchor.x if direction < 0 else anchor.x
  return Rect2(x - anchor_x / cell.x * absf(width), floor_y - sole * scale, width, cell.y * scale)
 
+func draw_anchored_sprite(texture: Texture2D, target: Rect2, source: Rect2, tint: Color, x: float, direction: float) -> void:
+ var lean := -sin(direction * PI) * 0.015 if not profile.settings.reduced_motion else 0.0
+ var pivot := Vector2(x, floor_y - 118)
+ var width := absf(target.size.x)
+ var corners := PackedVector2Array([target.position, target.position + Vector2(width, 0), target.position + Vector2(width, target.size.y), target.position + Vector2(0, target.size.y)])
+ for index in 4: corners[index] = pivot + (corners[index] - pivot).rotated(lean)
+ var left := source.end.x if target.size.x < 0 else source.position.x
+ var right := source.position.x if target.size.x < 0 else source.end.x
+ var uv := PackedVector2Array([Vector2(left, source.position.y), Vector2(right, source.position.y), Vector2(right, source.end.y), Vector2(left, source.end.y)])
+ for index in 4: uv[index] /= Vector2(texture.get_size())
+ draw_polygon(corners, PackedColorArray([tint]), uv, texture)
+
 func draw_turn(x: float, direction: float, tint: Color) -> void:
  var cell := Vector2(TURN.get_size()) / Vector2(5, 1)
  var target := side_target(x, direction, cell, IDLE_ANCHOR, IDLE_SOLE)
- draw_texture_rect_region(TURN, target, Rect2(Vector2.ZERO, cell), tint)
+ draw_anchored_sprite(TURN, target, Rect2(Vector2.ZERO, cell), tint, x, direction)
 
 func walking_frame(gait: float) -> int:
  return posmod(int(gait), 8)
 
 func draw_explorer(frame: int, gait: float, speed: float, direction: float, x: float, tint: Color, incapacitated: bool) -> void:
+ # Plant briefly at the midpoint; retain one solid sprite throughout the pivot.
+ if not incapacitated and absf(direction) < 0.35: speed = 0
  if not incapacitated and speed <= 1:
   draw_turn(x, direction, tint)
  elif speed > 1 and not incapacitated:
@@ -923,7 +938,7 @@ func draw_explorer(frame: int, gait: float, speed: float, direction: float, x: f
   var step := walking_frame(gait)
   var source := Rect2(Vector2(step % 4, step / 4) * cell, cell)
   var target := side_target(x, direction, cell, WALK_ANCHORS[step], WALK_SOLES[step], 116.0 / 140.0)
-  draw_texture_rect_region(WALK, target, source, tint)
+  draw_anchored_sprite(WALK, target, source, tint, x, direction)
   if frame in range(4, 12):
    var grip := Vector2(x + side_scale(direction) * 16, floor_y - 66)
    draw_line(grip, grip + Vector2(0, -18), Color("72543c"), 6, true)

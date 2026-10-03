@@ -54,7 +54,7 @@ func run() -> void:
  arcade.set_control("▶",false)
  arcade.set_control("◀",true)
  arcade.simulate(1.0/60)
- expect(arcade.facing < 0 and arcade.visual_facing == -1, "Reversal mirrors the side profile immediately")
+ expect(arcade.facing < 0 and arcade.visual_facing > -1 and arcade.visual_facing < 1, "Reversal begins a short anchored pivot")
  expect(arcade.slide_speed > 0 and arcade.slide_speed < 240, "Reversal brakes existing momentum before moving left")
  var turning := arcade.visual_facing
  arcade.set_paused(true)
@@ -71,7 +71,7 @@ func run() -> void:
  arcade.set_control("▶",false)
  arcade.set_control("◀",true)
  arcade.simulate(0.02)
- expect(partial == 1 and arcade.visual_facing == -1, "Rapid direction changes have no delayed turn animation")
+ expect(arcade.visual_facing < partial and arcade.visual_facing > -1, "Rapid direction changes smoothly reverse the ongoing pivot")
  game.profile.settings.reduced_motion = true
  arcade.set_control("◀",false)
  arcade.set_control("▶",true)
@@ -84,7 +84,7 @@ func run() -> void:
  arcade.freeze = 100
  arcade.set_control("P2 ◀",true)
  arcade.simulate(0.02)
- expect(arcade.partner_visual_facing == -1, "P2 also mirrors without a turn animation")
+ expect(arcade.partner_visual_facing > -1 and arcade.partner_visual_facing < 1, "P2 also uses a brief planted-foot turn")
  arcade.simulate(0.3)
  expect(arcade.partner_visual_facing == -1, "P2 turn completes")
  if DisplayServer.get_name() != "headless":
@@ -107,7 +107,7 @@ func run() -> void:
    await RenderingServer.frame_post_draw
    var capture := root.get_texture().get_image()
    capture.save_png("/tmp/passport-turn-frames/%03d.png" % index)
-   if index == 30: capture.save_png("res://artifacts/arcade-turning.png")
+   if index == 26: capture.save_png("res://artifacts/arcade-turning-smooth.png")
   # Render every atlas frame at one fixed world position in both directions.
   arcade.player_x = -1000
   arcade.shot_time = 0
@@ -120,7 +120,7 @@ func run() -> void:
   var expected_x := play.position.x + 360 * world_scale.x
   var head_region := Rect2i(Vector2i(play.position + Vector2(280, arcade.floor_y - 132) * world_scale), Vector2i(Vector2(160, 60) * world_scale))
   arcade.player_x = 360
-  for direction in [-1.0, 1.0]:
+  for direction in [-1.0, -0.5, 0.0, 0.5, 1.0]:
    arcade.visual_facing = direction
    for step in 9:
     arcade.walk_clock = step % 8
@@ -129,7 +129,7 @@ func run() -> void:
     await process_frame
     await RenderingServer.frame_post_draw
     var anchored := root.get_texture().get_image()
-    expect(absf(rendered_head_center(anchored, background, head_region) - expected_x) <= 2, "Rendered character stays at the same position across every frame and mirror")
+    expect(absf(rendered_head_center(anchored, background, head_region) - expected_x) <= 2, "Rendered character stays anchored across gait %d and turn %.2f (offset %.2f)" % [step, direction, rendered_head_center(anchored, background, head_region) - expected_x])
     anchored.save_png("/tmp/passport-turn-frames/anchored-%s-%d.png" % ["left" if direction < 0 else "right", step])
  game.queue_free()
  await process_frame
