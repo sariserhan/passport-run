@@ -30,6 +30,16 @@ func run() -> void:
  if game.paused: game.resume_game()
  assert(game.traveler.portrait.texture.resource_path == "res://assets/realistic/memory-explorer.png")
  await capture("memory-france")
+ game.preview_remaining = 0.001
+ while game.run.phase == RunState.Phase.PREVIEW:
+  await process_frame
+  if game.paused: game.resume_game()
+ game.config.jump_seconds = 1.0
+ assert(game.choose_tile(0, game.run.safe_lane(0)))
+ await create_timer(0.3).timeout
+ if game.paused: game.resume_game()
+ assert(game.run.phase == RunState.Phase.JUMPING)
+ await capture("memory-path-jump")
  game.return_to_menu()
  game.start_game("kids", "easy")
  game.start_preview()

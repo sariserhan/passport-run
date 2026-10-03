@@ -1,8 +1,8 @@
 # Passport Run — agent handoff (2026-10-03)
 
-## Latest correction: jumping characters face forward
+## Latest correction: jumping characters face toward the path
 
-The jumping/memory game uses front-facing human and Kids robot sheets. Balloon Arcade keeps its separate side-facing explorer. `Traveler.align_portrait()` uses measured full-pose bounds from `resources/jumping-explorer.json` to avoid clipping generated frames and align boots. Existing pose indices and jump/scoring rules remain. The bounds JSON is explicitly included in iPhone export. Built-in edit prompts are in `docs/jumping-character-prompts.json`; preview is `artifacts/realistic-memory-front-jump.png`. Headless/rendered animation checks passed 53 each, polish passed 208, and the new `/private/tmp/passport-front-facing.pck` passed 582 exported-artwork/startup checks. Previous native Xcode builds predate this correction.
+The jumping/memory game uses rear-view human and Kids robot sheets: backs toward the camera, faces toward the path. This supersedes the earlier incorrect camera-facing interpretation. Balloon Arcade keeps its separate side-facing explorer. `Traveler.align_portrait()` uses refreshed measured full-pose bounds from `resources/jumping-explorer.json` to avoid clipping generated frames and align boots. Existing pose indices and jump/scoring rules remain. The bounds JSON is included in iPhone export. Built-in edit prompts are in `docs/jumping-character-prompts.json`; preview is `artifacts/realistic-memory-path-jump.png`. `tools/capture_realistic.gd` now captures a real safe-tile jump as well as standing, Kids and Infinite. Previous native Xcode builds predate this correction. Verification passed 53 animation/timer checks both headlessly and rendered, 208 polish checks, standing/mid-jump/Kids/Infinite captures, and 582 standalone artwork/startup checks of `/private/tmp/passport-path-facing.pck`.
 
 ## Current continuation: mastery and photorealistic graphics
 

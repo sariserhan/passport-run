@@ -19,7 +19,7 @@ func run() -> void:
  var data: Variant = JSON.parse_string(FileAccess.get_file_as_string("res://resources/realistic-explorer.json"))
  expect(data is Array and data.size() == 16, "Export contains all character frame alignment data")
  var jumping: Variant = JSON.parse_string(FileAccess.get_file_as_string("res://resources/jumping-explorer.json"))
- expect(jumping is Dictionary and jumping.human.size() == 16 and jumping.robot.size() == 16, "Export contains complete front-facing jump poses for both characters")
+ expect(jumping is Dictionary and jumping.human.size() == 16 and jumping.robot.size() == 16, "Export contains complete path-facing jump poses for both characters")
  expect(catalog.DESTINATIONS.size() == 282, "Export contains the full destination catalog")
  var seen := {}
  for id in catalog.DESTINATIONS:

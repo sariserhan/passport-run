@@ -9,8 +9,8 @@ The user requested realistic graphics throughout the game. This pass replaces th
 | `assets/realistic/details/scenery-00.png` through `scenery-68.png` | 69 four-cell atlases: 276 distinct destination scenes, approximately 512×768 per scene |
 | `assets/realistic/backdrops/{FR,TR,US,JP,EG,AF}.png` | Six dedicated full-resolution portrait scenes |
 | `assets/realistic/explorer.png` | Adult arcade explorer, planted side-profile idle/walk/shoot/death poses |
-| `assets/realistic/memory-explorer.png` | Front-facing adult memory-game thinking, jump, celebration, passport and fall poses |
-| `assets/realistic/robot-explorer.png` | Front-facing Kids explorer with physically textured metal, rubber, canvas and matching memory poses |
+| `assets/realistic/memory-explorer.png` | Rear-view, path-facing adult memory-game thinking, jump, celebration, passport and fall poses |
+| `assets/realistic/robot-explorer.png` | Rear-view, path-facing Kids explorer with physically textured metal, rubber, canvas and matching memory poses |
 | `assets/realistic/objects.png` | Three latex balloon colors, brass boss, anonymous sealed capsule and three weapon/projectile sprites |
 | `assets/realistic/materials.png` | Limestone, sandstone, frosted ice and oak surfaces |
 | `assets/realistic/medals.png` | Bronze, silver and gold compass medallions |
@@ -52,10 +52,10 @@ Selected previews: [arcade play](../artifacts/realistic-gameplay.png), [bounce b
 
 ## Jumping-game facing correction
 
-The user requested the jumping-game character face forward rather than sideways. Both memory-game sheets now face the viewer throughout standing, jumping, landing, celebration, passport and falling poses. The balloon-game sheet remains side-facing. The built-in image generator edited the two PNGs in place; [the submitted prompts](jumping-character-prompts.json) record the original reference commit and edits.
+The jumping-game character faces toward the path, away from the camera. Both the human and Kids robot show their backs and backpacks throughout standing, jumping, landing, celebration, passport and falling poses. The built-in image generator edited the two PNGs in place; [the submitted prompts](jumping-character-prompts.json) record the reference commit and rear-view edits. Balloon Arcade retains its separate side-facing sprites.
 
-`resources/jumping-explorer.json` measures the 32 complete silhouettes. `Traveler.align_portrait()` selects each measured pose and places its boots at the local ground level, preserving the existing frame numbers and actual game jump motion. This prevents clipping and neighboring-frame fragments where the generated standing poses cross a nominal grid boundary. Alpha analysis wrote coordinate data without modifying any PNG pixels. The data is explicitly included in export.
+`resources/jumping-explorer.json` measures the 32 complete silhouettes. `Traveler.align_portrait()` selects each measured pose and places its boots at the local ground level, preserving the existing frame numbers and actual game jump motion. This prevents clipping and neighboring-frame fragments where generated poses cross a nominal grid boundary. Alpha analysis wrote coordinate data without modifying any PNG pixels. The data is explicitly included in export.
 
-Current preview: [front-facing mid-jump](../artifacts/realistic-memory-front-jump.png). The previous Xcode app build predates this orientation correction.
+Current preview: [jumping toward the path](../artifacts/realistic-memory-path-jump.png). The previous Xcode app build predates this orientation correction.
 
-Facing-correction verification passed 53 animation/timer checks both headlessly and rendered, 208 polish checks, actual standing/mid-jump/Kids/Infinite captures, and 582 standalone checks of `/private/tmp/passport-front-facing.pck`. No balloon-game source or sprite was changed.
+Verification passed 53 animation/timer checks both headlessly and rendered, 208 polish checks, standing/mid-jump/Kids/Infinite captures, and 582 standalone artwork/startup checks of `/private/tmp/passport-path-facing.pck`.
