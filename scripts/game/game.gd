@@ -314,9 +314,11 @@ func set_overview() -> void:
 	var depth: float = (config.row_count + 1) * config.row_spacing
 	var focus := Vector3(0, 0, -segment_start * config.row_spacing - depth / 2)
 	var screen := get_viewport().get_visible_rect().size
+	var top := 155.0 if screen.x > screen.y else 200.0
+	var bottom := screen.y - (140.0 if screen.x > screen.y else 170.0)
 	var direction := Vector3(0, 0.72, 0.69).normalized()
 	var distance := 18.0
-	var target_y: float = (195.0 + screen.y - 160.0) / 2
+	var target_y: float = (top + bottom) / 2
 	# Fit the complete preview at every difficulty; play moves closer to the traveler.
 	for attempt in 48:
 		camera.position = focus + direction * distance
@@ -327,9 +329,9 @@ func set_overview() -> void:
 			for lane in [0, config.lane_count - 1]:
 				for offset in [Vector3(-1, 0, -1), Vector3(1, 0, 1)]:
 					var point := camera.unproject_position(grid.position_for(row, lane) + offset)
-					fits = fits and point.x > 16 and point.x < screen.x - 16 and point.y > 200 and point.y < screen.y - 170
+					fits = fits and point.x > 16 and point.x < screen.x - 16 and point.y > top and point.y < bottom
 		var boots := camera.unproject_position(Vector3(0, 0, -segment_start * config.row_spacing + 0.8))
-		fits = fits and boots.y < screen.y - 170
+		fits = fits and boots.y < bottom
 		if fits:
 			break
 		distance *= 1.06

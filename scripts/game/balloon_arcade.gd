@@ -60,6 +60,7 @@ var walk_clock := 0.0
 var combo := 0
 var combo_time := 0.0
 var particles: Array[Dictionary] = []
+var margins := Vector4i(16, 16, 16, 26)
 
 func _ready() -> void:
  set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -97,6 +98,9 @@ func set_control(key: String, pressed: bool) -> void:
  else: fire_held = pressed
 
 func layout() -> void:
+ margins = Vector4i(16, 16, 16, 26)
+ if OS.has_feature("mobile"):
+  margins = SafeAreaMargins.calculate(size, DisplayServer.screen_get_size(), DisplayServer.get_display_safe_area(), margins)
  var old_floor := floor_y
  var area := arena()
  world_height = area.size.y / maxf(1, area.size.x) * WORLD.x
@@ -110,23 +114,24 @@ func layout() -> void:
   wire.bottom = floor_y
  for pickup in pickups: pickup.position.y *= ratio
  for index in platforms.size(): platforms[index].position.y *= ratio
- heading.position = Vector2(16, 15)
- heading.size.x = maxf(150, size.x - 85)
+ heading.position = Vector2(margins.x, margins.y)
+ heading.size.x = maxf(150, size.x - margins.x - margins.z - 66)
  heading.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
- stats.position = Vector2(16, 72)
- notice.position = Vector2(16, 98)
- notice.size.x = size.x - 32
+ stats.position = Vector2(margins.x, margins.y + 56)
+ notice.position = Vector2(margins.x, margins.y + 82)
+ notice.size.x = size.x - margins.x - margins.z
  notice.clip_text = true
- pause_button.position = Vector2(size.x - 66, 16)
+ pause_button.position = Vector2(size.x - margins.z - 50, margins.y)
  pause_button.size = Vector2(50, 50)
- controls.position = Vector2(16, size.y - 92)
- controls.size = Vector2(size.x - 32, 62)
+ controls.position = Vector2(margins.x, size.y - margins.w - 66)
+ controls.size = Vector2(size.x - margins.x - margins.z, 62)
  queue_redraw()
 
 func arena() -> Rect2:
- var height := maxf(140, size.y - 248)
- var width := minf(size.x - 24, height * 2.1)
- return Rect2((size.x - width) / 2, 128, width, height)
+ var top := margins.y + 112
+ var height := maxf(140, size.y - top - margins.w - 94)
+ var width := minf(size.x - margins.x - margins.z, height * 2.1)
+ return Rect2(margins.x + (size.x - margins.x - margins.z - width) / 2, top, width, height)
 
 func load_destination() -> void:
  backdrop = GameCatalog.backdrop(route[country_index])
@@ -483,7 +488,7 @@ func simulate(delta: float) -> void:
 func _draw() -> void:
  if not backdrop: return
  draw_texture_rect(backdrop, Rect2(Vector2.ZERO, size), false)
- draw_rect(Rect2(Vector2.ZERO, Vector2(size.x, 124)), Color(0.04, 0.15, 0.22, 0.85))
+ draw_rect(Rect2(Vector2.ZERO, Vector2(size.x, arena().position.y - 4)), Color(0.04, 0.15, 0.22, 0.85))
  var play := arena()
  draw_set_transform(play.position, 0, play.size / Vector2(WORLD.x, world_height))
  for platform in platforms:

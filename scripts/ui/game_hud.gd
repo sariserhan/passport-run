@@ -12,6 +12,7 @@ const INK := Color("163c55")
 const CREAM := Color("fff6df")
 var root: Control
 var safe_margin: MarginContainer
+var instructions: VBoxContainer
 var score: Label
 var destination: Label
 var phase_title: Label
@@ -83,7 +84,7 @@ func _ready() -> void:
 	pause_button.tooltip_text = "Pause"
 	pause_button.pressed.connect(func(): pause_requested.emit())
 	header.add_child(pause_button)
-	var instructions := VBoxContainer.new()
+	instructions = VBoxContainer.new()
 	instructions.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
 	instructions.offset_top = 104
 	instructions.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -166,6 +167,10 @@ func _ready() -> void:
 	update_safe_area.call_deferred()
 
 func update_safe_area() -> void:
+	var landscape := root.size.x > root.size.y
+	instructions.offset_top = 64 if landscape else 104
+	phase_title.add_theme_font_size_override("font_size", 22 if landscape else 28)
+	phase_hint.add_theme_font_size_override("font_size", 14 if landscape else 17)
 	SafeAreaMargins.apply(safe_margin, root.size, Vector4i(24, 24, 24, 26))
 	SafeAreaMargins.apply(modal_margin, root.size, Vector4i(20, 24, 20, 26))
 	var available_width := root.size.x - modal_margin.get_theme_constant("margin_left") - modal_margin.get_theme_constant("margin_right")
