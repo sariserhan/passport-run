@@ -11,7 +11,13 @@ config_version=5
 [application]
 
 config/name="Passport Run"
-config/icon="res://assets/icon.svg"
+config/icon="res://assets/branding/app-icon.png"
+config/macos_native_icon="res://assets/branding/PassportRun.icns"
+boot_splash/bg_color=Color(0.016, 0.09, 0.18, 1)
+boot_splash/image="res://assets/branding/splash-screen.png"
+boot_splash/show_image=true
+boot_splash/fullsize=true
+boot_splash/use_filter=true
 config/version="0.1.0"
 config/description="Remember the path. Travel the world."
 run/main_scene="res://scenes/game.tscn"

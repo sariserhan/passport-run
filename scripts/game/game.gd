@@ -211,6 +211,7 @@ func start_game(mode: String, difficulty_key: String) -> void:
 		failed_countries.clear()
 	completed_stops.clear()
 	session.begin(mode, difficulty_key, adventure_start if mode == "adventure" else special_start if mode == "special" else (cinema_start if mode == "cinema" else profile.home_country), randi_range(1, PathGenerator.MODULUS - 2), {"route": TravelGoals.TRIPS[trip_id].route} if mode == "trip" else imported_challenge)
+	if mode in ["world", "kids"]: session.resume_world(profile.discoveries)
 	var requested_route: Array = issued.route if requested_online else session.fixed_route
 	if mode in ["daily", "challenge", "trip", "expedition"] and not profile.can_visit_route(requested_route):
 		reject_locked_destination()
@@ -255,7 +256,6 @@ func cancel_motion() -> void:
 	audio.set_paused(false)
 
 func restart(new_path: bool = false, auto_preview: bool = true) -> void:
-	completed_stops.clear()
 	if online:
 		retry_run_id = replay.run_id
 		start_game("online_" + session.mode, session.difficulty)
@@ -265,6 +265,14 @@ func restart(new_path: bool = false, auto_preview: bool = true) -> void:
 		next_seed = run.path_seed
 	if new_path and session.mode not in ["daily", "challenge"]:
 		next_seed = randi_range(1, PathGenerator.MODULUS - 2)
+	# A travel retry resets the active country's tiles, never the journey's departure.
+	if session.mode in ["world", "kids", "special", "cinema", "trip", "adventure", "expedition"] and run.phase != RunState.Phase.COMPLETE:
+		session.seed_value = next_seed
+		friend_steps.resize(mini(friend_steps.size(), session.banked_tiles))
+		load_country(auto_preview)
+		telemetry.track("run_retried", metadata())
+		return
+	completed_stops.clear()
 	# A daily retry stays pinned to the UTC date it started, even across midnight.
 	var old_date := session.date
 	var old_route: Array[String] = session.fixed_route.duplicate()
@@ -668,6 +676,8 @@ func show_failure() -> void:
 	var body := "%d tiles · %d destinations\nSame path. Another chance." % [total_score(), session.completed_countries]
 	if failure_reason == "timeout":
 		body += "\nTime ran out. Each new row gives you 10 seconds."
+	if session.mode in ["world", "kids", "trip", "special", "cinema", "adventure", "expedition"]:
+		body += "\nContinue in " + GameCatalog.country_name(session.current_country()) + "."
 	if session.mode == "infinite":
 		body = "%d tiles remembered\nRetry starts at step 1\nwith the exact same path." % run.completed_rows
 	if session.mode == "tutorial":
@@ -838,7 +848,7 @@ func copy_challenge() -> void:
 	var route := session.challenge_route()
 	if route.is_empty():
 		return
-	var code := ChallengeCode.encode(session.seed_value, session.difficulty, route, total_score(), session.balance_version, friend_steps)
+	var code := ChallengeCode.encode(session.challenge_seed(), session.difficulty, route, total_score(), session.balance_version, friend_steps)
 	DisplayServer.clipboard_set(ChallengeCode.link(code))
 	hud.modal_body.text = "Challenge link copied.\nSend it to a friend to replay\nthe same route and path."
 	telemetry.track("challenge_created", metadata())

@@ -213,6 +213,7 @@ func run_all() -> void:
 	await capture("19-daily")
 	game.profile.discoveries.assign(earned_stamps)
 	game.start_game("kids", "hard")
+	expect(game.session.current_country() not in earned_stamps, "Kids journey continues at an uncleared country")
 	expect(game.config.lane_count == 3 and game.config.row_count == 6 and game.config.preview_seconds == 3, "Kids overrides competitive difficulty")
 	await cross_country()
 	for control in game.hud.modal_actions.get_children():
@@ -236,7 +237,7 @@ func run_all() -> void:
 	game.profile.discoveries.assign(earned_stamps)
 	game.return_to_menu()
 	var reloaded := PlayerProfile.new(game.save_path)
-	expect(reloaded.discoveries.size() == 5 and reloaded.records.has("world:easy"), "End-to-end progress survives a fresh profile instance")
+	expect(reloaded.discoveries.size() == 6 and reloaded.discoveries == game.profile.discoveries and reloaded.records.has("world:easy"), "End-to-end progress survives a fresh profile instance")
 	print("Mode checks: ", checks, "; failures: ", failures)
 	game.queue_free()
 	await wait(0.25)

@@ -8,6 +8,7 @@ var date: String = ""
 var planner := RoutePlanner.new()
 var fixed_route: Array[String] = []
 var branches: Array = []
+var route_start_index: int = 0
 var country_index: int = 0
 var completed_countries: int = 0
 var banked_tiles: int = 0
@@ -20,6 +21,7 @@ func begin(selected_mode: String, selected_difficulty: String, home: String, new
 	difficulty = "kids" if mode == "kids" else selected_difficulty
 	seed_value = new_seed
 	country_index = 0
+	route_start_index = 0
 	completed_countries = 0
 	banked_tiles = 0
 	fixed_route.clear()
@@ -89,4 +91,22 @@ func travel_to(id: String) -> bool:
 func challenge_route() -> Array[String]:
 	if not fixed_route.is_empty():
 		return fixed_route.duplicate()
-	return planner.route.duplicate()
+	return planner.route.slice(route_start_index)
+
+func resume_world(discoveries: Array[String]) -> void:
+	if mode not in ["world", "kids"] or planner.route.is_empty(): return
+	var home := planner.route[0]
+	while current_country() in discoveries:
+		planner.complete_current()
+		var next := choices()
+		if next.is_empty():
+			# A fully collected tour can be replayed from home.
+			planner.start(home, GameCatalog.daily_seed("guided-tour-v1", home))
+			country_index = 0
+			route_start_index = 0
+			return
+		travel_to(next[0])
+		route_start_index = country_index
+
+func challenge_seed() -> int:
+	return GameCatalog.derived_seed(seed_value, route_start_index) if mode in ["world", "kids"] else seed_value

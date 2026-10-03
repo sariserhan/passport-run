@@ -165,7 +165,12 @@ func show_main() -> void:
 	action("BALLOON TOUR · ARCADE", true, show_arcade)
 	for item in [["world", "WORLD TOUR"], ["infinite", "INFINITE MEMORY"], ["daily", "DAILY WORLD TOUR"], ["kids", "KIDS ADVENTURE"]]:
 		var mode: String = item[0]
-		mode_buttons[mode] = action(item[1], mode == "world", func(): request_mode(mode))
+		var label: String = item[1]
+		if mode in ["world", "kids"] and profile.home_country in profile.discoveries and not profile.world_champion(): label = "CONTINUE " + label
+		mode_buttons[mode] = action(label, mode == "world", func(): request_mode(mode))
+		if mode == "world" and label.begins_with("CONTINUE"):
+			var route := profile.tour_route()
+			if not route.is_empty(): copy("Next stop: " + GameCatalog.country_name(route[RoutePlanner.next_uncleared(route, profile.discoveries)]), 17)
 		if mode == "daily" and not profile.can_visit_route(GameCatalog.COUNTRIES.keys()):
 			mode_buttons[mode].text = "? · DAILY WORLD TOUR · REACH ITS STOPS FIRST"
 			mode_buttons[mode].disabled = true
