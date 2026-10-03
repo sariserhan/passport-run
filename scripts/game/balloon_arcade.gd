@@ -462,14 +462,49 @@ func layout() -> void:
    button.size = Vector2(arrow_width if index < 2 else arrow_width * 2, button_height)
  quick_retry.position = Vector2(margins.x, controls.position.y)
  quick_retry.size = Vector2(size.x - margins.x - margins.z, button_height)
+ if landscape(): layout_edge_controls(button_height)
  countdown.position = area.position
  countdown.size = area.size
  feedback.position = area.position + Vector2(10, 10)
  feedback.size.x = area.size.x - 20
  queue_redraw()
 
+# Landscape puts arrows/FIRE in side gutters so the arena can use the full height.
+func layout_edge_controls(button_height: float) -> void:
+ var gutter := edge_gutter()
+ var top := margins.y + 60.0
+ var height := size.y - margins.w - top
+ var fire_height := button_height * (1.2 if coop else 1.6)
+ var arrow_width := (gutter - 8) / 2
+ controls.position = Vector2(margins.x, top)
+ controls.size = Vector2(gutter if coop else size.x - margins.x - margins.z, height)
+ partner_controls.position = Vector2(size.x - margins.z - gutter, top)
+ partner_controls.size = Vector2(gutter, height)
+ for row in [controls, partner_controls]:
+  var arrows_x := 0.0
+  var fire := Vector2(0, height - button_height - 8 - fire_height)
+  if not coop:
+   var far: float = row.size.x - gutter
+   arrows_x = far if profile.settings.arcade_swap else 0.0
+   fire = Vector2(0.0 if profile.settings.arcade_swap else far, height - fire_height)
+  (row.get_child(0) as Button).position = Vector2(arrows_x, height - button_height)
+  (row.get_child(1) as Button).position = Vector2(arrows_x + arrow_width + 8, height - button_height)
+  (row.get_child(2) as Button).position = fire
+  for index in 2: (row.get_child(index) as Button).size = Vector2(arrow_width, button_height)
+  (row.get_child(2) as Button).size = Vector2(gutter, fire_height)
+ var retry_width := minf(320, size.x - margins.x - margins.z - gutter * 2 - 24)
+ quick_retry.position = Vector2((size.x - retry_width) / 2, size.y - margins.w - button_height)
+ quick_retry.size = Vector2(retry_width, button_height)
+
+func edge_gutter() -> float:
+ return clampf(size.x * 0.17, 150, 230)
+
 func arena() -> Rect2:
  var top := margins.y + (60 if landscape() else 140)
+ if landscape():
+  var tall := maxf(90, size.y - top - margins.w)
+  var wide := minf(size.x - margins.x - margins.z - (edge_gutter() + 12) * 2, tall * 2.1)
+  return Rect2((size.x - wide) / 2, top, wide, tall)
  var height := maxf(90, size.y - top - margins.w - ((control_height() + 8) * 2 + 24 if coop and not coop_side_by_side() else control_height() + 32))
  var width := minf(size.x - margins.x - margins.z, height * 2.1)
  return Rect2(margins.x + (size.x - margins.x - margins.z - width) / 2, top, width, height)

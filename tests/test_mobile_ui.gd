@@ -55,6 +55,30 @@ func check_touch_scroll(menu: MenuUI) -> void:
 	Input.emulate_touch_from_mouse = false
 	probe.queue_free()
 
+func check_globe_swipe() -> void:
+	# Phones send a touch plus an emulated mouse event; the globe must rotate once per swipe.
+	var globe := TravelGlobe.new()
+	root.add_child(globe)
+	globe.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	await settle()
+	var transform := root.get_final_transform()
+	var down := InputEventScreenTouch.new()
+	down.position = transform * Vector2(200, 160)
+	down.pressed = true
+	Input.parse_input_event(down)
+	await process_frame
+	var drag := InputEventScreenDrag.new()
+	drag.position = transform * Vector2(300, 160)
+	drag.relative = transform.basis_xform(Vector2(100, 0))
+	Input.parse_input_event(drag)
+	await process_frame
+	var up := InputEventScreenTouch.new()
+	up.position = drag.position
+	Input.parse_input_event(up)
+	await process_frame
+	expect(is_equal_approx(globe.longitude, 100.0 / maxf(100, globe.size.x) * 4), "One touch swipe rotates the globe once")
+	globe.queue_free()
+
 func run_tests() -> void:
 	var defaults := Vector4i(24, 24, 24, 26)
 	var insets := SafeAreaMargins.calculate(Vector2(390, 844), Vector2i(1170, 2532), Rect2i(0, 177, 1170, 2253), defaults)
@@ -72,6 +96,7 @@ func run_tests() -> void:
 	expect(menu.safe_margin.get_theme_constant("margin_top") == 48, "Menu padding initialized without requiring a resize")
 	await check_touch_scroll(menu)
 	menu.root.hide()
+	await check_globe_swipe()
 	for viewport_size in [Vector2i(480, 900), Vector2i(390, 844), Vector2i(375, 667), Vector2i(320, 568)]:
 		root.size = viewport_size
 		await settle()

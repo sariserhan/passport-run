@@ -229,10 +229,12 @@ func run() -> void:
 		for button in row.get_children():
 			expect(button.size.y >= 72 and button.get_global_rect().end.x <= root.size.x, "Phone controls stay large and inside the landscape screen")
 	expect(arcade.controls.get_child(2).size.x > arcade.controls.get_child(1).size.x, "Fire has a wider thumb target separated from movement")
+	for button in arcade.controls.get_children():
+		expect(not button.get_global_rect().intersects(arcade.arena()), "Landscape solo controls sit beside the arena, not over it")
 	await capture("controls-landscape")
 	arcade.coop = true
 	arcade.layout()
-	expect(arcade.controls.get_global_rect().end.x < arcade.partner_controls.position.x and arcade.arena().end.y < arcade.controls.position.y, "Landscape co-op keeps both control sets apart and below the arena")
+	expect(arcade.controls.get_global_rect().end.x <= arcade.arena().position.x and arcade.partner_controls.position.x >= arcade.arena().end.x, "Landscape co-op keeps each player's controls in a side gutter beside the arena")
 	await capture("controls-coop-landscape")
 	arcade.coop = false
 	arcade.layout()

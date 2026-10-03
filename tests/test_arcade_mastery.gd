@@ -182,7 +182,7 @@ func run() -> void:
    expect(arcade.notice.get_rect().end.y <= arcade.arena().position.y, "Round instructions stay on the dark header without covering the arena")
    for row in [arcade.controls,arcade.partner_controls] if team else [arcade.controls]:
     for button in row.get_children():
-     expect(button.size.y == 88 and row.get_global_rect().encloses(button.get_global_rect()), "Large controls remain inside their safe-area row")
+     expect(button.size.y >= 88 and row.get_global_rect().encloses(button.get_global_rect()), "Large controls remain inside their safe-area row")
     expect(not row.get_child(0).get_rect().intersects(row.get_child(2).get_rect()), "Swapped fire and movement buttons do not overlap")
   if screen == Vector2i(844,390): await capture("large-landscape-controls")
  root.size = Vector2i(390,844)

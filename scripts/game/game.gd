@@ -56,6 +56,7 @@ func _ready() -> void:
 	profile = PlayerProfile.new(save_path)
 	telemetry = LocalTelemetry.new(save_path + ".events")
 	telemetry.track("session_started")
+	add_child(PerfLog.new(save_path + ".perf.csv", func(): return "arcade" if arcade else "menu" if menu and menu.root.visible else session.mode))
 	audio = GameAudio.new()
 	add_child(audio)
 	audio.apply_settings(profile.settings)

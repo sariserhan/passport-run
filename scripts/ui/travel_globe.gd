@@ -54,17 +54,14 @@ func pick(point: Vector2) -> void:
   var d: float = pins[id].distance_to(point)
   if d < distance: distance = d; nearest = id
  if not nearest.is_empty(): selected = nearest; destination_selected.emit(nearest); queue_redraw()
+# Mouse only: phones also emit emulated mouse events for every touch, so handling
+# ScreenTouch/ScreenDrag too rotated the globe twice per swipe.
 func _gui_input(event: InputEvent) -> void:
  if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
   dragging = event.pressed
   if event.pressed: drag_distance = 0
   elif drag_distance < 8: pick(event.position)
  elif event is InputEventMouseMotion and dragging: rotate_by(event.relative.x)
- elif event is InputEventScreenTouch:
-  dragging = event.pressed
-  if event.pressed: drag_distance = 0
-  elif drag_distance < 8: pick(event.position)
- elif event is InputEventScreenDrag: rotate_by(event.relative.x)
  accept_event()
 func rotate_by(amount: float) -> void:
  drag_distance += absf(amount)

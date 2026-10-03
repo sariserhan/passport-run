@@ -4,6 +4,7 @@ extends CanvasLayer
 signal player_slot_requested(slot: int)
 signal profile_reload_requested
 var player_slot := 0
+var hero: TextureRect
 var player_count := 2
 var multiplayer_scores: Dictionary = {}
 var turn_challenge: Dictionary = {}
@@ -89,6 +90,8 @@ func setup(saved_profile: PlayerProfile, hud_style: GameHUD) -> void:
 
 func update_safe_area() -> void:
 	SafeAreaMargins.apply(safe_margin, root.size, Vector4i(28, 48, 28, 38))
+	# Landscape is too short for the key art; show the menu buttons on the first screen instead.
+	if is_instance_valid(hero): hero.visible = root.size.x <= root.size.y
 
 func clear(title: String, subtitle: String) -> void:
 	wardrobe_page = false
@@ -135,13 +138,14 @@ func show_main() -> void:
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.add_theme_font_size_override("font_size", 48)
 	title.add_theme_color_override("font_color", Color("ffda65"))
-	var hero := TextureRect.new()
+	hero = TextureRect.new()
 	hero.texture = preload("res://assets/realistic/menu.png")
 	hero.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	hero.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 	hero.custom_minimum_size.y = 210
 	hero.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	content.add_child(hero)
+	update_safe_area()
 	home_button = action("Start: " + GameCatalog.country_name(profile.home_country) + " · LOCKED" if profile.home_country in GameCatalog.FREE_DESTINATIONS else "CHOOSE YOUR START · ONE TIME", false, show_countries)
 	home_button.disabled = profile.home_country in GameCatalog.FREE_DESTINATIONS
 	difficulty_picker = OptionButton.new()

@@ -21,8 +21,13 @@ func run() -> void:
 	expect(ProjectSettings.get_setting("display/window/handheld/orientation") == DisplayServer.SCREEN_SENSOR, "Phone supports portrait and landscape rotation")
 	var game = load("res://scenes/game.tscn").instantiate()
 	game.save_path = "user://landscape-check.json"
+	DirAccess.remove_absolute("user://landscape-check.json.perf.csv")
 	root.add_child(game)
 	await settle()
+	var perf: PerfLog = game.find_children("*", "PerfLog", false, false)[0]
+	perf._process(PerfLog.INTERVAL)
+	var perf_lines := FileAccess.get_file_as_string("user://landscape-check.json.perf.csv").strip_edges().split("\n")
+	expect(perf_lines.size() == 2 and perf_lines[1].split(",")[1] == "menu" and perf_lines[1].split(",").size() == 8, "Device performance log records a labelled sample")
 	game.profile.settings.reduced_motion = true
 	game.profile.home_country = "AF"
 	game.profile.settings.music = 0.0
@@ -33,6 +38,7 @@ func run() -> void:
 		expect(root.get_visible_rect().size.y >= 480, "Scaling preserves touch target size")
 		game.return_to_menu()
 		await capture("menu-%dx%d" % [physical.x, physical.y])
+		expect(game.menu.hero.visible == (physical.x < physical.y), "Main menu key art only takes space in portrait")
 		game.start_game("world", "hard")
 		await settle()
 		expect(not game.menu.root.visible, "Memory run is active during layout checks")
