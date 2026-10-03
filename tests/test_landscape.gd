@@ -63,6 +63,9 @@ func run() -> void:
 		await settle()
 		expect(game.arcade.score == points and game.arcade.weapon == "sticky", "Rotation preserves current round and weapon")
 		expect(game.arcade.world_height > 300 and game.arcade.controls.get_global_rect().end.y < game.arcade.size.y, "Arcade arena and touch controls fit")
+		if physical.x > physical.y:
+			expect(game.arcade.arena().size.y > game.arcade.size.y * 0.5, "Landscape arcade header leaves most of the height to the arena")
+			expect(game.arcade.notice.get_global_rect().end.y <= game.arcade.arena().position.y + 8 or game.arcade.notice.text.count("\n") > 1, "Landscape round notice stays in the header row")
 		await capture("arcade-%dx%d" % [physical.x, physical.y])
 	game.queue_free()
 	await settle()

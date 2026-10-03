@@ -418,6 +418,7 @@ func layout() -> void:
  heading.position = Vector2(margins.x, margins.y)
  heading.size.x = maxf(150, size.x - margins.x - margins.z - 66)
  heading.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+ heading.clip_text = false
  stats.position = Vector2(margins.x, margins.y + 48)
  stats.size.x = size.x - margins.x - margins.z
  stats.clip_text = true
@@ -425,6 +426,16 @@ func layout() -> void:
  notice.size.x = size.x - margins.x - margins.z
  notice.clip_text = false
  notice.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+ if landscape():
+  # One header row (title | stats | notice) so the short landscape arena keeps its height.
+  var row := size.x - margins.x - margins.z - 62
+  heading.autowrap_mode = TextServer.AUTOWRAP_OFF
+  heading.clip_text = true
+  heading.size.x = row * 0.24
+  stats.position = Vector2(margins.x + row * 0.24 + 12, margins.y)
+  stats.size.x = row * 0.36
+  notice.position = Vector2(margins.x + row * 0.6 + 24, margins.y)
+  notice.size.x = row * 0.4 - 12
  pause_button.position = Vector2(size.x - margins.z - 50, margins.y)
  pause_button.size = Vector2(50, 50)
  partner_controls.visible = coop and phase != Phase.TRAVEL
@@ -458,10 +469,13 @@ func layout() -> void:
  queue_redraw()
 
 func arena() -> Rect2:
- var top := margins.y + 140
+ var top := margins.y + (60 if landscape() else 140)
  var height := maxf(90, size.y - top - margins.w - ((control_height() + 8) * 2 + 24 if coop and not coop_side_by_side() else control_height() + 32))
  var width := minf(size.x - margins.x - margins.z, height * 2.1)
  return Rect2(margins.x + (size.x - margins.x - margins.z - width) / 2, top, width, height)
+
+func landscape() -> bool:
+ return size.x > size.y
 
 func coop_side_by_side() -> bool:
  return coop and size.x >= 650 and size.x > size.y
