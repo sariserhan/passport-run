@@ -61,3 +61,7 @@ Latest signed native project: `/private/tmp/passport-native-map/PassportRun.xcod
 ## Enjoyment pass native build — 2026-10-02
 
 Latest signed project is `/private/tmp/passport-native-fun/PassportRun.xcodeproj`. Build and resource-pack inspection passed, including short trips, collection cover definitions, scenery animator and menu. New gameplay checks passed headlessly and rendered at 390×844. No physical-phone launch/FPS or live purchase acceptance is inferred.
+
+## Progressive cracking and timeout collapse — 2026-10-02
+
+Latest signed project: `/private/tmp/passport-native-cracks/PassportRun.xcodeproj`. Native export/build passed. Rendered 390×844 animation checks validate growing jagged fissures, fresh landing pressure, initial platform expiry and entire occupied-row collapse. The nine-suite regression, Python reporting checks and 19 real Godot/backend integration checks passed; competitive scoring and timeout duration are unchanged. Physical-device launch/performance remains pending.

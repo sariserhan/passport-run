@@ -76,3 +76,5 @@ Destination coverage, artwork sharing, data attribution and update instructions:
 New games memorize the path for **3 seconds**. Infinite has its own dreamscape. **WORLD MAP** pins cleared countries, and **MY PASSPORT** shows illustrated stamped pages with navigation/search. Earlier challenges retain their original preview timing. See [map and passport notes](docs/world-map.md).
 
 **SHORT ADVENTURES** offers three-country trips with finish badges. **COLLECTION GOALS** unlocks cosmetic passport covers as you collect countries. Correct-jump streaks add rising notes and visual feedback; failures reveal the missed tile. Scenery has subtle motion, and the world map tracks regional completion. These rewards preserve gameplay and competitive scoring.
+
+Your standing stone progressively cracks during the ten-second decision window. Timeout collapses the entire occupied row, including the starting platform before the first jump. Landing gives the new stone a fresh timer.

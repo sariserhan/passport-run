@@ -52,3 +52,7 @@ New balance-v3 games use a three-second preview across modes. Old v1/v2 challeng
 ## Enjoyment pass — 2026-10-02
 
 All five approved proposals are implemented: three short adventure routes/badges, cosmetic jump streaks, missed-step/proximity retry feedback, animated background ambience, and collection covers with regional map progress. Covers and badges persist locally and never grant purchase access or scoring advantages. Nine Godot suites, three Python tests, rendered 95-check gameplay verification, 19 real backend integration checks, signed native build and exported-pack inspection passed. Real player enjoyment and device performance remain to be tested.
+
+## Standing-stone pressure feedback — 2026-10-02
+
+Progressive timed fissures, fresh pressure after landing, initial-platform collapse and whole occupied-row timeout drops are implemented. Pause/preview/jump timing and score verification stay unchanged; Reduced Motion retains static crack/collapse feedback. Rendered animation checks passed (47 assertions); the final headless animation suite passed 52, adding crack-freeze, legacy and Reduced Motion checks.

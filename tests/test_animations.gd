@@ -63,12 +63,16 @@ func run_tests() -> void:
 	await capture("24-thinking")
 	game._process(9.1)
 	expect(game.decision_remaining > 0 and game.decision_remaining < 1, "Decision clock counts down on playable row")
+	expect(game.environment.starting_tile.pressure_progress > 0.9 and game.environment.starting_tile.cracks.visible, "Starting platform cracks progressively with the decision clock")
+	await capture("cracking-start")
 	game.pause_game()
+	var pressure: float = game.standing_tile().pressure_progress
 	var remaining: float = game.decision_remaining
 	var animation_time: float = game.traveler.animation_clock
 	game._process(3)
 	await wait(0.1)
 	expect(game.decision_remaining == remaining and game.traveler.animation_clock == animation_time, "Pause freezes countdown and character animation")
+	expect(game.standing_tile().pressure_progress == pressure, "Pause freezes crack growth")
 	game.resume_game()
 	expect(game.choose_tile(0, game.run.safe_lane(0)), "Choice before deadline starts jump")
 	game._process(3)
@@ -78,12 +82,21 @@ func run_tests() -> void:
 	await capture("25-jumping")
 	await until(func(): return game.run.phase == RunState.Phase.PLAY)
 	expect(game.run.completed_rows == 1 and game.decision_remaining > 9.8, "Landing advances once and resets 10 seconds")
+	expect(game.standing_tile().pressure_progress < 0.03, "Newly landed stone has fresh crack pressure")
+	game._process(5.0)
+	expect(game.standing_tile().pressure_progress > 0.49 and game.standing_tile().pressure_progress < 0.6, "Occupied stone crack growth follows elapsed decision time")
+	expect(game.grid.tile_at(1, 0).pressure_progress == 0, "Future rows do not crack while waiting")
+	await capture("cracking-stone")
 	game.decision_remaining = 0
 	expect(not game.choose_tile(1, game.run.safe_lane(1)), "Expired clock rejects a late choice")
 	game._process(0.01)
 	expect(game.run.phase == RunState.Phase.FALLING and game.failure_reason == "timeout", "Expired row ends with a timed fall")
+	for lane in game.config.lane_count:
+		expect(game.grid.tile_at(0, lane).state == PathTile.State.CRACKING, "Timeout cracks every stone in occupied row")
 	await wait(0.5)
 	expect(game.traveler.portrait.frame >= 12, "Falling uses flailing character poses")
+	for lane in game.config.lane_count:
+		expect(game.grid.tile_at(0, lane).state == PathTile.State.FALLING and game.grid.tile_at(0, lane).position.y < 0, "Entire occupied row falls together")
 	await capture("26-falling")
 	await until(func(): return game.run.phase == RunState.Phase.FAILED)
 	expect(game.total_score() == 1 and "10 seconds" in game.hud.modal_body.text, "Timeout preserves earned score and explains the rule")
@@ -92,12 +105,14 @@ func run_tests() -> void:
 	game._process(0.01)
 	await until(func(): return game.run.phase == RunState.Phase.FAILED)
 	expect(game.total_score() == 0, "Initial platform timeout works without a tile or phantom score")
+	expect(game.environment.starting_tile.state == PathTile.State.FALLING, "Initial timeout collapses the whole starting platform")
 	var route: Array[String] = ["FR"]
 	var old := ChallengeCode.decode(ChallengeCode.encode(5, "easy", route, 0, 1))
 	game.imported_challenge = old
 	await start_play("challenge")
 	game._process(11)
 	expect(game.session.balance_version == 1 and game.run.phase == RunState.Phase.PLAY, "Legacy challenge keeps untimed rules")
+	expect(game.standing_tile().pressure_progress == 0, "Untimed legacy challenges do not grow timer cracks")
 	var new_code := ChallengeCode.decode(ChallengeCode.encode(5, "easy", route, 0))
 	expect(new_code.balance_version == 3, "New challenge code carries timed rules")
 	await start_play()
@@ -129,6 +144,13 @@ func run_tests() -> void:
 	var frame: int = game.traveler.portrait.frame
 	game.traveler._process(3)
 	expect(game.traveler.portrait.frame == frame, "Reduced motion suppresses idle gesture cycling")
+	game.choose_tile(0, game.run.safe_lane(0))
+	await until(func(): return game.run.phase == RunState.Phase.PLAY)
+	game.decision_remaining = 0
+	game._process(0.01)
+	await until(func(): return game.run.phase == RunState.Phase.FAILED)
+	for lane in game.config.lane_count:
+		expect(not game.grid.tile_at(0, lane).visible and game.grid.tile_at(0, lane).state == PathTile.State.FALLING, "Reduced Motion removes the whole expired row without falling movement")
 	game.queue_free()
 	await wait()
 	print("Animation/timer checks: ", checks, "; failures: ", failures)

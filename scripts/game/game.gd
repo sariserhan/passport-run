@@ -328,13 +328,18 @@ func _process(delta: float) -> void:
 	if run.phase == RunState.Phase.PLAY and session.balance_version >= 2:
 		decision_remaining = maxf(0, decision_remaining - delta)
 		hud.update_decision(decision_remaining, GameCatalog.DECISION_SECONDS)
+		standing_tile().set_pressure(1.0 - decision_remaining / GameCatalog.DECISION_SECONDS)
 		if decision_remaining <= 0 and run.time_out():
 			failure_reason = "timeout"
-			var tile: PathTile = grid.tile_at(run.completed_rows - 1, run.selected_lane) if run.completed_rows > 0 else null
+			var tile: PathTile = standing_tile()
 			fall(tile)
+
+func standing_tile() -> PathTile:
+	return grid.tile_at(run.completed_rows - 1, run.selected_lane) if run.completed_rows > 0 else environment.starting_tile
 
 func reset_decision_clock() -> void:
 	decision_remaining = GameCatalog.DECISION_SECONDS
+	standing_tile().set_pressure(0)
 	traveler.play_animation("thinking")
 	if session.balance_version >= 2:
 		hud.update_decision(decision_remaining, GameCatalog.DECISION_SECONDS)
@@ -470,14 +475,23 @@ func fall(tile: PathTile = null) -> void:
 	if correct_tile:
 		correct_tile.set_state(PathTile.State.REVEALED)
 		hud.phase_hint.text = "The checkmark shows the step you missed."
+	var collapsing: Array[PathTile] = []
 	if tile:
-		tile.set_state(PathTile.State.CRACKING)
+		if failure_reason == "timeout" and tile.row >= 0:
+			for lane in config.lane_count:
+				collapsing.append(grid.tile_at(tile.row, lane))
+		else:
+			collapsing.append(tile)
+	for stone in collapsing:
+		stone.set_state(PathTile.State.CRACKING)
 	audio.play_cue("fall")
 	vibrate(55)
 	telemetry.track("decision_timeout" if failure_reason == "timeout" else "wrong_tile", metadata())
 	var token: int = generation
 	var start := traveler.position
-	var tile_start := tile.position if tile else Vector3.ZERO
+	var positions: Array[Vector3] = []
+	for stone in collapsing:
+		positions.append(stone.position)
 	active_tween = create_tween()
 	if profile.settings.reduced_motion or not tile:
 		active_tween.tween_interval(config.crack_seconds)
@@ -485,16 +499,19 @@ func fall(tile: PathTile = null) -> void:
 		active_tween.tween_property(tile, "rotation:z", 0.055, config.crack_seconds / 2)
 		active_tween.tween_property(tile, "rotation:z", -0.045, config.crack_seconds / 2)
 	active_tween.tween_callback(func():
-		if tile:
-			tile.set_state(PathTile.State.FALLING)
+		for stone in collapsing:
+			stone.set_state(PathTile.State.FALLING)
+			if profile.settings.reduced_motion:
+				stone.hide()
 	)
 	active_tween.tween_method(func(progress: float):
 		if not profile.settings.reduced_motion:
 			traveler.position = start + Vector3(0, -9 * progress * progress, 0)
 			traveler.pose_fall(progress)
-			if tile:
-				tile.position = tile_start + Vector3(0.5 * progress, -11 * progress * progress, 0)
-				tile.rotation.z = progress * 0.65
+			for index in collapsing.size():
+				var stone := collapsing[index]
+				stone.position = positions[index] + Vector3((index - collapsing.size() / 2.0) * 0.35 * progress, -11 * progress * progress, 0)
+				stone.rotation.z = progress * (0.4 if index % 2 == 0 else -0.4)
 	, 0.0, 1.0, config.fall_seconds)
 	active_tween.tween_callback(func():
 		if token == generation:
