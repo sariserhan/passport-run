@@ -57,6 +57,7 @@ func run() -> void:
  expect(arcade.fire(), "Double wire first shot")
  arcade.cooldown = 0
  expect(arcade.fire(), "Double wire second shot")
+ arcade.balls.assign([arcade.make_ball(Vector2(100, 150), 0, 1)])
  arcade.freeze = 2
  var previous: Vector2 = arcade.balls[0].position
  arcade.simulate(0.01)

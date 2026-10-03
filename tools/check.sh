@@ -19,3 +19,4 @@ python3 tests/test_report.py
 python3 tests/test_iphone_export.py
 "$GODOT_BIN" --headless --path . --script tests/test_unique_artwork.gd
 "$GODOT_BIN" --headless --path . --script tests/test_balloon.gd
+"$GODOT_BIN" --headless --path . --script tests/test_arcade_rich.gd
