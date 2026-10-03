@@ -16,7 +16,8 @@ static var CINEMA_DESTINATIONS: Dictionary = JSON.parse_string(FileAccess.get_fi
 static var FREE_DESTINATIONS: Dictionary = destination_catalog(false)
 static var DESTINATIONS: Dictionary = destination_catalog(true)
 static var backdrop_cache: Dictionary = {}
-static var world_backdrops: Texture2D = preload("res://assets/world-backdrops.png")
+static var artwork: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://resources/geography/artwork.json"))
+static var country_atlases: Dictionary = {}
 static var fantasy_backdrops := [preload("res://assets/fantasy-0.png"), preload("res://assets/fantasy-1.png")]
 static var cinema_backdrops := [preload("res://assets/cinema-0.png"), preload("res://assets/cinema-1.png")]
 static var landmark_backdrops := [preload("res://assets/landmarks-0.png"), preload("res://assets/landmarks-1.png"), preload("res://assets/landmarks-2.png"), preload("res://assets/landmarks-3.png")]
@@ -45,8 +46,22 @@ static func backdrop(id: String) -> Texture2D:
 	if id not in DESTINATIONS:
 		id = "FR"
 	if id not in backdrop_cache:
-		if id in LEGACY_COUNTRIES:
-			backdrop_cache[id] = load("res://assets/backdrops/" + id + ".png")
+		var dedicated := "res://assets/backdrops/" + id + ".png"
+		if ResourceLoader.exists(dedicated):
+			backdrop_cache[id] = load(dedicated)
+		elif id in artwork:
+			var entry: Dictionary = artwork[id]
+			var atlas_id := int(entry.atlas)
+			if atlas_id not in country_atlases:
+				country_atlases[atlas_id] = load("res://assets/countries-%02d.png" % atlas_id)
+			var texture := AtlasTexture.new()
+			texture.atlas = country_atlases[atlas_id]
+			var columns := int(entry.columns)
+			var cell := Vector2(texture.atlas.get_size()) / columns
+			var index := int(entry.cell)
+			texture.region = Rect2(Vector2(index % columns, index / columns) * cell, cell)
+			texture.filter_clip = true
+			backdrop_cache[id] = texture
 		else:
 			var texture := AtlasTexture.new()
 			var destination: Dictionary = DESTINATIONS[id]
@@ -56,7 +71,7 @@ static func backdrop(id: String) -> Texture2D:
 			elif destination.has("fantasy_atlas"):
 				texture.atlas = fantasy_backdrops[int(destination.fantasy_atlas)]
 			else:
-				texture.atlas = landmark_backdrops[int(destination.landmark_atlas)] if columns == 2 else world_backdrops
+				texture.atlas = landmark_backdrops[int(destination.landmark_atlas)]
 			var cell := Vector2(texture.atlas.get_size()) / columns
 			var index := int(destination.art)
 			texture.region = Rect2(Vector2(index % columns, index / columns) * cell, cell)

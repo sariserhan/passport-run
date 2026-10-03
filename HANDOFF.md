@@ -141,3 +141,15 @@ Replaced random scale walks and unrelated backing chords with four composed answ
 Music lifecycle checks passed, including minimum phrase duration, audible unclipped PCM, deterministic destination differences and rapid changes; 1,189 destination-polish checks passed. Listen to `artifacts/music-france.wav`, `music-japan.wav`, and `music-desert.wav`. Musical taste and device listening remain user acceptance; objective tests do not prove perceived quality.
 
 Updated signed iPhone build passed at `/private/tmp/passport-native-travel-expansion`; no device installation performed.
+
+## Unique destination artwork — 2026-10-03
+
+The user requires a unique image for every destination. Afghanistan had incorrectly inherited a Thai-temple regional scene; it now has its own Hindu Kush-inspired valley painting at `assets/backdrops/AF.png`. All other shared free-country scenery is replaced: 244 distinct paintings across 16 atlases plus six dedicated country PNGs. With the existing 32 paid scenes, every one of the 282 destinations resolves to a different image. Infinite retains its separate dreamscape.
+
+`GameCatalog.backdrop()` prioritizes dedicated PNGs, then the stable ID-to-atlas/cell mapping in `resources/geography/artwork.json`, then existing paid artwork. Every gameplay/passport/sticker/travel surface already uses this lookup. Atlases load on demand. Country data, routes, catalog and balance versions are unchanged. Generated images are stylized country-inspired compositions; they are not exact landmark photographs. Full prompts and built-in imagegen provenance are recorded in `docs/unique-artwork-prompts.md`.
+
+`tests/test_unique_artwork.gd` checks all 282 resolved images, region bounds, uniqueness and the Afghanistan correction; added to `tools/check.sh`. Rendered 390×844 checks capture AF, TH, IN, PK, IR, MY, GL, AQ and passport in `artifacts/unique-*.png`. Physical-device acceptance remains deferred to the user.
+
+Unique-art validation: all 282 destination images are distinct in both desktop and exported native-pack checks. Eight country/polar scenes and passport rendered successfully. Updated development-signed generic-iPhone build passed at `/private/tmp/passport-native-travel-expansion`; no physical-device installation or performance acceptance is claimed.
+
+Destination progression regression passed: 5,676 checks, zero failures.

@@ -17,3 +17,4 @@ python3 tests/test_report.py
 "$GODOT_BIN" --headless --path . --script tests/test_destination_polish.gd
 "$GODOT_BIN" --headless --path . --script tests/test_travel_expansion.gd
 python3 tests/test_iphone_export.py
+"$GODOT_BIN" --headless --path . --script tests/test_unique_artwork.gd

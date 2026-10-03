@@ -6,7 +6,7 @@ Country names, capitals, subregions and land-border links come from [mledoze/cou
 
 To update the snapshot, download that repository's countries.json locally and run `python3 tools/import_destinations.py /path/to/countries.json`, then verify Godot/backend route parity and review source changes. The game reads the JSON offline; Convex imports the exact same file. Changing deterministic catalog order or borders requires a new catalog version for ranked compatibility. Current catalog v2 preserves old catalog-v1 five-country retries and boards.
 
-Artwork: five original destination paintings plus sixteen original illustrated regional scenes in `assets/world-backdrops.png`. Several countries share scenery; unique country landmark art remains future work. Every destination has scenery, stamps, stickers and capital/subregion reward text. Prompts and built-in imagegen provenance are in [visual asset notes](visual-assets.md).
+Artwork: all 282 destinations now have distinct images. Six country paintings (including Afghanistan) use dedicated PNGs; 244 other country/territory paintings use individually assigned cells across sixteen atlases, and the 32 paid locations retain their individual scenes. No destination shares a scene. `resources/geography/artwork.json` assigns the country atlas cells; regional metadata no longer selects country artwork. Every destination has scenery, stamps, stickers and capital/subregion reward text. Prompts and built-in imagegen provenance are in [visual asset notes](visual-assets.md).
 
 ## Coverage
 
