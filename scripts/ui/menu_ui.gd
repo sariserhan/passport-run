@@ -513,8 +513,9 @@ func show_adventures() -> void:
 	action("BACK", false, show_main)
 
 func show_wardrobe() -> void:
-	clear("Explorer wardrobe", "Choose your traveler. Explore to unlock more, or buy the traveler pack. Clear every world destination for World Champion.")
+	clear("Explorer wardrobe", "Choose a human, animal, space or fantasy traveler. Explore to unlock more, or buy the traveler pack. Clear every world destination for World Champion.")
 	wardrobe_page = true
+	copy(CharacterStyle.CHARACTERS[profile.equipped_character()].name, 24)
 	var holder := SubViewportContainer.new()
 	holder.custom_minimum_size.y = 240
 	holder.stretch = true
@@ -540,9 +541,14 @@ func show_wardrobe() -> void:
 	viewport.add_child(light)
 	copy("Travelers", 23)
 	copy("Clear all %d world destinations to unlock World Champion." % GameCatalog.FREE_DESTINATIONS.size(), 17)
+	var previous_group := ""
 	for id in CharacterStyle.CHARACTERS:
 		var key: String = id
 		var item: Dictionary = CharacterStyle.CHARACTERS[id]
+		var group: String = item.get("group", "Human travelers")
+		if group != previous_group:
+			copy(group, 23)
+			previous_group = group
 		var earned := CharacterStyle.character_unlocked(id, profile.discoveries, profile.character_pack_unlocked)
 		var portrait := TextureRect.new()
 		portrait.texture = CharacterStyle.character_texture(id)
@@ -559,6 +565,8 @@ func show_wardrobe() -> void:
 		buy.disabled = character_purchase.busy or character_purchase.price.is_empty() or character_purchase.unlocked
 		var restore := action("RESTORE CHARACTER PURCHASE", false, character_purchase.restore)
 		restore.disabled = character_purchase.busy or not character_purchase.store
+	if CharacterStyle.CHARACTERS[profile.equipped_character()].get("fantasy_art", false):
+		copy("This traveler wears its own signature gear. Outfit colors still apply.", 17)
 	for kind in ["outfit", "hat", "backpack"]:
 		copy(kind.capitalize(), 23)
 		var items: Dictionary = CharacterStyle.OUTFITS if kind == "outfit" else CharacterStyle.HATS if kind == "hat" else CharacterStyle.BACKPACKS

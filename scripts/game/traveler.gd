@@ -113,6 +113,7 @@ func pose_fall(progress: float) -> void:
 func apply_customization() -> void:
 	var outfit: String = customization.get("outfit", "classic")
 	portrait.modulate = Color(CharacterStyle.OUTFITS.get(outfit, CharacterStyle.OUTFITS.classic).color)
+	if CharacterStyle.CHARACTERS.get(character_id, {}).get("fantasy_art", false): return
 	var backpack: String = customization.get("backpack", "classic")
 	if backpack != "classic":
 		var cloth := MeshFactory.material(Color(CharacterStyle.BACKPACKS.get(backpack, "b58147")))
