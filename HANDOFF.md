@@ -71,6 +71,15 @@ Relevant artifacts: `artifacts/batch-*.png`, `artifacts/extras-*.png`, `artifact
 - `PerfLog` writes `profile.json.perf.csv` (FPS, worst frame, memory, scene) every 5 s. Pull it with `xcrun devicectl device copy from --device <id> --domain-type appDataContainer --domain-identifier com.serhansari.passportrun --source Documents/profile.json.perf.csv --destination perf.csv`.
 - TestFlight not attempted: needs the App Store Connect issuer ID for key `5QYF99NV59`, an app record for `com.serhansari.passportrun`, and the two purchase products. Hosted Convex not attempted: needs an authorized deployment target.
 
+## Release prep and device tooling (2026-10-03, later)
+
+- Soak test: `tools/device_soak.sh <device> [minutes]` copies `autoplay.json` to the phone; `Autoplay` plays World Tour and Balloon Tour on an isolated save while `PerfLog` records. On the first device tries the app stopped producing frames once it left the foreground. A clean soak needs the phone unlocked with the game on screen.
+- `project.godot` enables file logging, so device errors land in `Documents/logs/godot.log`. One harmless engine startup error ("Mouse is not supported") appears on iOS.
+- 138 opaque photo textures import as lossy WebP 0.8: the data pack went from 198 MB to 44 MB, and a release IPA is 78 MB. Alpha sprite sheets stay lossless.
+- Backdrop cache fix: drawers hold their texture, because the 8-entry cache could free an on-screen card's image (white card).
+- `tools/capture_screens.gd` sweeps 62 screens at three phone sizes; `tools/capture_store.gd` makes 6.9-inch App Store screenshots; `docs/app-store-listing.md` has the listing text.
+- `tools/release_iphone.sh` builds a distribution-signed App Store IPA locally, and uploads to TestFlight once `ASC_KEY_ID`, `ASC_ISSUER_ID` and `ASC_KEY_PATH` are set. Still needed: the issuer ID, the App Store Connect app record, the purchase products, and support/privacy URLs.
+
 ## What remains
 
 1. **Done (install/launch only):** full `tools/check.sh` passed with zero failures at `4bd13f0`. That build was exported, development-signed and installed on the iPhone 14 Pro (`00008120-001E28663CE3C01E`) at `/private/tmp/passport-native-device`. It launched and kept running; it wrote the GLES3 shader cache to `Documents`. The app was not previously installed, so no save was overwritten. This is not gameplay acceptance; items 2–5 still need a person holding the phone.
