@@ -685,11 +685,13 @@ func complete_country() -> void:
 	if country_awarded:
 		return
 	country_awarded = true
+	var rare_earned := false
 	session.complete_country(config.row_count)
 	profile.discover(session.current_country())
 	profile.record_destination(session.current_country(), "jump", config.row_count)
 	if session.current_country() not in failed_countries:
 		profile.award_badge("perfect:" + session.current_country())
+		rare_earned = profile.earn_rare(session.current_country(), "gold")
 	save_record()
 	telemetry.track("country_completed", metadata())
 	telemetry.flush()
@@ -708,6 +710,7 @@ func complete_country() -> void:
 	for character in profile.last_unlocked_characters:
 		body += "\nTRAVELER UNLOCKED · " + CharacterStyle.CHARACTERS[character].name
 	body += "\nSouvenir collected: " + DestinationTheme.souvenir(session.current_country())
+	if rare_earned: body += "\nRARE GOLD KEEPSAKE FOUND!"
 	body += "\nDaily missions: %d / 3 complete" % profile.mission_count()
 	if session.current_country() not in failed_countries:
 		body += "\nFLAWLESS COUNTRY · Perfect-jump badge earned!"

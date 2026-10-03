@@ -60,10 +60,10 @@ func run() -> void:
   root.add_child(traveler)
   traveler.play_animation("celebrate")
   await process_frame
-  check(traveler.buddy_face.text == "♥", "Buddy cheers")
+  check(traveler.buddy_face.text == "♥" or "Roar!" in traveler.buddy_face.text, "Buddy cheers")
   traveler.play_animation("fall")
   await process_frame
-  check(traveler.buddy_face.text == "!", "Buddy reacts to fall")
+  check(traveler.buddy_face.text == BuddyPersonality.FRIENDS[kind].worry, "Buddy reacts to fall")
   traveler.queue_free()
  if DisplayServer.get_name() != "headless":
   check(await TravelPicture.save_picture(menu, loaded, "room", "", "res://artifacts/travel-life-room.png") == OK, "Room exports PNG")

@@ -6,22 +6,25 @@ var destinations: Array[String] = []
 var postcards: Array[String] = []
 var decor: Dictionary = RoomDecor.DEFAULTS.duplicate()
 var positions: Dictionary = {}
+var rare_keepsakes: Dictionary = {}
+var buddy_kind := "none"
 var dragging: Control
 var drag_origin := Vector2.ZERO
 
 func _ready() -> void:
- custom_minimum_size.y = 640
+ custom_minimum_size.y = 850
  mouse_filter = Control.MOUSE_FILTER_PASS
  resized.connect(layout)
  for id in destinations.slice(0, 6):
   var card := SouvenirCard.new()
   card.destination_id = id
   card.compact = true
+  card.rare_variants = rare_keepsakes.get(id, [])
   add_child(card)
  layout.call_deferred()
 
 func bounds_for_cards() -> Rect2:
- return Rect2(12, 106, maxf(1, size.x / 2 - 12), 314)
+ return Rect2(12, 196 if decor.get("map", "none") == "world" else 106, maxf(1, size.x / 2 - 12), 314)
 
 func layout() -> void:
  var bounds := bounds_for_cards()
@@ -33,7 +36,7 @@ func layout() -> void:
    card.position = bounds.position + Vector2(point[0], point[1]) * bounds.size
   else:
    var slot := destinations.find(card.destination_id)
-   card.position = Vector2(12 + slot % 2 * size.x / 2, 110 + slot / 2 * 148)
+   card.position = Vector2(12 + slot % 2 * size.x / 2, (200 if decor.get("map", "none") == "world" else 110) + slot / 2 * 148)
  queue_redraw()
 
 func _gui_input(event: InputEvent) -> void:
@@ -69,16 +72,19 @@ func finish_drag() -> void:
  accept_event()
 
 func _draw() -> void:
- if not decor.has("display"): decor["display"] = "none"
+ for key in RoomDecor.DEFAULTS:
+  if not decor.has(key): decor[key] = RoomDecor.DEFAULTS[key]
+ var floor_y := 644 if decor.map == "world" else 554
+ var shift := floor_y - 554
  var wall: Color = Color(RoomDecor.ITEMS.wallpaper[decor.wallpaper].color)
  var shelf: Color = Color(RoomDecor.ITEMS.shelves[decor.shelves].color)
  draw_rect(Rect2(Vector2.ZERO, size), wall)
- for x in range(0, int(size.x), 22): draw_line(Vector2(x, 0), Vector2(x, 554), Color(1, 1, 1, 0.08), 1)
+ for x in range(0, int(size.x), 22): draw_line(Vector2(x, 0), Vector2(x, floor_y), Color(1, 1, 1, 0.08), 1)
  if decor.wallpaper == "night":
   for index in 28:
    draw_circle(Vector2(fmod(index * 47.0 + 13, size.x), 18 + fmod(index * 79.0, 530)), 2, Color("ffe2a0"))
- draw_rect(Rect2(0, 554, size.x, size.y - 554), Color("b8916e"))
- for y in range(565, int(size.y), 18): draw_line(Vector2(0, y), Vector2(size.x, y), Color("9c795c"), 1)
+ draw_rect(Rect2(0, floor_y, size.x, maxf(0, size.y - floor_y)), Color("b8916e"))
+ for y in range(floor_y + 11, int(size.y), 18): draw_line(Vector2(0, y), Vector2(size.x, y), Color("9c795c"), 1)
  draw_rect(Rect2(0, 0, size.x, 5), Color("8f6945"))
  for x in [size.x * 0.25, size.x * 0.75]:
   draw_circle(Vector2(x, 10), 38, Color(1, 0.86, 0.56, 0.12))
@@ -93,8 +99,8 @@ func _draw() -> void:
  if postcards.is_empty():
   draw_string(ThemeDB.fallback_font, Vector2(12, 60), "Hang your country postcards here", HORIZONTAL_ALIGNMENT_CENTER, size.x - 24, 15, wall.darkened(0.5))
  if decor.display != "none":
-  var base := Vector2(size.x * 0.5, 600)
-  draw_rect(Rect2(base.x - 85, 560, 170, 60), Color("263e60"))
+  var base := Vector2(size.x * 0.5, floor_y + 46)
+  draw_rect(Rect2(base.x - 85, floor_y + 6, 170, 60), Color("263e60"))
   if decor.display == "space":
    for i in 4:
     draw_circle(base + Vector2(-60 + i * 40, -12), 9 + i * 2, Color("d6b8ef"))
@@ -110,17 +116,25 @@ func _draw() -> void:
    draw_line(base + Vector2(-10, -10), base + Vector2(10, -10), Color("d48165"), 4)
   else:
    for i in 3: draw_rect(Rect2(base + Vector2(-65 + i * 45, -30), Vector2(35, 40)), Color("f6d59d"))
-  draw_string(ThemeDB.fallback_font, Vector2(10, 636), TravelCollections.SETS[decor.display].name, HORIZONTAL_ALIGNMENT_CENTER, size.x - 20, 16, Color("263e60"))
+  draw_string(ThemeDB.fallback_font, Vector2(10, floor_y + 82), TravelCollections.SETS[decor.display].name, HORIZONTAL_ALIGNMENT_CENTER, size.x - 20, 16, Color("263e60"))
+ if decor.map == "world":
+  var rect := Rect2(16, 100, size.x - 32, 80)
+  draw_rect(rect.grow(4), Color("785743"))
+  draw_rect(rect, Color("163d57"))
+  for polygon in PassportWorldMap.GEOGRAPHY.polygons:
+   var points := PackedVector2Array()
+   for point in polygon: points.append(rect.position + Vector2((float(point[0]) + 180) / 360, (90 - float(point[1])) / 180) * rect.size)
+   if not Geometry2D.triangulate_polygon(points).is_empty(): draw_colored_polygon(points, Color("91bfa5"))
  for row in 3:
-  draw_rect(Rect2(5, 243 + row * 148, size.x - 10, 9), shelf)
-  draw_rect(Rect2(16, 252 + row * 148, 12, 9), shelf.darkened(0.2))
-  draw_rect(Rect2(size.x - 28, 252 + row * 148, 12, 9), shelf.darkened(0.2))
+  draw_rect(Rect2(5, 243 + shift + row * 148, size.x - 10, 9), shelf)
+  draw_rect(Rect2(16, 252 + shift + row * 148, 12, 9), shelf.darkened(0.2))
+  draw_rect(Rect2(size.x - 28, 252 + shift + row * 148, 12, 9), shelf.darkened(0.2))
  if decor.rug != "none":
   var color := Color(RoomDecor.ITEMS.rug[decor.rug].color)
-  draw_style_box(room_style(color, 22), Rect2(40, 573, size.x - 80, 48))
-  draw_rect(Rect2(48, 581, size.x - 96, 32), color.lightened(0.25), false, 2)
+  draw_style_box(room_style(color, 22), Rect2(40, floor_y + 19, size.x - 80, 48))
+  draw_rect(Rect2(48, floor_y + 27, size.x - 96, 32), color.lightened(0.25), false, 2)
  if decor.plant != "none":
-  var origin := Vector2(size.x - 29, 597)
+  var origin := Vector2(size.x - 29, floor_y + 43)
   draw_style_box(room_style(Color("b87553"), 5), Rect2(origin + Vector2(-13, -5), Vector2(26, 31)))
   var height := 58.0 if decor.plant == "palm" else 38.0
   draw_line(origin, origin + Vector2(0, -height), Color("42633b"), 3)
@@ -128,6 +142,33 @@ func _draw() -> void:
    var angle := PI + index * PI / 5
    var tip := origin + Vector2(0, -height) + Vector2.from_angle(angle) * (35 if decor.plant == "palm" else 24)
    draw_line(origin + Vector2(0, -height), tip, Color("54865a"), 7, true)
+
+ if decor.furniture != "none":
+  var pos := Vector2(20, floor_y + 105)
+  if decor.furniture == "desk":
+   draw_rect(Rect2(pos, Vector2(size.x * 0.42, 12)), shelf)
+   for x in [0, size.x * 0.42 - 10]: draw_rect(Rect2(pos + Vector2(x, 12), Vector2(10, 54)), shelf.darkened(0.2))
+   draw_rect(Rect2(pos + Vector2(12, -10), Vector2(38, 10)), Color("f6e6bb"))
+  else:
+   draw_style_box(room_style(Color("bc866e"), 15), Rect2(pos + Vector2(8, -26), Vector2(90, 82)))
+   draw_style_box(room_style(Color("d6a386"), 12), Rect2(pos + Vector2(0, 5), Vector2(106, 28)))
+ if decor.buddy_bed != "none":
+  var pos := Vector2(size.x * 0.74, floor_y + 143)
+  var color := Color("a77c51") if decor.buddy_bed == "nest" else Color("74bacd") if decor.buddy_bed == "dock" else Color("ce927a")
+  draw_style_box(room_style(color, 18), Rect2(pos - Vector2(52, 0), Vector2(104, 36)))
+  draw_arc(pos + Vector2(0, 10), 35, 0, PI, 24, color.lightened(0.35), 4)
+  if buddy_kind in BuddyPersonality.FRIENDS:
+   draw_circle(pos + Vector2(0, -3), 17, Color(BuddyPersonality.FRIENDS[buddy_kind].color))
+   draw_string(ThemeDB.fallback_font, pos + Vector2(-13, -25), "Zzz", HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("263e60"))
+ if decor.trophy != "none":
+  var pos := Vector2(size.x * 0.74, floor_y + 101)
+  draw_rect(Rect2(pos + Vector2(-5, -27), Vector2(10, 30)), Color("f4cc66"))
+  draw_circle(pos + Vector2(0, -35), 13, Color("f4cc66"))
+  draw_rect(Rect2(pos + Vector2(-20, 0), Vector2(40, 8)), Color("785743"))
+  draw_string(ThemeDB.fallback_font, Vector2(10, floor_y + 199), decor.trophy + " explorer trophy", HORIZONTAL_ALIGNMENT_CENTER, size.x - 20, 15, Color("263e60"))
+ if decor.lighting != "day":
+  draw_rect(Rect2(Vector2.ZERO, size), Color(0.75, 0.35, 0.06, 0.1) if decor.lighting == "warm" else Color(0.03, 0.1, 0.3, 0.22))
+  for x in [size.x * 0.25, size.x * 0.75]: draw_circle(Vector2(x, 16), 62, Color(1, 0.83, 0.45, 0.12) if decor.lighting == "warm" else Color(0.7, 0.86, 1, 0.13))
 
 func room_style(color: Color, radius: int) -> StyleBoxFlat:
  var result := StyleBoxFlat.new()

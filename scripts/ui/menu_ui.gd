@@ -13,6 +13,7 @@ signal arcade_practice_requested(id: String)
 signal cinema_requested(id: String)
 signal special_requested(id: String)
 signal online_records_requested
+var export_busy := false
 var online_available := false
 var revision := 0
 var purchase: RoutePurchase
@@ -113,6 +114,10 @@ func show_main() -> void:
 	if profile.world_champion() and not profile.champion_seen:
 		show_champion()
 		return
+	var pending_regions := TravelMilestones.earned(profile.discoveries).filter(func(name): return name not in profile.regions_seen)
+	if not pending_regions.is_empty():
+		show_region_celebration(pending_regions[0])
+		return
 	clear("PASSPORT\nRUN", "Remember the path. Travel the world.")
 	var title: Label = content.get_child(0)
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -157,6 +162,9 @@ func show_main() -> void:
 	action("TRAVEL BUDDIES", false, show_buddies)
 	action("TODAY’S TRAVEL JOURNAL", false, show_journal)
 	if profile.world_champion(): action("WORLD CHAMPION · RELIVE YOUR JOURNEY", false, show_champion)
+	action("REGIONAL TROPHIES", false, show_regions)
+	action("RARE KEEPSAKE CHALLENGES", false, show_rare_challenges)
+	action("REPLAY MY JOURNEY", false, show_replay)
 	action("CHARACTER QUESTS", false, show_character_quests)
 	action("EXPLORER WARDROBE", false, show_wardrobe)
 	action("DAILY TRAVEL MISSIONS", false, show_missions)
@@ -600,6 +608,8 @@ func show_room() -> void:
 	room.destinations = profile.room_display.duplicate()
 	room.postcards = profile.room_postcards.duplicate()
 	room.decor = profile.room_decor.duplicate()
+	room.rare_keepsakes = profile.rare_keepsakes.duplicate(true)
+	room.buddy_kind = profile.travel_buddy
 	room.positions = profile.room_positions.duplicate(true)
 	room.arrangement_changed.connect(func(points: Dictionary): profile.room_positions = points; profile.save())
 	content.add_child(room)
@@ -620,7 +630,7 @@ func show_room() -> void:
 		for id in RoomDecor.ITEMS[kind]:
 			var item: Dictionary = RoomDecor.ITEMS[kind][id]
 			var earned := RoomDecor.unlocked(kind, id, profile.discoveries)
-			choices.add_item(item.name + ("" if earned else (" · Complete its souvenir set" if kind == "display" else " · %d destinations" % item.count)))
+			choices.add_item(item.name + ("" if earned else (" · Complete its souvenir set" if kind == "display" else " · Complete this region" if kind == "trophy" else " · %d destinations" % item.count)))
 			var index := choices.item_count - 1
 			choices.set_item_metadata(index, id)
 			choices.set_item_disabled(index, not earned)
@@ -631,7 +641,7 @@ func show_room() -> void:
 				profile.room_decor[group] = id
 				profile.save()
 				room.decor = profile.room_decor.duplicate()
-				room.queue_redraw()
+				room.layout()
 		)
 		content.add_child(choices)
 	copy("Souvenirs · %d / 6 displayed" % room.destinations.size(), 23)
@@ -824,6 +834,12 @@ func show_locked_destination() -> void:
 
 func show_buddies() -> void:
 	clear("Travel buddies", "Choose a tiny friend to accompany your travels. They cheer, jump and react with you.")
+	for friend in BuddyPersonality.FRIENDS:
+		var preview := BuddyPreview.new()
+		preview.kind = friend
+		preview.reduced_motion = profile.settings.reduced_motion
+		content.add_child(preview)
+		copy(BuddyPersonality.FRIENDS[friend].name + " · " + BuddyPersonality.FRIENDS[friend].description, 18)
 	for id in ["none", "bird", "robot", "dragon"]:
 		var key: String = id
 		action(("✓ " if profile.travel_buddy == id else "") + {"none": "Travel solo", "bird": "Pip · Little bird", "robot": "Orbit · Floating robot", "dragon": "Ember · Baby dragon"}[id], false, func(): profile.travel_buddy = key; profile.save(); show_buddies())
@@ -831,6 +847,17 @@ func show_buddies() -> void:
 
 func show_journal() -> void:
 	clear("Daily travel journal", GameCatalog.today_utc() + " · UTC")
+	var postcard := TravelJournalPostcard.new()
+	postcard.page = profile.journal_page(GameCatalog.today_utc())
+	content.add_child(postcard)
+	action("SHARE TODAY’S POSTCARD", false, func(): export_picture("journal", GameCatalog.today_utc()))
+	var dates := profile.journal_pages.keys()
+	dates.sort()
+	dates.reverse()
+	for date in dates:
+		if date != GameCatalog.today_utc():
+			var key: String = date
+			action("POSTCARD · " + key, false, func(): show_journal_postcard(key))
 	var countries: Array = profile.daily_progress().countries
 	copy("Today’s completed countries", 23)
 	if countries.is_empty(): copy("Your next journey starts today’s page.")
@@ -862,14 +889,81 @@ func show_champion() -> void:
 	room.destinations = profile.room_display.duplicate()
 	room.postcards = profile.room_postcards.duplicate()
 	room.decor = profile.room_decor.duplicate()
+	room.rare_keepsakes = profile.rare_keepsakes.duplicate(true)
+	room.buddy_kind = profile.travel_buddy
 	room.positions = profile.room_positions.duplicate(true)
 	content.add_child(room)
 	action("CELEBRATE & CONTINUE", true, func(): profile.champion_seen = true; profile.save(); show_main())
 
 func export_picture(kind: String, id: String = "") -> void:
+	if export_busy: return
+	export_busy = true
 	var message := copy("Preparing your picture…", 17)
-	var path := "user://passport-run-" + kind + ".png"
+	var filename := "passport-run-" + kind + ".png"
+	var path := "user://" + filename
 	var error: Error = await TravelPicture.save_picture(self, profile, kind, id, path)
-	if is_instance_valid(message):
-		message.text = "Picture saved: " + ProjectSettings.globalize_path(path) if error == OK else "Could not save picture. Please try again."
-	if error == OK and OS.has_feature("desktop"): OS.shell_show_in_file_manager(ProjectSettings.globalize_path(path))
+	if error == OK and OS.get_name() == "iOS":
+		var state: String = await NativePictureShare.request(self, filename)
+		if is_instance_valid(message): message.text = "Choose an app in the share sheet." if state == "opened" else "Picture shared." if state == "shared" else "Sharing cancelled. Your picture is saved." if state == "cancelled" else "Picture saved. The share sheet could not open; try sharing again."
+	else:
+		if is_instance_valid(message): message.text = "Picture saved: " + ProjectSettings.globalize_path(path) if error == OK else "Could not save picture. Please try again."
+		if error == OK and OS.has_feature("desktop"): OS.shell_show_in_file_manager(ProjectSettings.globalize_path(path))
+	export_busy = false
+
+func show_journal_postcard(date: String) -> void:
+	clear("My travel postcard", date + " · UTC")
+	var postcard := TravelJournalPostcard.new()
+	postcard.page = profile.journal_page(date)
+	content.add_child(postcard)
+	action("SHARE THIS POSTCARD", false, func(): export_picture("journal", date))
+	action("BACK", false, show_journal)
+
+func show_regions() -> void:
+	clear("Regional trophies", "Complete every free country and territory in a region to earn its explorer trophy.")
+	var counts := TravelMilestones.progress(profile.discoveries)
+	for name in TravelMilestones.CONTINENTS:
+		copy("%s · %d / %d" % [name, counts[name].completed, counts[name].total], 23)
+		if name in TravelMilestones.earned(profile.discoveries):
+			var key: String = name
+			action("★ RELIVE " + name.to_upper(), false, func(): show_region_celebration(key))
+	action("MY TRAVEL ROOM", false, show_room)
+	action("BACK", false, show_main)
+
+func show_region_celebration(name: String) -> void:
+	clear(name + " EXPLORER", "Every country and territory in " + name + " completed. Your explorer trophy is ready for your room!")
+	var celebration := WorldCelebration.new()
+	celebration.reduced_motion = profile.settings.reduced_motion
+	content.add_child(celebration)
+	var map := PassportWorldMap.new()
+	map.discoveries.assign(profile.discoveries.filter(func(id): return id in GameCatalog.FREE_DESTINATIONS and TravelMilestones.continent(id) == name))
+	content.add_child(map)
+	copy("★ " + name + " explorer trophy", 28)
+	action("DISPLAY MY TROPHY", true, func():
+		profile.room_decor.trophy = name
+		if name not in profile.regions_seen: profile.regions_seen.append(name)
+		profile.save()
+		show_room()
+	)
+	action("CONTINUE", false, func():
+		if name not in profile.regions_seen: profile.regions_seen.append(name)
+		profile.save()
+		show_main()
+	)
+
+func show_rare_challenges() -> void:
+	clear("Hidden keepsakes", "Optional challenges reward rare versions of each destination’s souvenir. Normal souvenirs are always yours when you finish.")
+	copy("Gold · Complete a memory-path destination without any failed attempt.", 21)
+	copy("Crystal · Clear all three Balloon Tour rounds at a destination without retries or collecting mystery drops. Practice does not earn keepsakes.", 21)
+	if profile.discoveries.is_empty(): copy("Complete a destination to start your rare collection.")
+	for id in profile.discoveries:
+		var owned: Array = profile.rare_keepsakes.get(id, [])
+		copy(GameCatalog.country_name(id) + " · " + ("★ Gold" if "gold" in owned else "○ Gold") + " · " + ("★ Crystal" if "crystal" in owned else "○ Crystal"), 18)
+	action("MY TRAVEL ALBUM", false, show_album)
+	action("BACK", false, show_main)
+
+func show_replay() -> void:
+	clear("My journey replay", "Follow your passport stamps in the order you first earned them. Pause, change speed or scrub to a favorite destination.")
+	var replay := JourneyReplay.new()
+	replay.profile = profile
+	content.add_child(replay)
+	action("BACK", false, show_main)

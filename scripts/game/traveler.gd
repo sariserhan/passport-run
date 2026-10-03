@@ -105,10 +105,15 @@ func play_animation(next: String) -> void:
 
 func _process(delta: float) -> void:
 	if buddy:
-		buddy_face.text = "!" if animation == "fall" or pressure > 0.65 else "♥" if animation in ["celebrate", "stamp"] else "• •"
+		buddy_face.text = BuddyPersonality.message(buddy_kind, animation, animation_clock, pressure)
 		if not animation_paused and not reduced_motion:
-			buddy.position.y = 1.7 + sin(animation_clock * (8 if animation == "jump" else 3)) * 0.18
-			buddy.rotation.z = sin(animation_clock * 4) * 0.1
+			buddy.position = Vector3(0.8, 1.7, 0) + BuddyPersonality.offset(buddy_kind, animation, animation_clock)
+			buddy.rotation.z = sin(animation_clock * (8 if buddy_kind == "bird" else 2)) * 0.1
+			buddy.rotation.y = animation_clock * 2 if buddy_kind == "bird" and animation in ["celebrate", "stamp"] else 0
+			if buddy_kind == "dragon" and animation in ["celebrate", "stamp"]:
+				buddy_face.text = "✦ " + BuddyPersonality.FRIENDS.dragon.cheer
+			elif animation in ["celebrate", "stamp"] and fmod(animation_clock, 3) > 1.5:
+				buddy_face.text = BuddyPersonality.FRIENDS[buddy_kind].cheer
 	if animation_paused or reduced_motion:
 		return
 	animation_clock += delta

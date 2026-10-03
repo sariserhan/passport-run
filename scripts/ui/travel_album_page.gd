@@ -14,12 +14,15 @@ func _ready() -> void:
  add_text(GameCatalog.country_name(destination_id), 25)
  var souvenir := SouvenirCard.new()
  souvenir.destination_id = destination_id
+ souvenir.rare_variants = profile.rare_keepsakes.get(destination_id, [])
  souvenir.quantity = int(profile.souvenir_counts.get(destination_id, 1))
  add_child(souvenir)
  add_text(CountryRewards.fact(destination_id), 18)
  var record: Dictionary = profile.destination_records.get(destination_id, {})
  add_text("Best jump clear: %d tiles" % record.jump if record.has("jump") else "Best jump clear: not recorded yet", 18)
  add_text("Best balloon score: %d pts" % record.arcade if record.has("arcade") else "Best balloon score: not recorded yet", 18)
+ add_text("Rare keepsakes: " + (", ".join(profile.rare_keepsakes.get(destination_id, []).map(func(variant): return str(variant).capitalize())) if not profile.rare_keepsakes.get(destination_id, []).is_empty() else "not yet found"), 18)
+ add_text("Optional: a flawless memory clear earns Gold; a Balloon Tour clear without retries or mystery drops earns Crystal.", 16)
  add_text("Collected %d time%s" % [profile.souvenir_counts.get(destination_id, 1), "" if profile.souvenir_counts.get(destination_id, 1) == 1 else "s"], 16)
 
 func add_text(value: String, font_size: int) -> void:

@@ -22,8 +22,14 @@ static func save_picture(owner: Node, profile: PlayerProfile, kind: String, id: 
   room.destinations = profile.room_display.duplicate()
   room.postcards = profile.room_postcards.duplicate()
   room.decor = profile.room_decor.duplicate()
+  room.rare_keepsakes = profile.rare_keepsakes.duplicate(true)
+  room.buddy_kind = profile.travel_buddy
   room.positions = profile.room_positions.duplicate(true)
   picture = room
+ elif kind == "journal":
+  var journal := TravelJournalPostcard.new()
+  journal.page = profile.journal_page(id)
+  picture = journal
  else:
   var album := TravelAlbumPage.new()
   album.destination_id = id

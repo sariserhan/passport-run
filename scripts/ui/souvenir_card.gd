@@ -4,6 +4,7 @@ extends Control
 var destination_id := "FR"
 var compact := false
 var quantity := 1
+var rare_variants: Array = []
 
 func _ready() -> void:
  custom_minimum_size.y = 132
@@ -18,7 +19,7 @@ func _ready() -> void:
  text.offset_right = -16
  text.offset_bottom = -12
  add_child(text)
- for line in [GameCatalog.country_name(destination_id), DestinationTheme.souvenir(destination_id) + " ×%d" % quantity]:
+ for line in [GameCatalog.country_name(destination_id), DestinationTheme.souvenir(destination_id) + " ×%d" % quantity + (" · Rare ★" if not rare_variants.is_empty() else "")]:
   var label := Label.new()
   label.text = line
   label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -32,6 +33,9 @@ func _draw() -> void:
  if size.x <= 12 or size.y <= 12: return
  var frame := StyleBoxFlat.new()
  frame.bg_color = Color("fff1d4")
+ if not rare_variants.is_empty():
+  frame.border_color = Color("f4c651") if "gold" in rare_variants else Color("7bd4e9")
+  frame.set_border_width_all(3)
  frame.set_corner_radius_all(12)
  draw_style_box(frame, Rect2(Vector2.ZERO, size))
  var texture := GameCatalog.backdrop(destination_id)

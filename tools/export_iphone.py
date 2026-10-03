@@ -13,12 +13,13 @@ def patch_project(directory):
     text = project.read_text()
     # Reuse Godot's generated C++ source entry; no extra plugin/header dependencies.
     source = directory / 'PassportRun/dummy.cpp'
-    source.with_suffix('.mm').write_text(source.read_text() + '\n' + (ROOT / 'ios/native/PassportLinks.m').read_text())
+    source.with_suffix('.mm').write_text(source.read_text() + '\n' + (ROOT / 'ios/native/PassportLinks.m').read_text() + '\n' + (ROOT / 'ios/native/PassportShare.m').read_text())
     text = text.replace('dummy.cpp', 'dummy.mm').replace('lastKnownFileType = sourcecode.cpp.cpp;', 'lastKnownFileType = sourcecode.cpp.objcpp;')
     project.write_text(text)
     info = directory / 'PassportRun/PassportRun-Info.plist'
     data = plistlib.loads(info.read_bytes())
     data['CFBundleURLTypes'] = [{'CFBundleURLName': 'com.serhansari.passportrun.challenge', 'CFBundleURLSchemes': ['passport-run']}]
+    data.setdefault('NSPhotoLibraryAddUsageDescription', 'Save your travel room, album pages and journal postcards to Photos.')
     info.write_bytes(plistlib.dumps(data))
 
 if __name__ == '__main__':

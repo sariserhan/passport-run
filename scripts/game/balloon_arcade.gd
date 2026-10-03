@@ -28,6 +28,8 @@ var cooldown := 0.0
 var freeze := 0.0
 var double_wire := 0.0
 var country_failed := false
+var rare_earned := false
+var buddy_clock := 0.0
 var left_held := false
 var right_held := false
 var fire_held := false
@@ -845,12 +847,14 @@ func clear_round() -> void:
  coins += 10 if round_index < 2 else 30
  profile.record(record_mode(), "moderate" if route_kind == "daily" else profile.difficulty, score)
  earned_badges.clear()
+ rare_earned = false
  if round_index == 2 and route_kind != "practice":
   profile.award_arcade_medal(route[country_index], record_difficulty(), coop, ArcadeProgress.medal(country_time, country_retries, country_combo))
   if country_drops == 0 and profile.note_arcade_goal("no_drops"): show_feedback("DAILY GOAL COMPLETE!\nNo-drop destination cleared")
   profile.discover(route[country_index])
   profile.record_destination(route[country_index], "arcade", maxi(0, score - country_start_score))
   profile.advance_missions(route[country_index], not country_failed, false)
+  if not country_failed and country_drops == 0: rare_earned = profile.earn_rare(route[country_index], "crystal")
   for id in ["arcade:clean_boss", "arcade:no_drops"]:
    if ((id == "arcade:clean_boss" and not country_failed) or (id == "arcade:no_drops" and country_drops == 0)) and profile.award_badge(id, false): earned_badges.append(id)
  update_stats()
@@ -870,6 +874,7 @@ func finish_stamp() -> void:
 
 func show_clear_panel() -> void:
  var message := ("PRACTICE COMPLETE!" if round_index == 2 and route_kind == "practice" else "DESTINATION STAMPED!" if round_index == 2 else "ROUND CLEARED!") + "\n" + GameCatalog.country_name(route[country_index]) + " · Score %d" % score
+ if rare_earned: message += "\nRARE CRYSTAL KEEPSAKE FOUND!"
  if round_index == 2: message += "\n\n" + destination_result()
  if round_index == 2 and route_kind != "practice":
   message += "\nSouvenir collected: " + DestinationTheme.souvenir(route[country_index])
@@ -1012,6 +1017,11 @@ func _unhandled_input(event: InputEvent) -> void:
  elif event is InputEventKey and event.physical_keycode == KEY_SPACE and event.pressed:
   fire()
   get_viewport().set_input_as_handled()
+
+func _process(delta: float) -> void:
+ if not visible or not profile or profile.travel_buddy == "none" or profile.settings.reduced_motion or phase == Phase.PAUSED: return
+ buddy_clock += delta
+ if phase in [Phase.READY, Phase.CLEAR, Phase.TRAVEL]: queue_redraw()
 
 func _physics_process(delta: float) -> void:
  if phase not in [Phase.PLAY, Phase.COUNTDOWN] and not (phase == Phase.FAILED and death_time > 0): return
@@ -1243,7 +1253,9 @@ func _draw() -> void:
  draw_set_transform(play.position + jitter, 0, play.size / Vector2(WORLD.x, world_height))
  if profile and profile.travel_buddy != "none":
   var buddy_color := Color("ffc85c") if profile.travel_buddy == "bird" else Color("86d7ed") if profile.travel_buddy == "robot" else Color("8ed599")
-  var point := Vector2(clampf(player_x + 45, 28, WORLD.x - 28), floor_y - 100 + (0 if profile.settings.reduced_motion else sin(clock * 4) * 6))
+  var buddy_state := "fall" if country_failed else "celebrate" if phase == Phase.CLEAR else "jump" if shot_time > 0 else "thinking"
+  var buddy_offset := Vector3.ZERO if profile.settings.reduced_motion else BuddyPersonality.offset(profile.travel_buddy, buddy_state, buddy_clock)
+  var point := Vector2(clampf(player_x + 45 + buddy_offset.x * 30, 28, WORLD.x - 28), floor_y - 100 - buddy_offset.y * 30)
   if profile.travel_buddy == "robot":
    draw_rect(Rect2(point - Vector2(15, 12), Vector2(30, 24)), buddy_color)
    draw_line(point + Vector2(0, -12), point + Vector2(0, -22), buddy_color, 2)
@@ -1255,8 +1267,10 @@ func _draw() -> void:
    else:
     draw_colored_polygon(PackedVector2Array([point + Vector2(12, -2), point + Vector2(24, 3), point + Vector2(12, 6)]), Color("e98c45"))
   for side in [-1, 1]: draw_circle(point + Vector2(side * 5, -3), 2, Color("153e57"))
-  draw_line(point + Vector2(-27, -5), point + Vector2(27, -5), buddy_color, 5)
-  draw_string(ThemeDB.fallback_font, point + Vector2(-10, -22), "!" if country_failed else "♥" if stamp_pending else "Hi!", HORIZONTAL_ALIGNMENT_LEFT, -1, 18, buddy_color)
+  for side in [-1, 1]: draw_line(point + Vector2(side * 12, 0), point + Vector2(side * 27, -5 + (0 if profile.settings.reduced_motion else sin(buddy_clock * (9 if profile.travel_buddy == "bird" else 2)) * 7)), buddy_color, 5)
+  if profile.travel_buddy == "dragon" and buddy_state == "celebrate":
+   for i in 3: draw_circle(point + Vector2(20 + i * 8, -5 - i * 4), 2, Color("f6c968"))
+  draw_string(ThemeDB.fallback_font, point + Vector2(-10, -22), BuddyPersonality.message(profile.travel_buddy, buddy_state, buddy_clock), HORIZONTAL_ALIGNMENT_LEFT, -1, 18, buddy_color)
  for platform in platforms:
   draw_surface(platform)
  draw_surface(Rect2(0, floor_y, WORLD.x, 30))

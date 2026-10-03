@@ -133,5 +133,17 @@ Adventure validation: all 17 Godot regression suites and four Python checks pass
 - Travel Buddies selects Pip (bird), Orbit (robot), Ember (baby dragon), or solo travel. The choice persists and companions react during memory-path and Balloon Tour play. Reduced motion and pause stop companion motion.
 - Souvenir sets unlock room displays: SPACE/MOON/MARS/SATURN, CA/NO/IS, and FR/IT/ES. The room shows set progress and lets earned displays be equipped.
 - Today's journal uses the existing UTC daily boundary, records completed destinations, flawless finishes, personal bests, souvenirs, badges, travelers and set rewards. It persists across restarts and resets with the day.
-- Room and album exports render standalone 720×1000 PNGs in user storage. Desktop opens the saved file in the file manager. Native iOS share-sheet delivery is not implemented.
+- Room and album exports render standalone 720×1000 PNGs in user storage. Desktop opens the saved file in the file manager. The iPhone export now includes a native share-sheet bridge for these pictures and journal postcards; its presentation and cancellation passed an isolated simulator smoke test. Physical-device acceptance remains pending.
 - `tests/test_travel_life.gd` exercises save/reload, reward gating, rollover, champion unlock/acknowledgement, screens and companion reactions; with a display it also verifies PNG exports.
+
+
+### Travel stories expansion
+
+- Buddies now have distinct idle messages, movements, firing/jump reactions and celebrations, with animated selection previews. Pip flutters and spins, Orbit scans and orbits, and Ember naps, hops and emits celebratory sparks. Pause and reduced motion stop their motion.
+- Room decor adds earned desks/armchairs, evening/moon lighting, a framed world map, companion beds and regional trophies. The map reserves wall space without covering keepsakes; arranged positions remain normalized.
+- All 250 free destinations belong to one of seven continents. Completing a continent earns a room trophy and queues a replayable regional celebration. Paid destinations do not affect these trophies.
+- Gold variants require a memory-path country completed without a failed attempt; Crystal variants require all three Balloon Tour rounds without retries or collecting drops. Practice does not award rare variants. Rewards appear in completion feedback, the journal, album and room.
+- Daily postcards retain the latest 30 UTC days, including stamps, highlights and rewards; each postcard can be exported or shared. The bounded profile reader allows 2 MiB so a full archive remains readable. Full-archive reload is tested.
+- Journey replay uses first-completion order, an animated geographic route, destination images and keepsakes. It supports play/pause, 1×/2×/4× speeds and scrubbing. Reduced motion starts paused with static routes. Special expeditions without geographic pins are labeled beyond the world map.
+- `tests/test_travel_stories.gd` verifies milestone gating, rare reward uniqueness/persistence, complete archive reload, room persistence and replay controls, and captures rendered exports when a display is available.
+- `python3 tools/check_iphone_sharing.py` creates and removes an isolated temporary simulator and verifies that the exact native bridge presents `UIActivityViewController` and handles cancellation. Export integration and Objective-C compilation are also checked; physical-device and actual recipient delivery remain unverified.

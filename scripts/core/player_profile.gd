@@ -2,6 +2,7 @@ class_name PlayerProfile
 extends RefCounted
 
 const SCHEMA_VERSION: int = 1
+const MAX_PROFILE_BYTES := 2097152 # Includes the bounded 30-day postcard archive.
 var file_path: String
 var home_country: String = ""
 var difficulty: String = "easy"
@@ -35,6 +36,9 @@ var settings: Dictionary = {"music": 0.35, "sound": 0.65, "reduced_motion": fals
 var travel_buddy := "bird"
 var champion_seen := false
 var travel_journal: Dictionary = {}
+var journal_pages: Dictionary = {}
+var regions_seen: Array[String] = []
+var rare_keepsakes: Dictionary = {}
 var last_error: String = ""
 
 func _init(path: String = "user://profile.json") -> void:
@@ -55,6 +59,28 @@ func load_profile() -> void:
 	if data.get("anonymous_id") is String and data.anonymous_id.length() == 32 and data.anonymous_id.is_valid_hex_number():
 		anonymous_id = data.anonymous_id
 	travel_buddy = data.get("travel_buddy", "bird") if data.get("travel_buddy", "bird") in ["none", "bird", "robot", "dragon"] else "bird"
+	if data.get("regions_seen") is Array:
+		for name in data.regions_seen:
+			if name is String and name in TravelMilestones.CONTINENTS and name not in regions_seen: regions_seen.append(name)
+	if data.get("rare_keepsakes") is Dictionary:
+		for id in data.rare_keepsakes:
+			if id is String and id in GameCatalog.DESTINATIONS and data.rare_keepsakes[id] is Array:
+				var variants: Array[String] = []
+				for variant in data.rare_keepsakes[id]:
+					if variant in ["gold", "crystal"] and variant not in variants: variants.append(variant)
+				rare_keepsakes[id] = variants
+	if data.get("journal_pages") is Dictionary:
+		var dates: Array = data.journal_pages.keys().filter(func(key): return key is String and key.length() == 10 and key.substr(4, 1) == "-" and key.substr(7, 1) == "-")
+		dates.sort()
+		for date in dates.slice(maxi(0, dates.size() - 30)):
+			var page: Variant = data.journal_pages[date]
+			if page is Dictionary:
+				var clean := {"date": date, "countries": [], "moments": [], "rewards": []}
+				for field in ["countries", "moments", "rewards"]:
+					if page.get(field) is Array:
+						for value in page[field].slice(0, 100):
+							if value is String and (field != "countries" or value in GameCatalog.DESTINATIONS): clean[field].append(value.left(160))
+				journal_pages[date] = clean
 	champion_seen = data.get("champion_seen", false) == true
 	var journal: Variant = data.get("travel_journal")
 	if journal is Dictionary and journal.get("date") == GameCatalog.today_utc():
@@ -150,13 +176,15 @@ func load_profile() -> void:
 			elif value is bool and key not in ["music", "sound"]:
 				settings[key] = value
 
+	for id in rare_keepsakes.keys():
+		if id not in discoveries: rare_keepsakes.erase(id)
 	if world_champion() and "world:champion" not in badges: badges.append("world:champion")
 
 func read_valid(path: String) -> Dictionary:
 	if not FileAccess.file_exists(path):
 		return {}
 	var file := FileAccess.open(path, FileAccess.READ)
-	if file == null or file.get_length() > 262144:
+	if file == null or file.get_length() > MAX_PROFILE_BYTES:
 		return {}
 	var parser := JSON.new()
 	if parser.parse(file.get_as_text()) != OK:
@@ -167,10 +195,14 @@ func read_valid(path: String) -> Dictionary:
 	return {}
 
 func save() -> bool:
+	snapshot_journal()
 	var data := {"version": SCHEMA_VERSION, "anonymous_id": anonymous_id, "home_country": home_country, "difficulty": difficulty, "tutorial_done": tutorial_done, "discoveries": discoveries, "history": history, "records": records, "badges": badges, "passport_cover": passport_cover, "daily_missions": daily_missions, "character_style": character_style, "room_display": room_display, "settings": settings, "arcade_saves": arcade_saves}
 	data["travel_buddy"] = travel_buddy
 	data["champion_seen"] = champion_seen
 	data["travel_journal"] = travel_journal
+	data["journal_pages"] = journal_pages
+	data["regions_seen"] = regions_seen
+	data["rare_keepsakes"] = rare_keepsakes
 	data["character_id"] = character_id
 	data["souvenir_counts"] = souvenir_counts
 	data["room_decor"] = room_decor
@@ -229,6 +261,7 @@ func discover(id: String) -> void:
 	last_unlocked_characters.clear()
 	if id not in GameCatalog.DESTINATIONS:
 		return
+	var previous_regions := TravelMilestones.earned(discoveries)
 	var previous_sets := TravelCollections.earned(discoveries)
 	var first_visit := id not in discoveries
 	var locked: Array[String] = []
@@ -240,6 +273,8 @@ func discover(id: String) -> void:
 		if CharacterStyle.character_unlocked(character, discoveries, character_pack_unlocked):
 			last_unlocked_characters.append(character)
 			journal_note("rewards", "Traveler: " + CharacterStyle.CHARACTERS[character].name)
+	for name in TravelMilestones.earned(discoveries):
+		if name not in previous_regions: journal_note("rewards", name + " explorer trophy")
 	if first_visit: journal_note("rewards", DestinationTheme.souvenir(id))
 	for collection in TravelCollections.earned(discoveries):
 		if collection not in previous_sets: journal_note("rewards", TravelCollections.SETS[collection].name)
@@ -344,3 +379,28 @@ func journal_note(kind: String, value: String) -> void:
 	var entries: Array = journal_today()[kind]
 	if value not in entries: entries.append(value)
 	while entries.size() > 100: entries.pop_front()
+
+func snapshot_journal() -> void:
+	if travel_journal.get("date", "") != GameCatalog.today_utc(): return
+	var page := travel_journal.duplicate(true)
+	page["countries"] = daily_progress().countries.duplicate()
+	journal_pages[page.date] = page
+	var dates := journal_pages.keys()
+	dates.sort()
+	while dates.size() > 30: journal_pages.erase(dates.pop_front())
+
+func journal_page(date: String) -> Dictionary:
+	if date == GameCatalog.today_utc():
+		journal_today()
+		snapshot_journal()
+	return journal_pages.get(date, {"date": date, "countries": [], "moments": [], "rewards": []}).duplicate(true)
+
+func earn_rare(id: String, variant: String) -> bool:
+	if id not in discoveries or variant not in ["gold", "crystal"]: return false
+	var owned: Array = rare_keepsakes.get(id, [])
+	if variant in owned: return false
+	owned.append(variant)
+	rare_keepsakes[id] = owned
+	journal_note("rewards", GameCatalog.country_name(id) + (" · Golden keepsake" if variant == "gold" else " · Crystal keepsake"))
+	save()
+	return true

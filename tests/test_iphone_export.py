@@ -25,8 +25,12 @@ class NativeExportTest(unittest.TestCase):
             source = (directory / "PassportRun/dummy.mm").read_text()
             self.assertIn("register_godot_storekit2_types();", source)
             self.assertIn("passportOpenURL", source)
+            self.assertIn("UIActivityViewController", source)
+            self.assertIn("passportPollShare", source)
+            self.assertIn("popoverPresentationController.sourceView", source)
             self.assertIn("dummy.mm", project.read_text())
             data = plistlib.loads(info.read_bytes())
+            self.assertIn("Save your travel room", data["NSPhotoLibraryAddUsageDescription"])
             self.assertEqual(data["CFBundleIdentifier"], "com.serhansari.passportrun")
             self.assertEqual(data["CFBundleURLTypes"][0]["CFBundleURLSchemes"], ["passport-run"])
 
