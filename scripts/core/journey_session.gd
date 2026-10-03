@@ -32,6 +32,8 @@ func begin(selected_mode: String, selected_difficulty: String, home: String, new
 		var places := GameCatalog.PREMIUM_DESTINATIONS.keys() if mode == "special" else GameCatalog.CINEMA_DESTINATIONS.keys()
 		var start := maxi(0, places.find(home))
 		fixed_route.assign(places.slice(start) + places.slice(0, start))
+	elif mode == "adventure":
+		fixed_route.assign([home])
 	elif mode == "trip":
 		fixed_route.assign(challenge.get("route", []))
 	elif mode == "challenge":

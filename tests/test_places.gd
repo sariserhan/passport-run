@@ -168,11 +168,13 @@ func run_tests() -> void:
 		for id in GameCatalog.PREMIUM_DESTINATIONS:
 			game.special_start = id
 			game.start_game("special", "easy")
+			game.travel.finish()
 			game.start_preview()
 			await create_timer(0.10).timeout
 			await capture("special-" + id)
 	game.special_start = "EVEREST"
 	game.start_game("special", "easy")
+	game.travel.finish()
 	game.start_preview()
 	game.preview_remaining = 0.001
 	game.config.jump_seconds = 0.005

@@ -7,6 +7,7 @@ signal settings_changed
 signal home_country_selected(id: String)
 signal difficulty_selected(key: String)
 signal trip_requested(id: String)
+signal adventure_requested(id: String)
 signal cinema_requested(id: String)
 signal special_requested(id: String)
 signal online_records_requested
@@ -132,10 +133,13 @@ func show_main() -> void:
 	if not profile.tutorial_done:
 		action("LEARN THE PATH", true, func(): start_requested.emit("tutorial", "easy"))
 	action("SHORT ADVENTURES · 3 COUNTRIES", true, show_trips)
+	action("ADVENTURE PLAY · SPECIAL MECHANICS", false, show_adventures)
 	for item in [["world", "WORLD TOUR"], ["infinite", "INFINITE MEMORY"], ["daily", "DAILY WORLD TOUR"], ["kids", "KIDS ADVENTURE"]]:
 		var mode: String = item[0]
 		mode_buttons[mode] = action(item[1], mode == "world", func(): request_mode(mode))
 	action("COLLECTION GOALS", false, show_goals)
+	action("MY TRAVEL ROOM", false, show_room)
+	action("EXPLORER WARDROBE", false, show_wardrobe)
 	action("DAILY TRAVEL MISSIONS", false, show_missions)
 	action("CINEMA WORLDS · SEPARATE PAID ROUTE", false, show_cinema_route)
 	action("SPECIAL EXPEDITIONS · PAID ROUTE", false, show_special_route)
@@ -321,7 +325,7 @@ func show_settings() -> void:
 	action("BACK", true, show_main)
 
 func show_challenge() -> void:
-	clear("Challenge a friend", "Paste a PR1 challenge code to play the exact same route and path. These are local challenges, without verified online rankings.")
+	clear("Challenge a friend", "Paste a challenge link or PR1 code to play the same path. Links with a ghost let you race your friend. These are local challenges, without verified online rankings.")
 	challenge_input = TextEdit.new()
 	challenge_input.custom_minimum_size.y = 170
 	challenge_input.wrap_mode = TextEdit.LINE_WRAPPING_BOUNDARY
@@ -464,4 +468,66 @@ func show_souvenirs() -> void:
 	search.text_changed.connect(fill)
 	fill.call("")
 	action("MY PASSPORT", false, show_passport)
+	action("BACK", false, show_main)
+
+func show_adventures() -> void:
+	clear("Adventure Play", "Special mechanics, local scores. Ranked modes keep their usual rules.")
+	for item in [["NO", "NORWAY · SLIPPERY ICE"], ["BR", "BRAZIL · MOVING BRIDGES"], ["GR", "GREECE · MOVING SEASIDE STONES"], ["MOON", "MOON · LOW GRAVITY · SPECIAL PACK"], ["UNDERWATER", "UNDERWATER · BUOYANT JUMPS · SPECIAL PACK"]]:
+		var id: String = item[0]
+		action(item[1], true, func(): adventure_requested.emit(id))
+	action("BACK", false, show_main)
+
+func show_wardrobe() -> void:
+	clear("Explorer wardrobe", "Earn outfits and hats by exploring. Backpack colors match your earned passport covers.")
+	var holder := SubViewportContainer.new()
+	holder.custom_minimum_size.y = 240
+	holder.stretch = true
+	content.add_child(holder)
+	var viewport := SubViewport.new()
+	viewport.size = Vector2i(400, 240)
+	viewport.own_world_3d = true
+	viewport.transparent_bg = true
+	viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	holder.add_child(viewport)
+	var actor := Traveler.new()
+	actor.customization = profile.character_style.duplicate()
+	actor.reduced_motion = profile.settings.reduced_motion
+	viewport.add_child(actor)
+	var camera := Camera3D.new()
+	viewport.add_child(camera)
+	camera.position = Vector3(0, 1.6, 4.5)
+	camera.look_at(Vector3(0, 1.3, 0))
+	camera.make_current()
+	var light := DirectionalLight3D.new()
+	light.rotation_degrees = Vector3(-30, 0, 0)
+	viewport.add_child(light)
+	for kind in ["outfit", "hat", "backpack"]:
+		copy(kind.capitalize(), 23)
+		var items: Dictionary = CharacterStyle.OUTFITS if kind == "outfit" else CharacterStyle.HATS if kind == "hat" else CharacterStyle.BACKPACKS
+		for id in items:
+			var key: String = id
+			var group: String = kind
+			var earned := CharacterStyle.unlocked(kind, id, profile.discoveries)
+			var name: String = items[id].name if kind != "backpack" else (TravelGoals.TRIPS[id].cover if id in TravelGoals.TRIPS else "Classic")
+			var label := name + (" · EQUIPPED" if profile.character_style[kind] == id else " · LOCKED" if not earned else " · EQUIP")
+			if not earned: label += " · %d destinations" % items[id].count if kind != "backpack" else " · finish collection goal"
+			var button := action(label, earned, func(): profile.character_style[group] = key; profile.save(); show_wardrobe())
+			button.disabled = not earned or profile.character_style[kind] == id
+	action("BACK", false, show_main)
+
+func show_room() -> void:
+	clear("My travel room", "Display six favorite souvenirs. Tap an earned keepsake below to add or remove it.")
+	var room := SouvenirRoom.new()
+	room.destinations = profile.room_display.duplicate()
+	content.add_child(room)
+	if profile.discoveries.is_empty(): copy("Your shelves are waiting for your first adventure.")
+	for id in profile.discoveries:
+		var key: String = id
+		action(("✓ " if id in room.destinations else "+ ") + GameCatalog.country_name(id), false, func():
+			if key in profile.room_display: profile.room_display.erase(key)
+			elif profile.room_display.size() < 6: profile.room_display.append(key)
+			profile.save()
+			show_room()
+		)
+	action("MY SOUVENIRS", false, show_souvenirs)
 	action("BACK", false, show_main)

@@ -13,6 +13,8 @@ var records: Dictionary = {}
 var badges: Array[String] = []
 var passport_cover := "classic"
 var daily_missions: Dictionary = {}
+var character_style := {"outfit": "classic", "hat": "none", "backpack": "classic"}
+var room_display: Array[String] = []
 var settings: Dictionary = {"music": 0.35, "sound": 0.65, "reduced_motion": false, "high_contrast": false, "haptics": true}
 var last_error: String = ""
 
@@ -61,6 +63,13 @@ func load_profile() -> void:
 		if daily_missions.countries.is_empty():
 			daily_missions.flawless = false
 			daily_missions.trip = false
+	if data.get("character_style") is Dictionary:
+		for kind in character_style:
+			var id: Variant = data.character_style.get(kind)
+			if id is String and CharacterStyle.unlocked(kind, id, discoveries): character_style[kind] = id
+	if data.get("room_display") is Array:
+		for id in data.room_display:
+			if id is String and id in discoveries and id not in room_display and room_display.size() < 6: room_display.append(id)
 	if data.get("settings") is Dictionary:
 		for key in settings:
 			var value: Variant = data.settings.get(key)
@@ -84,7 +93,7 @@ func read_valid(path: String) -> Dictionary:
 	return {}
 
 func save() -> bool:
-	var data := {"version": SCHEMA_VERSION, "anonymous_id": anonymous_id, "home_country": home_country, "difficulty": difficulty, "tutorial_done": tutorial_done, "discoveries": discoveries, "history": history, "records": records, "badges": badges, "passport_cover": passport_cover, "daily_missions": daily_missions, "settings": settings}
+	var data := {"version": SCHEMA_VERSION, "anonymous_id": anonymous_id, "home_country": home_country, "difficulty": difficulty, "tutorial_done": tutorial_done, "discoveries": discoveries, "history": history, "records": records, "badges": badges, "passport_cover": passport_cover, "daily_missions": daily_missions, "character_style": character_style, "room_display": room_display, "settings": settings}
 	var file := FileAccess.open(file_path + ".tmp", FileAccess.WRITE)
 	if file == null:
 		last_error = "Progress could not be saved on this device."

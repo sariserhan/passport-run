@@ -40,6 +40,11 @@ var trip_id := "europe"
 var jump_streak := 0
 var failed_countries: Array[String] = []
 var special_start := "EVEREST"
+var adventure_start := "NO"
+var friend_steps: Array[int] = []
+var selected_decision_ms := 0
+var ghost: FriendGhost
+var link_poll := 0.0
 
 func _ready() -> void:
 	config = GameCatalog.difficulty("easy")
@@ -101,6 +106,7 @@ func _ready() -> void:
 			return_to_menu()
 			menu.show_cinema_route()
 	)
+	menu.adventure_requested.connect(func(id: String): adventure_start = id; start_game("adventure", profile.difficulty))
 	menu.trip_requested.connect(func(id: String): trip_id = id; start_game("trip", profile.difficulty))
 	menu.cinema_requested.connect(func(id: String): cinema_start = id; start_game("cinema", profile.difficulty))
 	menu.special_requested.connect(func(id: String): special_start = id; start_game("special", profile.difficulty))
@@ -148,16 +154,18 @@ func start_game(mode: String, difficulty_key: String) -> void:
 		if token != generation:
 			return
 		network_busy = false
+	friend_steps.clear()
 	online = requested_online
-	if mode == "special" or (mode == "challenge" and imported_challenge.get("route", []).any(func(id): return id in GameCatalog.PREMIUM_DESTINATIONS)):
+	if mode == "adventure" and adventure_start not in GameCatalog.DESTINATIONS: return
+	if mode == "special" or (mode == "adventure" and adventure_start in GameCatalog.PREMIUM_DESTINATIONS) or (mode == "challenge" and imported_challenge.get("route", []).any(func(id): return id in GameCatalog.PREMIUM_DESTINATIONS)):
 		if not purchase.unlocked:
 			menu.show_special_route()
 			return
-	if mode == "cinema" or (mode == "challenge" and imported_challenge.get("route", []).any(func(id): return id in GameCatalog.CINEMA_DESTINATIONS)):
+	if mode == "cinema" or (mode == "adventure" and adventure_start in GameCatalog.CINEMA_DESTINATIONS) or (mode == "challenge" and imported_challenge.get("route", []).any(func(id): return id in GameCatalog.CINEMA_DESTINATIONS)):
 		if not cinema_purchase.unlocked:
 			menu.show_cinema_route()
 			return
-	if mode not in ["world", "infinite", "daily", "kids", "tutorial", "challenge", "special", "cinema", "trip"]:
+	if mode not in ["world", "infinite", "daily", "kids", "tutorial", "challenge", "special", "cinema", "trip", "adventure"]:
 		return
 	if mode in ["world", "kids"] and profile.home_country not in GameCatalog.FREE_DESTINATIONS:
 		menu.pending_mode = mode
@@ -167,7 +175,7 @@ func start_game(mode: String, difficulty_key: String) -> void:
 		return
 	if not is_retry:
 		failed_countries.clear()
-	session.begin(mode, difficulty_key, special_start if mode == "special" else (cinema_start if mode == "cinema" else profile.home_country), randi_range(1, PathGenerator.MODULUS - 2), {"route": TravelGoals.TRIPS[trip_id].route} if mode == "trip" else imported_challenge)
+	session.begin(mode, difficulty_key, adventure_start if mode == "adventure" else special_start if mode == "special" else (cinema_start if mode == "cinema" else profile.home_country), randi_range(1, PathGenerator.MODULUS - 2), {"route": TravelGoals.TRIPS[trip_id].route} if mode == "trip" else imported_challenge)
 	if online:
 		session.balance_version = int(issued.balanceVersion)
 		session.seed_value = int(issued.seed)
@@ -182,6 +190,8 @@ func start_game(mode: String, difficulty_key: String) -> void:
 		config = GameCatalog.difficulty("easy")
 		config.row_count = 3
 	load_country(false)
+	if mode in ["special", "cinema", "adventure"]:
+		travel.begin("", session.current_country(), profile.settings.reduced_motion, true)
 	telemetry.track("run_started", metadata())
 	if mode in ["tutorial", "infinite", "daily", "kids"]:
 		telemetry.track(mode + "_started", metadata())
@@ -214,11 +224,12 @@ func restart(new_path: bool = false, auto_preview: bool = true) -> void:
 	# A daily retry stays pinned to the UTC date it started, even across midnight.
 	var old_date := session.date
 	var old_route: Array[String] = session.fixed_route.duplicate()
-	session.begin(session.mode, session.difficulty, special_start if session.mode == "special" else (cinema_start if session.mode == "cinema" else profile.home_country), next_seed, {"route": TravelGoals.TRIPS[trip_id].route} if session.mode == "trip" else imported_challenge)
+	session.begin(session.mode, session.difficulty, adventure_start if session.mode == "adventure" else special_start if session.mode == "special" else (cinema_start if session.mode == "cinema" else profile.home_country), next_seed, {"route": TravelGoals.TRIPS[trip_id].route} if session.mode == "trip" else imported_challenge)
 	if session.mode == "daily" and not old_date.is_empty():
 		session.date = old_date
 		session.seed_value = next_seed
 		session.fixed_route = old_route
+	friend_steps.clear()
 	load_country(auto_preview)
 	if session.mode != "practice":
 		telemetry.track("run_retried", metadata())
@@ -236,6 +247,14 @@ func load_country(auto_preview: bool) -> void:
 	run.reset(session.path_seed(), config, session.mode == "infinite")
 	grid.destination_id = "INFINITE" if session.mode == "infinite" else session.current_country()
 	grid.layout = DestinationTheme.layout(grid.destination_id) if session.balance_version >= 3 and not grid.destination_id.is_empty() else "classic"
+	if session.mode == "adventure":
+		if session.current_country() in ["MOON", "SPACE", "MARS"]:
+			config.jump_height = 3.0
+			config.jump_seconds = 0.75
+		elif session.current_country() == "UNDERWATER":
+			config.jump_height = 2.0
+			config.jump_seconds = 0.7
+	grid.moving = session.mode == "adventure" and DestinationTheme.style(grid.destination_id) in ["jungle", "ocean"]
 	grid.build(config)
 	if is_instance_valid(traveler):
 		remove_child(traveler)
@@ -243,10 +262,16 @@ func load_country(auto_preview: bool) -> void:
 	traveler = Traveler.new()
 	traveler.kids = session.mode == "kids"
 	traveler.reduced_motion = profile.settings.reduced_motion
+	traveler.customization = profile.character_style.duplicate()
 	traveler.destination_theme = DestinationTheme.style(grid.destination_id)
 	traveler.name = "Player"
 	add_child(traveler)
 	traveler.position = Vector3(0, 0.03, 0.6)
+	if is_instance_valid(ghost): ghost.queue_free()
+	ghost = FriendGhost.new()
+	ghost.game = self
+	ghost.decisions = imported_challenge.get("ghost", []) if session.mode == "challenge" else []
+	add_child(ghost)
 	rebuild_environment()
 	audio.play_destination("INFINITE" if session.mode == "infinite" else session.current_country())
 	set_overview()
@@ -264,6 +289,8 @@ func load_country(auto_preview: bool) -> void:
 	elif session.mode == "tutorial":
 		hud.phase_title.text = "Your first three steps"
 	telemetry.track("country_started", metadata())
+	if session.mode == "adventure":
+		hud.phase_hint.text = adventure_hint()
 	if auto_preview:
 		start_preview()
 
@@ -315,6 +342,17 @@ func start_preview() -> void:
 	hud.update_preview(preview_remaining, config.preview_seconds)
 
 func _process(delta: float) -> void:
+	link_poll += delta
+	if OS.get_name() == "iOS" and link_poll > 0.5:
+		link_poll = 0
+		var path := "user://passport-challenge.txt"
+		if FileAccess.file_exists(path):
+			var file := FileAccess.open(path, FileAccess.READ)
+			var link := file.get_as_text() if file and file.get_length() <= 24576 else ""
+			file = null
+			DirAccess.remove_absolute(path)
+			open_challenge_link(link)
+	if grid: grid.frozen = paused or menu.root.visible or run.phase != RunState.Phase.PLAY
 	if is_instance_valid(environment) and environment.atmosphere:
 		environment.atmosphere.frozen = paused or menu.root.visible
 	if paused or (menu and menu.root.visible):
@@ -331,6 +369,11 @@ func _process(delta: float) -> void:
 		return
 	if run.phase == RunState.Phase.PLAY and session.balance_version >= 2:
 		decision_remaining = maxf(0, decision_remaining - delta)
+		if session.mode == "adventure":
+			if grid.moving and run.completed_rows > 0:
+				traveler.position = standing_tile().position + Vector3.UP * 0.03
+			elif DestinationTheme.style(session.current_country()) == "ice":
+				traveler.position = Vector3(standing_tile().position.x + (GameCatalog.DECISION_SECONDS - decision_remaining) * 0.075, traveler.position.y, traveler.position.z)
 		hud.update_decision(decision_remaining, GameCatalog.DECISION_SECONDS)
 		standing_tile().set_pressure(1.0 - decision_remaining / GameCatalog.DECISION_SECONDS)
 		traveler.pressure = 1.0 - decision_remaining / GameCatalog.DECISION_SECONDS
@@ -393,13 +436,14 @@ func choose_tile(row: int, lane: int) -> bool:
 		return false
 	if paused or travel.active or not run.select(row, lane, config.lane_count):
 		return false
+	selected_decision_ms = int(round((GameCatalog.DECISION_SECONDS - decision_remaining) * 1000))
 	replay.select(0 if session.mode == "infinite" else session.country_index, row, lane, int(round((GameCatalog.DECISION_SECONDS - decision_remaining) * 1000)))
 	traveler.play_animation("jump")
 	hud.timer_label.text = "JUMPING…"
 	telemetry.track("tile_selected", {"row": row, "lane": lane, "mode": session.mode})
 	audio.play_cue("jump")
 	var start := traveler.position
-	var destination := grid.position_for(row, lane) + Vector3(0, 0.03, 0)
+	var destination := grid.tile_at(row, lane).position + Vector3(0, 0.03, 0)
 	var token: int = generation
 	active_tween = create_tween()
 	active_tween.tween_method(func(progress: float):
@@ -417,6 +461,7 @@ func choose_tile(row: int, lane: int) -> bool:
 func land(row: int, lane: int) -> void:
 	var tile := grid.tile_at(row, lane)
 	if run.land():
+		if friend_steps.size() < 512 and session.mode != "kids": friend_steps.append(selected_decision_ms)
 		tile.set_state(PathTile.State.CORRECT)
 		jump_streak += 1
 		audio.play_streak(jump_streak)
@@ -552,7 +597,7 @@ func show_failure() -> void:
 	if session.mode == "infinite":
 		actions.append({"text": "NEW PATH", "callback": func(): restart(true, true)})
 	elif session.mode in ["world", "daily", "challenge"]:
-		actions.append({"text": "COPY CODE + SAVE CARD", "callback": share_challenge})
+		actions.append({"text": "SHARE LINK + SAVE CARD", "callback": share_challenge})
 	actions.append({"text": "MAIN MENU", "callback": return_to_menu})
 	hud.show_journey_result("Great try!", body, actions)
 
@@ -646,8 +691,8 @@ func complete_country() -> void:
 		if session.mode == "challenge":
 			body += "\n" + ("You beat the target!" if total_score() > session.target else "Target matched!" if total_score() == session.target else "Target: %d" % session.target)
 		actions.append({"text": "PLAY AGAIN", "primary": true, "callback": func(): restart(false, true)})
-	if options.size() <= 1 and session.mode != "kids":
-		actions.append({"text": "COPY CODE + SAVE CARD", "callback": share_challenge})
+	if options.size() <= 1 and session.mode not in ["kids", "adventure"]:
+		actions.append({"text": "SHARE LINK + SAVE CARD", "callback": share_challenge})
 	actions.append({"text": "MAIN MENU", "callback": return_to_menu})
 	hud.show_journey_result(title, body, actions)
 	if options.is_empty() and online:
@@ -663,7 +708,7 @@ func travel_to(id: String) -> void:
 	if id not in GameCatalog.DESTINATIONS[departure].neighbors:
 		telemetry.track("long_haul_selected", {"country": id, "mode": session.mode})
 	audio.play_cue("travel")
-	travel.begin(departure, id, profile.settings.reduced_motion)
+	travel.begin(departure, id, profile.settings.reduced_motion, id in GameCatalog.PREMIUM_DESTINATIONS or id in GameCatalog.CINEMA_DESTINATIONS)
 
 func total_score() -> int:
 	return session.banked_tiles + (0 if country_awarded else run.completed_rows)
@@ -676,9 +721,9 @@ func copy_challenge() -> void:
 	var route := session.challenge_route()
 	if route.is_empty():
 		return
-	var code := ChallengeCode.encode(session.seed_value, session.difficulty, route, total_score(), session.balance_version)
-	DisplayServer.clipboard_set(code)
-	hud.modal_body.text = "Challenge code copied.\nSend it to a friend to replay\nthe same route and path."
+	var code := ChallengeCode.encode(session.seed_value, session.difficulty, route, total_score(), session.balance_version, friend_steps)
+	DisplayServer.clipboard_set(ChallengeCode.link(code))
+	hud.modal_body.text = "Challenge link copied.\nSend it to a friend to replay\nthe same route and path."
 	telemetry.track("challenge_created", metadata())
 
 func share_challenge() -> void:
@@ -696,6 +741,10 @@ func share_challenge() -> void:
 	sharing = false
 
 func has_paid_access() -> bool:
+	if session.mode == "adventure":
+		var id := session.current_country()
+		if id in GameCatalog.PREMIUM_DESTINATIONS and not purchase.unlocked: return false
+		if id in GameCatalog.CINEMA_DESTINATIONS and not cinema_purchase.unlocked: return false
 	var route: Array = session.fixed_route if session.mode == "challenge" else []
 	if (session.mode == "special" or route.any(func(id): return id in GameCatalog.PREMIUM_DESTINATIONS)) and not purchase.unlocked:
 		return false
@@ -810,3 +859,18 @@ func sync_online_passport() -> void:
 			if id is String and id in GameCatalog.DESTINATIONS and id not in profile.discoveries:
 				profile.discoveries.append(id)
 		profile.save()
+
+func adventure_hint() -> String:
+	var theme := DestinationTheme.style(session.current_country())
+	if theme == "ice": return "SLIPPERY ICE · Your feet drift while you decide."
+	if grid.moving: return "MOVING BRIDGES · Aim for the moving stone."
+	if session.current_country() in ["MOON", "SPACE", "MARS"]: return "LOW GRAVITY · Float higher and longer."
+	if session.current_country() == "UNDERWATER": return "BUOYANT JUMPS · Drift through the deep."
+	return "ADVENTURE PLAY · Local scores, no ranked points."
+
+func open_challenge_link(link: String) -> bool:
+	if ChallengeCode.decode(link).is_empty(): return false
+	return_to_menu()
+	menu.show_challenge()
+	menu.challenge_input.text = link
+	return true

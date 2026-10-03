@@ -13,6 +13,7 @@ var animation_paused := false
 var reduced_motion := false
 var passport_prop: Node3D
 var destination_theme := "stone"
+var customization := {"outfit": "classic", "hat": "none", "backpack": "classic"}
 var reaction: Label3D
 var pressure := 0.0:
 	set(value):
@@ -45,6 +46,7 @@ func _ready() -> void:
 		portrait.position.y = 1.28
 		portrait.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		body.add_child(portrait)
+		apply_customization()
 		return
 	var shirt := MeshFactory.material(Color("f6e9ce"))
 	var skin := MeshFactory.material(Color("bce2dd"))
@@ -152,3 +154,18 @@ func pose_fall(progress: float) -> void:
 
 func bag_material() -> StandardMaterial3D:
 	return MeshFactory.material(Color("a6e771"))
+
+func apply_customization() -> void:
+	var outfit: String = customization.get("outfit", "classic")
+	portrait.modulate = Color(CharacterStyle.OUTFITS.get(outfit, CharacterStyle.OUTFITS.classic).color)
+	var backpack: String = customization.get("backpack", "classic")
+	if backpack != "classic":
+		var cloth := MeshFactory.material(Color(CharacterStyle.BACKPACKS.get(backpack, "b58147")))
+		MeshFactory.beveled_box(body, Vector3(0.48, 0.55, 0.18), Vector3(0.12, 1.24, 0.14), cloth, 0.05)
+		MeshFactory.box(body, Vector3(0.34, 0.1, 0.02), Vector3(0.12, 1.09, 0.24), MeshFactory.material(Color("ffe6ac")))
+	var hat: String = customization.get("hat", "none")
+	if hat == "none": return
+	var fabric := MeshFactory.material(Color("e6be7d") if hat == "sun" else Color("769bc8") if hat == "winter" else Color("b9a5dd"))
+	MeshFactory.cylinder(body, 0.31, 0.24, 0.18, Vector3(0, 2.53, 0.08), fabric)
+	if hat == "sun": MeshFactory.cylinder(body, 0.43, 0.43, 0.035, Vector3(0, 2.45, 0.08), fabric)
+	if hat == "winter": MeshFactory.sphere(body, 0.09, Vector3(0, 2.7, 0.08), fabric)

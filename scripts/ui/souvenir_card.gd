@@ -2,10 +2,14 @@ class_name SouvenirCard
 extends Control
 
 var destination_id := "FR"
+var compact := false
 
 func _ready() -> void:
  custom_minimum_size.y = 132
  mouse_filter = Control.MOUSE_FILTER_IGNORE
+ if compact:
+  resized.connect(queue_redraw)
+  return
  var text := VBoxContainer.new()
  text.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
  text.offset_left = 108
@@ -28,7 +32,7 @@ func _draw() -> void:
  frame.bg_color = Color("fff1d4")
  frame.set_corner_radius_all(12)
  draw_style_box(frame, Rect2(Vector2.ZERO, size))
- var center := Vector2(53, 64)
+ var center := Vector2(size.x / 2, 51) if compact else Vector2(53, 64)
  var color := DestinationTheme.color(destination_id).darkened(0.2)
  var theme := DestinationTheme.style(destination_id)
  var keepsake := DestinationTheme.souvenir(destination_id).to_lower()
@@ -89,6 +93,12 @@ func _draw() -> void:
    draw_rect(Rect2(x, -4 - abs(x) * 0.4, 14, 30 + abs(x) * 0.4), color)
    draw_rect(Rect2(x + 4, 4, 5, 6), color.lightened(0.6))
  draw_set_transform(Vector2.ZERO)
+ if compact:
+  var font := ThemeDB.fallback_font
+  var name := GameCatalog.country_name(destination_id)
+  var font_size := 16
+  while font_size > 9 and font.get_string_size(name, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x > size.x - 12: font_size -= 1
+  draw_string(font, Vector2(6, 114), name, HORIZONTAL_ALIGNMENT_CENTER, size.x - 12, font_size, Color("203d4d"))
 
 func draw_ellipse(center: Vector2, radii: Vector2, color: Color) -> void:
  var points := PackedVector2Array()

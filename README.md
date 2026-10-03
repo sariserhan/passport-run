@@ -78,3 +78,9 @@ New games memorize the path for **3 seconds**. Infinite has its own dreamscape. 
 **SHORT ADVENTURES** offers three-country trips with finish badges. **COLLECTION GOALS** unlocks cosmetic passport covers as you collect countries. Correct-jump streaks add rising notes and visual feedback; failures reveal the missed tile. Scenery has subtle motion, and the world map tracks regional completion. These rewards preserve gameplay and competitive scoring.
 
 Your standing stone progressively cracks during the ten-second decision window. Timeout collapses the entire occupied row, including the starting platform before the first jump. Landing gives the new stone a fresh timer.
+
+## Latest additions
+
+Adventure Play adds ice, moving bridges and low-gravity/buoyant jumps. MY TRAVEL ROOM and WARDROBE save earned decorations and cosmetics. Friend challenge links include a local ghost replay; cinematic arrivals introduce adventure and paid destinations. See [handoff](HANDOFF.md) for verification and limits.
+
+For the iPhone project with challenge-link support, run `python3 tools/export_iphone.py /private/tmp/passport-native-travel-expansion`. Device testing is deferred to you.

@@ -3,13 +3,19 @@ extends RefCounted
 
 const PREFIX := "PR1."
 
-static func encode(seed_value: int, difficulty_key: String, route: Array[String], target: int, balance_version: int = GameCatalog.BALANCE_VERSION) -> String:
+static func encode(seed_value: int, difficulty_key: String, route: Array[String], target: int, balance_version: int = GameCatalog.BALANCE_VERSION, ghost: Array[int] = []) -> String:
 	var data := {"generator_version": PathGenerator.VERSION, "seed": seed_value, "difficulty": difficulty_key, "route": route, "starting_country": route[0], "target_score": target}
 	data.balance_version = balance_version
+	if not ghost.is_empty(): data.ghost = ghost.slice(0, mini(target, 512))
 	return PREFIX + Marshalls.utf8_to_base64(JSON.stringify(data))
+
+static func link(code: String) -> String:
+	return "passport-run://challenge/" + code.uri_encode()
 
 static func decode(code: String) -> Dictionary:
 	code = code.strip_edges()
+	if code.begins_with("passport-run://challenge/"):
+		code = code.trim_prefix("passport-run://challenge/").uri_decode()
 	if not code.begins_with(PREFIX) or code.length() > 8192:
 		return {}
 	var encoded := code.trim_prefix(PREFIX)
@@ -52,4 +58,11 @@ static func decode(code: String) -> Dictionary:
 		return {}
 	if data.target_score > data.route.size() * GameCatalog.difficulty(data.difficulty).row_count:
 		return {}
+	if data.has("ghost"):
+		if not data.ghost is Array or data.ghost.size() > mini(int(data.target_score), 512): return {}
+		for decision in data.ghost:
+			if not (decision is int or decision is float) or decision != floor(decision) or decision < 0 or decision >= 10000: return {}
+		var timings: Array[int] = []
+		timings.assign(data.ghost)
+		data.ghost = timings
 	return data

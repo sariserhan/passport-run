@@ -6,6 +6,9 @@ var config: DifficultyConfig
 var first_row: int = 0
 var destination_id := ""
 var layout := "classic"
+var moving := false
+var frozen := true
+var motion_clock := 0.0
 
 func build(settings: DifficultyConfig, start_row: int = 0, count: int = -1) -> void:
 	first_row = start_row
@@ -35,6 +38,12 @@ func position_for(row: int, lane: int) -> Vector3:
 	var bend := sin((row + 1) * 0.45) * 0.65 if layout in ["curve", "bridge"] else 0.0
 	var height := (1.0 - cos((row + 1) * 0.35)) * 0.22 if layout == "climb" else 0.0
 	return Vector3((lane - (config.lane_count - 1) / 2.0) * config.lane_spacing + bend, height, -(row + 1) * config.row_spacing)
+
+func _process(delta: float) -> void:
+	if not moving or frozen: return
+	motion_clock += delta
+	for tile in tiles:
+		tile.position = position_for(tile.row, tile.lane) + Vector3(sin(motion_clock * 1.2 + tile.row * 0.25) * 0.55, 0, 0)
 
 func tile_at(row: int, lane: int) -> PathTile:
 	return tiles[(row - first_row) * config.lane_count + lane]
