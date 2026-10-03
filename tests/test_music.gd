@@ -1,7 +1,7 @@
 extends SceneTree
 
 func _initialize() -> void:
-	create_timer(30).timeout.connect(func(): quit(1))
+	create_timer(60).timeout.connect(func(): quit(1))
 	run.call_deferred()
 
 func ready_song(audio: GameAudio) -> void:
@@ -19,6 +19,12 @@ func run() -> void:
 	assert(audio.synthesis != null and audio.music.stream == original, "Composition is prepared off the gameplay thread")
 	await ready_song(audio)
 	var france: AudioStreamWAV = audio.music.stream
+	assert(france.get_length() > 20, "Composed themes have room for answering phrases")
+	assert(france.save_to_wav("res://artifacts/music-france.wav") == OK)
+	var peak := 0
+	for index in range(0, france.data.size(), 2):
+		peak = maxi(peak, absi(france.data.decode_s16(index)))
+	assert(peak > 1000 and peak < 31130, "Soundtrack is audible with headroom and no clipping")
 	assert(france.loop_mode == AudioStreamWAV.LOOP_FORWARD and france.loop_end > 0)
 	audio.play_destination("FR")
 	assert(audio.music.stream == france, "Retry keeps music uninterrupted")
@@ -30,9 +36,11 @@ func run() -> void:
 	audio.play_destination("JP")
 	await ready_song(audio)
 	assert(audio.music_style == "plucked")
+	assert(audio.music.stream.save_to_wav("res://artifacts/music-japan.wav") == OK)
 	audio.play_destination("SAHARA")
 	await ready_song(audio)
 	assert(audio.music_style == "desert")
+	assert(audio.music.stream.save_to_wav("res://artifacts/music-desert.wav") == OK)
 	audio.play_destination("UNDERWATER")
 	await ready_song(audio)
 	assert(audio.music_style == "water")

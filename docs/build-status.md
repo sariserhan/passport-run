@@ -72,3 +72,11 @@ Challenge sharing now copies a self-contained `passport-run://challenge/…` ins
 Adventure and paid destinations have skippable, pauseable cinematic artwork arrivals before memorization, with Reduced Motion support. Physical-device testing is intentionally deferred to the user; no device acceptance or live purchase is claimed. Latest signed project: `/private/tmp/passport-native-travel-expansion/PassportRun.xcodeproj`. Regenerate with `python3 tools/export_iphone.py /private/tmp/passport-native-travel-expansion`, then build/run through Xcode. See [native link notes](../ios/native/README.md).
 
 Rendered feature checks passed (37); screenshots are `artifacts/expansion-*.png`. Signed generic-iPhone build passed. All 12 Godot regression suites and four Python checks passed; the real local Godot/backend integration passed 19 checks. Exported native resource-pack loading passed.
+
+## Soundtrack clarity pass — 2026-10-02
+
+Replaced random scale walks and unrelated backing chords with four composed answering phrases, rests, diatonic chord progressions and phrase dynamics. Slower 16-bar arrangements distinguish plucked strings, bell tones, warm sustained leads, waltz accompaniment and percussion. Short reflections soften timbres; music gain increased 3 dB while retaining mute, pause, bounded background synthesis and crossfades. These remain original synthesized music, not recorded country songs or film scores.
+
+Music lifecycle checks passed, including minimum phrase duration, audible unclipped PCM, deterministic destination differences and rapid changes; 1,189 destination-polish checks passed. Listen to `artifacts/music-france.wav`, `music-japan.wav`, and `music-desert.wav`. Musical taste and device listening remain user acceptance; objective tests do not prove perceived quality.
+
+Updated signed iPhone build passed at `/private/tmp/passport-native-travel-expansion`; no device installation performed.

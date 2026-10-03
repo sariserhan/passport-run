@@ -99,61 +99,90 @@ func _process(delta: float) -> void:
 func update_music_volume() -> void:
 	var progress := 1.0 - fade_remaining / 1.2
 	var volume := float(settings.get("music", 0.35))
-	music.volume_db = linear_to_db(maxf(0.0001, volume * sin(progress * PI / 2))) - 13
-	outgoing.volume_db = linear_to_db(maxf(0.0001, volume * cos(progress * PI / 2))) - 13
+	music.volume_db = linear_to_db(maxf(0.0001, volume * sin(progress * PI / 2))) - 10
+	outgoing.volume_db = linear_to_db(maxf(0.0001, volume * cos(progress * PI / 2))) - 10
 
 func soundtrack(id: String, style: String) -> AudioStreamWAV:
-	# Original regional-inspired synthesis, not traditional songs or film scores.
+	# Original composed themes; regional colors, not traditional or film recordings.
 	const RATE := 22050
 	var seed_value := GameCatalog.daily_seed(id, "soundtrack")
-	var rng := RandomNumberGenerator.new()
-	rng.seed = seed_value
-	var scale: Array = [0, 2, 4, 7, 9]
-	if style in ["desert", "fantasy", "mountain", "space"]:
-		scale = [0, 1, 4, 5, 7, 8, 10] if style == "desert" else [0, 2, 3, 5, 7, 10]
-	var beat := 0.28 if style in ["guitar", "drums", "plucked"] else 0.38
-	var root := 196.0 * pow(2.0, float(seed_value % 7) / 12.0)
-	var motif: Array[int] = []
-	var degree := rng.randi_range(0, scale.size() - 1)
-	for step in 8:
-		degree = clampi(degree + rng.randi_range(-1, 1), 0, scale.size() - 1)
-		motif.append(degree)
-	var notes: Array[float] = []
-	for step in 64:
-		degree = 0 if step % 16 == 15 else motif[step % 8]
-		notes.append(root * pow(2.0, float(scale[degree]) / 12.0))
-	var count := int(RATE * beat) * notes.size()
+	var minor := style in ["desert", "fantasy", "mountain", "space"]
+	var scale: Array = [0, 2, 3, 5, 7, 8, 10] if minor else [0, 2, 4, 5, 7, 9, 11]
+	if style == "desert": scale = [0, 1, 4, 5, 7, 8, 10]
+	var beat := 0.46 if style in ["guitar", "drums", "plucked"] else 0.56
+	var meter := 3 if style == "waltz" else 4
+	var bar_samples := int(RATE * beat) * meter
+	var count := bar_samples * 16
+	var root := 220.0 * pow(2.0, float(seed_value % 5 - 2) / 12.0)
+	# Four answering phrases. Rests give the melody breathing room.
+	var phrases: Array = [[0, 2, 4, -1, 4, 2, 1, -1], [2, 4, 6, 4, 2, -1, 1, 0], [4, 6, 7, -1, 6, 4, 2, -1], [2, 1, 0, -1, 1, 2, 0, -1]]
+	var progression: Array = [0, 5, 3, 4] if not minor else [0, 5, 2, 6]
 	var pcm := PackedByteArray()
 	pcm.resize(count * 2)
-	var samples_per_beat := int(RATE * beat)
+	var dry := PackedFloat32Array()
+	dry.resize(count)
+	var beat_samples := int(RATE * beat)
+	var chords: Array = []
+	var notes: Array[float] = []
+	for bar in 16:
+		var chord_degree: int = progression[(bar / 2) % 4]
+		var frequencies: Array[float] = []
+		for interval in [0, 2, 4]:
+			var d: int = chord_degree + interval
+			frequencies.append(root * pow(2.0, float(scale[d % 7] + (d / 7) * 12) / 12.0))
+		chords.append(frequencies)
+		var phrase: Array = phrases[(bar / 4 + seed_value % 4) % 4]
+		for step in meter:
+			var degree: int = phrase[(bar % 2) * meter + step]
+			if degree < 0:
+				notes.append(0.0)
+			else:
+				degree += chord_degree
+				notes.append(root * pow(2.0, float(scale[degree % 7] + (degree / 7) * 12) / 12.0))
 	for index in count:
-		var step := index / samples_per_beat
-		var local := float(index % samples_per_beat) / RATE
-		var phase := TAU * notes[step] * local
-		var envelope := (1.0 - exp(-local * 80.0)) * exp(-local * (5.0 if style in ["space", "water", "mountain"] else 12.0))
-		var lead := sin(phase)
-		if style in ["plucked", "guitar", "waltz", "desert"]:
-			lead += sin(phase * 2.0) * 0.3 + sin(phase * 3.0) * 0.12
-		elif style in ["bells", "water", "fantasy"]:
-			lead += sin(phase * 2.76) * 0.25
-		var time := float(index) / RATE
-		var chord: float = [1.0, 0.75, 0.889, 0.667][(step / 8) % 4]
-		var tail := minf(1.0, float(samples_per_beat - index % samples_per_beat) / RATE * 80.0)
-		var bass := sin(TAU * root * chord * 0.5 * local) * 0.13 * exp(-local * 5.0)
-		var third := 1.189 if style in ["desert", "fantasy", "mountain", "space"] else 1.26
-		var pad := (sin(TAU * root * chord * time) + sin(TAU * root * chord * 1.5 * time) + sin(TAU * root * chord * third * time)) * 0.035
-		var chord_time := float(index % (samples_per_beat * 8)) / RATE
-		pad *= minf(1.0, minf(chord_time, float(samples_per_beat * 8) / RATE - chord_time) * 10.0)
-		var arp_time := fmod(local, beat / 2)
-		var arp := sin(TAU * root * chord * (2.0 if local < beat / 2 else 3.0) * arp_time) * exp(-arp_time * 18.0) * 0.045
-		arp *= minf(1.0, (beat / 2 - arp_time) * 80.0)
-		var drum := 0.0
-		if style in ["drums", "guitar", "desert", "plucked"]:
-			drum = sin(TAU * (65.0 if step % 2 == 0 else 150.0) * local) * exp(-local * 35.0) * 0.14
-			drum += sin(local * 11893) * sin(local * 7193) * exp(-arp_time * 80) * 0.045
-		# Whole-loop fades avoid clicks on replay, including sustained layers.
-		var fade := minf(1.0, minf(time, float(count - index) / RATE) * 25.0)
-		pcm.encode_s16(index * 2, int(clampf(((lead * envelope * 0.25 + bass + drum) * tail + pad + arp) * fade, -1.0, 1.0) * 32767))
+		var bar := index / bar_samples
+		var step := (index / beat_samples) % meter
+		var local := float(index % beat_samples) / RATE
+		var bar_time := float(index % bar_samples) / RATE
+		var chord_root: float = chords[bar][0]
+		var frequency: float = notes[index / beat_samples]
+		var lead := 0.0
+		if frequency > 0:
+			var phase := TAU * frequency * local
+			var attack := minf(1.0, local * 100.0)
+			var release := minf(1.0, (beat - local) * 35.0)
+			if style in ["guitar", "plucked", "desert"]:
+				lead = (sin(phase) + sin(phase * 2) * 0.32 + sin(phase * 3) * 0.14 + sin(phase * 4) * 0.06) * exp(-local * 7.0)
+			elif style in ["bells", "water"]:
+				lead = sin(phase) * exp(-local * 3.0) + sin(phase * 2) * exp(-local * 9.0) * 0.3 + sin(phase * 4) * exp(-local * 15.0) * 0.08
+			elif style == "waltz":
+				lead = (sin(phase) + sin(phase * 2) * 0.18 + sin(phase * 3) * 0.08) * exp(-local * 4.0)
+			else:
+				lead = (sin(phase + sin(TAU * 4.5 * local) * 0.035) + sin(phase * 2) * 0.1) * minf(1.0, local * 14.0) * exp(-local * 1.6)
+			lead *= attack * release * 0.24
+		var bass_frequency := chord_root * (0.5 if step % 2 == 0 else 0.75)
+		var bass := sin(TAU * bass_frequency * local) * exp(-local * 4) * minf(1, local * 80) * 0.13
+		var harmony := 0.0
+		for tone in chords[bar]:
+			harmony += sin(TAU * tone * bar_time) * 0.025
+		harmony *= minf(1.0, minf(bar_time, beat * meter - bar_time) * 8)
+		var percussion := 0.0
+		if style in ["guitar", "drums", "desert", "plucked"]:
+			if step == 0 or step == 2:
+				percussion += sin(TAU * (48 * local + 1.4 * (1 - exp(-local * 24)))) * exp(-local * 24) * 0.12
+			var offbeat := fmod(local, beat / 2)
+			var noise := sin(index * 1.713) * sin(index * 2.391)
+			percussion += noise * exp(-offbeat * 100) * 0.022
+			if step == 1 or step == 3:
+				percussion += (noise * 0.045 + sin(TAU * 180 * local) * 0.04) * exp(-local * 35)
+		var phrase_gain := 0.75 if bar in [3, 7, 11, 15] else 1.0
+		dry[index] = lead * phrase_gain + bass + harmony + percussion
+	# Short, quiet reflections soften the synthetic instruments without burying notes.
+	var delay := int(RATE * beat * 0.75)
+	for index in count:
+		var sample := dry[index] + dry[(index - delay + count) % count] * 0.16 + dry[(index - delay * 2 + count) % count] * 0.07
+		var fade := minf(1.0, minf(float(index), float(count - index)) / RATE * 25)
+		pcm.encode_s16(index * 2, int(clampf(sample * fade, -0.95, 0.95) * 32767))
 	var stream := AudioStreamWAV.new()
 	stream.format = AudioStreamWAV.FORMAT_16_BITS
 	stream.mix_rate = RATE
