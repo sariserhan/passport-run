@@ -90,6 +90,7 @@ func run() -> void:
  arcade.simulate(1)
  expect(arcade.remaining == remaining and arcade.phase == BalloonArcade.Phase.PAUSED, "Pause freezes timer and simulation")
  arcade.set_paused(false)
+ arcade.simulate(3.0) # Resume countdown does not advance the saved simulation.
  arcade.invincible = 0
  arcade.balls.assign([arcade.make_ball(Vector2(arcade.player_x, arcade.floor_y - 35), 0, 1)])
  arcade.wires.clear()

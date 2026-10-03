@@ -17,7 +17,7 @@ const IDLE_SOLE := 699.0
 const PORTRAIT := preload("res://assets/arcade-poses.png")
 const DROPS := ["double", "sticky", "gun", "triple", "spread", "laser", "rocket", "rapid", "freeze", "slow", "boots", "upgrade", "time", "coin", "bomb", "magnet", "speed", "multiply", "heavy", "reverse", "jam", "shrink_time"]
 const WEAPONS := ["double", "sticky", "gun", "triple", "spread", "laser", "rocket"]
-enum Phase { READY, PLAY, CLEAR, FAILED, PAUSED, TRAVEL }
+enum Phase { READY, PLAY, CLEAR, FAILED, PAUSED, TRAVEL, COUNTDOWN }
 var phase := Phase.READY
 var profile: PlayerProfile
 var audio: GameAudio
@@ -111,12 +111,52 @@ var stamp: PassportStamp
 var arrival: TravelTransition
 var stamp_pending := false
 var last_haptic := -1000
+var quick_retry: Button
+var countdown: ColorRect
+var countdown_label: Label
+var countdown_remaining := 0.0
+var feedback: Label
+var feedback_time := 0.0
+var country_drops := 0
+var earned_badges: Array[String] = []
+var best_before := 0
+var best_initialized := false
+var best_beaten := false
+
+func initialize_best() -> void:
+ if best_initialized: return
+ best_before = profile.best_score(record_mode(), "moderate" if route_kind == "daily" else profile.difficulty)
+ best_initialized = true
+
+func show_feedback(message: String) -> void:
+ feedback.text = message
+ feedback_time = 4.0
+ feedback.show()
+
+func update_personal_best() -> void:
+ if not best_initialized or best_beaten or score <= best_before: return
+ best_beaten = true
+ if not feedback.visible or not feedback.text.begins_with("ACHIEVEMENT"):
+  show_feedback("PERSONAL BEST! · %d pts" % score)
+ pulse(30)
+
+func retry_round() -> void:
+ if phase != Phase.FAILED: return
+ begin_round()
+
+func clear_controls() -> void:
+ left_held = false
+ right_held = false
+ fire_held = false
+ touches.clear()
+ partner_held.clear()
+ update_control_feedback()
 
 func checkpoint_key() -> String:
  return "daily:" + daily_day if route_kind == "daily" else route_kind
 
 func save_checkpoint() -> void:
- if finished_tour or route.is_empty() or not is_instance_valid(panel): return
+ if route_kind == "practice" or finished_tour or route.is_empty() or not is_instance_valid(panel): return
  var encoded := ArcadeCheckpoint.capture(self)
  if encoded.is_empty():
   notice.text = "Progress could not be saved. Try returning to the menu."
@@ -129,6 +169,7 @@ func save_checkpoint() -> void:
  autosave_time = 0
 
 func restore_checkpoint() -> bool:
+ if route_kind == "practice": return false
  var state := ArcadeCheckpoint.decode(profile.arcade_saves.get(checkpoint_key(), ""), self)
  if state.is_empty(): return false
  for field in ArcadeCheckpoint.FIELDS: set(field, state[field])
@@ -140,6 +181,7 @@ func restore_checkpoint() -> bool:
  platforms.assign(state.platforms)
  effects = state.effects
  rng.state = state.rng
+ initialize_best()
  rescale_world(state.floor)
  resumed = true
  lives = 0 if state.phase == Phase.FAILED else 1
@@ -160,7 +202,7 @@ func restore_checkpoint() -> bool:
  elif state.phase == Phase.FAILED:
   phase = Phase.FAILED
   death_time = 0
-  show_panel("RETRY YOUR SAVED ROUND\n%s · %d/3" % [GameCatalog.country_name(route[country_index]), round_index + 1], "RETRY ROUND", begin_round)
+  show_panel("GAME OVER\n%s · Round %d/3 · %d pts" % [GameCatalog.country_name(route[country_index]), round_index + 1, score], "RETRY ROUND", retry_round)
  else: phase = Phase.READY
  return true
 
@@ -185,6 +227,7 @@ func pulse(duration: int = 20) -> void:
  Input.vibrate_handheld(duration, 0.35)
 
 func record_mode() -> String:
+ if route_kind == "practice": return "balloon-practice:" + route[0] + (":coop" if coop else "")
  return "balloon-daily:" + daily_day if route_kind == "daily" else "balloon-coop" if coop else "balloon"
 
 static func daily_destination(day: String) -> String:
@@ -279,6 +322,29 @@ func _ready() -> void:
  panel.color = Color(0.04, 0.12, 0.18, 0.94)
  panel.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
  add_child(panel)
+ quick_retry = style.button("RETRY ROUND", true)
+ quick_retry.pressed.connect(retry_round)
+ quick_retry.hide()
+ add_child(quick_retry)
+ countdown = ColorRect.new()
+ countdown.color = Color(0.03, 0.10, 0.16, 0.55)
+ countdown.mouse_filter = Control.MOUSE_FILTER_IGNORE
+ add_child(countdown)
+ countdown_label = style.label("3", 72, GameHUD.CREAM)
+ countdown_label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+ countdown_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+ countdown_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+ countdown.add_child(countdown_label)
+ countdown.hide()
+ feedback = style.label("", 18, Color("ffdf80"))
+ feedback.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+ feedback.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+ feedback.add_theme_color_override("font_shadow_color", Color("102c43"))
+ feedback.add_theme_constant_override("shadow_offset_x", 2)
+ feedback.add_theme_constant_override("shadow_offset_y", 2)
+ add_child(feedback)
+ feedback.hide()
+ move_child(panel, get_child_count() - 1)
  stamp = PassportStamp.new()
  add_child(stamp)
  stamp.setup(style)
@@ -294,7 +360,7 @@ func _ready() -> void:
  layout()
  if restore_checkpoint() and phase != Phase.READY: return
  load_destination()
- show_panel(("DAILY ARCADE · " + daily_day + "\n" + starting_weapon.to_upper() + " · " + daily_modifier.to_upper() + "\nBest today: %d pts\n" % int(profile.records.get(record_mode() + ":moderate", 0)) if route_kind == "daily" else "") + "BALLOON TOUR\nMove ◀ ▶ and FIRE ↑.\nSplit balloons; clear 3 rounds.\nOne balloon hit ends the game.\n? drops may help or hurt.", "START", begin_round)
+ show_panel(("PRACTICE · " + GameCatalog.country_name(route[0]) + "\nYour journey stays saved.\n" if route_kind == "practice" else "DAILY ARCADE · " + daily_day + "\n" + starting_weapon.to_upper() + " · " + daily_modifier.to_upper() + "\nBest today: %d pts\n" % int(profile.records.get(record_mode() + ":moderate", 0)) if route_kind == "daily" else "") + "BALLOON TOUR\nMove ◀ ▶ and FIRE ↑.\nSplit balloons; clear 3 rounds.\nOne balloon hit ends the game.\n? drops may help or hurt.", "START", begin_round)
 
 func set_control(key: String, pressed: bool) -> void:
  if phase != Phase.PLAY and pressed: return
@@ -363,6 +429,12 @@ func layout() -> void:
    var button := row.get_child(index) as Button
    button.position = Vector2(0 if index == 0 else arrow_width + 8 if index == 1 else arrow_width * 2 + 8 + gap, 0)
    button.size = Vector2(arrow_width if index < 2 else arrow_width * 2, 72)
+ quick_retry.position = Vector2(margins.x, controls.position.y)
+ quick_retry.size = Vector2(size.x - margins.x - margins.z, 72)
+ countdown.position = area.position
+ countdown.size = area.size
+ feedback.position = area.position + Vector2(10, 10)
+ feedback.size.x = area.size.x - 20
  queue_redraw()
 
 func arena() -> Rect2:
@@ -380,12 +452,8 @@ func load_destination() -> void:
  heading.text = ("DAILY · " if route_kind == "daily" else "") + GameCatalog.country_name(route[country_index]) + " · %d/3" % (round_index + 1)
 
 func show_panel(message: String, action_text: String, callback: Callable) -> void:
- left_held = false
- right_held = false
- fire_held = false
- touches.clear()
- partner_held.clear()
- update_control_feedback()
+ clear_controls()
+ quick_retry.hide()
  for child in panel.get_children():
   panel.remove_child(child)
   child.queue_free()
@@ -437,12 +505,21 @@ func wave_interval(enraged: bool) -> float:
 
 func begin_round() -> void:
  if phase == Phase.FAILED:
+  best_initialized = false
+  best_beaten = false
+ initialize_best()
+ if phase == Phase.FAILED:
   score = round_score
   coins = round_coins
  else:
   round_score = score
   round_coins = coins
  phase = Phase.PLAY
+ quick_retry.hide()
+ countdown.hide()
+ feedback.hide()
+ feedback_time = 0
+ clear_controls()
  panel.hide()
  load_destination()
  lives = 1
@@ -560,6 +637,27 @@ func fire(origin: float = -1) -> bool:
  audio.play_cue("team" if special_fired else "shot_" + equipped)
  return true
 
+func queue_boss_attack(boss: Dictionary, charge: bool, minions: int) -> void:
+ boss.warning = 0.85
+ boss.charge_pending = boss.get("charge_pending", false) or charge
+ boss.minions_pending = mini(4, int(boss.get("minions_pending", 0)) + minions)
+
+func update_boss_attacks(delta: float) -> void:
+ for boss in balls:
+  if not boss.get("boss", false) or boss.get("warning", 0.0) <= 0: continue
+  boss.warning = maxf(0, boss.warning - delta)
+  if boss.warning > 0: continue
+  if boss.get("charge_pending", false):
+   boss.velocity.x = clampf(-boss.velocity.x * 1.25, -520, 520)
+  for index in int(boss.get("minions_pending", 0)):
+   if balls.size() >= 20: break
+   var direction := -1 if index % 2 == 0 else 1
+   var spawn := Vector2(clampf(boss.position.x + direction * 44, 20, 700), minf(boss.position.y, floor_y - 160))
+   balls.append(make_ball(spawn, 0, direction))
+  boss.charge_pending = false
+  boss.minions_pending = 0
+  audio.play_cue("armor")
+
 func pop_ball(index: int) -> void:
  var ball: Dictionary = balls[index]
  ball.flash = 0.18
@@ -575,8 +673,7 @@ func pop_ball(index: int) -> void:
   burst(ball.position, Color("ffc75b"))
   if ball.hp > 0:
    if ball.hp == int(ball.max_hp) - 2 or ball.hp == int(ball.max_hp) / 2:
-    ball.velocity.x *= -1.25
-    for direction in [-1,1]: balls.append(make_ball(ball.position, 0, direction))
+    queue_boss_attack(ball, true, 2)
    notice.text = "BOSS ARMOR CRACKED · %d hits left" % ball.hp
    return
  balls.remove_at(index)
@@ -585,12 +682,16 @@ func pop_ball(index: int) -> void:
  score += (3 - int(ball.tier)) * 100 + mini(5, combo - 1) * 20
  burst(ball.position, Color("ffe8a4"))
  pops += 1
+ var pop_badge := route_kind != "practice" and profile.note_arcade_pop()
+ if pop_badge:
+  show_feedback("ACHIEVEMENT · 100 Pops\nSky Balloon outfit unlocked")
  coins += 2 if travel_choice == "detour" and country_index > 0 else 1
  audio.play_cue("burst")
  if int(ball.tier) > 0 and not ball.get("boss", false):
   for direction in [-1, 1]: balls.append(make_ball(ball.position, int(ball.tier) - 1, direction))
  if pickups.size() < 10 and (pops % 3 == 0 or rng.randf() < 0.22):
   pickups.append({"position": ball.position, "kind": DROPS[rng.randi_range(0, DROPS.size() - 1)], "age": 0.0})
+ if pop_badge: save_checkpoint()
 
 func burst(point: Vector2, color: Color) -> void:
  for index in 18:
@@ -599,6 +700,7 @@ func burst(point: Vector2, color: Color) -> void:
 
 func collect(kind: String) -> void:
  if kind not in DROPS: return
+ if country_drops >= 0: country_drops += 1
  if kind in WEAPONS:
   if kind == weapon and weapon_time > 0: weapon_level = mini(3, weapon_level + 1)
   else:
@@ -647,22 +749,22 @@ func boost_time(seconds: float) -> void:
 
 func fail_round(reason: String) -> void:
  phase = Phase.FAILED
+ country_failed = true
  movement = 0
  partner_movement = 0
  walk_speed = 0
  partner_walk_speed = 0
  death_time = 0.9
  death_reason = reason
- left_held = false
- right_held = false
- fire_held = false
- touches.clear()
- partner_held.clear()
+ clear_controls()
  update_stats()
  update_control_feedback()
  pulse(55)
  save_checkpoint()
  profile.record(record_mode(), "moderate" if route_kind == "daily" else profile.difficulty, score)
+ panel.hide()
+ quick_retry.show()
+ quick_retry.grab_focus.call_deferred()
  queue_redraw()
 
 func hit() -> void:
@@ -683,12 +785,15 @@ func clear_round() -> void:
  score += int(remaining) * 10
  coins += 10 if round_index < 2 else 30
  profile.record(record_mode(), "moderate" if route_kind == "daily" else profile.difficulty, score)
- if round_index == 2:
+ earned_badges.clear()
+ if round_index == 2 and route_kind != "practice":
   profile.discover(route[country_index])
   profile.advance_missions(route[country_index], not country_failed, false)
+  for id in ["arcade:clean_boss", "arcade:no_drops"]:
+   if ((id == "arcade:clean_boss" and not country_failed) or (id == "arcade:no_drops" and country_drops == 0)) and profile.award_badge(id, false): earned_badges.append(id)
  update_stats()
  save_checkpoint()
- if round_index == 2:
+ if round_index == 2 and route_kind != "practice":
   stamp_pending = true
   panel.hide()
   stamp.present(route[country_index], Vector2(size.x / 2, size.y / 2), profile.settings.reduced_motion)
@@ -701,7 +806,10 @@ func finish_stamp() -> void:
  show_clear_panel()
 
 func show_clear_panel() -> void:
- show_panel(("DESTINATION STAMPED!" if round_index == 2 else "ROUND CLEARED!") + "\n" + GameCatalog.country_name(route[country_index]) + " · Score %d" % score, "NEXT DESTINATION" if round_index == 2 else "NEXT ROUND", next_round)
+ var message := ("PRACTICE COMPLETE!" if round_index == 2 and route_kind == "practice" else "DESTINATION STAMPED!" if round_index == 2 else "ROUND CLEARED!") + "\n" + GameCatalog.country_name(route[country_index]) + " · Score %d" % score
+ if best_beaten: message += "\nNEW PERSONAL BEST!"
+ for id in earned_badges: message += "\n★ " + ArcadeAchievements.BADGES[id].name + " · Wardrobe reward unlocked"
+ show_panel(message, "FINISH PRACTICE" if round_index == 2 and route_kind == "practice" else "NEXT DESTINATION" if round_index == 2 else "NEXT ROUND", next_round)
 
 func next_round() -> void:
  if phase != Phase.CLEAR or stamp_pending: return
@@ -733,6 +841,7 @@ func finish_arrival() -> void:
  if phase != Phase.TRAVEL: return
  country_index += 1
  country_failed = false
+ country_drops = 0
  round_index = 0
  controls.show()
  partner_controls.visible = coop
@@ -741,17 +850,25 @@ func finish_arrival() -> void:
  begin_round()
 
 func set_paused(value: bool) -> void:
- if value and (phase == Phase.PLAY or (phase == Phase.FAILED and death_time > 0)):
-  pause_from = phase
+ if value and (phase in [Phase.PLAY, Phase.COUNTDOWN] or (phase == Phase.FAILED and death_time > 0)):
+  pause_from = Phase.PLAY if phase == Phase.COUNTDOWN else phase
   phase = Phase.PAUSED
+  countdown.hide()
   audio.set_paused(true)
   update_control_feedback()
   save_checkpoint()
   show_panel("BALLOON TOUR PAUSED", "RESUME", func(): set_paused(false))
  elif not value and phase == Phase.PAUSED:
-  phase = pause_from
   panel.hide()
-  audio.set_paused(false)
+  if pause_from == Phase.PLAY:
+   phase = Phase.COUNTDOWN
+   countdown_remaining = 3.0
+   countdown_label.text = "3"
+   countdown.show()
+  else:
+   phase = pause_from
+   quick_retry.visible = death_time > 0
+   audio.set_paused(false)
 
 func exit_game() -> void:
  save_checkpoint()
@@ -768,6 +885,14 @@ func _notification(what: int) -> void:
    save_checkpoint()
 
 func _input(event: InputEvent) -> void:
+ if phase == Phase.COUNTDOWN and event is InputEventScreenTouch and event.pressed and pause_button.get_global_rect().has_point(event.position):
+  set_paused(true)
+  get_viewport().set_input_as_handled()
+  return
+ if phase == Phase.FAILED and event is InputEventScreenTouch and event.pressed and quick_retry.visible and quick_retry.get_global_rect().has_point(event.position):
+  retry_round()
+  get_viewport().set_input_as_handled()
+  return
  if phase != Phase.PLAY: return
  if event is InputEventScreenDrag and touches.has(event.index):
   var old_key: String = touches[event.index]
@@ -799,7 +924,12 @@ func _input(event: InputEvent) -> void:
    get_viewport().set_input_as_handled()
 
 func _unhandled_input(event: InputEvent) -> void:
- if event is InputEventKey and event.physical_keycode == KEY_Q and event.pressed and not event.echo:
+ if phase == Phase.FAILED and event is InputEventKey and event.pressed and not event.echo and event.physical_keycode in [KEY_R, KEY_SPACE, KEY_ENTER]:
+  retry_round()
+  get_viewport().set_input_as_handled()
+ elif phase == Phase.COUNTDOWN:
+  if event.is_action_pressed("ui_cancel"): set_paused(true)
+ elif event is InputEventKey and event.physical_keycode == KEY_Q and event.pressed and not event.echo:
   accept_drops = not accept_drops
   notice.text = "? DROPS: COLLECT" if accept_drops else "? DROPS: AVOID"
   get_viewport().set_input_as_handled()
@@ -811,16 +941,26 @@ func _unhandled_input(event: InputEvent) -> void:
   get_viewport().set_input_as_handled()
 
 func _physics_process(delta: float) -> void:
- if phase != Phase.PLAY and not (phase == Phase.FAILED and death_time > 0): return
+ if phase not in [Phase.PLAY, Phase.COUNTDOWN] and not (phase == Phase.FAILED and death_time > 0): return
  simulate(minf(delta, 1.0 / 30))
 
 func simulate(delta: float) -> void:
+ if phase == Phase.COUNTDOWN:
+  countdown_remaining = maxf(0, countdown_remaining - delta)
+  countdown_label.text = str(ceili(countdown_remaining))
+  if countdown_remaining == 0:
+   phase = Phase.PLAY
+   countdown.hide()
+   audio.set_paused(false)
+  return
  if phase == Phase.FAILED and death_time > 0:
   death_time = maxf(0, death_time - delta)
   queue_redraw()
-  if death_time == 0: show_panel(death_reason + "\nScore %d · Try this round again" % score, "RETRY ROUND", begin_round)
+  if death_time == 0: show_panel("GAME OVER · %d pts\n%s" % [score, death_reason], "RETRY ROUND", retry_round)
   return
  if phase != Phase.PLAY: return
+ feedback_time = maxf(0, feedback_time - delta)
+ if feedback_time == 0: feedback.hide()
  clock += delta
  autosave_time += delta
  update_control_feedback()
@@ -877,12 +1017,16 @@ func simulate(delta: float) -> void:
   partner_walk += absf(partner_x - previous_partner_x) * 8.0 / 110.0
   if axis != 0: partner_facing = signf(axis)
   partner_visual_facing = update_turn(partner_visual_facing, partner_facing, delta)
- wave_clock += delta
+ wave_clock += delta if round_index != 2 or freeze <= 0 else 0.0
  var enraged := balls.any(func(ball): return ball.get("boss", false) and ball.hp <= int(ball.max_hp) / 2)
  if (challenge in ["swarm", "no_fire"] or round_index == 2) and wave_clock >= wave_interval(enraged):
   wave_clock = 0
-  for wave in (2 if enraged else 1):
+  if round_index == 2:
+   for boss in balls:
+    if boss.get("boss", false): queue_boss_attack(boss, false, 2 if enraged else 1)
+  else:
    if balls.size() < 20: balls.append(make_ball(Vector2(rng.randf_range(40,680), 40), 0, 1 if rng.randf() > 0.5 else -1))
+ if freeze <= 0: update_boss_attacks(delta)
  if fire_held or "FIRE ↑" in touches.values() or Input.is_physical_key_pressed(KEY_SPACE): fire()
  for ball in balls: ball.flash = maxf(0, float(ball.get("flash", 0)) - delta)
  if freeze <= 0:
@@ -989,10 +1133,12 @@ func simulate(delta: float) -> void:
  queue_redraw()
 
 func update_stats() -> void:
+ update_personal_best()
  stats.text = "ONE HIT · %ds · %d pts · %d coins\n%s" % [ceili(remaining), score, coins, weapon.to_upper()]
  if weapon != "wire": stats.text += " Lv%d" % weapon_level
  if combo > 1 and combo_time > 0: stats.text += " · COMBO ×%d" % mini(6, combo)
  if coop: stats.text += " · TEAM BURST %d/4" % team_charge
+ if best_beaten: stats.text += " · BEST!"
  stats.add_theme_font_size_override("font_size", 14)
 
 func _draw() -> void:
@@ -1031,6 +1177,19 @@ func _draw() -> void:
    draw_arc(ball.position,ball.radius+5,0,TAU,40,Color("ffdd79"),6 if ball.hp > int(ball.max_hp)-2 else 2,true)
    draw_rect(Rect2(ball.position.x-45,ball.position.y-ball.radius-15,90,7),Color("193b52"))
    draw_rect(Rect2(ball.position.x-45,ball.position.y-ball.radius-15,90*float(ball.hp)/ball.max_hp,7),Color("ffdd79"))
+   if ball.get("warning", 0.0) > 0:
+    var pulse_size := 0.0 if profile.settings.reduced_motion else sin(clock * 14) * 3.0
+    draw_arc(ball.position, ball.radius + 12 + pulse_size, 0, TAU, 48, Color("fff5aa"), 5, true)
+    var message := "CHARGE + MINIONS!" if ball.get("charge_pending", false) else "MINIONS INCOMING!"
+    draw_string(ThemeDB.fallback_font, ball.position + Vector2(-115, ball.radius + 32), message, HORIZONTAL_ALIGNMENT_CENTER, 230, 20, Color("fff5aa"))
+    if ball.get("charge_pending", false):
+     var direction := -signf(ball.velocity.x)
+     var tip: Vector2 = ball.position + Vector2(direction * (ball.radius + 65), 0)
+     draw_line(ball.position + Vector2(direction * (ball.radius + 15), 0), tip, Color("fff5aa"), 5, true)
+     draw_line(tip, tip + Vector2(-direction * 16, -12), Color("fff5aa"), 5, true)
+     draw_line(tip, tip + Vector2(-direction * 16, 12), Color("fff5aa"), 5, true)
+    for direction in [-1, 1]:
+     draw_arc(ball.position + Vector2(direction * 44, 0), 18, 0, TAU, 24, Color("fff5aa"), 3, true)
  for pickup in pickups:
   draw_style_box(style.panel_style(Color("ffda79"), 7), Rect2(pickup.position - Vector2(19, 19), Vector2(38, 38)))
   draw_string(ThemeDB.fallback_font, pickup.position + Vector2(-7, 7), "?", HORIZONTAL_ALIGNMENT_LEFT, -1, 24, Color("143e55"))

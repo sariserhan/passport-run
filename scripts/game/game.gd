@@ -112,6 +112,7 @@ func _ready() -> void:
 	menu.cinema_requested.connect(func(id: String): cinema_start = id; start_game("cinema", profile.difficulty))
 	menu.special_requested.connect(func(id: String): special_start = id; start_game("special", profile.difficulty))
 	menu.arcade_requested.connect(start_arcade)
+	menu.arcade_practice_requested.connect(func(id: String): start_arcade("practice", id))
 	menu.start_requested.connect(start_game)
 	menu.challenge_requested.connect(func(data: Dictionary): imported_challenge = data; start_game("challenge", data.difficulty))
 	menu.settings_changed.connect(func(): audio.apply_settings(profile.settings))
@@ -902,12 +903,15 @@ func open_challenge_link(link: String) -> bool:
 	menu.challenge_input.text = link
 	return true
 
-func start_arcade(kind: String) -> void:
-	if kind not in ["world", "special", "cinema", "daily"]: return
-	if kind == "special" and not purchase.unlocked:
+func start_arcade(kind: String, destination: String = "") -> void:
+	if kind not in ["world", "special", "cinema", "daily", "practice"]: return
+	if kind == "practice" and destination not in profile.discoveries:
+		reject_locked_destination()
+		return
+	if (kind == "special" or (kind == "practice" and destination in GameCatalog.PREMIUM_DESTINATIONS)) and not purchase.unlocked:
 		menu.show_special_route()
 		return
-	if kind == "cinema" and not cinema_purchase.unlocked:
+	if (kind == "cinema" or (kind == "practice" and destination in GameCatalog.CINEMA_DESTINATIONS)) and not cinema_purchase.unlocked:
 		menu.show_cinema_route()
 		return
 	if kind == "world" and profile.home_country not in GameCatalog.FREE_DESTINATIONS:
@@ -930,7 +934,9 @@ func start_arcade(kind: String) -> void:
 	arcade.audio = audio
 	arcade.style = hud
 	arcade.route_kind = kind
-	if kind == "daily":
+	if kind == "practice":
+		arcade.route.assign([destination])
+	elif kind == "daily":
 		arcade.configure_daily(Time.get_datetime_string_from_unix_time(int(Time.get_unix_time_from_system())).substr(0, 10))
 	elif kind == "world":
 		arcade.route = profile.tour_route()

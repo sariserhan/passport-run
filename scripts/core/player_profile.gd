@@ -16,6 +16,8 @@ var daily_missions: Dictionary = {}
 var character_style := {"outfit": "classic", "hat": "none", "backpack": "classic"}
 var room_display: Array[String] = []
 var arcade_saves: Dictionary = {}
+var arcade_pops := 0
+var arcade_practice_records: Dictionary = {}
 var cached_home := ""
 var cached_tour: Array[String] = []
 var settings: Dictionary = {"music": 0.35, "sound": 0.65, "reduced_motion": false, "high_contrast": false, "haptics": true}
@@ -39,6 +41,8 @@ func load_profile() -> void:
 	if data.get("anonymous_id") is String and data.anonymous_id.length() == 32 and data.anonymous_id.is_valid_hex_number():
 		anonymous_id = data.anonymous_id
 	tutorial_done = data.get("tutorial_done", false) == true
+	if data.get("arcade_pops") is float or data.get("arcade_pops") is int:
+		arcade_pops = clampi(int(data.arcade_pops), 0, 10000000)
 	if data.get("arcade_saves") is Dictionary:
 		for key in data.arcade_saves:
 			if key is String and key in ["world", "special", "cinema", "daily:" + GameCatalog.today_utc()] and data.arcade_saves[key] is String and data.arcade_saves[key].length() <= ArcadeCheckpoint.MAX_ENCODED:
@@ -56,10 +60,12 @@ func load_profile() -> void:
 			if badge is String and valid_badge(badge) and badge not in badges: badges.append(badge)
 	if data.get("passport_cover", "classic") in TravelGoals.earned_covers(discoveries):
 		passport_cover = data.get("passport_cover", "classic")
-	if data.get("records") is Dictionary:
-		for key in data.records.keys().slice(0, 200):
-			if key is String and key.length() <= 64 and (data.records[key] is float or data.records[key] is int):
-				records[key] = clampi(int(data.records[key]), 0, 10000000)
+	for field in ["records", "arcade_practice_records"]:
+		if data.get(field) is Dictionary:
+			var target: Dictionary = get(field)
+			for key in data[field].keys().slice(0, 200):
+				if key is String and key.length() <= 64 and (data[field][key] is float or data[field][key] is int):
+					target[key] = clampi(int(data[field][key]), 0, 10000000)
 	var missions: Variant = data.get("daily_missions")
 	if missions is Dictionary and missions.get("date") == GameCatalog.today_utc():
 		daily_missions = {"date": missions.date, "countries": [], "flawless": missions.get("flawless") == true, "trip": missions.get("trip") == true}
@@ -73,7 +79,7 @@ func load_profile() -> void:
 	if data.get("character_style") is Dictionary:
 		for kind in character_style:
 			var id: Variant = data.character_style.get(kind)
-			if id is String and CharacterStyle.unlocked(kind, id, discoveries): character_style[kind] = id
+			if id is String and CharacterStyle.unlocked(kind, id, discoveries, badges): character_style[kind] = id
 	if data.get("room_display") is Array:
 		for id in data.room_display:
 			if id is String and id in discoveries and id not in room_display and room_display.size() < 6: room_display.append(id)
@@ -101,6 +107,8 @@ func read_valid(path: String) -> Dictionary:
 
 func save() -> bool:
 	var data := {"version": SCHEMA_VERSION, "anonymous_id": anonymous_id, "home_country": home_country, "difficulty": difficulty, "tutorial_done": tutorial_done, "discoveries": discoveries, "history": history, "records": records, "badges": badges, "passport_cover": passport_cover, "daily_missions": daily_missions, "character_style": character_style, "room_display": room_display, "settings": settings, "arcade_saves": arcade_saves}
+	data["arcade_pops"] = arcade_pops
+	data["arcade_practice_records"] = arcade_practice_records
 	var file := FileAccess.open(file_path + ".tmp", FileAccess.WRITE)
 	if file == null:
 		last_error = "Progress could not be saved on this device."
@@ -156,18 +164,27 @@ func discover(id: String) -> void:
 
 func record(mode: String, difficulty_key: String, score: int, date: String = "") -> void:
 	var key := mode + ":" + difficulty_key + (":" + date if not date.is_empty() else "")
-	records[key] = maxi(int(records.get(key, 0)), score)
-	while records.size() > 200:
-		records.erase(records.keys()[0])
+	var target := arcade_practice_records if mode.begins_with("balloon-practice:") else records
+	target[key] = maxi(int(target.get(key, 0)), score)
+	while target.size() > 200:
+		target.erase(target.keys()[0])
 	save()
+
+func best_score(mode: String, difficulty_key: String) -> int:
+	var target := arcade_practice_records if mode.begins_with("balloon-practice:") else records
+	return int(target.get(mode + ":" + difficulty_key, 0))
 
 func valid_badge(id: String) -> bool:
-	return (id.begins_with("trip:") and id.trim_prefix("trip:") in TravelGoals.TRIPS) or (id.begins_with("perfect:") and id.trim_prefix("perfect:") in GameCatalog.DESTINATIONS)
+	return id in ArcadeAchievements.BADGES or (id.begins_with("trip:") and id.trim_prefix("trip:") in TravelGoals.TRIPS) or (id.begins_with("perfect:") and id.trim_prefix("perfect:") in GameCatalog.DESTINATIONS)
 
-func award_badge(id: String) -> bool:
+func note_arcade_pop() -> bool:
+	arcade_pops = mini(10000000, arcade_pops + 1)
+	return arcade_pops >= 100 and award_badge("arcade:100_pops", false)
+
+func award_badge(id: String, persist: bool = true) -> bool:
 	if not valid_badge(id) or id in badges: return false
 	badges.append(id)
-	save()
+	if persist: save()
 	return true
 
 func daily_progress(date: String = "") -> Dictionary:

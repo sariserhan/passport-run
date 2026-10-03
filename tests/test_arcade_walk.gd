@@ -62,6 +62,7 @@ func run() -> void:
  arcade.simulate(0.5)
  expect(arcade.walk_clock == before, "Pause freezes gait")
  arcade.set_paused(false)
+ arcade.simulate(3.0) # Resume countdown does not advance the saved simulation.
  arcade.coop = true
  arcade.layout()
  arcade.begin_round()

@@ -131,7 +131,11 @@ func run() -> void:
  arcade.pop_ball(0)
  expect(boss.hp==hp-1 and arcade.balls.size()==1, "Boss absorbs hits without splitting")
  arcade.pop_ball(0)
- expect(arcade.balls.size()>1, "Boss sheds armor and spawns minions")
+ expect(arcade.balls.size()==1 and boss.warning > 0 and boss.charge_pending, "Boss warns before charging and spawning minions")
+ arcade.freeze = 0
+ arcade.update_boss_attacks(0.85)
+ expect(arcade.balls.size()>1, "Warned boss attack spawns minions")
+ arcade.freeze = 30
  await capture("boss")
  for index in hp-2: arcade.pop_ball(0)
  expect(not arcade.balls.any(func(ball): return ball.get("boss",false)), "Boss defeated after its health is exhausted")

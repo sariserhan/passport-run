@@ -63,6 +63,7 @@ func run() -> void:
  arcade.simulate(1)
  expect(arcade.visual_facing == turning, "Pause freezes a partial turn")
  arcade.set_paused(false)
+ arcade.simulate(3.0) # Resume countdown does not advance the saved simulation.
  arcade.set_control("◀",true)
  arcade.simulate(0.3)
  expect(arcade.visual_facing == -1 and arcade.slide_speed < 0, "Turn completes with leftward motion")

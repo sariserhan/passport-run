@@ -9,6 +9,7 @@ signal difficulty_selected(key: String)
 signal trip_requested(id: String)
 signal adventure_requested(id: String)
 signal arcade_requested(kind: String)
+signal arcade_practice_requested(id: String)
 signal cinema_requested(id: String)
 signal special_requested(id: String)
 signal online_records_requested
@@ -508,7 +509,7 @@ func show_adventures() -> void:
 	action("BACK", false, show_main)
 
 func show_wardrobe() -> void:
-	clear("Explorer wardrobe", "Earn outfits and hats by exploring. Backpack colors match your earned passport covers.")
+	clear("Explorer wardrobe", "Earn outfits and hats by exploring or completing balloon achievements. Backpack colors match your earned passport covers.")
 	var holder := SubViewportContainer.new()
 	holder.custom_minimum_size.y = 240
 	holder.stretch = true
@@ -537,10 +538,13 @@ func show_wardrobe() -> void:
 		for id in items:
 			var key: String = id
 			var group: String = kind
-			var earned := CharacterStyle.unlocked(kind, id, profile.discoveries)
+			var earned := CharacterStyle.unlocked(kind, id, profile.discoveries, profile.badges)
 			var name: String = items[id].name if kind != "backpack" else (TravelGoals.TRIPS[id].cover if id in TravelGoals.TRIPS else "Classic")
 			var label := name + (" · EQUIPPED" if profile.character_style[kind] == id else " · LOCKED" if not earned else " · EQUIP")
-			if not earned: label += " · %d destinations" % items[id].count if kind != "backpack" else " · finish collection goal"
+			if not earned:
+				if items[id] is Dictionary and items[id].has("badge"):
+					copy("Unlock: " + ArcadeAchievements.BADGES[items[id].badge].name, 17)
+				else: label += " · %d destinations" % items[id].count if kind != "backpack" else " · finish collection goal"
 			var button := action(label, earned, func(): profile.character_style[group] = key; profile.save(); show_wardrobe())
 			button.disabled = not earned or profile.character_style[kind] == id
 	action("BACK", false, show_main)
@@ -571,6 +575,8 @@ func show_arcade() -> void:
 	action("WORLD BALLOON TOUR · 250 DESTINATIONS", true, func(): request_arcade("world"))
 	action("SPECIAL BALLOON TOUR · EXPEDITIONS PACK", false, func(): arcade_requested.emit("special"))
 	action("CINEMA BALLOON TOUR · CINEMA PACK", false, func(): arcade_requested.emit("cinema"))
+	action("PRACTICE VISITED DESTINATIONS", false, show_arcade_practice)
+	action("BALLOON ACHIEVEMENTS", false, show_arcade_achievements)
 	if profile.home_country not in GameCatalog.FREE_DESTINATIONS:
 		action("CHOOSE STARTING COUNTRY · ONE TIME", false, show_countries)
 	action("BACK", false, show_main)
@@ -581,6 +587,26 @@ func request_arcade(kind: String) -> void:
 		show_countries()
 		return
 	arcade_requested.emit(kind)
+
+func show_arcade_practice() -> void:
+	clear("Balloon practice", "Replay a stamped destination. Your tour, coins, achievements and passport stay where you left them. Practice has separate local best scores.")
+	if profile.discoveries.is_empty(): copy("Earn your first passport stamp to unlock practice.")
+	for id in profile.discoveries:
+		var place: String = id
+		var owned := (id not in GameCatalog.PREMIUM_DESTINATIONS or (purchase and purchase.unlocked)) and (id not in GameCatalog.CINEMA_DESTINATIONS or (cinema_purchase and cinema_purchase.unlocked))
+		var button := action("PRACTICE " + GameCatalog.country_name(id).to_upper() if owned else "PACK REQUIRED · " + GameCatalog.country_name(id).to_upper(), owned, func(): arcade_practice_requested.emit(place))
+		button.disabled = not owned
+	action("BACK", false, show_arcade)
+
+func show_arcade_achievements() -> void:
+	clear("Balloon achievements", "%d lifetime pops · Tour attempts count; practice does not. Rewards appear in your Explorer wardrobe." % profile.arcade_pops)
+	for id in ArcadeAchievements.BADGES:
+		var badge: Dictionary = ArcadeAchievements.BADGES[id]
+		copy(("★ " if id in profile.badges else "○ ") + badge.name, 23)
+		copy(badge.description, 17)
+		copy("Reward: " + CharacterStyle.OUTFITS[badge.outfit].name, 16)
+	action("EXPLORER WARDROBE", true, show_wardrobe)
+	action("BACK", false, show_arcade)
 
 func show_locked_destination() -> void:
 	clear("A mystery awaits", "Reach this destination in your tour first. Its scenery stays hidden until you clear the previous stop.")

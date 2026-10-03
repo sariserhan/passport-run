@@ -120,6 +120,7 @@ func run() -> void:
 	expect(arcade.remaining == remaining and not arcade.left_held and arcade.touches.is_empty(), "Saved-round screen freezes gameplay and clears held input")
 	await capture("resume")
 	arcade.set_paused(false)
+	arcade.simulate(3.0) # Resume countdown does not advance the saved simulation.
 	arcade.balls.assign([arcade.make_ball(Vector2(100, 120), 0, 1)])
 	arcade.freeze = 30
 	arcade.wires.clear()
@@ -148,6 +149,7 @@ func run() -> void:
 	arcade._notification(Node.NOTIFICATION_APPLICATION_PAUSED)
 	expect(arcade.phase == BalloonArcade.Phase.PAUSED and arcade.touches.is_empty() and not arcade.controls.get_child(2).get_meta("control_active"), "Backgrounding saves, pauses and clears all touch feedback")
 	arcade.set_paused(false)
+	arcade.simulate(3.0) # Resume countdown does not advance the saved simulation.
 	arcade.balls.assign([arcade.make_ball(Vector2(arcade.partner_x, arcade.floor_y - 35), 0, 1)])
 	arcade.freeze = 30
 	arcade.simulate(0.01)
