@@ -3,6 +3,7 @@ extends Control
 
 var destination_id := "FR"
 var compact := false
+var quantity := 1
 
 func _ready() -> void:
  custom_minimum_size.y = 132
@@ -12,12 +13,12 @@ func _ready() -> void:
   return
  var text := VBoxContainer.new()
  text.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
- text.offset_left = 108
+ text.offset_left = 120
  text.offset_top = 21
  text.offset_right = -16
  text.offset_bottom = -12
  add_child(text)
- for line in [GameCatalog.country_name(destination_id), DestinationTheme.souvenir(destination_id)]:
+ for line in [GameCatalog.country_name(destination_id), DestinationTheme.souvenir(destination_id) + " ×%d" % quantity]:
   var label := Label.new()
   label.text = line
   label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -32,14 +33,34 @@ func _draw() -> void:
  frame.bg_color = Color("fff1d4")
  frame.set_corner_radius_all(12)
  draw_style_box(frame, Rect2(Vector2.ZERO, size))
- var center := Vector2(size.x / 2, 51) if compact else Vector2(53, 64)
+ var texture := GameCatalog.backdrop(destination_id)
+ var photo := Rect2(6, 6, size.x - 12, 60) if compact else Rect2(6, 6, 100, size.y - 12)
+ var source_size := Vector2(texture.get_size())
+ var crop := source_size
+ var aspect := photo.size.x / photo.size.y
+ if crop.x / crop.y > aspect: crop.x = crop.y * aspect
+ else: crop.y = crop.x / aspect
+ draw_texture_rect_region(texture, photo, Rect2((source_size - crop) / 2, crop))
+ var center := Vector2(size.x / 2, 65) if compact else Vector2(53, 75)
  var color := DestinationTheme.color(destination_id).darkened(0.2)
  var theme := DestinationTheme.style(destination_id)
  var keepsake := DestinationTheme.souvenir(destination_id).to_lower()
  draw_circle(center, 39, color.lightened(0.65))
  draw_arc(center, 39, 0, TAU, 48, color, 2, true)
  draw_set_transform(center)
- if destination_id == "FR":
+ if "postcard" in keepsake:
+  draw_rect(Rect2(-29, -21, 58, 42), Color("fff4dc"))
+  draw_texture_rect_region(texture, Rect2(-26, -18, 32, 36), Rect2((source_size - crop) / 2, crop))
+  for y in [-4, 4, 12]: draw_line(Vector2(10, y), Vector2(24, y), color, 2)
+ elif destination_id == "TR":
+  draw_circle(Vector2.ZERO, 28, Color("255eb4"))
+  draw_circle(Vector2.ZERO, 19, Color("ffffff"))
+  draw_circle(Vector2.ZERO, 12, Color("55bfdf"))
+  draw_circle(Vector2.ZERO, 6, Color("142941"))
+ elif "torch" in keepsake:
+  draw_colored_polygon(PackedVector2Array([Vector2(-7, 27), Vector2(-11, -9), Vector2(11, -9), Vector2(7, 27)]), Color("639b7d"))
+  draw_colored_polygon(PackedVector2Array([Vector2(-12, -10), Vector2(-8, -24), Vector2(0, -32), Vector2(5, -18), Vector2(13, -25), Vector2(12, -10)]), Color("e6a94c"))
+ elif destination_id == "FR":
   draw_polyline(PackedVector2Array([Vector2(-20, 25), Vector2(0, -30), Vector2(20, 25)]), color, 4, true)
   for y in [-7, 8, 22]: draw_line(Vector2(-13, y), Vector2(13, y), color, 3, true)
  elif "mask" in keepsake:
@@ -98,7 +119,13 @@ func _draw() -> void:
   var name := GameCatalog.country_name(destination_id)
   var font_size := 16
   while font_size > 9 and font.get_string_size(name, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x > size.x - 12: font_size -= 1
-  draw_string(font, Vector2(6, 114), name, HORIZONTAL_ALIGNMENT_CENTER, size.x - 12, font_size, Color("203d4d"))
+  draw_string(font, Vector2(6, 111), name, HORIZONTAL_ALIGNMENT_CENTER, size.x - 12, font_size, Color("203d4d"))
+
+ if compact:
+  var title := DestinationTheme.souvenir(destination_id)
+  var title_size := 11
+  while title_size > 8 and ThemeDB.fallback_font.get_string_size(title, HORIZONTAL_ALIGNMENT_LEFT, -1, title_size).x > size.x - 12: title_size -= 1
+  draw_string(ThemeDB.fallback_font, Vector2(6, 126), title, HORIZONTAL_ALIGNMENT_CENTER, size.x - 12, title_size, Color("61482e"))
 
 func draw_ellipse(center: Vector2, radii: Vector2, color: Color) -> void:
  var points := PackedVector2Array()

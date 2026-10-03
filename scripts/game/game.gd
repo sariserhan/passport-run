@@ -107,6 +107,14 @@ func _ready() -> void:
 			return_to_menu()
 			menu.show_cinema_route()
 	)
+	var character_purchase := RoutePurchase.new("com.serhansari.passportrun.travelers")
+	add_child(character_purchase)
+	menu.character_purchase = character_purchase
+	character_purchase.message = "Traveler purchases are available on iPhone. World Champion is earned by clearing the world."
+	character_purchase.changed.connect(func():
+		profile.character_pack_unlocked = character_purchase.unlocked
+		if menu.root.visible and menu.wardrobe_page: menu.show_wardrobe()
+	)
 	menu.adventure_requested.connect(func(id: String): adventure_start = id; start_game("adventure", profile.difficulty))
 	menu.trip_requested.connect(func(id: String): trip_id = id; start_game("trip", profile.difficulty))
 	menu.cinema_requested.connect(func(id: String): cinema_start = id; start_game("cinema", profile.difficulty))
@@ -272,6 +280,7 @@ func load_country(auto_preview: bool) -> void:
 	traveler = Traveler.new()
 	traveler.kids = session.mode == "kids"
 	traveler.reduced_motion = profile.settings.reduced_motion
+	traveler.character_id = profile.equipped_character()
 	traveler.customization = profile.character_style.duplicate()
 	traveler.destination_theme = DestinationTheme.style(grid.destination_id)
 	traveler.name = "Player"
@@ -687,7 +696,8 @@ func complete_country() -> void:
 		actions.append({"text": ("FLY TO " if options.size() > 1 else "CONTINUE TO ") + GameCatalog.country_name(id).to_upper(), "primary": true, "callback": func(): travel_to(id)})
 	var title := "Passport stamped!"
 	var body := "%s\n%d %s · %d tiles" % [GameCatalog.country_name(session.current_country()), session.completed_countries, "destination" if session.completed_countries == 1 else "destinations", session.banked_tiles]
-	body += "\nSouvenir: " + DestinationTheme.souvenir(session.current_country())
+	if CharacterStyle.world_complete(profile.discoveries): body += "\nWORLD CHAMPION CHARACTER UNLOCKED!"
+	body += "\nSouvenir collected: " + DestinationTheme.souvenir(session.current_country())
 	body += "\nDaily missions: %d / 3 complete" % profile.mission_count()
 	if session.current_country() not in failed_countries:
 		body += "\nFLAWLESS COUNTRY · Perfect-jump badge earned!"

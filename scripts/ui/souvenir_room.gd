@@ -22,8 +22,13 @@ func layout() -> void:
 	queue_redraw()
 
 func _draw() -> void:
-	draw_rect(Rect2(Vector2.ZERO, size), Color("c7b494"))
+	draw_rect(Rect2(Vector2.ZERO, size), Color("e6d8bf"))
 	for x in range(0, int(size.x), 22): draw_line(Vector2(x, 0), Vector2(x, size.y), Color(1, 1, 1, 0.08), 1)
+	# Warm ceiling light and brass display fittings.
+	draw_rect(Rect2(0, 0, size.x, 5), Color("8f6945"))
+	for x in [size.x * 0.25, size.x * 0.75]:
+		draw_circle(Vector2(x, 10), 38, Color(1, 0.86, 0.56, 0.12))
+		draw_circle(Vector2(x, 7), 4, Color("ffdf8a"))
 	for row in 3:
 		draw_rect(Rect2(5, 145 + row * 148, size.x - 10, 9), Color("785743"))
 		draw_rect(Rect2(16, 154 + row * 148, 12, 9), Color("543e33"))

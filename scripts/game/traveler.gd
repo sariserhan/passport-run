@@ -3,6 +3,7 @@ extends Node3D
 
 static var pose_bounds: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://resources/jumping-explorer.json"))
 
+var character_id := "classic"
 var kids := false
 var body: Node3D
 var contact_shadow: MeshInstance3D
@@ -47,9 +48,17 @@ func _ready() -> void:
 	align_portrait()
 	portrait.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	body.add_child(portrait)
+	if not kids and character_id != "classic":
+		portrait.texture = CharacterStyle.character_texture(character_id)
+		portrait.hframes = 1
+		portrait.vframes = 1
+		portrait.region_enabled = false
+		portrait.pixel_size = 2.65 / portrait.texture.get_height()
+		portrait.position.y = 1.345
 	if not kids: apply_customization()
 
 func align_portrait() -> void:
+	if not kids and character_id != "classic": return
 	var bounds: Array = pose_bounds["robot" if kids else "human"][portrait.frame]
 	var origin := Vector2(bounds[0], bounds[1])
 	var extent := Vector2(bounds[2] - bounds[0], bounds[3] - bounds[1])
@@ -65,7 +74,7 @@ func play_animation(next: String) -> void:
 	body.rotation = Vector3.ZERO
 	body.scale = Vector3.ONE
 	reaction.visible = pressure > 0.65 and next == "thinking"
-	if portrait:
+	if portrait and (kids or character_id == "classic"):
 		portrait.frame = {"thinking": 0, "jump": 4, "celebrate": 8, "pocket": 9, "passport": 10, "stamp": 11, "fall": 12}.get(next, 0)
 
 func _process(delta: float) -> void:
@@ -73,7 +82,7 @@ func _process(delta: float) -> void:
 		return
 	animation_clock += delta
 	if animation == "thinking":
-		if portrait:
+		if portrait and (kids or character_id == "classic"):
 			portrait.frame = 3 if pressure > 0.65 else int(animation_clock / 0.8) % 4
 			portrait.position.x = sin(animation_clock * 0.8) * 0.035
 		body.rotation.z = sin(animation_clock * (8.0 if pressure > 0.65 else 1.5)) * (0.045 if pressure > 0.65 else 0.025)
@@ -89,14 +98,14 @@ func _process(delta: float) -> void:
 			body.rotation.z = sin(animation_clock * 9) * 0.055
 
 func pose_jump(progress: float) -> void:
-	portrait.frame = 4 + mini(3, int(progress * 4))
+	if kids or character_id == "classic": portrait.frame = 4 + mini(3, int(progress * 4))
 	contact_shadow.position.y = -sin(progress * PI) * 1.45
 	contact_shadow.scale = Vector3.ONE * (1.0 - sin(progress * PI) * 0.25)
 	body.rotation.z = sin(progress * PI) * 0.08
 	body.scale = Vector3(1.0 + sin(progress * PI) * 0.04, 1.0 - sin(progress * PI) * 0.03, 1.0)
 
 func pose_fall(progress: float) -> void:
-	portrait.frame = 12 + mini(3, int(progress * 4))
+	if kids or character_id == "classic": portrait.frame = 12 + mini(3, int(progress * 4))
 	contact_shadow.hide()
 	body.rotation.z = progress * 0.7
 	body.scale = Vector3.ONE * (1.0 - progress * 0.18)

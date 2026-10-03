@@ -16,6 +16,8 @@ signal online_records_requested
 var online_available := false
 var revision := 0
 var purchase: RoutePurchase
+var character_purchase: RoutePurchase
+var wardrobe_page := false
 var cinema_purchase: RoutePurchase
 var cinema_page := false
 var special_page := false
@@ -77,6 +79,7 @@ func update_safe_area() -> void:
 	SafeAreaMargins.apply(safe_margin, root.size, Vector4i(28, 48, 28, 38))
 
 func clear(title: String, subtitle: String) -> void:
+	wardrobe_page = false
 	revision += 1
 	special_page = false
 	cinema_page = false
@@ -477,7 +480,7 @@ func show_missions() -> void:
 	action("BACK", false, show_main)
 
 func show_souvenirs() -> void:
-	clear("My souvenirs", "%d keepsakes collected\nEvery stamped destination earns its own keepsake." % profile.discoveries.size())
+	clear("My souvenirs", "%d keepsakes collected\nEvery completed destination earns a local keepsake. Repeat clears earn another copy." % profile.discoveries.size())
 	var search := LineEdit.new()
 	search.placeholder_text = "Search your souvenirs"
 	search.custom_minimum_size.y = 54
@@ -493,6 +496,7 @@ func show_souvenirs() -> void:
 			if not query.is_empty() and query.to_lower() not in (GameCatalog.country_name(id) + " " + DestinationTheme.souvenir(id)).to_lower(): continue
 			var card := SouvenirCard.new()
 			card.destination_id = id
+			card.quantity = int(profile.souvenir_counts.get(id, 1))
 			list.add_child(card)
 	if profile.discoveries.is_empty(): copy("Complete a destination to bring home your first souvenir.")
 	search.text_changed.connect(fill)
@@ -509,7 +513,8 @@ func show_adventures() -> void:
 	action("BACK", false, show_main)
 
 func show_wardrobe() -> void:
-	clear("Explorer wardrobe", "Earn outfits and hats by exploring or completing balloon achievements. Backpack colors match your earned passport covers.")
+	clear("Explorer wardrobe", "Choose your traveler. Explore to unlock more, or buy the traveler pack. Clear every world destination for World Champion.")
+	wardrobe_page = true
 	var holder := SubViewportContainer.new()
 	holder.custom_minimum_size.y = 240
 	holder.stretch = true
@@ -521,17 +526,39 @@ func show_wardrobe() -> void:
 	viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	holder.add_child(viewport)
 	var actor := Traveler.new()
+	actor.character_id = profile.equipped_character()
 	actor.customization = profile.character_style.duplicate()
 	actor.reduced_motion = profile.settings.reduced_motion
 	viewport.add_child(actor)
 	var camera := Camera3D.new()
 	viewport.add_child(camera)
-	camera.position = Vector3(0, 1.6, 4.5)
+	camera.position = Vector3(0, 1.4, 3.0)
 	camera.look_at(Vector3(0, 1.3, 0))
 	camera.make_current()
 	var light := DirectionalLight3D.new()
 	light.rotation_degrees = Vector3(-30, 0, 0)
 	viewport.add_child(light)
+	copy("Travelers", 23)
+	copy("Clear all %d world destinations to unlock World Champion." % GameCatalog.FREE_DESTINATIONS.size(), 17)
+	for id in CharacterStyle.CHARACTERS:
+		var key: String = id
+		var item: Dictionary = CharacterStyle.CHARACTERS[id]
+		var earned := CharacterStyle.character_unlocked(id, profile.discoveries, profile.character_pack_unlocked)
+		var portrait := TextureRect.new()
+		portrait.texture = CharacterStyle.character_texture(id)
+		portrait.custom_minimum_size = Vector2(0, 130)
+		portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		content.add_child(portrait)
+		var label: String = item.name + (" · EQUIPPED" if profile.equipped_character() == id else " · EQUIP" if earned else " · CLEAR THE WORLD" if item.has("world") else " · %d destinations or character pack" % item.count)
+		var button := action(label, earned, func(): profile.character_id = key; profile.save(); show_wardrobe())
+		button.disabled = not earned or profile.equipped_character() == id
+	if character_purchase:
+		copy(character_purchase.message, 17)
+		var buy := action("BUY TRAVELER PACK " + character_purchase.price, true, character_purchase.purchase)
+		buy.disabled = character_purchase.busy or character_purchase.price.is_empty() or character_purchase.unlocked
+		var restore := action("RESTORE CHARACTER PURCHASE", false, character_purchase.restore)
+		restore.disabled = character_purchase.busy or not character_purchase.store
 	for kind in ["outfit", "hat", "backpack"]:
 		copy(kind.capitalize(), 23)
 		var items: Dictionary = CharacterStyle.OUTFITS if kind == "outfit" else CharacterStyle.HATS if kind == "hat" else CharacterStyle.BACKPACKS
@@ -550,14 +577,15 @@ func show_wardrobe() -> void:
 	action("BACK", false, show_main)
 
 func show_room() -> void:
-	clear("My travel room", "Display six favorite souvenirs. Tap an earned keepsake below to add or remove it.")
+	clear("My travel room", "Your country postcards and local keepsakes. Display six favorites; tap below to swap them.")
 	var room := SouvenirRoom.new()
 	room.destinations = profile.room_display.duplicate()
 	content.add_child(room)
+	if room.destinations.size() == 6: copy("Shelves full. Remove a keepsake to make room for another.", 17)
 	if profile.discoveries.is_empty(): copy("Your shelves are waiting for your first adventure.")
 	for id in profile.discoveries:
 		var key: String = id
-		action(("✓ " if id in room.destinations else "+ ") + GameCatalog.country_name(id), false, func():
+		action(("✓ " if id in room.destinations else "+ ") + GameCatalog.country_name(id) + " · " + DestinationTheme.souvenir(id), false, func():
 			if key in profile.room_display: profile.room_display.erase(key)
 			elif profile.room_display.size() < 6: profile.room_display.append(key)
 			profile.save()

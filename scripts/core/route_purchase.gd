@@ -8,11 +8,13 @@ var product_id := PRODUCT_ID
 var unlocked := false
 var busy := false
 var price := ""
+var is_character_pack := false
 var message := "Route-pack purchases are available on iPhone."
 var store: Object
 
 func _init(id: String = PRODUCT_ID) -> void:
 	product_id = id
+	is_character_pack = id == "com.serhansari.passportrun.travelers"
 
 func _ready() -> void:
 	if ClassDB.class_exists("GodotStoreKit2"):
@@ -34,12 +36,12 @@ func load_product() -> void:
 	price = ""
 	unlocked = false
 	if info.get("error", "") != "" or info.get("product_id", "") != product_id:
-		message = "The route pack is unavailable right now. Your free tour is ready."
+		message = "This pack is unavailable right now. Your earned rewards are ready."
 		return
 	price = str(info.get("localized_price", ""))
 	# Native StoreKit reports only Apple-verified current entitlements. Never read a saved premium flag.
 	unlocked = info.get("is_purchased", false) == true
-	message = "Route pack unlocked." if unlocked else "One purchase unlocks every destination in this route."
+	message = ("Traveler pack unlocked." if unlocked else "Unlock all milestone travelers. World Champion requires completing the world tour.") if is_character_pack else ("Route pack unlocked." if unlocked else "One purchase unlocks every destination in this route.")
 
 func purchase() -> void:
 	if busy or not store or price.is_empty() or unlocked:
@@ -53,7 +55,7 @@ func purchase() -> void:
 		match int(result.get("transaction_state", -1)):
 			2, 3: message = "Purchase is awaiting approval."
 			7: message = "Purchase cancelled."
-			_: message = "Purchase could not be completed. You have not unlocked the route pack."
+			_: message = "Purchase could not be completed. You have not unlocked the pack."
 	busy = false
 	changed.emit()
 
@@ -66,7 +68,7 @@ func restore() -> void:
 	await store.sync()
 	await load_product()
 	if not unlocked and not price.is_empty():
-		message = "No route-pack purchase was found for this Apple account."
+		message = "No purchase was found for this Apple account."
 	busy = false
 	changed.emit()
 

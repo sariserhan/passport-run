@@ -14,6 +14,9 @@ var badges: Array[String] = []
 var passport_cover := "classic"
 var daily_missions: Dictionary = {}
 var character_style := {"outfit": "classic", "hat": "none", "backpack": "classic"}
+var character_id := "classic"
+var character_pack_unlocked := false
+var souvenir_counts: Dictionary = {}
 var room_display: Array[String] = []
 var arcade_saves: Dictionary = {}
 var arcade_pops := 0
@@ -90,6 +93,14 @@ func load_profile() -> void:
 		for kind in character_style:
 			var id: Variant = data.character_style.get(kind)
 			if id is String and CharacterStyle.unlocked(kind, id, discoveries, badges): character_style[kind] = id
+	if data.get("character_id") is String and data.character_id in CharacterStyle.CHARACTERS:
+		character_id = data.character_id
+	if data.get("souvenir_counts") is Dictionary:
+		for id in discoveries:
+			var amount: Variant = data.souvenir_counts.get(id, 1)
+			if amount is int or amount is float: souvenir_counts[id] = clampi(int(amount), 1, 10000000)
+	for id in discoveries:
+		if id not in souvenir_counts: souvenir_counts[id] = 1
 	if data.get("room_display") is Array:
 		for id in data.room_display:
 			if id is String and id in discoveries and id not in room_display and room_display.size() < 6: room_display.append(id)
@@ -117,6 +128,8 @@ func read_valid(path: String) -> Dictionary:
 
 func save() -> bool:
 	var data := {"version": SCHEMA_VERSION, "anonymous_id": anonymous_id, "home_country": home_country, "difficulty": difficulty, "tutorial_done": tutorial_done, "discoveries": discoveries, "history": history, "records": records, "badges": badges, "passport_cover": passport_cover, "daily_missions": daily_missions, "character_style": character_style, "room_display": room_display, "settings": settings, "arcade_saves": arcade_saves}
+	data["character_id"] = character_id
+	data["souvenir_counts"] = souvenir_counts
 	data["arcade_pops"] = arcade_pops
 	data["arcade_practice_records"] = arcade_practice_records
 	data["arcade_mastery"] = arcade_mastery
@@ -170,6 +183,8 @@ func discover(id: String) -> void:
 		return
 	if id not in discoveries:
 		discoveries.append(id)
+	souvenir_counts[id] = mini(10000000, int(souvenir_counts.get(id, 0)) + 1)
+	if room_display.size() < 6 and id not in room_display: room_display.append(id)
 	history.append(id)
 	if history.size() > 200:
 		history.pop_front()
@@ -239,3 +254,6 @@ func advance_missions(id: String, flawless: bool, trip_finished: bool) -> void:
 func mission_count() -> int:
 	var progress := daily_progress()
 	return int(progress.countries.size() >= 3) + int(progress.flawless) + int(progress.trip)
+
+func equipped_character() -> String:
+	return character_id if CharacterStyle.character_unlocked(character_id, discoveries, character_pack_unlocked) else "classic"

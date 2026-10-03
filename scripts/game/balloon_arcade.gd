@@ -865,6 +865,9 @@ func finish_stamp() -> void:
 func show_clear_panel() -> void:
  var message := ("PRACTICE COMPLETE!" if round_index == 2 and route_kind == "practice" else "DESTINATION STAMPED!" if round_index == 2 else "ROUND CLEARED!") + "\n" + GameCatalog.country_name(route[country_index]) + " · Score %d" % score
  if round_index == 2: message += "\n\n" + destination_result()
+ if round_index == 2 and route_kind != "practice":
+  message += "\nSouvenir collected: " + DestinationTheme.souvenir(route[country_index])
+  if CharacterStyle.world_complete(profile.discoveries): message += "\nWORLD CHAMPION CHARACTER UNLOCKED!"
  if best_beaten: message += "\nNEW PERSONAL BEST!"
  for id in earned_badges: message += "\n★ " + ArcadeAchievements.BADGES[id].name + " · Wardrobe reward unlocked"
  show_panel(message, "FINISH PRACTICE" if round_index == 2 and route_kind == "practice" else "NEXT DESTINATION" if round_index == 2 else "NEXT ROUND", next_round)
@@ -1297,7 +1300,12 @@ func _draw() -> void:
  var frame := character_frame()
  var tint := Color(CharacterStyle.OUTFITS.get(profile.character_style.outfit, CharacterStyle.OUTFITS.classic).color)
  if invincible > 0 and hurt_time <= 0 and phase == Phase.PLAY and int(clock * 8) % 2: tint.a = 0.45
- draw_explorer(frame, walk_clock, walk_speed, visual_facing, player_x, tint, hurt_time > 0 or phase == Phase.FAILED)
+ if profile.equipped_character() != "classic":
+  var traveler_texture := CharacterStyle.character_texture(profile.equipped_character())
+  var width := 132.0 * traveler_texture.get_width() / traveler_texture.get_height()
+  draw_texture_rect(traveler_texture, Rect2(player_x - width / 2, floor_y - 132, width * side_scale(visual_facing), 132), false, tint)
+ else:
+  draw_explorer(frame, walk_clock, walk_speed, visual_facing, player_x, tint, hurt_time > 0 or phase == Phase.FAILED)
  draw_set_transform(Vector2.ZERO)
  if hit_flash > 0: draw_rect(play, Color(1, 0.25, 0.2, hit_flash * 0.35))
 
