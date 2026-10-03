@@ -245,6 +245,7 @@ func load_country(auto_preview: bool) -> void:
 	add_child(traveler)
 	traveler.position = Vector3(0, 0.03, 0.6)
 	rebuild_environment()
+	audio.play_destination("INFINITE" if session.mode == "infinite" else session.current_country())
 	set_overview()
 	hud.show_ready(config.lane_count, config.row_count)
 	hud.destination.text = "INFINITE MEMORY" if session.mode == "infinite" else GameCatalog.country_name(session.current_country()) if not session.current_country().is_empty() else "PASSPORT RUN"
