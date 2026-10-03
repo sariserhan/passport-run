@@ -58,12 +58,15 @@ Play. Travel. Remember. Have fun.
 | Primary category | Games › Puzzle |
 | Secondary category | Games › Family |
 | Age rating | 4+ (no violence, no user-generated content shared online, no web access) |
-| Kids Category | Do not opt in yet. It requires a parental gate in front of purchases and external links, which the game does not have. |
+| Kids Category | Optional. Purchases and every share sheet now sit behind `ParentGate`, a typed multiplication question asked each time. Apple's Kids Category also requires no third-party analytics or ads, which the game already meets. If you opt in, choose the 6–8 or 9–11 band. |
 | App Privacy | Data Not Collected. Event logs and the performance log stay on the device; the backend URL is empty, so nothing is sent. Re-answer this if online play is ever turned on. |
 | Encryption | Already declared: `ITSAppUsesNonExemptEncryption = false` in the exported Info.plist. |
 | In-app purchases | `com.serhansari.passportrun.special_routes` and `com.serhansari.passportrun.cinema_worlds`, both non-consumable. See [purchases](purchases.md). |
-| Support / privacy URLs | Required. Neither exists yet. |
+| Support URL | https://sariserhan.github.io/passport-run/support.html |
+| Privacy policy URL | https://sariserhan.github.io/passport-run/privacy.html |
 | Version | 0.1.0, set in `export_presets.cfg`. `tools/release_iphone.sh` stamps a UTC build number. |
+
+Pages source: `site/` on `main`, published from the `gh-pages` branch. Contact goes through GitHub Issues; replace it with an email address if you prefer.
 
 ## Screenshots
 

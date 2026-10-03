@@ -7,6 +7,7 @@ const FILENAMES := ["passport-run-room.png", "passport-run-album.png", "passport
 static func request(owner: Node, filename: String) -> String:
  if OS.get_name() != "iOS": return "unavailable"
  if filename not in FILENAMES or not FileAccess.file_exists("user://" + filename): return "error"
+ if not await ParentGate.ask(owner): return "cancelled" # the share sheet leaves the app
  var token := Crypto.new().generate_random_bytes(12).hex_encode()
  DirAccess.remove_absolute(RESULT)
  var file := FileAccess.open(REQUEST + ".tmp", FileAccess.WRITE)

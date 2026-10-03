@@ -429,7 +429,7 @@ func show_paid_route(cinema: bool) -> void:
 		if manager.busy:
 			copy("Please wait…")
 		elif not manager.unlocked:
-			var buy := action("UNLOCK · " + manager.price if not manager.price.is_empty() else "PURCHASE UNAVAILABLE", true, manager.purchase)
+			var buy := action("UNLOCK · " + manager.price if not manager.price.is_empty() else "PURCHASE UNAVAILABLE", true, func(): if await ParentGate.ask(self): manager.purchase())
 			buy.disabled = manager.price.is_empty()
 			var restore := action("RESTORE PURCHASE", false, manager.restore)
 			restore.disabled = manager.store == null
@@ -603,7 +603,7 @@ func show_wardrobe() -> void:
 		button.disabled = not earned or profile.equipped_character() == id
 	if character_purchase:
 		copy(character_purchase.message, 17)
-		var buy := action("BUY TRAVELER PACK " + character_purchase.price, true, character_purchase.purchase)
+		var buy := action("BUY TRAVELER PACK " + character_purchase.price, true, func(): if await ParentGate.ask(self): character_purchase.purchase())
 		buy.disabled = character_purchase.busy or character_purchase.price.is_empty() or character_purchase.unlocked
 		var restore := action("RESTORE CHARACTER PURCHASE", false, character_purchase.restore)
 		restore.disabled = character_purchase.busy or not character_purchase.store

@@ -103,6 +103,25 @@ func check_backdrop_lifetime() -> void:
 	expect(first.get_ref() != null, "Drawn destination artwork stays loaded while its card is on screen")
 	box.queue_free()
 
+func check_parent_gate() -> void:
+	var results: Array = []
+	for attempt in ["wrong", "right", "cancel"]:
+		var outcome := [null]
+		var waiter := func(): outcome[0] = await ParentGate.ask(root)
+		waiter.call()
+		await process_frame
+		var gate: ParentGate = root.find_children("*", "ParentGate", false, false)[0]
+		if attempt == "cancel":
+			gate.answered.emit(false)
+		else:
+			gate.field.text = str(gate.answer + (1 if attempt == "wrong" else 0))
+			gate.submit()
+		await process_frame
+		results.append(outcome[0])
+	expect(results == [false, true, false], "Parent gate passes only the correct answer: " + str(results))
+	await settle()
+	expect(root.find_children("*", "ParentGate", false, false).is_empty(), "Parent gate closes after answering")
+
 func run_tests() -> void:
 	var defaults := Vector4i(24, 24, 24, 26)
 	var insets := SafeAreaMargins.calculate(Vector2(390, 844), Vector2i(1170, 2532), Rect2i(0, 177, 1170, 2253), defaults)
@@ -120,6 +139,7 @@ func run_tests() -> void:
 	expect(menu.safe_margin.get_theme_constant("margin_top") == 48, "Menu padding initialized without requiring a resize")
 	await check_touch_scroll(menu)
 	await check_backdrop_lifetime()
+	await check_parent_gate()
 	menu.root.hide()
 	await check_globe_swipe()
 	for viewport_size in [Vector2i(480, 900), Vector2i(390, 844), Vector2i(375, 667), Vector2i(320, 568)]:
