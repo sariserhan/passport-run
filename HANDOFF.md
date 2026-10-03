@@ -1,3 +1,117 @@
+# Passport Run — current agent handoff (2026-10-03)
+
+Read this section first. It supersedes conflicting status claims in the historical notes below, especially claims about sharing, retries, lives, and unfinished feature batches.
+
+## Current state and request
+
+The latest user request is to document completed work and remaining work for another agent. All approved travel feature batches and the latest country-retry/branding request have been implemented and committed locally. The working tree was clean at `c50de1a` before this handoff update. No push, production deployment, or installation of the latest full game on the physical iPhone was performed.
+
+The most recent gameplay report was: complete Denmark, enter Germany, fail, then incorrectly restart Denmark. This is fixed: casual travel retries stay in Germany until it is passed, and Continue resumes the first uncleared country.
+
+## Completed work
+
+| Commit | Delivered |
+| --- | --- |
+| `330f2d3` | World Champion celebration with journey and souvenirs; reactive bird/robot/dragon buddies; souvenir set room rewards; daily journal; room and album picture exports. |
+| `fe6d37e` | Buddy personalities, regional trophies, rare keepsakes, archived daily postcards, journey replay, and native iOS picture sharing. |
+| `cdc7685` | The approved 7 + 12 activity batch, listed below. |
+| `0c08959` | The next 15 journey/workshop features, listed below. |
+| `c50de1a` | Preserve the active country after casual failure; resume saved World/Kids progress; app icons, macOS icon, and matching splash artwork/configuration. |
+
+The 19 activity features are arrival scenery/music/buddy reactions, interactive souvenirs, buddy quests/accessories, room interactions, editable scrapbook, weekly expeditions, small-phone polish, photo mode, personalized passport, bronze/silver/gold destination mastery, capital treasure hunts, weekly bingo, departure lounge, travel timeline, separate room spaces, weather/time choices, optional capital learning stickers, celebration choices, and discovery checklist. Entry points are **More adventures & creative tools** and **Departure lounge**. See [travel activities](docs/travel-activities.md).
+
+The next 15 features are city stops, branching trips, landmark stages, transport journeys, secret viewpoints, rotating seasonal themes, NPC requests, crafting, six room presets, interactive globe, journey recaps/GIF movies, local multiplayer/profile slots, friendly route challenge codes, accessibility controls, and portable passport backup/restore. Entry point: **New journeys & workshop**. See [new journeys](docs/new-journeys.md).
+
+## Latest retry fix: behavior and code
+
+- `scripts/game/game.gd`: casual offline World, Kids, Special, Cinema, Trip, Adventure, and Expedition failures reload the active country without calling `session.begin()`. Preserve the route position, completed countries, banked tiles, completed stops, and ordinary retry path seed. Truncate failed-country timing samples while keeping completed-country timings.
+- Daily, Infinite, Challenge, and online retries retain their full scored-run restart behavior. Do not apply casual checkpoints to these modes.
+- `JourneySession.resume_world()` resumes World/Kids after the already earned country prefix. It does not fabricate banked score or current-session completions. A fully completed tour can replay from home.
+- `route_start_index` and `challenge_seed()` preserve the actual resumed route and its seed in shared challenge codes.
+- World/Kids menu buttons display Continue where applicable; World identifies the next stop. Failure text names the country being continued.
+- The real local save was inspected read-only: home Denmark (`DK`), discoveries `AF`, `US`, `DK`; Germany was uncleared. No player save was edited.
+- Regression coverage: `tests/test_country_retry.gd` includes Denmark → Germany, repeated failures, score/reward preservation, saved resume, mode boundaries, and resumed challenge seeds. Preview: `artifacts/germany-retry.png`.
+
+## Branding delivered
+
+Generated matching passport/globe/stepping-tile artwork is packaged in `assets/branding/`:
+
+- `app-icon.png`: opaque 1024-square app icon; all 16 required iOS icon variants are configured.
+- `PassportRun.icns` and its iconset: macOS icon.
+- `splash-screen.png`: 887 × 1774 portrait splash; iOS storyboard uses aspect fit on a navy background.
+- `project.godot` configures the desktop icon and boot splash; `export_presets.cfg` configures iOS icons and launch imagery.
+- `tools/build_brand_assets.gd` packages image sizes; [branding documentation](docs/branding.md) records prompts, provenance, and rebuild steps.
+
+The native export was checked for opaque correctly sized icons, matching splash pixels, and resolved storyboard settings. The latest full unsigned iPhone Debug build succeeded:
+
+- Project: `/private/tmp/passport-native-branding/PassportRun.xcodeproj`
+- Product: `/private/tmp/passport-native-branding/build/Build/Products/Debug-iphoneos/PassportRun.app`
+- Logs: `/tmp/passport-brand-export.log`, `/tmp/passport-brand-native-build.log`
+
+This is build evidence, not physical-device installation or acceptance. Temporary build paths may disappear.
+
+## Verification completed
+
+- Full `tools/check.sh` passed after the main retry/resume change and updated Kids fixtures.
+- After the final challenge-seed/timing changes, focused checks passed: Core **1143**, Modes **388**, Country Retry **59**, all zero failures. The full suite was not rerun after those final small changes.
+- Country Retry rendered checks passed **56** before those final additions; Germany retry screenshot was captured.
+- Travel Extras: **95 headless / 96 rendered** checks; screens reviewed at 375 × 667 and 390 × 844, including larger text. GIF output was decoded as multiple frames.
+- The earlier activity batch passed **42 headless / 45 rendered** checks and the full suite.
+- Native sharing was tested using isolated apps: picture presentation and synthetic cancellation on the physical iPhone 14 Pro; picture, JSON backup, and GIF presentation/cancellation in the simulator. These tests do not prove recipient delivery or full Godot gameplay on the phone.
+- `python3 tests/test_iphone_export.py` passed. The native bridge/export patches remain covered.
+- The stale project desktop process was restarted with the latest game; `/tmp/passport-run-current.log` had no reported errors. Do not stop a running user game merely for documentation work.
+
+Relevant artifacts: `artifacts/batch-*.png`, `artifacts/extras-*.png`, `artifacts/extras-journey-movie.gif`, and `artifacts/germany-retry.png`.
+
+## What remains
+
+1. **Run the complete updated game on the physical iPhone.** Sign the latest native project using the existing development setup, preserve/back up the installed save, and validate the actual game. The previous phone unlock was used for the isolated sharing test; do not assume the latest game was installed.
+2. **Device acceptance:** Denmark → Germany failure/retry and menu resume; touch controls across difficulties; portrait/landscape and safe areas; larger text; background/lock/resume; performance, heat, audio/mute/haptics; save persistence and backup recovery.
+3. **Real sharing acceptance:** use the full game to share room/album pictures, GIF movies, and passport backups; verify actual recipient delivery or Photos saving. Prior synthetic cancellation callbacks are not this evidence.
+4. **Branding acceptance:** check the home-screen icon and cold-launch splash on the phone, including possible cached old assets.
+5. **Human visual acceptance:** obtain confirmation of explorer orientation toward the actual path and the latest art/audio presentation. A rendered still or passing test does not establish this.
+
+There is no known unfinished implementation from the approved feature batches. Online hosting, public challenge-link hosting, live events, online leaderboards, production entitlements, and deployment are separate work; do not describe local features as those services. Existing backend integration was not revalidated or deployed during these batches. The default empty backend URL keeps the game offline.
+
+## Important limits and invariants
+
+- Multiplayer offers four local profile slots; passports/rooms persist, but the match board is session-only. Friendly codes and scores are local/offline.
+- Seasonal themes rotate by UTC month locally; weekly activities use Monday UTC.
+- In-game recaps retain the full recorded route. GIF exports are 240 × 450 and sample at most 12 frames, including first/last.
+- Backup restore affects the current player slot, preserves device identity/store entitlements, and keeps a `.before-restore` recovery save. Reload with `save_current=false` to avoid overwriting the restored file with stale memory.
+- Keep country access/paid gates on every route. Short scenic routes use easy mastery rather than awarding higher tiers for shortened paths.
+- Keep the transport deck below the tile slab so preview markers remain visible.
+- Balloon collision remains fatal on the first hit. Preserve manual arcade movement, separate practice scoring/progression, and permanent starting-country choice.
+- Never modify the user's save to manufacture test evidence.
+
+## Where to continue
+
+Core state: `scripts/core/player_profile.gd`, `journey_session.gd`, `travel_activities.gd`, `travel_extras.gd`, `passport_backup.gd`.
+
+Game and scenery: `scripts/game/game.gd`, `travel_stage.gd`, `tile_grid.gd`, `traveler.gd`, `balloon_arcade.gd`.
+
+UI: `scripts/ui/menu_ui.gd`, `travel_activity_ui.gd`, `travel_extras_ui.gd`, `travel_globe.gd`, `travel_movie.gd`. Native export/sharing tooling lives under `tools/`; consult the current feature docs before older build-status notes.
+
+Godot executable: `/Applications/Godot.app/Contents/MacOS/Godot`.
+
+```sh
+GODOT_BIN=/Applications/Godot.app/Contents/MacOS/Godot bash tools/check.sh
+/Applications/Godot.app/Contents/MacOS/Godot --headless --path . --script tests/test_country_retry.gd
+/Applications/Godot.app/Contents/MacOS/Godot --path . --script tests/test_travel_extras.gd
+python3 tests/test_iphone_export.py
+python3 tools/export_iphone.py /private/tmp/passport-native-branding
+```
+
+Do not run tests that share save fixtures concurrently. Inspect assertion totals and `ERROR`/`SCRIPT ERROR`; an engine exit code alone is insufficient. A stale Godot instance can retain imported assets: inspect its working directory/start time and restart only the relevant project process when necessary.
+
+Commit only owned changes. No push or deployment is implied. Documentation-only handoff updates do not require rerunning gameplay tests.
+
+---
+
+# Historical handoff notes
+
+The notes below preserve earlier context. Their status statements are superseded by the current handoff above; do not treat older pending lists as the current backlog.
+
 # Passport Run — agent handoff (2026-10-03)
 
 ## Latest correction: jumping characters face toward the path
