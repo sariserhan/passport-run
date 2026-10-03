@@ -1241,6 +1241,22 @@ func _draw() -> void:
  var play := arena()
  var jitter := Vector2(sin(clock * 93), cos(clock * 77)) * shake * 12 if not profile.settings.reduced_motion else Vector2.ZERO
  draw_set_transform(play.position + jitter, 0, play.size / Vector2(WORLD.x, world_height))
+ if profile and profile.travel_buddy != "none":
+  var buddy_color := Color("ffc85c") if profile.travel_buddy == "bird" else Color("86d7ed") if profile.travel_buddy == "robot" else Color("8ed599")
+  var point := Vector2(clampf(player_x + 45, 28, WORLD.x - 28), floor_y - 100 + (0 if profile.settings.reduced_motion else sin(clock * 4) * 6))
+  if profile.travel_buddy == "robot":
+   draw_rect(Rect2(point - Vector2(15, 12), Vector2(30, 24)), buddy_color)
+   draw_line(point + Vector2(0, -12), point + Vector2(0, -22), buddy_color, 2)
+   draw_circle(point + Vector2(0, -23), 3, Color("fff2d6"))
+  else:
+   draw_circle(point, 14, buddy_color)
+   if profile.travel_buddy == "dragon":
+    for side in [-1, 1]: draw_colored_polygon(PackedVector2Array([point + Vector2(side * 5, -10), point + Vector2(side * 12, -24), point + Vector2(side * 14, -8)]), Color("ffe0a0"))
+   else:
+    draw_colored_polygon(PackedVector2Array([point + Vector2(12, -2), point + Vector2(24, 3), point + Vector2(12, 6)]), Color("e98c45"))
+  for side in [-1, 1]: draw_circle(point + Vector2(side * 5, -3), 2, Color("153e57"))
+  draw_line(point + Vector2(-27, -5), point + Vector2(27, -5), buddy_color, 5)
+  draw_string(ThemeDB.fallback_font, point + Vector2(-10, -22), "!" if country_failed else "♥" if stamp_pending else "Hi!", HORIZONTAL_ALIGNMENT_LEFT, -1, 18, buddy_color)
  for platform in platforms:
   draw_surface(platform)
  draw_surface(Rect2(0, floor_y, WORLD.x, 30))

@@ -32,6 +32,9 @@ var arcade_daily: Dictionary = {}
 var cached_home := ""
 var cached_tour: Array[String] = []
 var settings: Dictionary = {"music": 0.35, "sound": 0.65, "reduced_motion": false, "high_contrast": false, "haptics": true, "arcade_swap": false, "arcade_large": false}
+var travel_buddy := "bird"
+var champion_seen := false
+var travel_journal: Dictionary = {}
 var last_error: String = ""
 
 func _init(path: String = "user://profile.json") -> void:
@@ -51,6 +54,15 @@ func load_profile() -> void:
 		difficulty = data.difficulty
 	if data.get("anonymous_id") is String and data.anonymous_id.length() == 32 and data.anonymous_id.is_valid_hex_number():
 		anonymous_id = data.anonymous_id
+	travel_buddy = data.get("travel_buddy", "bird") if data.get("travel_buddy", "bird") in ["none", "bird", "robot", "dragon"] else "bird"
+	champion_seen = data.get("champion_seen", false) == true
+	var journal: Variant = data.get("travel_journal")
+	if journal is Dictionary and journal.get("date") == GameCatalog.today_utc():
+		travel_journal = {"date": journal.date, "moments": [], "rewards": []}
+		for field in ["moments", "rewards"]:
+			if journal.get(field) is Array:
+				for entry in journal[field].slice(0, 100):
+					if entry is String: travel_journal[field].append(entry.left(160))
 	tutorial_done = data.get("tutorial_done", false) == true
 	if data.get("arcade_pops") is float or data.get("arcade_pops") is int:
 		arcade_pops = clampi(int(data.arcade_pops), 0, 10000000)
@@ -138,6 +150,8 @@ func load_profile() -> void:
 			elif value is bool and key not in ["music", "sound"]:
 				settings[key] = value
 
+	if world_champion() and "world:champion" not in badges: badges.append("world:champion")
+
 func read_valid(path: String) -> Dictionary:
 	if not FileAccess.file_exists(path):
 		return {}
@@ -154,6 +168,9 @@ func read_valid(path: String) -> Dictionary:
 
 func save() -> bool:
 	var data := {"version": SCHEMA_VERSION, "anonymous_id": anonymous_id, "home_country": home_country, "difficulty": difficulty, "tutorial_done": tutorial_done, "discoveries": discoveries, "history": history, "records": records, "badges": badges, "passport_cover": passport_cover, "daily_missions": daily_missions, "character_style": character_style, "room_display": room_display, "settings": settings, "arcade_saves": arcade_saves}
+	data["travel_buddy"] = travel_buddy
+	data["champion_seen"] = champion_seen
+	data["travel_journal"] = travel_journal
 	data["character_id"] = character_id
 	data["souvenir_counts"] = souvenir_counts
 	data["room_decor"] = room_decor
@@ -212,13 +229,21 @@ func discover(id: String) -> void:
 	last_unlocked_characters.clear()
 	if id not in GameCatalog.DESTINATIONS:
 		return
+	var previous_sets := TravelCollections.earned(discoveries)
+	var first_visit := id not in discoveries
 	var locked: Array[String] = []
 	for character in CharacterStyle.CHARACTERS:
 		if not CharacterStyle.character_unlocked(character, discoveries, character_pack_unlocked): locked.append(character)
 	if id not in discoveries:
 		discoveries.append(id)
 	for character in locked:
-		if CharacterStyle.character_unlocked(character, discoveries, character_pack_unlocked): last_unlocked_characters.append(character)
+		if CharacterStyle.character_unlocked(character, discoveries, character_pack_unlocked):
+			last_unlocked_characters.append(character)
+			journal_note("rewards", "Traveler: " + CharacterStyle.CHARACTERS[character].name)
+	if first_visit: journal_note("rewards", DestinationTheme.souvenir(id))
+	for collection in TravelCollections.earned(discoveries):
+		if collection not in previous_sets: journal_note("rewards", TravelCollections.SETS[collection].name)
+	if world_champion() and "world:champion" not in badges: award_badge("world:champion", false)
 	souvenir_counts[id] = mini(10000000, int(souvenir_counts.get(id, 0)) + 1)
 	if room_display.size() < 6 and id not in room_display: room_display.append(id)
 	history.append(id)
@@ -239,7 +264,7 @@ func best_score(mode: String, difficulty_key: String) -> int:
 	return int(target.get(mode + ":" + difficulty_key, 0))
 
 func valid_badge(id: String) -> bool:
-	return id in ArcadeAchievements.BADGES or (id.begins_with("trip:") and id.trim_prefix("trip:") in TravelGoals.TRIPS) or (id.begins_with("perfect:") and id.trim_prefix("perfect:") in GameCatalog.DESTINATIONS)
+	return id == "world:champion" or id in ArcadeAchievements.BADGES or (id.begins_with("trip:") and id.trim_prefix("trip:") in TravelGoals.TRIPS) or (id.begins_with("perfect:") and id.trim_prefix("perfect:") in GameCatalog.DESTINATIONS)
 
 func note_arcade_pop() -> bool:
 	arcade_pops = mini(10000000, arcade_pops + 1)
@@ -270,6 +295,8 @@ func award_arcade_medal(id: String, key: String, coop: bool, medal: int) -> void
 func award_badge(id: String, persist: bool = true) -> bool:
 	if not valid_badge(id) or id in badges: return false
 	badges.append(id)
+	var reward_name: String = "World Champion" if id == "world:champion" else ArcadeAchievements.BADGES[id].name if id in ArcadeAchievements.BADGES else TravelGoals.TRIPS[id.trim_prefix("trip:")].name + " adventure badge" if id.begins_with("trip:") else GameCatalog.country_name(id.trim_prefix("perfect:")) + " perfect-jump badge"
+	journal_note("rewards", reward_name)
 	if persist: save()
 	return true
 
@@ -283,6 +310,8 @@ func advance_missions(id: String, flawless: bool, trip_finished: bool) -> void:
 	if id not in discoveries: return
 	var progress := daily_progress()
 	if id not in progress.countries: progress.countries.append(id)
+	journal_note("moments", GameCatalog.country_name(id) + (" · Flawless finish!" if flawless else " · Destination completed"))
+	if trip_finished: journal_note("moments", "A whole trip completed!")
 	progress.flawless = progress.flawless or flawless
 	progress.trip = progress.trip or trip_finished
 	save()
@@ -297,6 +326,21 @@ func equipped_character() -> String:
 func record_destination(id: String, mode: String, score: int) -> void:
 	if id not in discoveries or mode not in ["jump", "arcade"]: return
 	var record: Dictionary = destination_records.get(id, {})
+	if score > int(record.get(mode, 0)):
+		journal_note("moments", "%s · Best %s: %d" % [GameCatalog.country_name(id), mode, score])
 	record[mode] = maxi(int(record.get(mode, 0)), clampi(score, 0, 10000000))
 	destination_records[id] = record
 	save()
+
+func world_champion() -> bool:
+	return GameCatalog.FREE_DESTINATIONS.keys().all(func(id): return id in discoveries)
+
+func journal_today() -> Dictionary:
+	if travel_journal.get("date", "") != GameCatalog.today_utc():
+		travel_journal = {"date": GameCatalog.today_utc(), "moments": [], "rewards": []}
+	return travel_journal
+
+func journal_note(kind: String, value: String) -> void:
+	var entries: Array = journal_today()[kind]
+	if value not in entries: entries.append(value)
+	while entries.size() > 100: entries.pop_front()

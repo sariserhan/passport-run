@@ -55,7 +55,7 @@ func run() -> void:
  profile.record_destination("FR", "jump", 12)
  profile.record_destination("UNKNOWN", "arcade", 100)
  var restored := PlayerProfile.new(SAVE)
- check(restored.room_decor == {"wallpaper": "sky", "shelves": "oak", "plant": "fern", "rug": "none"}, "Only earned room decoration persists")
+ check(restored.room_decor == {"wallpaper": "sky", "shelves": "oak", "plant": "fern", "rug": "none", "display": "none"}, "Only earned room decoration persists")
  check(Vector2(restored.room_positions.FR[0], restored.room_positions.FR[1]).is_equal_approx(Vector2(0.25, 0.65)) and Vector2(restored.room_positions.NO[0], restored.room_positions.NO[1]).is_equal_approx(Vector2(0, 1)) and "IS" not in restored.room_positions and "UNKNOWN" not in restored.room_positions, "Room coordinates persist and invalid data is cleaned")
  check(restored.room_postcards == ["FR", "NO", "IS"], "Only three unique earned postcards persist")
  check(restored.destination_records.FR.arcade == 120 and restored.destination_records.FR.jump == 12 and "UNKNOWN" not in restored.destination_records, "Album stores personal bests for earned destinations")
@@ -109,7 +109,7 @@ func run() -> void:
   if child is SouvenirRoom: room = child
  check(room != null, "Room is accessible")
  var choices: Array = game.menu.content.get_children().filter(func(child): return child is OptionButton)
- check(choices.size() == 4, "Room has four decoration selectors")
+ check(choices.size() == 5, "Room has five decoration selectors including themed displays")
  choices[0].item_selected.emit(0)
  check(game.profile.room_decor.wallpaper == "sand" and room.decor.wallpaper == "sand", "Wallpaper selector updates saved and visible room")
  choices[0].item_selected.emit(1)

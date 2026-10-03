@@ -110,6 +110,9 @@ func action(text: String, primary: bool, callback: Callable) -> Button:
 	return control
 
 func show_main() -> void:
+	if profile.world_champion() and not profile.champion_seen:
+		show_champion()
+		return
 	clear("PASSPORT\nRUN", "Remember the path. Travel the world.")
 	var title: Label = content.get_child(0)
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -151,6 +154,9 @@ func show_main() -> void:
 	action("COLLECTION GOALS", false, show_goals)
 	action("MY TRAVEL ROOM", false, show_room)
 	action("MY TRAVEL ALBUM", false, show_album)
+	action("TRAVEL BUDDIES", false, show_buddies)
+	action("TODAY’S TRAVEL JOURNAL", false, show_journal)
+	if profile.world_champion(): action("WORLD CHAMPION · RELIVE YOUR JOURNEY", false, show_champion)
 	action("CHARACTER QUESTS", false, show_character_quests)
 	action("EXPLORER WARDROBE", false, show_wardrobe)
 	action("DAILY TRAVEL MISSIONS", false, show_missions)
@@ -597,6 +603,12 @@ func show_room() -> void:
 	room.positions = profile.room_positions.duplicate(true)
 	room.arrangement_changed.connect(func(points: Dictionary): profile.room_positions = points; profile.save())
 	content.add_child(room)
+	action("EXPORT ROOM PICTURE", false, func(): export_picture("room"))
+	copy("Souvenir sets", 23)
+	for key in TravelCollections.SETS:
+		var names: Array[String] = []
+		for id in TravelCollections.SETS[key].route: names.append(("✓ " if id in profile.discoveries else "○ ") + GameCatalog.country_name(id))
+		copy(TravelCollections.SETS[key].name + " · " + ", ".join(names), 17)
 	action("RESET SOUVENIR POSITIONS", false, func(): profile.room_positions.clear(); profile.save(); show_room())
 	copy("Decorate your room", 23)
 	for kind in RoomDecor.ITEMS:
@@ -608,7 +620,7 @@ func show_room() -> void:
 		for id in RoomDecor.ITEMS[kind]:
 			var item: Dictionary = RoomDecor.ITEMS[kind][id]
 			var earned := RoomDecor.unlocked(kind, id, profile.discoveries)
-			choices.add_item(item.name + ("" if earned else " · %d destinations" % item.count))
+			choices.add_item(item.name + ("" if earned else (" · Complete its souvenir set" if kind == "display" else " · %d destinations" % item.count)))
 			var index := choices.item_count - 1
 			choices.set_item_metadata(index, id)
 			choices.set_item_disabled(index, not earned)
@@ -709,6 +721,9 @@ func show_album() -> void:
 		update.call()
 	)
 	update.call()
+	action("EXPORT THIS ALBUM PAGE", false, func():
+		if not state.ids.is_empty(): export_picture("album", state.ids[state.index])
+	)
 	action("MY TRAVEL ROOM", false, show_room)
 	action("MY PASSPORT", false, show_passport)
 	action("BACK", false, show_main)
@@ -806,3 +821,55 @@ func show_locked_destination() -> void:
 	clear("A mystery awaits", "Reach this destination in your tour first. Its scenery stays hidden until you clear the previous stop.")
 	action("CONTINUE MY BALLOON TOUR", true, func(): request_arcade("world"))
 	action("BACK", false, show_main)
+
+func show_buddies() -> void:
+	clear("Travel buddies", "Choose a tiny friend to accompany your travels. They cheer, jump and react with you.")
+	for id in ["none", "bird", "robot", "dragon"]:
+		var key: String = id
+		action(("✓ " if profile.travel_buddy == id else "") + {"none": "Travel solo", "bird": "Pip · Little bird", "robot": "Orbit · Floating robot", "dragon": "Ember · Baby dragon"}[id], false, func(): profile.travel_buddy = key; profile.save(); show_buddies())
+	action("BACK", false, show_main)
+
+func show_journal() -> void:
+	clear("Daily travel journal", GameCatalog.today_utc() + " · UTC")
+	var countries: Array = profile.daily_progress().countries
+	copy("Today’s completed countries", 23)
+	if countries.is_empty(): copy("Your next journey starts today’s page.")
+	for id in countries: copy(GameCatalog.country_name(id), 18)
+	var journal := profile.journal_today()
+	for field in ["moments", "rewards"]:
+		copy("Best moments" if field == "moments" else "New rewards", 23)
+		if journal[field].is_empty(): copy("Keep traveling to fill this section.", 17)
+		for entry in journal[field]: copy(entry, 18)
+	action("BACK", false, show_main)
+
+func show_champion() -> void:
+	clear("WORLD CHAMPION", "Every country and territory in the free World Tour completed. Your passport tells an extraordinary story.")
+	var celebration := WorldCelebration.new()
+	celebration.reduced_motion = profile.settings.reduced_motion
+	content.add_child(celebration)
+	var art := TravelArtwork.new()
+	art.country_id = profile.history.back() if not profile.history.is_empty() else "FR"
+	art.custom_minimum_size.y = 250
+	content.add_child(art)
+	copy("★ WORLD CHAMPION ★", 32)
+	copy("%d destinations · %d souvenirs collected" % [profile.discoveries.size(), profile.souvenir_counts.values().reduce(func(total, count): return total + int(count), 0)], 22)
+	copy("Your journey", 23)
+	var names: Array[String] = []
+	for id in profile.discoveries.slice(0, 12): names.append(GameCatalog.country_name(id))
+	copy(" → ".join(names) + (" → … +%d more destinations" % (profile.discoveries.size() - 12) if profile.discoveries.size() > 12 else ""), 17)
+	copy("Your souvenir collection", 23)
+	var room := SouvenirRoom.new()
+	room.destinations = profile.room_display.duplicate()
+	room.postcards = profile.room_postcards.duplicate()
+	room.decor = profile.room_decor.duplicate()
+	room.positions = profile.room_positions.duplicate(true)
+	content.add_child(room)
+	action("CELEBRATE & CONTINUE", true, func(): profile.champion_seen = true; profile.save(); show_main())
+
+func export_picture(kind: String, id: String = "") -> void:
+	var message := copy("Preparing your picture…", 17)
+	var path := "user://passport-run-" + kind + ".png"
+	var error: Error = await TravelPicture.save_picture(self, profile, kind, id, path)
+	if is_instance_valid(message):
+		message.text = "Picture saved: " + ProjectSettings.globalize_path(path) if error == OK else "Could not save picture. Please try again."
+	if error == OK and OS.has_feature("desktop"): OS.shell_show_in_file_manager(ProjectSettings.globalize_path(path))

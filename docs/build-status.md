@@ -126,3 +126,12 @@ DestinationTheme drives sandy gusts, icy movement inertia, underwater gravity/bu
 Select LOCAL CO-OP on the arcade's arrival screen, then START. P1 uses arrows/A/D + Space; P2 uses J/L + K, or each player's dedicated touch row. Players move independently and share the weapon arsenal/pickup effects. A fallen player can be revived by a teammate staying within 70 logical units for two seconds, within a 15-second deadline. Both falling ends the round. Hearts revive a fallen teammate or grant a shield to a healthy team. Co-op records use `balloon-coop:<difficulty>`, including menu exits. This is local shared-screen co-op; online networking and second-device pairing were not added. Screenshots: `artifacts/arcade-adventure-*.png`.
 
 Adventure validation: all 17 Godot regression suites and four Python checks passed. The new adventure suite passed 58 checks headlessly, rendered in portrait/landscape and against the exported iPhone pack. Existing arcade (46), rich weapons (45), rotation and passport progression checks remain passing. Updated development-signed generic-iPhone build succeeded at `/private/tmp/passport-native-travel-expansion`; no physical-device installation or online co-op claim.
+
+### Travel life features
+
+- World Champion unlocks after all 250 free countries/territories are discovered, in either gameplay mode. The celebration includes confetti, a journey recap and the player's arranged souvenirs. It appears on return to the menu until acknowledged and can be replayed later.
+- Travel Buddies selects Pip (bird), Orbit (robot), Ember (baby dragon), or solo travel. The choice persists and companions react during memory-path and Balloon Tour play. Reduced motion and pause stop companion motion.
+- Souvenir sets unlock room displays: SPACE/MOON/MARS/SATURN, CA/NO/IS, and FR/IT/ES. The room shows set progress and lets earned displays be equipped.
+- Today's journal uses the existing UTC daily boundary, records completed destinations, flawless finishes, personal bests, souvenirs, badges, travelers and set rewards. It persists across restarts and resets with the day.
+- Room and album exports render standalone 720×1000 PNGs in user storage. Desktop opens the saved file in the file manager. Native iOS share-sheet delivery is not implemented.
+- `tests/test_travel_life.gd` exercises save/reload, reward gating, rollover, champion unlock/acknowledgement, screens and companion reactions; with a display it also verifies PNG exports.

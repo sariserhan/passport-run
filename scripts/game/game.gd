@@ -283,6 +283,7 @@ func load_country(auto_preview: bool) -> void:
 		remove_child(traveler)
 		traveler.queue_free()
 	traveler = Traveler.new()
+	traveler.buddy_kind = profile.travel_buddy
 	traveler.kids = session.mode == "kids"
 	traveler.reduced_motion = profile.settings.reduced_motion
 	traveler.character_id = profile.equipped_character()
@@ -700,6 +701,8 @@ func complete_country() -> void:
 	for destination in options:
 		var id: String = destination
 		actions.append({"text": ("FLY TO " if options.size() > 1 else "CONTINUE TO ") + GameCatalog.country_name(id).to_upper(), "primary": true, "callback": func(): travel_to(id)})
+	if profile.world_champion() and not profile.champion_seen:
+		actions.append({"text": "WORLD CHAMPION CELEBRATION", "primary": true, "callback": return_to_menu})
 	var title := "Passport stamped!"
 	var body := "%s\n%d %s · %d tiles" % [GameCatalog.country_name(session.current_country()), session.completed_countries, "destination" if session.completed_countries == 1 else "destinations", session.banked_tiles]
 	for character in profile.last_unlocked_characters:

@@ -69,6 +69,7 @@ func finish_drag() -> void:
  accept_event()
 
 func _draw() -> void:
+ if not decor.has("display"): decor["display"] = "none"
  var wall: Color = Color(RoomDecor.ITEMS.wallpaper[decor.wallpaper].color)
  var shelf: Color = Color(RoomDecor.ITEMS.shelves[decor.shelves].color)
  draw_rect(Rect2(Vector2.ZERO, size), wall)
@@ -91,6 +92,25 @@ func _draw() -> void:
   draw_line(Vector2(frame.get_center().x, 6), Vector2(frame.get_center().x, 15), Color("b49155"), 2)
  if postcards.is_empty():
   draw_string(ThemeDB.fallback_font, Vector2(12, 60), "Hang your country postcards here", HORIZONTAL_ALIGNMENT_CENTER, size.x - 24, 15, wall.darkened(0.5))
+ if decor.display != "none":
+  var base := Vector2(size.x * 0.5, 600)
+  draw_rect(Rect2(base.x - 85, 560, 170, 60), Color("263e60"))
+  if decor.display == "space":
+   for i in 4:
+    draw_circle(base + Vector2(-60 + i * 40, -12), 9 + i * 2, Color("d6b8ef"))
+    draw_arc(base + Vector2(-60 + i * 40, -12), 17, 0, TAU, 24, Color("f7d88c"), 2)
+  elif decor.display == "winter":
+   draw_rect(Rect2(base.x - 80, base.y + 9, 160, 8), Color("e2f8ff"))
+   for offset in [-55, 55]:
+    var tree := PackedVector2Array([base + Vector2(offset, -35), base + Vector2(offset - 22, 12), base + Vector2(offset + 22, 12)])
+    draw_colored_polygon(tree, Color("8fc7b1"))
+   draw_circle(base, 14, Color("e2f8ff"))
+   draw_circle(base + Vector2(0, -20), 10, Color("e2f8ff"))
+   for offset in [-3, 3]: draw_circle(base + Vector2(offset, -22), 1.5, Color("263e60"))
+   draw_line(base + Vector2(-10, -10), base + Vector2(10, -10), Color("d48165"), 4)
+  else:
+   for i in 3: draw_rect(Rect2(base + Vector2(-65 + i * 45, -30), Vector2(35, 40)), Color("f6d59d"))
+  draw_string(ThemeDB.fallback_font, Vector2(10, 636), TravelCollections.SETS[decor.display].name, HORIZONTAL_ALIGNMENT_CENTER, size.x - 20, 16, Color("263e60"))
  for row in 3:
   draw_rect(Rect2(5, 243 + row * 148, size.x - 10, 9), shelf)
   draw_rect(Rect2(16, 252 + row * 148, 12, 9), shelf.darkened(0.2))

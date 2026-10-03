@@ -6,8 +6,10 @@ const ITEMS := {
  "shelves": {"oak": {"name": "Oak shelves", "count": 0, "color": "785743"}, "white": {"name": "White shelves", "count": 5, "color": "eee5d5"}, "walnut": {"name": "Walnut shelves", "count": 15, "color": "443b39"}},
  "plant": {"none": {"name": "No plant", "count": 0}, "fern": {"name": "Travel fern", "count": 3}, "palm": {"name": "Island palm", "count": 20}},
  "rug": {"none": {"name": "No rug", "count": 0, "color": "ffffff"}, "sunset": {"name": "Sunset rug", "count": 5, "color": "ce8c6e"}, "ocean": {"name": "Ocean rug", "count": 12, "color": "669fae"}},
+ "display": {"none": {"name": "No themed display", "count": 0}, "space": {"name": "Space display", "count": 0}, "winter": {"name": "Winter corner", "count": 0}, "escape": {"name": "European postcard gallery", "count": 0}},
 }
-const DEFAULTS := {"wallpaper": "sand", "shelves": "oak", "plant": "none", "rug": "none"}
+const DEFAULTS := {"wallpaper": "sand", "shelves": "oak", "plant": "none", "rug": "none", "display": "none"}
 
 static func unlocked(kind: String, id: String, discoveries: Array[String]) -> bool:
+ if kind == "display": return id == "none" or id in TravelCollections.earned(discoveries)
  return kind in ITEMS and id in ITEMS[kind] and discoveries.size() >= ITEMS[kind][id].count

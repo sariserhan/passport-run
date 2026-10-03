@@ -3,6 +3,9 @@ extends Node3D
 
 static var pose_bounds: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://resources/jumping-explorer.json"))
 
+var buddy_kind := "none"
+var buddy: Node3D
+var buddy_face: Label3D
 var character_id := "classic"
 var kids := false
 var body: Node3D
@@ -22,6 +25,25 @@ var pressure := 0.0:
 		if reaction: reaction.visible = value > 0.65 and animation == "thinking"
 
 func _ready() -> void:
+	if buddy_kind != "none":
+		buddy = Node3D.new()
+		add_child(buddy)
+		var color := Color("ffc85c") if buddy_kind == "bird" else Color("86d7ed") if buddy_kind == "robot" else Color("8ed599")
+		var material := MeshFactory.material(color)
+		MeshFactory.sphere(buddy, 0.23, Vector3.ZERO, material)
+		MeshFactory.sphere(buddy, 0.16, Vector3(0, 0.18, 0), material)
+		if buddy_kind == "bird": MeshFactory.box(buddy, Vector3(0.14, 0.08, 0.18), Vector3(0, 0.17, 0.18), MeshFactory.material(Color("e98c45")))
+		if buddy_kind == "robot": MeshFactory.box(buddy, Vector3(0.38, 0.22, 0.25), Vector3(0, 0.2, 0), MeshFactory.material(Color("426b89")))
+		if buddy_kind == "dragon":
+			MeshFactory.sphere(buddy, 0.09, Vector3(0, -0.05, 0.35), material)
+			for side in [-1, 1]: MeshFactory.cylinder(buddy, 0.06, 0, 0.18, Vector3(side * 0.1, 0.4, 0), MeshFactory.material(Color("ffe0a0")))
+		for side in [-1, 1]: MeshFactory.box(buddy, Vector3(0.28, 0.04, 0.18), Vector3(side * 0.28, 0, 0), material)
+		buddy_face = Label3D.new()
+		buddy_face.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+		buddy_face.pixel_size = 0.005
+		buddy_face.position.y = 0.55
+		buddy.add_child(buddy_face)
+		buddy.position = Vector3(0.8, 1.7, 0)
 	body = Node3D.new()
 	add_child(body)
 	reaction = Label3D.new()
@@ -82,6 +104,11 @@ func play_animation(next: String) -> void:
 		portrait.frame = {"thinking": 0, "jump": 4, "celebrate": 8, "pocket": 9, "passport": 10, "stamp": 11, "fall": 12}.get(next, 0)
 
 func _process(delta: float) -> void:
+	if buddy:
+		buddy_face.text = "!" if animation == "fall" or pressure > 0.65 else "♥" if animation in ["celebrate", "stamp"] else "• •"
+		if not animation_paused and not reduced_motion:
+			buddy.position.y = 1.7 + sin(animation_clock * (8 if animation == "jump" else 3)) * 0.18
+			buddy.rotation.z = sin(animation_clock * 4) * 0.1
 	if animation_paused or reduced_motion:
 		return
 	animation_clock += delta

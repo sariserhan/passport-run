@@ -29,6 +29,7 @@ func _ready() -> void:
  resized.connect(queue_redraw)
 
 func _draw() -> void:
+ if size.x <= 12 or size.y <= 12: return
  var frame := StyleBoxFlat.new()
  frame.bg_color = Color("fff1d4")
  frame.set_corner_radius_all(12)
