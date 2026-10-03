@@ -135,8 +135,7 @@ func _ready() -> void:
 	modal_margin = MarginContainer.new()
 	modal_margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	overlay.add_child(modal_margin)
-	modal_scroll = ScrollContainer.new()
-	modal_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	modal_scroll = TouchScroll.new()
 	modal_scroll.follow_focus = true
 	modal_margin.add_child(modal_scroll)
 	var center := CenterContainer.new()

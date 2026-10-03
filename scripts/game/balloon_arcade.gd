@@ -481,8 +481,7 @@ func show_panel(message: String, action_text: String, callback: Callable) -> voi
  margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
  for side in ["left", "right", "top", "bottom"]: margin.add_theme_constant_override("margin_" + side, 16)
  panel.add_child(margin)
- var scroll := ScrollContainer.new()
- scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+ var scroll := TouchScroll.new()
  scroll.follow_focus = true
  margin.add_child(scroll)
  var box := VBoxContainer.new()

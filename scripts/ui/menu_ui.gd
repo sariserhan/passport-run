@@ -77,8 +77,7 @@ func setup(saved_profile: PlayerProfile, hud_style: GameHUD) -> void:
 	margins.add_theme_constant_override("margin_top", 48)
 	margins.add_theme_constant_override("margin_bottom", 38)
 	root.add_child(margins)
-	scroll = ScrollContainer.new()
-	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll = TouchScroll.new()
 	margins.add_child(scroll)
 	content = VBoxContainer.new()
 	content.size_flags_horizontal = Control.SIZE_EXPAND_FILL
