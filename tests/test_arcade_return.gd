@@ -36,13 +36,14 @@ func run() -> void:
   await process_frame
   await RenderingServer.frame_post_draw
   root.get_texture().get_image().save_png("res://artifacts/arcade-supplies.png")
- expect(arcade.buy_upgrade("heart") and arcade.coins == 70, "Heart purchase deducts exactly its price")
- expect(arcade.buy_upgrade("shield") and arcade.coins == 45, "Shield purchase succeeds")
+ expect(arcade.buy_upgrade("time") and arcade.coins == 70, "Time purchase deducts exactly its price")
+ expect(arcade.buy_upgrade("freeze") and arcade.coins == 45, "Starting freeze purchase succeeds")
  expect(arcade.buy_upgrade("laser") and arcade.coins == 5, "Weapon selection spends coins")
- expect(not arcade.buy_upgrade("heart"), "Insufficient balance rejected")
+ expect(not arcade.buy_upgrade("time"), "Insufficient balance rejected")
  arcade.travel_choice = "detour"
  arcade.next_round()
- expect(arcade.country_index == 1 and arcade.lives == 1 and arcade.shield and arcade.weapon == "laser", "Travel starts destination with bought supplies")
+ arcade.arrival.finish()
+ expect(arcade.country_index == 1 and arcade.lives == 1 and arcade.freeze > 0 and arcade.starting_time and arcade.weapon == "laser", "Travel starts destination with bought supplies")
  expect(arcade.balls[0].armor == 2, "Hard detour has armor")
  arcade.balls.assign([arcade.make_ball(Vector2(200,100),0,1)])
  arcade.balls[0].armor = 1
@@ -83,12 +84,6 @@ func run() -> void:
   arcade.partner_cooldown = 0
   expect(arcade.fire() and arcade.fire(arcade.partner_x), "Both players can shoot simultaneously")
  expect(arcade.team_charge == 0 and arcade.notice.text.begins_with("TEAM BURST"), "Four synchronized pairs trigger team attack")
- var score_before := arcade.score
- var coins_before := arcade.coins
- arcade.player_down = true
- arcade.partner_x = arcade.player_x
- arcade.simulate(2.1)
- expect(arcade.score == score_before + 500 and arcade.coins == coins_before + 10, "Rescue grants team bonus")
  arcade.wires.clear()
  arcade.cooldown = 0
  arcade.partner_cooldown = 0
@@ -116,6 +111,8 @@ func run() -> void:
  var modifier := arcade.daily_modifier
  arcade.configure_daily("2026-10-03")
  expect(arcade.route == daily_route and arcade.starting_weapon == daily_weapon and arcade.daily_modifier == modifier, "Daily manifest repeats deterministically")
+ # Test fixture: daily gameplay rules are tested after its scenery has been reached.
+ game.profile.discover(BalloonArcade.daily_destination(GameCatalog.today_utc()))
  game.start_arcade("daily")
  arcade = game.arcade
  arcade.set_physics_process(false)
@@ -134,7 +131,7 @@ func run() -> void:
  expect(arcade.record_mode().begins_with("balloon-daily:"), "Daily records separate by UTC date")
  arcade.phase = BalloonArcade.Phase.CLEAR
  arcade.round_index = 2
- expect(not arcade.buy_upgrade("heart"), "Daily cannot buy tour upgrades")
+ expect(not arcade.buy_upgrade("time"), "Daily cannot buy tour upgrades")
  if DisplayServer.get_name() != "headless":
   arcade.phase = BalloonArcade.Phase.PLAY
   arcade.simulate(0.01)

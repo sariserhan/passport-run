@@ -26,6 +26,7 @@ func _initialize() -> void:
 func run() -> void:
  game = load("res://scenes/game.tscn").instantiate()
  game.save_path = "user://arcade-rich-" + DisplayServer.get_name() + ".json"
+ for suffix in ["", ".bak", ".tmp"]: DirAccess.remove_absolute(game.save_path + suffix)
  root.add_child(game)
  await process_frame
  root.size = Vector2i(390,844)
@@ -107,9 +108,8 @@ func run() -> void:
  arcade.simulate(3.1)
  expect(arcade.fire(), "Firing returns when the jam expires")
  reset()
- arcade.lives = 2
- arcade.collect("heart")
- expect(arcade.lives == 3, "Heart restores a life")
+ arcade.collect("upgrade")
+ expect(arcade.weapon == "double" and arcade.weapon_level == 1 and arcade.lives == 1, "Upgrade rewards a stronger weapon while retaining one-hit death")
  var time: float = arcade.remaining
  arcade.collect("time")
  expect(arcade.remaining == time + 12, "Clock adds time")

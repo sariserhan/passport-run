@@ -77,7 +77,7 @@ func run() -> void:
  arcade.effects.clear()
  var old_score := arcade.score
  for index in 3:
-  arcade.pickups.assign([{"position":Vector2(arcade.player_x,arcade.floor_y-20),"kind":"shield","age":0.0}])
+  arcade.pickups.assign([{"position":Vector2(arcade.player_x,arcade.floor_y-20),"kind":"rapid","age":0.0}])
   arcade.simulate(0.01)
  expect(arcade.score == old_score+500, "Three lucky mysteries award a risk bonus")
  reset()
@@ -144,7 +144,7 @@ func run() -> void:
  arcade.begin_round()
  arcade.set_physics_process(false)
  arcade.freeze = 30
- expect(arcade.partner_controls.visible and arcade.controls.position.y < arcade.partner_controls.position.y, "Co-op exposes two sets of touch controls")
+ expect(arcade.partner_controls.visible and arcade.controls.get_global_rect().end.x < arcade.partner_controls.position.x, "Landscape co-op exposes separate side-by-side touch controls")
  arcade.set_control("P2 ▶",true)
  x = arcade.partner_x
  arcade.simulate(0.1)
@@ -154,12 +154,10 @@ func run() -> void:
  arcade.simulate(0.1)
  expect(not arcade.wires.is_empty() and absf(arcade.wires[0].x-arcade.partner_x)<1, "P2 fires from their own character")
  arcade.set_control("P2 FIRE",false)
- arcade.partner_down = true
- arcade.collect("heart")
- expect(not arcade.partner_down and arcade.partner_grace > 0, "Shared heart revives a fallen teammate")
- arcade.collect("heart")
- expect(arcade.shield, "Healthy team receives a shared shield from heart")
- arcade.shield = false
+ arcade.collect("upgrade")
+ expect(arcade.weapon == "double" and arcade.weapon_level == 1, "Weapon upgrade benefits the shared team weapon")
+ arcade.collect("rapid")
+ expect(arcade.effects.has("rapid"), "Co-op rapid reward increases shared firing speed")
  arcade.invincible = 0
  arcade.hit()
  expect(arcade.phase == BalloonArcade.Phase.FAILED, "First co-op collision ends the run")

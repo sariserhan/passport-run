@@ -59,6 +59,8 @@ func run_tests() -> void:
 	game.backend_session_path = "user://online-game-test-session.json"
 	root.add_child(game)
 	await process_frame
+	# Test fixture: ranked dailies replay reached scenery without changing server rules.
+	game.profile.discoveries.assign(GameCatalog.COUNTRIES.keys())
 	await game.start_game("online_daily", "easy")
 	expect(game.online and game.session.mode == "daily", "Explicit online mode uses a server-issued game run")
 	game.start_preview()

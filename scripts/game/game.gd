@@ -178,6 +178,13 @@ func start_game(mode: String, difficulty_key: String) -> void:
 	if not is_retry:
 		failed_countries.clear()
 	session.begin(mode, difficulty_key, adventure_start if mode == "adventure" else special_start if mode == "special" else (cinema_start if mode == "cinema" else profile.home_country), randi_range(1, PathGenerator.MODULUS - 2), {"route": TravelGoals.TRIPS[trip_id].route} if mode == "trip" else imported_challenge)
+	var requested_route: Array = issued.route if requested_online else session.fixed_route
+	if mode in ["daily", "challenge", "trip"] and not profile.can_visit_route(requested_route):
+		reject_locked_destination()
+		return
+	if mode in ["special", "cinema", "adventure"] and not profile.can_visit(session.current_country()):
+		reject_locked_destination()
+		return
 	if online:
 		session.balance_version = int(issued.balanceVersion)
 		session.seed_value = int(issued.seed)
@@ -304,7 +311,7 @@ func rebuild_environment() -> void:
 	environment.reduced_motion = profile.settings.reduced_motion
 	environment.config = config
 	environment.country_id = session.current_country()
-	environment.endless = session.mode == "infinite"
+	environment.endless = session.mode in ["infinite", "tutorial", "practice"]
 	environment.name = "EnvironmentRoot"
 	add_child(environment)
 	if session.mode == "infinite":
@@ -706,6 +713,9 @@ func complete_country() -> void:
 func travel_to(id: String) -> void:
 	if travel.active or run.phase != RunState.Phase.COMPLETE or not country_awarded or id not in session.choices():
 		return
+	if not profile.can_visit(id):
+		reject_locked_destination()
+		return
 	var departure := session.current_country()
 	if not session.travel_to(id):
 		return
@@ -825,6 +835,7 @@ func _notification(what: int) -> void:
 			audio.set_paused(false)
 	elif what == NOTIFICATION_WM_CLOSE_REQUEST:
 		if profile:
+			if is_instance_valid(arcade): arcade.save_checkpoint()
 			profile.save()
 			telemetry.flush()
 
@@ -903,6 +914,9 @@ func start_arcade(kind: String) -> void:
 		menu.pending_arcade = kind
 		menu.show_countries()
 		return
+	if kind == "daily" and not profile.can_visit(BalloonArcade.daily_destination(GameCatalog.today_utc())):
+		reject_locked_destination()
+		return
 	return_to_menu()
 	paused = true
 	menu.root.hide()
@@ -919,7 +933,7 @@ func start_arcade(kind: String) -> void:
 	if kind == "daily":
 		arcade.configure_daily(Time.get_datetime_string_from_unix_time(int(Time.get_unix_time_from_system())).substr(0, 10))
 	elif kind == "world":
-		arcade.route = RoutePlanner.tour(profile.home_country)
+		arcade.route = profile.tour_route()
 		arcade.country_index = RoutePlanner.next_uncleared(arcade.route, profile.discoveries)
 	else:
 		arcade.route.assign(GameCatalog.PREMIUM_DESTINATIONS.keys() if kind == "special" else GameCatalog.CINEMA_DESTINATIONS.keys())
@@ -929,6 +943,7 @@ func start_arcade(kind: String) -> void:
 
 func close_arcade() -> void:
 	if not is_instance_valid(arcade): return
+	arcade.save_checkpoint()
 	profile.record(arcade.record_mode(), "moderate" if arcade.route_kind == "daily" else profile.difficulty, arcade.score)
 	var layer := arcade.get_parent()
 	arcade = null
@@ -936,3 +951,7 @@ func close_arcade() -> void:
 	paused = false
 	hud.show()
 	audio.set_paused(false)
+
+func reject_locked_destination() -> void:
+	return_to_menu()
+	menu.show_locked_destination()

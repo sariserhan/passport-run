@@ -141,6 +141,9 @@ func show_main() -> void:
 	for item in [["world", "WORLD TOUR"], ["infinite", "INFINITE MEMORY"], ["daily", "DAILY WORLD TOUR"], ["kids", "KIDS ADVENTURE"]]:
 		var mode: String = item[0]
 		mode_buttons[mode] = action(item[1], mode == "world", func(): request_mode(mode))
+		if mode == "daily" and not profile.can_visit_route(GameCatalog.COUNTRIES.keys()):
+			mode_buttons[mode].text = "? · DAILY WORLD TOUR · REACH ITS STOPS FIRST"
+			mode_buttons[mode].disabled = true
 	action("COLLECTION GOALS", false, show_goals)
 	action("MY TRAVEL ROOM", false, show_room)
 	action("EXPLORER WARDROBE", false, show_wardrobe)
@@ -150,7 +153,9 @@ func show_main() -> void:
 	copy("Daily: same UTC date + difficulty = same route. Scores are local until online rankings are connected.", 15)
 	if online_available:
 		copy("Online play uses an anonymous account and syncs your passport.", 15)
-		action("ONLINE DAILY", false, func(): start_requested.emit("online_daily", profile.difficulty))
+		var daily_online := action("ONLINE DAILY", false, func(): start_requested.emit("online_daily", profile.difficulty))
+		daily_online.disabled = not profile.can_visit_route(GameCatalog.COUNTRIES.keys())
+		if daily_online.disabled: daily_online.text = "? · ONLINE DAILY · REACH ITS STOPS FIRST"
 		action("ONLINE INFINITE", false, func(): start_requested.emit("online_infinite", profile.difficulty))
 		action("ONLINE RANKINGS", false, func(): online_records_requested.emit())
 	action("WORLD MAP", false, show_world_map)
@@ -407,7 +412,8 @@ func show_paid_route(cinema: bool) -> void:
 		else:
 			card.add_child(style.label("? · Scenery revealed when you reach this destination", 17, GameHUD.CREAM))
 		var play := style.button("PLAY " + GameCatalog.country_name(place).to_upper() if manager and manager.unlocked else "LOCKED · ROUTE PACK REQUIRED", manager and manager.unlocked)
-		play.disabled = not manager or not manager.unlocked or manager.busy
+		play.disabled = not manager or not manager.unlocked or manager.busy or not profile.can_visit(place)
+		if manager and manager.unlocked and not profile.can_visit(place): play.text = "? · REACH THIS STOP TO UNLOCK"
 		play.pressed.connect(func():
 			if cinema: cinema_requested.emit(place)
 			else: special_requested.emit(place)
@@ -436,7 +442,8 @@ func show_trips() -> void:
 		copy(" → ".join(names), 18)
 		copy("★ Adventure badge collected" if "trip:" + id in profile.badges else "Complete all three in one run for your badge.", 16)
 		var trip_key: String = id
-		action("START " + trip.name.to_upper(), true, func(): trip_requested.emit(trip_key))
+		var play := action("START " + trip.name.to_upper() if profile.can_visit_route(trip.route) else "? · REACH THESE STOPS TO UNLOCK", true, func(): trip_requested.emit(trip_key))
+		play.disabled = not profile.can_visit_route(trip.route)
 	action("BACK", false, show_main)
 
 func show_goals() -> void:
@@ -496,7 +503,8 @@ func show_adventures() -> void:
 	clear("Adventure Play", "Special mechanics, local scores. Ranked modes keep their usual rules.")
 	for item in [["NO", "NORWAY · SLIPPERY ICE"], ["BR", "BRAZIL · MOVING BRIDGES"], ["GR", "GREECE · MOVING SEASIDE STONES"], ["MOON", "MOON · LOW GRAVITY · SPECIAL PACK"], ["UNDERWATER", "UNDERWATER · BUOYANT JUMPS · SPECIAL PACK"]]:
 		var id: String = item[0]
-		action(item[1], true, func(): adventure_requested.emit(id))
+		var play := action(item[1] if profile.can_visit(id) else "? · SPECIAL MECHANIC · REACH THIS STOP FIRST", true, func(): adventure_requested.emit(id))
+		play.disabled = not profile.can_visit(id)
 	action("BACK", false, show_main)
 
 func show_wardrobe() -> void:
@@ -558,7 +566,8 @@ func show_arcade() -> void:
 	clear("Balloon Tour", "Clear three rounds at each destination to reveal the next. Your route is planned for you. One balloon hit ends the game.\nMove ◀ ▶ and FIRE ↑. Keyboard: arrows or A/D + Space. Co-op: P2 uses J/L + K. Mystery drops can help or hurt; collect or avoid them in Pause.")
 	if profile.home_country in GameCatalog.FREE_DESTINATIONS:
 		copy("Start: " + GameCatalog.country_name(profile.home_country) + " · permanent", 17)
-	action("DAILY ARCADE · SAME CHALLENGE FOR EVERYONE", false, func(): arcade_requested.emit("daily"))
+	var daily := action("DAILY ARCADE" if profile.can_visit(BalloonArcade.daily_destination(GameCatalog.today_utc())) else "? · DAILY ARCADE · REACH THIS STOP FIRST", false, func(): arcade_requested.emit("daily"))
+	daily.disabled = not profile.can_visit(BalloonArcade.daily_destination(GameCatalog.today_utc()))
 	action("WORLD BALLOON TOUR · 250 DESTINATIONS", true, func(): request_arcade("world"))
 	action("SPECIAL BALLOON TOUR · EXPEDITIONS PACK", false, func(): arcade_requested.emit("special"))
 	action("CINEMA BALLOON TOUR · CINEMA PACK", false, func(): arcade_requested.emit("cinema"))
@@ -572,3 +581,8 @@ func request_arcade(kind: String) -> void:
 		show_countries()
 		return
 	arcade_requested.emit(kind)
+
+func show_locked_destination() -> void:
+	clear("A mystery awaits", "Reach this destination in your tour first. Its scenery stays hidden until you clear the previous stop.")
+	action("CONTINUE MY BALLOON TOUR", true, func(): request_arcade("world"))
+	action("BACK", false, show_main)

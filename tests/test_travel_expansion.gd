@@ -24,6 +24,8 @@ func capture(name: String) -> void:
   root.get_texture().get_image().save_png("res://artifacts/expansion-" + name + ".png")
 
 func play_adventure(id: String) -> void:
+ # Replay fixture: these mechanics are tested after reaching their scenery.
+ if id not in game.profile.discoveries: game.profile.discoveries.append(id)
  game.adventure_start = id
  game.start_game("adventure", "easy")
  expect(game.travel.active and game.run.phase == RunState.Phase.READY, "Adventure starts with a cinematic arrival")
@@ -103,6 +105,7 @@ func run() -> void:
  expect(game.menu.special_page and not game.purchase.unlocked, "Moon mechanics retain the paid route gate")
  # Test-only entitlement; no saved premium flag or production checkout bypass.
  game.purchase.unlocked = true
+ game.profile.discoveries.append("MOON")
  game.start_game("adventure", "easy")
  expect(game.config.jump_height == 3.0 and game.config.jump_seconds == 0.75, "Moon adventure uses higher, longer jumps")
  await capture("arrival-MOON")

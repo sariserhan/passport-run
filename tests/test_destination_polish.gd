@@ -99,6 +99,7 @@ func run() -> void:
  var old_position: Vector3 = game.grid.position_for(0, 0)
  game.imported_challenge = {"seed": 10, "difficulty": "easy", "route": ["FR"], "target_score": 0, "balance_version": 1}
  game.return_to_menu()
+ game.profile.discoveries.append("FR") # Legacy geometry test replays a reached stop.
  game.start_game("challenge", "easy")
  expect(game.grid.layout == "classic" and game.grid.position_for(0, 0).y == 0, "Legacy challenge geometry stays flat")
  expect(old_position != game.grid.position_for(0, 0), "New routes use destination path variation")

@@ -55,16 +55,19 @@ func run() -> void:
 		arcade.simulate(0.01)
 		expect(arcade.phase == BalloonArcade.Phase.CLEAR and arcade.backdrop == scenery, "The current scenery remains until its rounds are passed")
 		if stage < 2: arcade.next_round()
+	arcade.finish_stamp()
 	arcade.next_round()
 	expect(arcade.country_index == 0 and arcade.backdrop == scenery, "Travel supplies still shows the completed destination")
 	arcade.next_round()
+	expect(arcade.phase == BalloonArcade.Phase.TRAVEL and not arcade.arrival.artwork.revealed and arcade.backdrop == scenery, "Travel begins with a mystery silhouette")
+	arcade.arrival.finish()
 	expect(arcade.country_index == 1 and arcade.backdrop == GameCatalog.backdrop(route[1]), "Only clearing the current destination reveals the next scenery")
 	game.return_to_menu()
 	game.profile.difficulty = "hard"
 	game.start_arcade("world")
 	arcade = game.arcade
 	arcade.set_physics_process(false)
-	expect(arcade.route == route and arcade.country_index == 1, "Leaving and changing difficulty preserves route order and resumes the first uncleared destination")
+	expect(arcade.route == route and arcade.country_index == 1, "Leaving and changing difficulty preserves route order and resumes the saved round")
 	var resumed_map := arcade.panel.find_children("*", "PassportWorldMap", true, false)[0] as PassportWorldMap
 	expect(resumed_map.route == route.slice(0, 2), "The resumed map reveals only reached stops")
 	game.return_to_menu()

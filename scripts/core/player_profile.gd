@@ -15,6 +15,9 @@ var passport_cover := "classic"
 var daily_missions: Dictionary = {}
 var character_style := {"outfit": "classic", "hat": "none", "backpack": "classic"}
 var room_display: Array[String] = []
+var arcade_saves: Dictionary = {}
+var cached_home := ""
+var cached_tour: Array[String] = []
 var settings: Dictionary = {"music": 0.35, "sound": 0.65, "reduced_motion": false, "high_contrast": false, "haptics": true}
 var last_error: String = ""
 
@@ -36,6 +39,10 @@ func load_profile() -> void:
 	if data.get("anonymous_id") is String and data.anonymous_id.length() == 32 and data.anonymous_id.is_valid_hex_number():
 		anonymous_id = data.anonymous_id
 	tutorial_done = data.get("tutorial_done", false) == true
+	if data.get("arcade_saves") is Dictionary:
+		for key in data.arcade_saves:
+			if key is String and key in ["world", "special", "cinema", "daily:" + GameCatalog.today_utc()] and data.arcade_saves[key] is String and data.arcade_saves[key].length() <= ArcadeCheckpoint.MAX_ENCODED:
+				arcade_saves[key] = data.arcade_saves[key]
 	for field in ["discoveries", "history"]:
 		if data.get(field) is Array:
 			for id in data[field].slice(0, 200 if field == "history" else GameCatalog.DESTINATIONS.size()):
@@ -93,7 +100,7 @@ func read_valid(path: String) -> Dictionary:
 	return {}
 
 func save() -> bool:
-	var data := {"version": SCHEMA_VERSION, "anonymous_id": anonymous_id, "home_country": home_country, "difficulty": difficulty, "tutorial_done": tutorial_done, "discoveries": discoveries, "history": history, "records": records, "badges": badges, "passport_cover": passport_cover, "daily_missions": daily_missions, "character_style": character_style, "room_display": room_display, "settings": settings}
+	var data := {"version": SCHEMA_VERSION, "anonymous_id": anonymous_id, "home_country": home_country, "difficulty": difficulty, "tutorial_done": tutorial_done, "discoveries": discoveries, "history": history, "records": records, "badges": badges, "passport_cover": passport_cover, "daily_missions": daily_missions, "character_style": character_style, "room_display": room_display, "settings": settings, "arcade_saves": arcade_saves}
 	var file := FileAccess.open(file_path + ".tmp", FileAccess.WRITE)
 	if file == null:
 		last_error = "Progress could not be saved on this device."
@@ -116,6 +123,26 @@ func choose_start_country(id: String) -> bool:
 	if save(): return true
 	home_country = previous
 	return false
+
+func tour_route() -> Array[String]:
+	if home_country not in GameCatalog.FREE_DESTINATIONS: return []
+	if cached_home != home_country:
+		cached_home = home_country
+		cached_tour = RoutePlanner.tour(home_country)
+	return cached_tour.duplicate()
+
+func can_visit(id: String) -> bool:
+	if id in discoveries: return true
+	var free_route := tour_route()
+	if not free_route.is_empty() and free_route[RoutePlanner.next_uncleared(free_route, discoveries)] == id: return true
+	for catalog in [GameCatalog.PREMIUM_DESTINATIONS, GameCatalog.CINEMA_DESTINATIONS]:
+		var ids: Array[String] = []
+		ids.assign(catalog.keys())
+		if ids[RoutePlanner.next_uncleared(ids, discoveries)] == id: return true
+	return false
+
+func can_visit_route(ids: Array) -> bool:
+	return not ids.is_empty() and ids.all(func(id): return id is String and can_visit(id))
 
 func discover(id: String) -> void:
 	if id not in GameCatalog.DESTINATIONS:

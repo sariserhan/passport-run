@@ -60,6 +60,8 @@ func run_tests() -> void:
  await capture("short-adventures")
  game.menu.show_goals()
  await capture("goals-locked")
+ # Replay fixture: short trips are available for destinations already reached.
+ game.profile.discoveries.assign(["FR", "IT", "ES"])
  game.trip_id = "europe"
  game.start_game("trip", "easy")
  var seed_value: int = game.session.seed_value

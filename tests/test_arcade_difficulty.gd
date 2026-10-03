@@ -61,6 +61,8 @@ func run() -> void:
  arcade.round_index = 1
  arcade.begin_round()
  expect(absf(arcade.balls[0].velocity.x) > opening_speed, "Rounds increase speed within each destination")
+ # Test fixture: daily gameplay rules only unlock after reaching the destination.
+ game.profile.discover(BalloonArcade.daily_destination(GameCatalog.today_utc()))
  game.start_arcade("daily")
  arcade = game.arcade
  arcade.set_physics_process(false)

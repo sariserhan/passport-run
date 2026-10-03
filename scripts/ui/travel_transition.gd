@@ -52,27 +52,34 @@ func setup(style: GameHUD) -> void:
 	root.resized.connect(func(): SafeAreaMargins.apply(margins, root.size, Vector4i(28, 48, 28, 38)))
 	root.hide()
 
-func begin(from: String, to: String, reduced_motion: bool, cinematic: bool = false) -> void:
+func begin(from: String, to: String, reduced_motion: bool, cinematic: bool = false, mystery: bool = false) -> void:
 	cancel()
 	active = true
 	root.show()
 	SafeAreaMargins.apply(margins, root.size, Vector4i(28, 48, 28, 38))
+	artwork.revealed = not mystery
 	artwork.country_id = to
 	artwork.show_traveler = not cinematic
 	artwork.custom_minimum_size.y = 310 if cinematic else 220
 	artwork.zoom = 1.0 if reduced_motion else 1.2 if cinematic else 1.0
 	artwork.queue_redraw()
-	root.find_child("Destination", true, false).text = GameCatalog.country_name(to)
-	root.find_child("Route", true, false).text = CountryRewards.fact(to) if cinematic else "%s → %s" % [GameCatalog.country_name(from), GameCatalog.country_name(to)]
+	root.find_child("Destination", true, false).text = "MYSTERY DESTINATION" if mystery else GameCatalog.country_name(to)
+	root.find_child("Route", true, false).text = "Your next adventure is waiting…" if mystery else CountryRewards.fact(to) if cinematic else "%s → %s" % [GameCatalog.country_name(from), GameCatalog.country_name(to)]
+	skip_button.text = "REVEAL NOW" if mystery else "LAND NOW"
 	flight.value = 0
 	skip_button.grab_focus.call_deferred()
 	animation = create_tween()
 	animation.tween_method(func(progress: float):
 		flight.value = progress
+		if mystery and progress >= 0.75 and not artwork.revealed:
+			artwork.revealed = true
+			root.find_child("Destination", true, false).text = GameCatalog.country_name(to)
+			root.find_child("Route", true, false).text = "WELCOME · " + CountryRewards.fact(to)
+			artwork.queue_redraw()
 		if cinematic and not reduced_motion:
 			artwork.zoom = lerpf(1.2, 1.0, progress)
 			artwork.queue_redraw()
-	, 0.0, 1.0, 0.15 if reduced_motion else 3.0 if cinematic else 2.0)
+	, 0.0, 1.0, 0.15 if reduced_motion else 1.6 if mystery else 3.0 if cinematic else 2.0)
 	animation.tween_callback(finish)
 
 func finish() -> void:

@@ -15,9 +15,9 @@ const WALK_SOLES := [443.0, 443.0, 443.0, 443.0, 436.0, 437.0, 435.0, 436.0]
 const IDLE_ANCHOR := Vector2(230.5, 28)
 const IDLE_SOLE := 699.0
 const PORTRAIT := preload("res://assets/arcade-poses.png")
-const DROPS := ["double", "sticky", "gun", "triple", "spread", "laser", "rocket", "shield", "freeze", "slow", "boots", "heart", "time", "coin", "bomb", "magnet", "speed", "multiply", "heavy", "reverse", "jam", "shrink_time"]
+const DROPS := ["double", "sticky", "gun", "triple", "spread", "laser", "rocket", "rapid", "freeze", "slow", "boots", "upgrade", "time", "coin", "bomb", "magnet", "speed", "multiply", "heavy", "reverse", "jam", "shrink_time"]
 const WEAPONS := ["double", "sticky", "gun", "triple", "spread", "laser", "rocket"]
-enum Phase { READY, PLAY, CLEAR, FAILED, PAUSED }
+enum Phase { READY, PLAY, CLEAR, FAILED, PAUSED, TRAVEL }
 var phase := Phase.READY
 var profile: PlayerProfile
 var audio: GameAudio
@@ -35,7 +35,6 @@ var invincible := 0.0
 var cooldown := 0.0
 var freeze := 0.0
 var double_wire := 0.0
-var shield := false
 var country_failed := false
 var left_held := false
 var right_held := false
@@ -49,7 +48,7 @@ var backdrop: Texture2D
 var panel: ColorRect
 var heading: Label
 var stats: Label
-var controls: HBoxContainer
+var controls: Control
 var pause_button: Button
 var clock := 0.0
 var weapon := "wire"
@@ -75,16 +74,11 @@ var combo_time := 0.0
 var particles: Array[Dictionary] = []
 var coop := false
 var partner_x := 430.0
-var partner_down := false
-var player_down := false
-var revive_time := 0.0
-var down_time := 0.0
 var partner_shot := 0.0
-var partner_grace := 0.0
 var partner_slide := 0.0
 var partner_movement := 0.0
 var partner_walk := 0.0
-var partner_controls: HBoxContainer
+var partner_controls: Control
 var partner_held: Dictionary = {}
 var mechanic := "stone"
 var slide_speed := 0.0
@@ -98,8 +92,8 @@ var mystery_chain := 0
 var coins := 0
 var round_coins := 0
 var travel_choice := "safe"
-var extra_hearts := 0
-var starting_shield := false
+var starting_freeze := false
+var starting_time := false
 var starting_weapon := "wire"
 var daily_day := ""
 var daily_modifier := ""
@@ -110,44 +104,129 @@ var partner_cooldown := 0.0
 var shake := 0.0
 var hit_flash := 0.0
 var margins := Vector4i(16, 16, 16, 26)
+var autosave_time := 0.0
+var resumed := false
+var finished_tour := false
+var stamp: PassportStamp
+var arrival: TravelTransition
+var stamp_pending := false
+var last_haptic := -1000
+
+func checkpoint_key() -> String:
+ return "daily:" + daily_day if route_kind == "daily" else route_kind
+
+func save_checkpoint() -> void:
+ if finished_tour or route.is_empty() or not is_instance_valid(panel): return
+ var encoded := ArcadeCheckpoint.capture(self)
+ if encoded.is_empty():
+  notice.text = "Progress could not be saved. Try returning to the menu."
+  return
+ var keep_daily := "daily:" + (daily_day if route_kind == "daily" else GameCatalog.today_utc())
+ for key in profile.arcade_saves.keys():
+  if key.begins_with("daily:") and key != keep_daily: profile.arcade_saves.erase(key)
+ profile.arcade_saves[checkpoint_key()] = encoded
+ if not profile.save(): notice.text = profile.last_error
+ autosave_time = 0
+
+func restore_checkpoint() -> bool:
+ var state := ArcadeCheckpoint.decode(profile.arcade_saves.get(checkpoint_key(), ""), self)
+ if state.is_empty(): return false
+ for field in ArcadeCheckpoint.FIELDS: set(field, state[field])
+ profile.difficulty = state.difficulty if route_kind != "daily" else profile.difficulty
+ layout()
+ balls.assign(state.balls)
+ wires.assign(state.wires)
+ pickups.assign(state.pickups)
+ platforms.assign(state.platforms)
+ effects = state.effects
+ rng.state = state.rng
+ rescale_world(state.floor)
+ resumed = true
+ lives = 0 if state.phase == Phase.FAILED else 1
+ load_destination()
+ notice.text = round_brief()
+ update_stats()
+ if state.phase == Phase.PLAY:
+  phase = Phase.PAUSED
+  pause_from = Phase.PLAY
+  audio.set_paused(true)
+  show_panel("JOURNEY SAVED\n%s · Round %d/3\n%d pts · %d coins" % [GameCatalog.country_name(route[country_index]), round_index + 1, score, coins], "RESUME ROUND", func(): set_paused(false))
+ elif state.phase == Phase.CLEAR:
+  phase = Phase.CLEAR
+  if state.supplies and round_index == 2 and country_index < route.size() - 1:
+   panel.set_meta("travel", true)
+   show_travel()
+  else: show_clear_panel()
+ elif state.phase == Phase.FAILED:
+  phase = Phase.FAILED
+  death_time = 0
+  show_panel("RETRY YOUR SAVED ROUND\n%s · %d/3" % [GameCatalog.country_name(route[country_index]), round_index + 1], "RETRY ROUND", begin_round)
+ else: phase = Phase.READY
+ return true
+
+func rescale_world(old_floor: float) -> void:
+ var ratio := floor_y / old_floor
+ for ball in balls:
+  ball.position.y *= ratio
+  ball.velocity.y *= sqrt(ratio)
+ for wire in wires:
+  wire.top *= ratio
+  wire.bottom = floor_y
+ for pickup in pickups: pickup.position.y *= ratio
+ for index in platforms.size():
+  platforms[index].position.y *= ratio
+  platforms[index].size.y *= ratio
+
+func pulse(duration: int = 20) -> void:
+ if not profile.settings.haptics or not OS.has_feature("mobile"): return
+ var now := Time.get_ticks_msec()
+ if now - last_haptic < 100: return
+ last_haptic = now
+ Input.vibrate_handheld(duration, 0.35)
 
 func record_mode() -> String:
  return "balloon-daily:" + daily_day if route_kind == "daily" else "balloon-coop" if coop else "balloon"
+
+static func daily_destination(day: String) -> String:
+ var destinations: Array = GameCatalog.FREE_DESTINATIONS.keys()
+ destinations.sort()
+ return destinations[posmod(GameCatalog.daily_seed(day, "balloon-daily-v1"), destinations.size())]
 
 func configure_daily(day: String) -> void:
  daily_day = day
  country_index = 0
  round_index = 0
  var seed_value := GameCatalog.daily_seed(day, "balloon-daily-v1")
- var destinations: Array = GameCatalog.FREE_DESTINATIONS.keys()
- destinations.sort()
- route.assign([destinations[posmod(seed_value, destinations.size())]])
+ route.assign([daily_destination(day)])
  starting_weapon = WEAPONS[posmod(seed_value / 7, WEAPONS.size())]
  daily_modifier = ["zigzag", "armored", "timed", "dodge"][posmod(seed_value / 31, 4)]
 
 func buy_upgrade(kind: String) -> bool:
  if phase != Phase.CLEAR or round_index != 2 or route_kind == "daily": return false
- var cost := 30 if kind == "heart" else 25 if kind == "shield" else 40
- if coins < cost or (kind == "heart" and extra_hearts >= 2) or (kind == "shield" and starting_shield) or (kind not in ["heart", "shield"] and kind not in WEAPONS): return false
+ var cost := 30 if kind == "time" else 25 if kind == "freeze" else 40
+ if kind not in ["time", "freeze"] + WEAPONS or coins < cost or (kind == "time" and starting_time) or (kind == "freeze" and starting_freeze): return false
  coins -= cost
- if kind == "heart": extra_hearts += 1
- elif kind == "shield": starting_shield = true
+ if kind == "time": starting_time = true
+ elif kind == "freeze": starting_freeze = true
  else: starting_weapon = kind
+ update_stats()
+ save_checkpoint()
  show_travel()
  return true
 
 func show_travel() -> void:
- show_panel("TRAVEL SUPPLIES · %d coins\nNext: %s\nSafe route: shield, normal rewards.\nHard detour: faster armored balloons, double coins.\nSupplies apply to every following destination." % [coins, GameCatalog.country_name(route[country_index + 1])], "TRAVEL · " + travel_choice.to_upper(), next_round)
+ show_panel("TRAVEL SUPPLIES · %d coins\nYour next stop is a mystery.\nTime boost: +8s to clear, 8s shorter survival.\nSafe: 2s freeze, normal rewards.\nHard: faster armored balloons, double coins.\nSupplies apply to every following destination." % coins, "REVEAL NEXT STOP", next_round)
  var box := panel.get_child(0).get_child(0).get_child(0)
- var route_button := style.button("CHOOSE HARD DETOUR" if travel_choice == "safe" else "CHOOSE SAFE ROUTE", false)
- route_button.pressed.connect(func(): travel_choice = "detour" if travel_choice == "safe" else "safe"; show_travel())
+ var route_button := style.button("HARD CHALLENGE · DOUBLE COINS" if travel_choice == "safe" else "SAFE CHALLENGE · STARTING FREEZE", false)
+ route_button.pressed.connect(func(): travel_choice = "detour" if travel_choice == "safe" else "safe"; save_checkpoint(); show_travel())
  box.add_child(route_button)
  box.move_child(route_button, 1)
  var shop_index := 2
- for kind in ["heart", "shield"] + WEAPONS:
-  var cost := 30 if kind == "heart" else 25 if kind == "shield" else 40
-  var button := style.button("%s · %d COINS" % [kind.to_upper(), cost], false)
-  button.disabled = coins < cost or (kind == "heart" and extra_hearts >= 2) or (kind == "shield" and starting_shield)
+ for kind in ["time", "freeze"] + WEAPONS:
+  var cost := 30 if kind == "time" else 25 if kind == "freeze" else 40
+  var label_text: String = "ROUND TIME BOOST" if kind == "time" else "2s STARTING FREEZE" if kind == "freeze" else kind.to_upper()
+  var button := style.button("%s · %d COINS" % [label_text, cost], false)
+  button.disabled = coins < cost or (kind == "time" and starting_time) or (kind == "freeze" and starting_freeze)
   button.pressed.connect(func(): buy_upgrade(kind))
   box.add_child(button)
   box.move_child(button, shop_index)
@@ -172,23 +251,27 @@ func _ready() -> void:
  pause_button = style.button("Ⅱ", false)
  pause_button.pressed.connect(func(): set_paused(true))
  add_child(pause_button)
- controls = HBoxContainer.new()
- controls.add_theme_constant_override("separation", 10)
+ controls = Control.new()
+ controls.mouse_filter = Control.MOUSE_FILTER_IGNORE
  add_child(controls)
  for text in ["◀", "▶", "FIRE ↑"]:
   var button := style.button(text, text == "FIRE ↑")
   button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-  button.custom_minimum_size.y = 58
+  button.custom_minimum_size = Vector2(56, 72)
+  button.add_theme_font_size_override("font_size", 20)
+  button.set_meta("control_active", false)
   controls.add_child(button)
   button.button_down.connect(func(): set_control(text, true))
   button.button_up.connect(func(): set_control(text, false))
- partner_controls = HBoxContainer.new()
- partner_controls.add_theme_constant_override("separation", 10)
+ partner_controls = Control.new()
+ partner_controls.mouse_filter = Control.MOUSE_FILTER_IGNORE
  add_child(partner_controls)
  for text in ["P2 ◀", "P2 ▶", "P2 FIRE"]:
   var button := style.button(text, text == "P2 FIRE")
   button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-  button.custom_minimum_size.y = 58
+  button.custom_minimum_size = Vector2(56, 72)
+  button.add_theme_font_size_override("font_size", 20)
+  button.set_meta("control_active", false)
   partner_controls.add_child(button)
   button.button_down.connect(func(): set_control(text, true))
   button.button_up.connect(func(): set_control(text, false))
@@ -196,18 +279,50 @@ func _ready() -> void:
  panel.color = Color(0.04, 0.12, 0.18, 0.94)
  panel.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
  add_child(panel)
+ stamp = PassportStamp.new()
+ add_child(stamp)
+ stamp.setup(style)
+ stamp.layer = 7
+ stamp.stamped.connect(func(): audio.play_cue("stamp"); pulse(35))
+ stamp.finished.connect(finish_stamp)
+ arrival = TravelTransition.new()
+ add_child(arrival)
+ arrival.setup(style)
+ arrival.layer = 7
+ arrival.arrived.connect(finish_arrival)
  resized.connect(layout)
  layout()
+ if restore_checkpoint() and phase != Phase.READY: return
  load_destination()
  show_panel(("DAILY ARCADE · " + daily_day + "\n" + starting_weapon.to_upper() + " · " + daily_modifier.to_upper() + "\nBest today: %d pts\n" % int(profile.records.get(record_mode() + ":moderate", 0)) if route_kind == "daily" else "") + "BALLOON TOUR\nMove ◀ ▶ and FIRE ↑.\nSplit balloons; clear 3 rounds.\nOne balloon hit ends the game.\n? drops may help or hurt.", "START", begin_round)
 
 func set_control(key: String, pressed: bool) -> void:
+ if phase != Phase.PLAY and pressed: return
+ if pressed: pulse()
  if key == "◀": left_held = pressed
  elif key == "▶": right_held = pressed
  elif key == "FIRE ↑": fire_held = pressed
  elif key.begins_with("P2"):
   if pressed: partner_held[key] = true
   else: partner_held.erase(key)
+ update_control_feedback()
+
+func update_control_feedback() -> void:
+ if not is_instance_valid(controls): return
+ var keyboard := {"◀": Input.is_physical_key_pressed(KEY_A) or Input.is_action_pressed("ui_left"), "▶": Input.is_physical_key_pressed(KEY_D) or Input.is_action_pressed("ui_right"), "FIRE ↑": Input.is_physical_key_pressed(KEY_SPACE), "P2 ◀": Input.is_physical_key_pressed(KEY_J), "P2 ▶": Input.is_physical_key_pressed(KEY_L), "P2 FIRE": Input.is_physical_key_pressed(KEY_K)}
+ for button in controls.get_children() + partner_controls.get_children():
+  var key: String = button.text
+  var held := left_held if key == "◀" else right_held if key == "▶" else fire_held if key == "FIRE ↑" else partner_held.has(key)
+  var active: bool = phase == Phase.PLAY and (held or key in touches.values() or keyboard.get(key, false))
+  if button.get_meta("control_active", false) == active: continue
+  button.set_meta("control_active", active)
+  var color := Color("ffdf80") if active else Color("58d887") if "FIRE" in key else Color("117caf")
+  var surface := style.panel_style(color, 14)
+  if active:
+   surface.border_color = Color("fff6df")
+   surface.set_border_width_all(3)
+  for state in ["normal", "hover", "pressed"]: button.add_theme_stylebox_override(state, surface)
+  button.add_theme_color_override("font_color", GameHUD.INK if active or "FIRE" in key else GameHUD.CREAM)
 
 func layout() -> void:
  margins = Vector4i(16, 16, 16, 26)
@@ -217,39 +332,47 @@ func layout() -> void:
  var area := arena()
  world_height = area.size.y / maxf(1, area.size.x) * WORLD.x
  floor_y = world_height - 30
- var ratio := floor_y / old_floor
- for ball in balls:
-  ball.position.y *= ratio
-  ball.velocity.y *= sqrt(ratio)
- for wire in wires:
-  wire.top *= ratio
-  wire.bottom = floor_y
- for pickup in pickups: pickup.position.y *= ratio
- for index in platforms.size(): platforms[index].position.y *= ratio
+ rescale_world(old_floor)
  heading.position = Vector2(margins.x, margins.y)
  heading.size.x = maxf(150, size.x - margins.x - margins.z - 66)
  heading.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
- stats.position = Vector2(margins.x, margins.y + 56)
+ stats.position = Vector2(margins.x, margins.y + 48)
  stats.size.x = size.x - margins.x - margins.z
  stats.clip_text = true
- notice.position = Vector2(margins.x, margins.y + 82)
+ notice.position = Vector2(margins.x, margins.y + 98)
  notice.size.x = size.x - margins.x - margins.z
  notice.clip_text = true
  pause_button.position = Vector2(size.x - margins.z - 50, margins.y)
  pause_button.size = Vector2(50, 50)
- partner_controls.visible = coop
- partner_controls.position = Vector2(margins.x, size.y - margins.w - 66)
- partner_controls.size = Vector2(size.x - margins.x - margins.z, 62)
- controls.position = Vector2(margins.x, size.y - margins.w - 66)
- controls.position.y -= 68 if coop else 0
- controls.size = Vector2(size.x - margins.x - margins.z, 62)
+ partner_controls.visible = coop and phase != Phase.TRAVEL
+ partner_controls.position = Vector2(margins.x, size.y - margins.w - 72)
+ partner_controls.size = Vector2(size.x - margins.x - margins.z, 72)
+ controls.position = Vector2(margins.x, size.y - margins.w - 72)
+ controls.position.y -= 80 if coop else 0
+ controls.size = Vector2(size.x - margins.x - margins.z, 72)
+ if coop_side_by_side():
+  var row_width := (size.x - margins.x - margins.z - 16) / 2
+  controls.position.y = partner_controls.position.y
+  controls.size.x = row_width
+  partner_controls.size.x = row_width
+  partner_controls.position.x = controls.position.x + row_width + 16
+ for row in [controls, partner_controls]:
+  var gap := clampf(row.size.x * 0.08, 20, 42)
+  var arrow_width: float = (row.size.x - gap - 8) / 4
+  for index in 3:
+   var button := row.get_child(index) as Button
+   button.position = Vector2(0 if index == 0 else arrow_width + 8 if index == 1 else arrow_width * 2 + 8 + gap, 0)
+   button.size = Vector2(arrow_width if index < 2 else arrow_width * 2, 72)
  queue_redraw()
 
 func arena() -> Rect2:
- var top := margins.y + 112
- var height := maxf(140, size.y - top - margins.w - (162 if coop else 94))
+ var top := margins.y + 128
+ var height := maxf(90, size.y - top - margins.w - (184 if coop and not coop_side_by_side() else 104))
  var width := minf(size.x - margins.x - margins.z, height * 2.1)
  return Rect2(margins.x + (size.x - margins.x - margins.z - width) / 2, top, width, height)
+
+func coop_side_by_side() -> bool:
+ return coop and size.x >= 650 and size.x > size.y
 
 func load_destination() -> void:
  backdrop = GameCatalog.backdrop(route[country_index])
@@ -262,6 +385,7 @@ func show_panel(message: String, action_text: String, callback: Callable) -> voi
  fire_held = false
  touches.clear()
  partner_held.clear()
+ update_control_feedback()
  for child in panel.get_children():
   panel.remove_child(child)
   child.queue_free()
@@ -326,9 +450,6 @@ func begin_round() -> void:
  remaining -= tour_pressure() * 20
  player_x = 280 if coop else 360
  partner_x = 440
- partner_down = false
- player_down = false
- partner_grace = 1.5
  partner_slide = 0
  partner_movement = 0
  partner_walk = 0
@@ -339,8 +460,6 @@ func begin_round() -> void:
  facing = 1
  visual_facing = 1
  partner_visual_facing = 1
- revive_time = 0
- down_time = 0
  slide_speed = 0
  weapon_level = 1
  weapon_trait = ""
@@ -350,9 +469,9 @@ func begin_round() -> void:
  mechanic = DestinationTheme.style(route[country_index])
  challenge = ["swarm", "no_fire", "flood"][country_index % 3] if round_index == 1 else ""
  if challenge != "": remaining = 25
- invincible = 1.5
- shield = starting_shield or (country_index > 0 and travel_choice == "safe" and route_kind != "daily")
- freeze = 0
+ invincible = 0
+ freeze = 2.0 if starting_freeze or (country_index > 0 and travel_choice == "safe" and route_kind != "daily") else 0.0
+ if starting_time: boost_time(8)
  double_wire = 0
  cooldown = 0
  weapon = starting_weapon
@@ -391,6 +510,8 @@ func begin_round() -> void:
   boss.hp += 0 if route_kind == "daily" else mini(12, country_index / 3)
   boss.max_hp = boss.hp
   balls.append(boss)
+ save_checkpoint()
+ update_stats()
  queue_redraw()
 
 func round_brief() -> String:
@@ -412,12 +533,12 @@ func fire(origin: float = -1) -> bool:
  if weapon_trait == "volley": volley += 1
  limit = maxi(limit, volley * 2) if weapon_level > 1 or weapon_trait == "volley" else limit
  if coop: limit *= 2
- if phase != Phase.PLAY or challenge == "no_fire" or (player_down if origin < 0 else partner_down) or (cooldown if origin < 0 else partner_cooldown) > 0 or effects.get("jam", 0) > 0 or wires.size() + volley > limit: return false
+ if phase != Phase.PLAY or challenge == "no_fire" or (cooldown if origin < 0 else partner_cooldown) > 0 or effects.get("jam", 0) > 0 or wires.size() + volley > limit: return false
  for index in volley:
   var offset := (index - (volley - 1) / 2.0) * 24
   wires.append({"x": clampf((player_x if origin < 0 else origin) + offset, 8, WORLD.x - 8), "top": floor_y - 72, "bottom": floor_y, "age": 0.0, "kind": equipped, "vx": offset * 6 if equipped == "spread" else 0.0, "stuck": false, "hold": 0.0, "sticky": equipped == "sticky" or weapon_trait == "sticky", "pierce": equipped == "laser" or weapon_trait == "pierce", "blast": equipped == "rocket" or weapon_trait == "blast"})
  var shot_cooldown := 0.12 if equipped == "gun" else 0.6 if equipped in ["rocket", "laser"] else 0.28
- shot_cooldown /= 1 + (weapon_level - 1) * 0.35 + (0.5 if weapon_trait == "rapid" else 0.0)
+ shot_cooldown /= 1 + (weapon_level - 1) * 0.35 + (0.5 if weapon_trait == "rapid" else 0.0) + (0.5 if effects.get("rapid", 0) > 0 else 0.0)
  if origin < 0:
   shot_time = 0.32
   cooldown = shot_cooldown
@@ -477,6 +598,7 @@ func burst(point: Vector2, color: Color) -> void:
   particles.append({"position": point, "velocity": Vector2(cos(angle), sin(angle)) * (130 + index % 3 * 45), "life": 0.45, "color": color})
 
 func collect(kind: String) -> void:
+ if kind not in DROPS: return
  if kind in WEAPONS:
   if kind == weapon and weapon_time > 0: weapon_level = mini(3, weapon_level + 1)
   else:
@@ -486,22 +608,17 @@ func collect(kind: String) -> void:
   weapon_time = 18
   double_wire = 0
   notice.text = kind.to_upper() + " Lv%d · %s · 18s" % [weapon_level, weapon_trait.to_upper()]
- elif kind == "shield": shield = true
  elif kind == "freeze": freeze = 4
- elif kind == "heart":
-  if coop:
-   if player_down or partner_down:
-    player_down = false
-    partner_down = false
-    invincible = 3
-    partner_grace = 3
-   else: shield = true
-  else: lives = mini(5, lives + 1)
- elif kind == "time": remaining = minf(110, remaining + 12)
+ elif kind == "rapid": effects["rapid"] = 8.0
+ elif kind == "upgrade":
+  if weapon == "wire": weapon = "double"
+  else: weapon_level = mini(3, weapon_level + 1)
+  weapon_time = 18
+ elif kind == "time": boost_time(12)
  elif kind == "coin":
   score += 750
   coins += 15
- elif kind == "shrink_time": remaining = maxf(1, remaining - 12)
+ elif kind == "shrink_time": boost_time(-12)
  elif kind == "multiply":
   # ponytail: multiplication caps at 40; splitting can yield 160 descendants. Profile before raising it.
   var originals := balls.duplicate(true)
@@ -520,27 +637,39 @@ func collect(kind: String) -> void:
     for direction in [-1, 1]: balls.append(make_ball(ball.position, int(ball.tier) - 1, direction))
  else: effects[kind] = 8.0 if kind in ["speed", "heavy", "reverse"] else 3.0 if kind == "jam" else 10.0
  if kind not in WEAPONS:
-  notice.text = {"shield": "SHIELD · One hit protected", "freeze": "FREEZE · 4s", "heart": "EXTRA HEART", "time": "+12 SECONDS", "coin": "+15 COINS · +750 BONUS", "multiply": "SURPRISE! BALLOONS MULTIPLIED", "speed": "CURSE: FASTER BALLOONS · 8s", "heavy": "CURSE: HEAVY BOOTS · 8s", "reverse": "CURSE: REVERSED CONTROLS · 8s", "jam": "CURSE: WEAPON JAM · 3s", "shrink_time": "CURSE: −12 SECONDS", "slow": "SLOW BALLOONS · 10s", "boots": "QUICK BOOTS · 10s", "magnet": "MYSTERY MAGNET · 10s", "bomb": "BURST BOMB · Splits every big balloon"}.get(kind, kind.to_upper())
+  notice.text = {"rapid": "RAPID FIRE · 8s", "freeze": "FREEZE · 4s", "upgrade": "WEAPON UPGRADE · 18s", "time": "TIME BOOST", "coin": "+15 COINS · +750 BONUS", "multiply": "SURPRISE! BALLOONS MULTIPLIED", "speed": "CURSE: FASTER BALLOONS · 8s", "heavy": "CURSE: HEAVY BOOTS · 8s", "reverse": "CURSE: REVERSED CONTROLS · 8s", "jam": "CURSE: WEAPON JAM · 3s", "shrink_time": "CURSE: TIME PRESSURE", "slow": "SLOW BALLOONS · 10s", "boots": "QUICK BOOTS · 10s", "magnet": "MYSTERY MAGNET · 10s", "bomb": "BURST BOMB · Splits every big balloon"}.get(kind, kind.to_upper())
  notice.add_theme_color_override("font_color", Color("ffb0a3") if kind in ["multiply", "speed", "heavy", "reverse", "jam", "shrink_time"] else Color("b4ffd0"))
  audio.play_cue("ui")
 
+func boost_time(seconds: float) -> void:
+ # Survival rewards shorten the wait; clear-round rewards extend the deadline.
+ remaining = clampf(remaining + (-seconds if challenge in ["swarm", "no_fire"] else seconds), 1, 110)
+
 func fail_round(reason: String) -> void:
  phase = Phase.FAILED
+ movement = 0
+ partner_movement = 0
+ walk_speed = 0
+ partner_walk_speed = 0
  death_time = 0.9
  death_reason = reason
  left_held = false
  right_held = false
  fire_held = false
  touches.clear()
+ partner_held.clear()
+ update_stats()
+ update_control_feedback()
+ pulse(55)
+ save_checkpoint()
  profile.record(record_mode(), "moderate" if route_kind == "daily" else profile.difficulty, score)
  queue_redraw()
 
 func hit() -> void:
- if phase != Phase.PLAY or player_down: return
+ if phase != Phase.PLAY: return
  hit_flash = 0.3
  shake = 0.22
  lives = 0
- shield = false
  country_failed = true
  hurt_time = 0.5
  combo = 0
@@ -557,25 +686,58 @@ func clear_round() -> void:
  if round_index == 2:
   profile.discover(route[country_index])
   profile.advance_missions(route[country_index], not country_failed, false)
-  audio.play_cue("stamp")
+ update_stats()
+ save_checkpoint()
+ if round_index == 2:
+  stamp_pending = true
+  panel.hide()
+  stamp.present(route[country_index], Vector2(size.x / 2, size.y / 2), profile.settings.reduced_motion)
+ else: show_clear_panel()
+
+func finish_stamp() -> void:
+ if not stamp_pending: return
+ stamp_pending = false
+ stamp.cancel()
+ show_clear_panel()
+
+func show_clear_panel() -> void:
  show_panel(("DESTINATION STAMPED!" if round_index == 2 else "ROUND CLEARED!") + "\n" + GameCatalog.country_name(route[country_index]) + " · Score %d" % score, "NEXT DESTINATION" if round_index == 2 else "NEXT ROUND", next_round)
 
 func next_round() -> void:
- if phase != Phase.CLEAR: return
+ if phase != Phase.CLEAR or stamp_pending: return
  if phase == Phase.CLEAR and round_index == 2 and country_index < route.size() - 1 and not panel.has_meta("travel"):
   panel.set_meta("travel", true)
   show_travel()
+  save_checkpoint()
   return
  panel.remove_meta("travel")
 
  if round_index == 2:
   if country_index == route.size() - 1:
+   finished_tour = true
+   profile.arcade_saves.erase(checkpoint_key())
+   profile.save()
    exit_game()
    return
-  country_index += 1
-  country_failed = false
-  round_index = 0
- else: round_index += 1
+  phase = Phase.TRAVEL
+  panel.hide()
+  controls.hide()
+  partner_controls.hide()
+  audio.play_cue("travel")
+  arrival.begin(route[country_index], route[country_index + 1], profile.settings.reduced_motion, true, true)
+  return
+ round_index += 1
+ begin_round()
+
+func finish_arrival() -> void:
+ if phase != Phase.TRAVEL: return
+ country_index += 1
+ country_failed = false
+ round_index = 0
+ controls.show()
+ partner_controls.visible = coop
+ phase = Phase.CLEAR
+ pulse(30)
  begin_round()
 
 func set_paused(value: bool) -> void:
@@ -583,6 +745,8 @@ func set_paused(value: bool) -> void:
   pause_from = phase
   phase = Phase.PAUSED
   audio.set_paused(true)
+  update_control_feedback()
+  save_checkpoint()
   show_panel("BALLOON TOUR PAUSED", "RESUME", func(): set_paused(false))
  elif not value and phase == Phase.PAUSED:
   phase = pause_from
@@ -590,31 +754,49 @@ func set_paused(value: bool) -> void:
   audio.set_paused(false)
 
 func exit_game() -> void:
+ save_checkpoint()
  profile.record(record_mode(), "moderate" if route_kind == "daily" else profile.difficulty, score)
  audio.set_paused(false)
  exited.emit()
 
 func _notification(what: int) -> void:
  if what == NOTIFICATION_APPLICATION_FOCUS_OUT or what == NOTIFICATION_APPLICATION_PAUSED:
-  if is_instance_valid(panel): set_paused(true)
+  if is_instance_valid(panel):
+   if phase == Phase.TRAVEL: arrival.finish()
+   if stamp_pending: finish_stamp()
+   set_paused(true)
+   save_checkpoint()
 
 func _input(event: InputEvent) -> void:
- if phase != Phase.PLAY or not event is InputEventScreenTouch: return
- if event.pressed:
-  if pause_button.get_global_rect().has_point(event.position):
-   set_paused(true)
-   get_viewport().set_input_as_handled()
-   return
+ if phase != Phase.PLAY: return
+ if event is InputEventScreenDrag and touches.has(event.index):
+  var old_key: String = touches[event.index]
+  var key := ""
   for button in controls.get_children() + (partner_controls.get_children() if coop else []):
-   if button.get_global_rect().has_point(event.position):
-    touches[event.index] = button.text
+   if button.get_global_rect().has_point(event.position): key = button.text; break
+  touches[event.index] = key
+  if old_key not in touches.values(): set_control(old_key, false)
+  update_control_feedback()
+  get_viewport().set_input_as_handled()
+ elif event is InputEventScreenTouch:
+  if event.pressed:
+   if pause_button.get_global_rect().has_point(event.position):
+    set_paused(true)
     get_viewport().set_input_as_handled()
     return
- elif touches.has(event.index):
-  var key: String = touches[event.index]
-  touches.erase(event.index)
-  if key not in touches.values(): set_control(key, false)
-  get_viewport().set_input_as_handled()
+   for button in controls.get_children() + (partner_controls.get_children() if coop else []):
+    if button.get_global_rect().has_point(event.position):
+     touches[event.index] = button.text
+     pulse()
+     update_control_feedback()
+     get_viewport().set_input_as_handled()
+     return
+  elif touches.has(event.index):
+   var key: String = touches[event.index]
+   touches.erase(event.index)
+   if key not in touches.values(): set_control(key, false)
+   update_control_feedback()
+   get_viewport().set_input_as_handled()
 
 func _unhandled_input(event: InputEvent) -> void:
  if event is InputEventKey and event.physical_keycode == KEY_Q and event.pressed and not event.echo:
@@ -640,11 +822,13 @@ func simulate(delta: float) -> void:
   return
  if phase != Phase.PLAY: return
  clock += delta
+ autosave_time += delta
+ update_control_feedback()
+ if autosave_time >= 2: save_checkpoint()
  shake = maxf(0, shake - delta)
  hit_flash = maxf(0, hit_flash - delta)
  partner_cooldown = maxf(0, partner_cooldown - delta)
  round_elapsed += delta
- partner_grace = maxf(0, partner_grace - delta)
  partner_shot = maxf(0, partner_shot - delta)
  shot_time = maxf(0, shot_time - delta)
  hurt_time = maxf(0, hurt_time - delta)
@@ -673,44 +857,26 @@ func simulate(delta: float) -> void:
  if effects.get("reverse", 0) > 0: movement *= -1
  if movement != 0: facing = signf(movement)
  var move_speed := 330.0 if effects.get("boots", 0) > 0 else 150.0 if effects.get("heavy", 0) > 0 else 240.0
- if player_down:
-  movement = 0
-  slide_speed = 0
  var desired := clampf(movement, -1, 1) * move_speed
  slide_speed = move_toward(slide_speed, desired, delta * movement_acceleration(slide_speed, desired))
  var wind := sin(clock * 1.7) * 32 if mechanic == "sand" else 0.0
  var previous_player_x := player_x
- player_x = clampf(player_x + (slide_speed + (wind if not player_down else 0.0)) * delta, 26, WORLD.x - 26)
- visual_facing = update_turn(visual_facing, facing, delta) if not player_down else visual_facing
+ player_x = clampf(player_x + (slide_speed + wind) * delta, 26, WORLD.x - 26)
+ visual_facing = update_turn(visual_facing, facing, delta)
  walk_speed = absf(player_x - previous_player_x) / maxf(delta, 0.0001)
  walk_clock += absf(player_x - previous_player_x) * 8.0 / 110.0
  if coop:
   var axis := float(Input.is_physical_key_pressed(KEY_L) or partner_held.has("P2 ▶") or "P2 ▶" in touches.values()) - float(Input.is_physical_key_pressed(KEY_J) or partner_held.has("P2 ◀") or "P2 ◀" in touches.values())
   if effects.get("reverse", 0) > 0: axis *= -1
-  partner_movement = axis if not partner_down else 0.0
+  partner_movement = axis
   var previous_partner_x := partner_x
-  if not partner_down:
-   partner_slide = move_toward(partner_slide, axis * move_speed, delta * movement_acceleration(partner_slide, axis * move_speed))
-   partner_x = clampf(partner_x + (partner_slide + wind) * delta, 26, WORLD.x - 26)
-   if Input.is_physical_key_pressed(KEY_K) or partner_held.has("P2 FIRE") or "P2 FIRE" in touches.values(): fire(partner_x)
+  partner_slide = move_toward(partner_slide, axis * move_speed, delta * movement_acceleration(partner_slide, axis * move_speed))
+  partner_x = clampf(partner_x + (partner_slide + wind) * delta, 26, WORLD.x - 26)
+  if Input.is_physical_key_pressed(KEY_K) or partner_held.has("P2 FIRE") or "P2 FIRE" in touches.values(): fire(partner_x)
   partner_walk_speed = absf(partner_x - previous_partner_x) / maxf(delta, 0.0001)
   partner_walk += absf(partner_x - previous_partner_x) * 8.0 / 110.0
   if axis != 0: partner_facing = signf(axis)
-  if not partner_down: partner_visual_facing = update_turn(partner_visual_facing, partner_facing, delta)
-  if player_down or partner_down:
-   down_time -= delta
-   revive_time = revive_time + delta if absf(partner_x - player_x) < 70 and player_down != partner_down else 0.0
-   if revive_time >= 2:
-    player_down = false
-    partner_down = false
-    invincible = 3
-    partner_grace = 3
-    revive_time = 0
-    score += 500
-    coins += 10
-    notice.text = "TEAMMATE RESCUED! +500 · +10 coins"
-   elif down_time <= 0: fail_round("REVIVE MISSED · Stay near your teammate")
-  if phase != Phase.PLAY: return
+  partner_visual_facing = update_turn(partner_visual_facing, partner_facing, delta)
  wave_clock += delta
  var enraged := balls.any(func(ball): return ball.get("boss", false) and ball.hp <= int(ball.max_hp) / 2)
  if (challenge in ["swarm", "no_fire"] or round_index == 2) and wave_clock >= wave_interval(enraged):
@@ -746,16 +912,18 @@ func simulate(delta: float) -> void:
    if ball.position.y + radius >= bounce_floor:
     ball.position.y = bounce_floor - radius
     ball.velocity.y = -[240.0, 390.0, 550.0][int(ball.tier)] * (0.45 if mechanic == "space" else 0.65 if mechanic == "ocean" else 1.0)
-   var body := Rect2(player_x - 17, floor_y - 65, 34, 65)
-   var nearest := Vector2(clampf(ball.position.x, body.position.x, body.end.x), clampf(ball.position.y, body.position.y, body.end.y))
-   if nearest.distance_squared_to(ball.position) <= radius * radius: hit()
-   if coop and not partner_down:
-    var partner_body := Rect2(partner_x - 17, floor_y - 65, 34, 65)
-    var partner_near := Vector2(clampf(ball.position.x, partner_body.position.x, partner_body.end.x), clampf(ball.position.y, partner_body.position.y, partner_body.end.y))
-    if partner_near.distance_squared_to(ball.position) <= radius * radius:
-     invincible = 0
-     hit()
-   if phase != Phase.PLAY: return
+ for ball in balls:
+  var radius: float = ball.radius
+  var body := Rect2(player_x - 17, floor_y - 65, 34, 65)
+  var nearest := Vector2(clampf(ball.position.x, body.position.x, body.end.x), clampf(ball.position.y, body.position.y, body.end.y))
+  if nearest.distance_squared_to(ball.position) <= radius * radius: hit()
+  if coop:
+   var partner_body := Rect2(partner_x - 17, floor_y - 65, 34, 65)
+   var partner_near := Vector2(clampf(ball.position.x, partner_body.position.x, partner_body.end.x), clampf(ball.position.y, partner_body.position.y, partner_body.end.y))
+   if partner_near.distance_squared_to(ball.position) <= radius * radius:
+    invincible = 0
+    hit()
+  if phase != Phase.PLAY: return
  for index in range(balls.size() - 1, -1, -1):
   var timed: Dictionary = balls[index]
   if freeze <= 0 and timed.get("behavior", "") == "timed" and timed.get("age", 0) >= 5 and int(timed.tier) > 0 and not timed.get("boss", false):
@@ -802,18 +970,14 @@ func simulate(delta: float) -> void:
   pickup.age += delta
   pickup.position.y = minf(floor_y - 16, pickup.position.y + delta * 155)
   if effects.get("magnet", 0) > 0: pickup.position.x = move_toward(pickup.position.x, player_x, delta * 110)
-  if accept_drops and ((not player_down and absf(pickup.position.x - player_x) < 30) or (coop and not partner_down and absf(pickup.position.x - partner_x) < 30)) and pickup.position.y > floor_y - 75:
+  if accept_drops and (absf(pickup.position.x - player_x) < 30 or (coop and absf(pickup.position.x - partner_x) < 30)) and pickup.position.y > floor_y - 75:
    mystery_chain = 0 if pickup.kind in ["multiply", "speed", "heavy", "reverse", "jam", "shrink_time"] else mystery_chain + 1
    if mystery_chain > 0 and mystery_chain % 3 == 0: score += 500
    collect(pickup.kind)
    if mystery_chain > 0 and mystery_chain % 3 == 0: notice.text += " · LUCKY STREAK +500"
    pickups.remove_at(index)
   elif pickup.age > 12: pickups.remove_at(index)
- stats.text = "♥ %d   %ds   %d pts · %s%s" % [lives, ceili(remaining), score, weapon.to_upper(), " ×%d" % mini(6, combo) if combo > 1 and combo_time > 0 else ""]
- if coop: stats.text = "%d/2 · %ds · %dpts · %s" % [2 - int(player_down) - int(partner_down), ceili(remaining), score, weapon.to_upper()]
- stats.text += " · %d¢" % coins
- if coop: stats.text += " · BURST %d/4" % team_charge
- stats.add_theme_font_size_override("font_size", 12 if coop else 14)
+ update_stats()
  if challenge in ["swarm", "no_fire"]:
   if remaining <= 0: clear_round()
  elif balls.is_empty(): clear_round()
@@ -823,6 +987,13 @@ func simulate(delta: float) -> void:
   audio.play_cue("fall")
   fail_round("FLOODED!" if challenge == "flood" else "TIME UP")
  queue_redraw()
+
+func update_stats() -> void:
+ stats.text = "ONE HIT · %ds · %d pts · %d coins\n%s" % [ceili(remaining), score, coins, weapon.to_upper()]
+ if weapon != "wire": stats.text += " Lv%d" % weapon_level
+ if combo > 1 and combo_time > 0: stats.text += " · COMBO ×%d" % mini(6, combo)
+ if coop: stats.text += " · TEAM BURST %d/4" % team_charge
+ stats.add_theme_font_size_override("font_size", 14)
 
 func _draw() -> void:
  if not backdrop: return
@@ -874,19 +1045,14 @@ func _draw() -> void:
   var depth := minf(floor_y, round_elapsed / 25 * floor_y)
   draw_rect(Rect2(0,floor_y-depth,720,depth),Color(0.15,0.65,0.92,0.35))
  if coop:
-  var teammate_frame := 15 if partner_down else 8 + mini(3,int((0.32-partner_shot)/0.32*4)) if partner_shot > 0 else int(partner_walk)%4 if partner_movement != 0 else 0
-  draw_explorer(teammate_frame, partner_walk, partner_walk_speed, partner_visual_facing, partner_x, Color("a4ddff"), partner_down)
+  var teammate_frame := 8 + mini(3,int((0.32-partner_shot)/0.32*4)) if partner_shot > 0 else int(partner_walk)%4 if partner_movement != 0 else 0
+  draw_explorer(teammate_frame, partner_walk, partner_walk_speed, partner_visual_facing, partner_x, Color("a4ddff"), phase == Phase.FAILED)
   draw_string(ThemeDB.fallback_font,Vector2(partner_x-14,floor_y-125),"P2",HORIZONTAL_ALIGNMENT_LEFT,-1,18,Color("a4ddff"))
   draw_string(ThemeDB.fallback_font,Vector2(player_x-14,floor_y-125),"P1",HORIZONTAL_ALIGNMENT_LEFT,-1,18,Color("ffdd79"))
-  if player_down or partner_down:
-   draw_string(ThemeDB.fallback_font,Vector2(160,floor_y-150),"REVIVE: stand together 2s · %ds" % ceili(down_time),HORIZONTAL_ALIGNMENT_LEFT,-1,18,Color("ffdd79"))
  var frame := character_frame()
  var tint := Color(CharacterStyle.OUTFITS.get(profile.character_style.outfit, CharacterStyle.OUTFITS.classic).color)
  if invincible > 0 and hurt_time <= 0 and phase == Phase.PLAY and int(clock * 8) % 2: tint.a = 0.45
- draw_explorer(frame, walk_clock, walk_speed, visual_facing, player_x, tint, player_down or hurt_time > 0 or phase == Phase.FAILED)
- if shield:
-  draw_arc(Vector2(player_x, floor_y - 44), 52, 0, TAU, 40, Color("9eecff"), 3, true)
-  if coop: draw_arc(Vector2(partner_x, floor_y - 44), 52, 0, TAU, 40, Color("9eecff"), 3, true)
+ draw_explorer(frame, walk_clock, walk_speed, visual_facing, player_x, tint, hurt_time > 0 or phase == Phase.FAILED)
  draw_set_transform(Vector2.ZERO)
  if hit_flash > 0: draw_rect(play, Color(1, 0.25, 0.2, hit_flash * 0.35))
 
@@ -952,7 +1118,6 @@ func draw_explorer(frame: int, gait: float, speed: float, direction: float, x: f
   draw_texture_rect_region(PORTRAIT, target, Rect2(Vector2(frame % 4, frame / 4) * cell, cell), tint)
 
 func character_frame() -> int:
- if player_down: return 15
  if phase == Phase.FAILED and death_time > 0: return 12 + mini(3, int((0.9 - death_time) / 0.9 * 4))
  if hurt_time > 0: return 12 + mini(1, int((0.5 - hurt_time) * 4))
  if shot_time > 0:

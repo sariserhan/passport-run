@@ -71,10 +71,10 @@ func run() -> void:
  arcade.set_control("P2 ◀",true)
  arcade.simulate(0.1)
  expect(arcade.partner_walk > 0 and arcade.partner_facing < 0, "P2 advances gait and faces left")
- arcade.player_down = true
+ arcade.hit()
  before = arcade.walk_clock
  arcade.simulate(0.1)
- expect(arcade.walk_clock == before and arcade.walk_speed == 0, "Downed player has no walking motion")
+ expect(arcade.walk_clock == before and arcade.walk_speed == 0, "A fatal hit stops walking motion")
  expect(arcade.walking_frame(0) == 0 and arcade.walking_frame(7) == 7 and arcade.walking_frame(8) == 0, "Eight-frame cycle loops")
  if DisplayServer.get_name() != "headless":
   root.size = Vector2i(390,844)

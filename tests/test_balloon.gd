@@ -91,18 +91,17 @@ func run() -> void:
  expect(arcade.remaining == remaining and arcade.phase == BalloonArcade.Phase.PAUSED, "Pause freezes timer and simulation")
  arcade.set_paused(false)
  arcade.invincible = 0
- arcade.shield = true
  arcade.balls.assign([arcade.make_ball(Vector2(arcade.player_x, arcade.floor_y - 35), 0, 1)])
  arcade.wires.clear()
  arcade.freeze = 0
  arcade.simulate(0.01)
- expect(arcade.lives == 0 and arcade.phase == BalloonArcade.Phase.FAILED, "First balloon collision ends the game even with a shield")
+ expect(arcade.lives == 0 and arcade.phase == BalloonArcade.Phase.FAILED, "First balloon collision ends the game immediately")
  arcade.begin_round()
  expect(arcade.score == arcade.round_score and arcade.lives == 1, "Retry rolls back failed-round score and restores one life")
  arcade.invincible = 0
  arcade.lives = 5
  arcade.hit()
- expect(arcade.phase == BalloonArcade.Phase.FAILED and arcade.lives == 0, "Extra hearts cannot prevent a fatal hit")
+ expect(arcade.phase == BalloonArcade.Phase.FAILED and arcade.lives == 0, "A larger life counter cannot prevent a fatal hit")
  arcade.begin_round()
  arcade.remaining = 0.001
  arcade.simulate(0.01)
@@ -122,9 +121,11 @@ func run() -> void:
  var restored := PlayerProfile.new(game.save_path)
  expect("AF" in restored.discoveries and restored.records.has("balloon:easy"), "Arcade stamp and separate local record persist")
  expect("AF" in restored.daily_progress().countries and not restored.daily_progress().flawless, "Arcade stamps count toward missions without mislabeling a damaged run flawless")
+ arcade.finish_stamp()
  arcade.next_round()
  expect(arcade.country_index == 0 and arcade.panel.visible, "Travel supplies opens before moving on")
  arcade.next_round()
+ arcade.arrival.finish()
  expect(arcade.country_index == 1 and arcade.round_index == 0, "Next destination resets round count")
  expect(arcade.backdrop == GameCatalog.backdrop(arcade.route[1]), "Every destination changes arcade scenery")
  expect(game.audio.music_destination == arcade.route[1], "Arcade music follows the destination")
@@ -136,9 +137,9 @@ func run() -> void:
  arcade.fire()
  for step in 12: arcade.simulate(0.1)
  expect(arcade.balls.size() == 1, "A platform blocks the harpoon from hitting a balloon above it")
- arcade.pickups.assign([{"position": Vector2(arcade.player_x, arcade.floor_y - 20), "kind": "shield", "age": 0.0}])
+ arcade.pickups.assign([{"position": Vector2(arcade.player_x, arcade.floor_y - 20), "kind": "rapid", "age": 0.0}])
  arcade.simulate(0.01)
- expect(arcade.shield and arcade.pickups.is_empty(), "Walking over a pickup grants its power")
+ expect(arcade.effects.has("rapid") and arcade.pickups.is_empty(), "Walking over a pickup grants its power")
  game.return_to_menu()
  expect(not is_instance_valid(game.arcade) and not game.paused and game.hud.visible, "Exit restores memory-mode controls")
  # Test-only entitlement simulation; no saved premium ownership or checkout bypass.
