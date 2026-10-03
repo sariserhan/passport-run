@@ -1085,6 +1085,32 @@ func simulate(delta: float) -> void:
   if death_time == 0: show_panel("GAME OVER · %d pts\n%s" % [score, death_reason], "RETRY ROUND", retry_round)
   return
  if phase != Phase.PLAY: return
+ tick_timers(delta)
+ move_players(delta)
+ update_waves(delta)
+ if fire_held or "FIRE ↑" in touches.values() or Input.is_physical_key_pressed(KEY_SPACE): fire()
+ move_balls(delta)
+ if player_hit(): return
+ split_timed_balls()
+ update_wires(delta)
+ update_pickups(delta)
+ if progress_dirty:
+  progress_dirty = false
+  save_checkpoint()
+ update_stats()
+ if challenge in ["swarm", "no_fire"]:
+  if remaining <= 0: clear_round()
+ elif balls.is_empty(): clear_round()
+ elif remaining <= 0:
+  country_failed = true
+  lives = 0
+  audio.play_cue("fall")
+  fail_round("FLOODED!" if challenge == "flood" else "TIME UP")
+ queue_redraw()
+
+
+# Count down every per-frame timer, effect and particle.
+func tick_timers(delta: float) -> void:
  feedback_time = maxf(0, feedback_time - delta)
  if feedback_time == 0: feedback.hide()
  clock += delta
@@ -1118,6 +1144,9 @@ func simulate(delta: float) -> void:
  cooldown = maxf(0, cooldown - delta)
  freeze = maxf(0, freeze - delta)
  double_wire = maxf(0, double_wire - delta)
+
+# Apply input, terrain and wind to both explorers.
+func move_players(delta: float) -> void:
  movement = float(right_held or "▶" in touches.values()) - float(left_held or "◀" in touches.values()) + Input.get_axis("ui_left", "ui_right")
  if Input.is_physical_key_pressed(KEY_A): movement -= 1
  if Input.is_physical_key_pressed(KEY_D): movement += 1
@@ -1144,6 +1173,9 @@ func simulate(delta: float) -> void:
   partner_walk += absf(partner_x - previous_partner_x) * 8.0 / 110.0
   if axis != 0: partner_facing = signf(axis)
   partner_visual_facing = update_turn(partner_visual_facing, partner_facing, delta)
+
+# Spawn swarm/no-fire waves and queue boss attack patterns.
+func update_waves(delta: float) -> void:
  wave_clock += delta if round_index != 2 or freeze <= 0 else 0.0
  var enraged := balls.any(func(ball): return ball.get("boss", false) and ball.hp <= int(ball.max_hp) / 2)
  if (challenge in ["swarm", "no_fire"] or round_index == 2) and wave_clock >= wave_interval(enraged):
@@ -1154,7 +1186,9 @@ func simulate(delta: float) -> void:
   else:
    if balls.size() < 20: balls.append(make_ball(Vector2(rng.randf_range(40,680), 40), 0, 1 if rng.randf() > 0.5 else -1))
  if freeze <= 0: update_boss_attacks(delta)
- if fire_held or "FIRE ↑" in touches.values() or Input.is_physical_key_pressed(KEY_SPACE): fire()
+
+# Balloon gravity, bounces and special behaviours.
+func move_balls(delta: float) -> void:
  for ball in balls: ball.flash = maxf(0, float(ball.get("flash", 0)) - delta)
  if freeze <= 0:
   for ball in balls:
@@ -1186,6 +1220,9 @@ func simulate(delta: float) -> void:
    if ball.position.y + radius >= bounce_floor:
     ball.position.y = bounce_floor - radius
     ball.velocity.y = -[240.0, 390.0, 550.0][int(ball.tier)] * (0.45 if mechanic == "space" else 0.65 if mechanic == "ocean" else 1.0)
+
+# True when a balloon touch ended the round this frame.
+func player_hit() -> bool:
  for ball in balls:
   var radius: float = ball.radius
   var body := Rect2(player_x - 17, floor_y - 65, 34, 65)
@@ -1197,13 +1234,20 @@ func simulate(delta: float) -> void:
    if partner_near.distance_squared_to(ball.position) <= radius * radius:
     invincible = 0
     hit()
-  if phase != Phase.PLAY: return
+  if phase != Phase.PLAY: return true
+ return false
+
+# Timer balloons split after five seconds.
+func split_timed_balls() -> void:
  for index in range(balls.size() - 1, -1, -1):
   var timed: Dictionary = balls[index]
   if freeze <= 0 and timed.get("behavior", "") == "timed" and timed.get("age", 0) >= 5 and int(timed.tier) > 0 and not timed.get("boss", false):
    balls.remove_at(index)
    burst(timed.position, Color("c7ff91"))
    for direction in [-1, 1]: balls.append(make_ball(timed.position, int(timed.tier) - 1, direction))
+
+# Advance shots, pop what they touch, retire expired ones.
+func update_wires(delta: float) -> void:
  for index in range(wires.size() - 1, -1, -1):
   var wire: Dictionary = wires[index]
   var kind: String = wire.get("kind", "wire")
@@ -1239,6 +1283,9 @@ func simulate(delta: float) -> void:
   if wire.get("sticky", false) and wire.get("stuck", false): expired = wire.hold > 3.0
   if kind == "laser": expired = wire.age > 0.5
   if expired or (popped and not wire.get("sticky", false) and not wire.get("pierce", false)): wires.remove_at(index)
+
+# Mystery drops fall, drift to a magnet and get collected.
+func update_pickups(delta: float) -> void:
  for index in range(pickups.size() - 1, -1, -1):
   var pickup: Dictionary = pickups[index]
   pickup.age += delta
@@ -1251,19 +1298,6 @@ func simulate(delta: float) -> void:
    if mystery_chain > 0 and mystery_chain % 3 == 0: notice.text += " · LUCKY STREAK +500"
    pickups.remove_at(index)
   elif pickup.age > 12: pickups.remove_at(index)
- if progress_dirty:
-  progress_dirty = false
-  save_checkpoint()
- update_stats()
- if challenge in ["swarm", "no_fire"]:
-  if remaining <= 0: clear_round()
- elif balls.is_empty(): clear_round()
- elif remaining <= 0:
-  country_failed = true
-  lives = 0
-  audio.play_cue("fall")
-  fail_round("FLOODED!" if challenge == "flood" else "TIME UP")
- queue_redraw()
 
 func update_stats() -> void:
  update_personal_best()

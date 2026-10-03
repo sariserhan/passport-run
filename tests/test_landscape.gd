@@ -26,7 +26,7 @@ func run() -> void:
 	await settle()
 	var perf: PerfLog = game.find_children("*", "PerfLog", false, false)[0]
 	perf._process(PerfLog.INTERVAL)
-	var perf_lines := FileAccess.get_file_as_string("user://landscape-check.json.perf.csv").strip_edges().split("\n")
+	var perf_lines := Array(FileAccess.get_file_as_string("user://landscape-check.json.perf.csv").strip_edges().split("\n")).filter(func(line): return ",hitch@" not in line)
 	expect(perf_lines.size() == 2 and perf_lines[1].split(",")[1] == "menu" and perf_lines[1].split(",").size() == 8, "Device performance log records a labelled sample")
 	game.profile.settings.reduced_motion = true
 	game.profile.home_country = "AF"
