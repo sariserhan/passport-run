@@ -16,8 +16,10 @@ var stuck := 0.0
 var last_state := ""
 var rng := RandomNumberGenerator.new()
 
+# {"minutes": 0} disarms a phone trigger, since devicectl can copy files but not delete them.
 static func requested() -> bool:
-	return FileAccess.file_exists(TRIGGER)
+	var settings = JSON.parse_string(FileAccess.get_file_as_string(TRIGGER)) if FileAccess.file_exists(TRIGGER) else null
+	return settings is Dictionary and float(settings.get("minutes", 0)) > 0
 
 func _init(owner_game: Node) -> void:
 	game = owner_game
