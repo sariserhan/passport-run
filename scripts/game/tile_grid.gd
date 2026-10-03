@@ -4,6 +4,8 @@ extends Node3D
 var tiles: Array[PathTile] = []
 var config: DifficultyConfig
 var first_row: int = 0
+var destination_id := ""
+var layout := "classic"
 
 func build(settings: DifficultyConfig, start_row: int = 0, count: int = -1) -> void:
 	first_row = start_row
@@ -17,11 +19,22 @@ func build(settings: DifficultyConfig, start_row: int = 0, count: int = -1) -> v
 			var tile := PathTile.new()
 			add_child(tile)
 			tile.build(row, lane, config.tile_size)
+			if not destination_id.is_empty(): tile.apply_destination(destination_id)
 			tile.position = position_for(row, lane)
+			if layout == "bridge":
+				var wood := MeshFactory.material(Color("6f5747"))
+				MeshFactory.box(tile.decoration, Vector3(0.2, 0.6, config.tile_size.z), Vector3(-0.55, -0.6, 0), wood)
+				MeshFactory.box(tile.decoration, Vector3(0.2, 0.6, config.tile_size.z), Vector3(0.55, -0.6, 0), wood)
+				if lane == 0 or lane == config.lane_count - 1:
+					var side := -1.0 if lane == 0 else 1.0
+					MeshFactory.box(tile.decoration, Vector3(0.07, 0.75, 0.07), Vector3(side * 1.1, 0.18, 0), wood)
+					MeshFactory.box(tile.decoration, Vector3(0.05, 0.05, config.row_spacing), Vector3(side * 1.1, 0.45, 0), wood)
 			tiles.append(tile)
 
 func position_for(row: int, lane: int) -> Vector3:
-	return Vector3((lane - (config.lane_count - 1) / 2.0) * config.lane_spacing, 0, -(row + 1) * config.row_spacing)
+	var bend := sin((row + 1) * 0.45) * 0.65 if layout in ["curve", "bridge"] else 0.0
+	var height := (1.0 - cos((row + 1) * 0.35)) * 0.22 if layout == "climb" else 0.0
+	return Vector3((lane - (config.lane_count - 1) / 2.0) * config.lane_spacing + bend, height, -(row + 1) * config.row_spacing)
 
 func tile_at(row: int, lane: int) -> PathTile:
 	return tiles[(row - first_row) * config.lane_count + lane]

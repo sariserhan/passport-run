@@ -1,5 +1,7 @@
 # Build status — 2026-10-02
 
+Latest enjoyment expansion implements destination tile palettes/effects, curves/elevation/bridge decoration, fuller original music with crossfades, earned souvenir cards, durable UTC daily missions, and character reactions/theme celebrations. All eleven Godot suites and three Python tests passed, with final focused rendered/music checks and 19 real local-backend checks. Native export/development signing passed; physical iPhone installation is blocked by the locked device. Souvenir art uses shared motif families and music remains synthesized original instrumentals.
+
 Latest finish pass: the character reaches the solid finish platform before celebration and passport stamping. Nine Godot suites, three Python tests, 53 rendered animation/timer checks, 19 real local-backend checks and the signed iPhone build passed. Finite completion timing and scoring are unchanged.
 
 The game with 250 free destinations and 32 separately purchased locations is a playable prototype. Online competition now works against a real local Convex instance; no hosted service or commercial release is claimed. [HANDOFF.md](../HANDOFF.md) contains continuation instructions.

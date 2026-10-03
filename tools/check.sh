@@ -14,3 +14,4 @@ GODOT_BIN="${GODOT_BIN:-godot}"
 "$GODOT_BIN" --headless --path . --script tests/test_fun.gd
 python3 tests/test_report.py
 "$GODOT_BIN" --headless --path . --script tests/test_music.gd
+"$GODOT_BIN" --headless --path . --script tests/test_destination_polish.gd

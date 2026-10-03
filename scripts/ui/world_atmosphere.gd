@@ -7,6 +7,7 @@ var reduced_motion := false
 var celebration_remaining := 0.0
 var cosmic := false
 var underwater := false
+var destination_theme := "stone"
 
 func _ready() -> void:
  mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -34,6 +35,17 @@ func _draw() -> void:
  for i in 12:
   var point := Vector2(fmod(i * 0.083 + clock * 0.008, 1) * size.x, size.y * (0.48 + (i % 5) * 0.09))
   draw_line(point, point + Vector2(12 + sin(clock + i) * 5, 0), Color(1, 0.95, 0.8, 0.10), 1.5, true)
+ for i in 14:
+  var point := Vector2(fposmod(i * size.x * 0.173 + sin(clock * 0.3 + i) * 20, size.x), fposmod(i * 97 + clock * (11 if destination_theme == "ice" else 6), size.y))
+  match destination_theme:
+   "ice":
+    draw_line(point - Vector2(3, 0), point + Vector2(3, 0), Color(0.9, 1, 1, 0.4), 1, true)
+    draw_line(point - Vector2(0, 3), point + Vector2(0, 3), Color(0.9, 1, 1, 0.4), 1, true)
+   "sand": draw_circle(point, 1, Color(1, 0.8, 0.45, 0.2))
+   "lantern": draw_circle(point, 2, Color(1, 0.72, 0.78, 0.3))
+   "jungle": draw_circle(point, 2, Color(0.8, 1, 0.5, 0.3))
+   "magic": draw_circle(point, 1.7, Color(0.9, 0.7, 1, 0.25 + sin(clock + i) * 0.1))
+   "lava": draw_circle(Vector2(point.x, size.y - point.y), 1.8, Color(1, 0.55, 0.2, 0.3))
  if not cosmic and not underwater:
   for i in 3:
    var point := Vector2(fposmod(i * size.x * 0.4 + clock * 5, size.x + 100) - 50, size.y * (0.07 + i * 0.06))

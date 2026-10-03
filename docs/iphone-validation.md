@@ -1,5 +1,7 @@
 # iPhone validation — 2026-10-02
 
+Latest native project: `/private/tmp/passport-native-enrichment/PassportRun.xcodeproj`. Export and development-signed build succeeded for destination themes, souvenirs, daily missions, fuller music/crossfades and character personality. Desktop rendered checks cover Hard themed paths/touch targets and collection screens at 390×844/320×568. Installation was attempted with `devicectl`; CoreDevice error 10003 reports that the paired device is locked, so the developer disk image could not mount (12040). No physical install/launch/performance PASS is claimed.
+
 Latest signed build: `/private/tmp/passport-native-finish/PassportRun.xcodeproj`, with the character landing on the solid finish stone before stamping. Godot export and Xcode development-signed build succeeded. Desktop rendered verification passed; physical-phone installation, launch and performance remain pending.
 
 ## Native evidence

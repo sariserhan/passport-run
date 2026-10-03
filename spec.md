@@ -8,6 +8,16 @@ The user explicitly requests broad country coverage, superseding the five-countr
 
 250 free countries and territories, a separately purchased 24-destination Special Expeditions route (16 landmarks plus eight fantasy worlds), and an independently purchased eight-destination Cinema Worlds route. Total passport coverage: 282 destinations. Ranked Daily retains its immutable 197-country catalog. Special Expeditions includes Everest, Sahara, underwater, space, Moon and Mars. Cinema Worlds contains original scenes inspired by Lord of the Rings, Harry Potter, dinosaur adventures and Wonderland. Each pack uses its own one-time non-consumable Apple purchase; buying one never unlocks the other. Free country travel excludes paid places. Paid challenge codes require the relevant ownership. Every completed destination uses the same jump, celebration and passport-stamp mechanics.
 
+## Latest approved destination enjoyment expansion — 2026-10-02
+
+All six proposed additions are approved: destination-specific stones/effects, fuller instrumental music and transitions, collectible souvenirs, varied paths, daily travel missions, and character personality.
+
+- Countries and special worlds use ice, sand, lantern, jungle, ocean, space, magic, lava or stone palettes with decorative effects. Three visual path families add gentle curves, wooden bridge details or small elevation changes. Lane choices, preview duration, timer, scoring and replay rules stay the same; legacy challenge layouts stay flat.
+- Original destination music has longer repeating melodic phrases, chord progression, bass, arpeggios and percussion, with a pauseable 1.2-second crossfade. Both players respect volume/mute, and the previous track is released when the transition ends.
+- Every earned passport stamp also earns a named souvenir. The searchable souvenir collection and current passport page show earned keepsakes; no additional purchase or currency is required.
+- Three daily missions reset at UTC midnight: stamp three distinct destinations, clear a country first try, and finish a short adventure. Progress survives restarts, duplicate clears do not inflate counts, and all missions can be completed on free routes. Three stars earn the Daily Explorer celebration; missions do not award ranked points.
+- Idle glance/breathing, a static warning plus worried motion as the stone cracks, and theme-specific celebration movement add personality. Pause freezes motion; Reduced Motion retains the static warning.
+
 ## Latest approved destination music — 2026-10-02
 
 Each destination has its own original looping instrumental melody, with region-inspired scales, timbres and rhythms. Desert, mountain, underwater, space and cinema/fantasy destinations use themed arrangements. Infinite has a dedicated space-style track. Music switches on destination entry, remains uninterrupted on same-destination retries and Infinite sections, and respects music volume, mute and pause. These are synthesized originals, not licensed traditional recordings or movie soundtracks.

@@ -136,6 +136,7 @@ func show_main() -> void:
 		var mode: String = item[0]
 		mode_buttons[mode] = action(item[1], mode == "world", func(): request_mode(mode))
 	action("COLLECTION GOALS", false, show_goals)
+	action("DAILY TRAVEL MISSIONS", false, show_missions)
 	action("CINEMA WORLDS · SEPARATE PAID ROUTE", false, show_cinema_route)
 	action("SPECIAL EXPEDITIONS · PAID ROUTE", false, show_special_route)
 	copy("Daily: same UTC date + difficulty = same route. Scores are local until online rankings are connected.", 15)
@@ -224,6 +225,7 @@ func show_passport() -> void:
 			book.destination_id = ids[state.index]
 			book.page_number = profile.discoveries.find(book.destination_id) + 1
 			book.queue_redraw()
+			counter.text += "\nSouvenir: " + DestinationTheme.souvenir(book.destination_id)
 	previous.pressed.connect(func(): state.index -= 1; update_page.call())
 	next.pressed.connect(func(): state.index += 1; update_page.call())
 	search.text_changed.connect(func(query: String):
@@ -235,6 +237,7 @@ func show_passport() -> void:
 	if profile.discoveries.size() == GameCatalog.DESTINATIONS.size():
 		copy("WORLD EXPLORER · Every destination sticker collected!", 21)
 	action("MY TRAVEL STICKERS", false, show_stickers)
+	action("MY SOUVENIRS", false, show_souvenirs)
 	copy("Recent journey", 22)
 	var names: Array[String] = []
 	for id in profile.history.slice(-12):
@@ -425,5 +428,40 @@ func show_goals() -> void:
 	copy("First-try country badges: %d" % profile.badges.filter(func(id: String): return id.begins_with("perfect:")).size(), 20)
 	action("CLASSIC PASSPORT COVER", false, func(): profile.passport_cover = "classic"; profile.save(); show_goals())
 	action("SHORT ADVENTURES", true, show_trips)
+	action("MY PASSPORT", false, show_passport)
+	action("MY SOUVENIRS", false, show_souvenirs)
+	action("BACK", false, show_main)
+
+func show_missions() -> void:
+	var progress := profile.daily_progress()
+	clear("Daily travel missions", "%s UTC · %d / 3 complete\nFresh goals every day. Play any free route." % [progress.date, profile.mission_count()])
+	for item in [[progress.countries.size() >= 3, "Stamp three different destinations", "%d / 3 stamped today" % mini(progress.countries.size(), 3)], [progress.flawless, "Clear a country without falling", "A first-try clear earns this star."], [progress.trip, "Finish a short adventure", "Complete any three-country adventure."]]:
+		copy(("★ " if item[0] else "○ ") + item[1], 23)
+		copy("COMPLETE" if item[0] else item[2], 17)
+	if profile.mission_count() == 3: copy("DAILY EXPLORER · All three stars earned!", 23)
+	action("PLAY A SHORT ADVENTURE", true, show_trips)
+	action("BACK", false, show_main)
+
+func show_souvenirs() -> void:
+	clear("My souvenirs", "%d keepsakes collected\nEvery stamped destination earns its own keepsake." % profile.discoveries.size())
+	var search := LineEdit.new()
+	search.placeholder_text = "Search your souvenirs"
+	search.custom_minimum_size.y = 54
+	content.add_child(search)
+	var list := VBoxContainer.new()
+	list.add_theme_constant_override("separation", 12)
+	content.add_child(list)
+	var fill := func(query: String):
+		for child in list.get_children():
+			list.remove_child(child)
+			child.queue_free()
+		for id in profile.discoveries:
+			if not query.is_empty() and query.to_lower() not in (GameCatalog.country_name(id) + " " + DestinationTheme.souvenir(id)).to_lower(): continue
+			var card := SouvenirCard.new()
+			card.destination_id = id
+			list.add_child(card)
+	if profile.discoveries.is_empty(): copy("Complete a destination to bring home your first souvenir.")
+	search.text_changed.connect(fill)
+	fill.call("")
 	action("MY PASSPORT", false, show_passport)
 	action("BACK", false, show_main)

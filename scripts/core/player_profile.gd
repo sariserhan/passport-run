@@ -12,6 +12,7 @@ var history: Array[String] = []
 var records: Dictionary = {}
 var badges: Array[String] = []
 var passport_cover := "classic"
+var daily_missions: Dictionary = {}
 var settings: Dictionary = {"music": 0.35, "sound": 0.65, "reduced_motion": false, "high_contrast": false, "haptics": true}
 var last_error: String = ""
 
@@ -50,6 +51,16 @@ func load_profile() -> void:
 		for key in data.records.keys().slice(0, 200):
 			if key is String and key.length() <= 64 and (data.records[key] is float or data.records[key] is int):
 				records[key] = clampi(int(data.records[key]), 0, 10000000)
+	var missions: Variant = data.get("daily_missions")
+	if missions is Dictionary and missions.get("date") == GameCatalog.today_utc():
+		daily_missions = {"date": missions.date, "countries": [], "flawless": missions.get("flawless") == true, "trip": missions.get("trip") == true}
+		if missions.get("countries") is Array:
+			for id in missions.countries.slice(0, GameCatalog.DESTINATIONS.size()):
+				if id is String and id in discoveries and id not in daily_missions.countries:
+					daily_missions.countries.append(id)
+		if daily_missions.countries.is_empty():
+			daily_missions.flawless = false
+			daily_missions.trip = false
 	if data.get("settings") is Dictionary:
 		for key in settings:
 			var value: Variant = data.settings.get(key)
@@ -73,7 +84,7 @@ func read_valid(path: String) -> Dictionary:
 	return {}
 
 func save() -> bool:
-	var data := {"version": SCHEMA_VERSION, "anonymous_id": anonymous_id, "home_country": home_country, "difficulty": difficulty, "tutorial_done": tutorial_done, "discoveries": discoveries, "history": history, "records": records, "badges": badges, "passport_cover": passport_cover, "settings": settings}
+	var data := {"version": SCHEMA_VERSION, "anonymous_id": anonymous_id, "home_country": home_country, "difficulty": difficulty, "tutorial_done": tutorial_done, "discoveries": discoveries, "history": history, "records": records, "badges": badges, "passport_cover": passport_cover, "daily_missions": daily_missions, "settings": settings}
 	var file := FileAccess.open(file_path + ".tmp", FileAccess.WRITE)
 	if file == null:
 		last_error = "Progress could not be saved on this device."
@@ -113,3 +124,21 @@ func award_badge(id: String) -> bool:
 	badges.append(id)
 	save()
 	return true
+
+func daily_progress(date: String = "") -> Dictionary:
+	if date.is_empty(): date = GameCatalog.today_utc()
+	if daily_missions.get("date", "") != date:
+		daily_missions = {"date": date, "countries": [], "flawless": false, "trip": false}
+	return daily_missions
+
+func advance_missions(id: String, flawless: bool, trip_finished: bool) -> void:
+	if id not in discoveries: return
+	var progress := daily_progress()
+	if id not in progress.countries: progress.countries.append(id)
+	progress.flawless = progress.flawless or flawless
+	progress.trip = progress.trip or trip_finished
+	save()
+
+func mission_count() -> int:
+	var progress := daily_progress()
+	return int(progress.countries.size() >= 3) + int(progress.flawless) + int(progress.trip)

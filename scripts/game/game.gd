@@ -234,6 +234,8 @@ func load_country(auto_preview: bool) -> void:
 	failure_reason = ""
 	decision_remaining = GameCatalog.DECISION_SECONDS
 	run.reset(session.path_seed(), config, session.mode == "infinite")
+	grid.destination_id = "INFINITE" if session.mode == "infinite" else session.current_country()
+	grid.layout = DestinationTheme.layout(grid.destination_id) if session.balance_version >= 3 and not grid.destination_id.is_empty() else "classic"
 	grid.build(config)
 	if is_instance_valid(traveler):
 		remove_child(traveler)
@@ -241,6 +243,7 @@ func load_country(auto_preview: bool) -> void:
 	traveler = Traveler.new()
 	traveler.kids = session.mode == "kids"
 	traveler.reduced_motion = profile.settings.reduced_motion
+	traveler.destination_theme = DestinationTheme.style(grid.destination_id)
 	traveler.name = "Player"
 	add_child(traveler)
 	traveler.position = Vector3(0, 0.03, 0.6)
@@ -330,6 +333,7 @@ func _process(delta: float) -> void:
 		decision_remaining = maxf(0, decision_remaining - delta)
 		hud.update_decision(decision_remaining, GameCatalog.DECISION_SECONDS)
 		standing_tile().set_pressure(1.0 - decision_remaining / GameCatalog.DECISION_SECONDS)
+		traveler.pressure = 1.0 - decision_remaining / GameCatalog.DECISION_SECONDS
 		if decision_remaining <= 0 and run.time_out():
 			failure_reason = "timeout"
 			var tile: PathTile = standing_tile()
@@ -341,6 +345,7 @@ func standing_tile() -> PathTile:
 func reset_decision_clock() -> void:
 	decision_remaining = GameCatalog.DECISION_SECONDS
 	standing_tile().set_pressure(0)
+	traveler.pressure = 0
 	traveler.play_animation("thinking")
 	if session.balance_version >= 2:
 		hud.update_decision(decision_remaining, GameCatalog.DECISION_SECONDS)
@@ -446,8 +451,9 @@ func follow_player() -> void:
 	if camera_tween and camera_tween.is_valid():
 		camera_tween.kill()
 	var aspect: float = get_viewport().get_visible_rect().size.x / get_viewport().get_visible_rect().size.y
-	var factor: float = maxf(1.0, (config.lane_count * config.lane_spacing + 0.8) / (aspect * 18.0))
-	var camera_position := Vector3(0, 8.0 * factor, traveler.position.z + 12.0 * factor)
+	var factor: float = maxf(1.0, (config.lane_count * config.lane_spacing + 1.0) / (aspect * 14.0))
+	var center_x := grid.position_for(run.completed_rows, 0).x + (config.lane_count - 1) * config.lane_spacing / 2.0
+	var camera_position := Vector3(center_x, traveler.position.y + 8.0 * factor, traveler.position.z + 12.0 * factor)
 	if run.phase == RunState.Phase.COMPLETE:
 		camera_position.x = traveler.position.x
 		camera_position.y = 9.0 * factor
@@ -614,6 +620,7 @@ func complete_country() -> void:
 	telemetry.track("country_completed", metadata())
 	telemetry.flush()
 	var options := session.choices()
+	profile.advance_missions(session.current_country(), session.current_country() not in failed_countries, session.mode == "trip" and options.is_empty())
 	if options.size() > 1:
 		telemetry.track("destination_choice_shown", metadata())
 	var actions: Array = []
@@ -622,6 +629,8 @@ func complete_country() -> void:
 		actions.append({"text": ("FLY TO " if options.size() > 1 else "CONTINUE TO ") + GameCatalog.country_name(id).to_upper(), "primary": true, "callback": func(): travel_to(id)})
 	var title := "Passport stamped!"
 	var body := "%s\n%d %s · %d tiles" % [GameCatalog.country_name(session.current_country()), session.completed_countries, "destination" if session.completed_countries == 1 else "destinations", session.banked_tiles]
+	body += "\nSouvenir: " + DestinationTheme.souvenir(session.current_country())
+	body += "\nDaily missions: %d / 3 complete" % profile.mission_count()
 	if session.current_country() not in failed_countries:
 		body += "\nFLAWLESS COUNTRY · Perfect-jump badge earned!"
 	if session.mode == "kids":

@@ -12,10 +12,25 @@ var animation_clock := 0.0
 var animation_paused := false
 var reduced_motion := false
 var passport_prop: Node3D
+var destination_theme := "stone"
+var reaction: Label3D
+var pressure := 0.0:
+	set(value):
+		pressure = value
+		if reaction: reaction.visible = value > 0.65 and animation == "thinking"
 
 func _ready() -> void:
 	body = Node3D.new()
 	add_child(body)
+	reaction = Label3D.new()
+	reaction.text = "!"
+	reaction.font_size = 70
+	reaction.pixel_size = 0.007
+	reaction.position.y = 3.0
+	reaction.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	reaction.modulate = Color("ffda65")
+	reaction.hide()
+	add_child(reaction)
 	if not kids:
 		var shade := MeshFactory.material(Color(0.05, 0.04, 0.04, 0.22))
 		shade.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
@@ -75,6 +90,9 @@ func play_animation(next: String) -> void:
 	animation = next
 	animation_clock = 0
 	body.position.y = 0
+	body.rotation = Vector3.ZERO
+	body.scale = Vector3.ONE
+	reaction.visible = pressure > 0.65 and next == "thinking"
 	if portrait:
 		portrait.frame = {"thinking": 0, "jump": 4, "celebrate": 8, "pocket": 9, "passport": 10, "stamp": 11, "fall": 12}.get(next, 0)
 	if passport_prop:
@@ -86,12 +104,22 @@ func _process(delta: float) -> void:
 	animation_clock += delta
 	if animation == "thinking":
 		if portrait:
-			portrait.frame = int(animation_clock / 0.8) % 4
-		body.rotation.z = sin(animation_clock * 1.5) * 0.025
+			portrait.frame = 3 if pressure > 0.65 else int(animation_clock / 0.8) % 4
+			portrait.position.x = sin(animation_clock * 0.8) * 0.035
+		body.rotation.z = sin(animation_clock * (8.0 if pressure > 0.65 else 1.5)) * (0.045 if pressure > 0.65 else 0.025)
+		body.position.y = sin(animation_clock * 2.0) * 0.012
 		if kids:
 			right_arm.rotation.z = -maxf(0, sin(animation_clock)) * 0.9
+			body.rotation.y = sin(animation_clock * 0.8) * 0.12
 	elif animation == "celebrate":
-		body.position.y = absf(sin(animation_clock * 7)) * 0.06
+		if destination_theme == "lantern":
+			body.rotation.z = sin(minf(animation_clock * 5.0, PI)) * 0.18
+		elif destination_theme in ["space", "magic"]:
+			body.position.y = absf(sin(animation_clock * 4)) * 0.12
+			body.rotation.z = sin(animation_clock * 6) * 0.12
+		else:
+			body.position.y = absf(sin(animation_clock * 7)) * 0.06
+			body.rotation.z = sin(animation_clock * 9) * 0.055
 		if kids:
 			left_arm.rotation.z = 2.2
 			right_arm.rotation.z = -2.2
@@ -102,7 +130,7 @@ func _process(delta: float) -> void:
 func pose_jump(progress: float) -> void:
 	if not kids:
 		portrait.frame = 4 + mini(3, int(progress * 4))
-		contact_shadow.position.y = 0.04 - position.y
+		contact_shadow.position.y = -sin(progress * PI) * 1.45
 		contact_shadow.scale = Vector3.ONE * (1.0 - sin(progress * PI) * 0.25)
 		body.rotation.z = sin(progress * PI) * 0.08
 		body.scale = Vector3(1.0 + sin(progress * PI) * 0.04, 1.0 - sin(progress * PI) * 0.03, 1.0)

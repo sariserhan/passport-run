@@ -9,6 +9,8 @@ var slab: MeshInstance3D
 var marker: Node3D
 var pressure_progress := 0.0
 var cracks: Node3D
+var theme := "stone"
+var decoration: Node3D
 var neutral := MeshFactory.stone_material(Color("777a83"))
 var green := MeshFactory.stone_material(Color("84da62"))
 var landed := MeshFactory.stone_material(Color("78bbb0"))
@@ -49,6 +51,24 @@ func add_fissure(from: Vector3, to: Vector3, material: Material) -> void:
 	var direction := to - from
 	var crack := MeshFactory.box(cracks, Vector3(0.026, 0.008, direction.length() + 0.025), (from + to) / 2, material)
 	crack.rotation.y = atan2(direction.x, direction.z)
+
+func apply_destination(id: String) -> void:
+	theme = DestinationTheme.style(id)
+	neutral.albedo_color = DestinationTheme.color(id)
+	neutral.roughness = 0.25 if theme in ["ice", "ocean"] else 0.85
+	if theme in ["space", "magic", "lava"]:
+		neutral.emission_enabled = true
+		neutral.emission = neutral.albedo_color * 0.25
+	decoration = Node3D.new()
+	add_child(decoration)
+	var accent := MeshFactory.material(neutral.albedo_color.lightened(0.3))
+	# Side ornaments never change collision or identify the safe lane.
+	if theme in ["space", "magic", "lava"]:
+		accent.emission_enabled = true
+		accent.emission = accent.albedo_color * 0.65
+	for side in [-1, 1]:
+		MeshFactory.box(decoration, Vector3(0.035, 0.025, 1.35), Vector3(side * 0.83, 0.006, 0), accent)
+	set_state(state)
 
 func set_state(next: State) -> void:
 	state = next
