@@ -25,8 +25,9 @@ def patch_project(directory):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('directory', type=Path)
+    parser.add_argument('--release', action='store_true', help='Use the release template (App Store/TestFlight builds).')
     args = parser.parse_args()
     output = args.directory.resolve()
     output.mkdir(parents=True, exist_ok=True)
-    subprocess.run([os.environ.get('GODOT_BIN', '/Applications/Godot.app/Contents/MacOS/Godot'), '--headless', '--path', str(ROOT), '--export-debug', 'iPhone', str(output / 'PassportRun.zip')], check=True)
+    subprocess.run([os.environ.get('GODOT_BIN', '/Applications/Godot.app/Contents/MacOS/Godot'), '--headless', '--path', str(ROOT), '--export-release' if args.release else '--export-debug', 'iPhone', str(output / 'PassportRun.zip')], check=True)
     patch_project(output)
