@@ -888,37 +888,33 @@ func movement_acceleration(velocity: float, desired: float) -> float:
  return 1800.0 if velocity * desired < 0 else 4000.0
 
 func update_turn(current: float, target: float, delta: float) -> float:
- return target if profile.settings.reduced_motion else move_toward(current, target, delta * 8.0)
+ return target if profile.settings.reduced_motion else move_toward(current, target, delta * 16.0)
+
+func side_scale(direction: float) -> float:
+ # Keep the side profile visible throughout a quick, gently compressed flip.
+ var width := 0.85 + 0.15 * sin(absf(clampf(direction, -1.0, 1.0)) * PI / 2.0)
+ return -width if direction < 0 else width
 
 func draw_turn(x: float, direction: float, tint: Color) -> void:
  var cell := Vector2(TURN.get_size()) / Vector2(5, 1)
- var pose := clampf((1 - direction) * 2, 0, 4)
- var first := floori(pose)
- var blend := pose - first
- var width := 140.0 * cell.x / cell.y
+ var width := 140.0 * cell.x / cell.y * side_scale(direction)
+ if absf(width) < 0.001: return
  var target := Rect2(x - width / 2, floor_y - 131.6, width, 140)
- var first_tint := tint
- first_tint.a *= 1 - blend
- draw_texture_rect_region(TURN, target, Rect2(Vector2(first * cell.x, 0), cell), first_tint)
- if blend > 0:
-  var next_tint := tint
-  next_tint.a *= blend
-  draw_texture_rect_region(TURN, target, Rect2(Vector2((first + 1) * cell.x, 0), cell), next_tint)
+ draw_texture_rect_region(TURN, target, Rect2(Vector2.ZERO, cell), tint)
 
 func walking_frame(gait: float) -> int:
  return posmod(int(gait), 8)
 
 func draw_explorer(frame: int, gait: float, speed: float, direction: float, x: float, tint: Color, incapacitated: bool) -> void:
- if not incapacitated and (absf(direction) < 0.999 or (speed <= 1 and frame < 4)):
+ if not incapacitated and speed <= 1:
   draw_turn(x, direction, tint)
  elif speed > 1 and not incapacitated:
   var cell := Vector2(WALK.get_size()) / Vector2(4, 2)
   var step := walking_frame(gait)
   var source := Rect2(Vector2(step % 4, step / 4) * cell, cell)
-  var target := Rect2(x - 58, floor_y - 131.6, 116, 140)
-  if direction < 0:
-   target.position.x += target.size.x
-   target.size.x *= -1
+  var width := 116.0 * side_scale(direction)
+  if absf(width) < 0.001: return
+  var target := Rect2(x - width / 2, floor_y - 131.6, width, 140)
   # Separate torso and legs so recoil never replaces the locomotion cycle.
   var waist := 0.66
   var bob := -absf(sin(gait * TAU / 8)) * 1.5 if not profile.settings.reduced_motion else 0.0

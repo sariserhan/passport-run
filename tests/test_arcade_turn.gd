@@ -20,6 +20,9 @@ func run() -> void:
  arcade.freeze = 100
  arcade.invincible = 100
  arcade.mechanic = "stone"
+ expect(is_equal_approx(arcade.side_scale(1), 1) and is_equal_approx(arcade.side_scale(-1), -1), "Side profile is mirrored at completed turns")
+ expect(is_equal_approx(arcade.side_scale(0), 0.85), "Mid-turn keeps the side profile visible without displaying a front pose")
+ expect(arcade.side_scale(0.25) > 0 and arcade.side_scale(-0.25) < 0, "Turn mirrors the side profile without changing its pose")
  arcade.set_control("▶",true)
  arcade.simulate(0.1)
  arcade.set_control("▶",false)
@@ -37,7 +40,7 @@ func run() -> void:
  expect(arcade.visual_facing == -1 and arcade.slide_speed < 0, "Turn completes with leftward motion")
  arcade.set_control("◀",false)
  arcade.set_control("▶",true)
- arcade.simulate(0.08)
+ arcade.simulate(0.03)
  var partial := arcade.visual_facing
  arcade.set_control("▶",false)
  arcade.set_control("◀",true)
@@ -55,7 +58,7 @@ func run() -> void:
  arcade.freeze = 100
  arcade.set_control("P2 ◀",true)
  arcade.simulate(0.02)
- expect(arcade.partner_visual_facing > -1 and arcade.partner_visual_facing < 1, "P2 also uses intermediate turn poses")
+ expect(arcade.partner_visual_facing > -1 and arcade.partner_visual_facing < 1, "P2 also smoothly flips its side profile")
  arcade.simulate(0.3)
  expect(arcade.partner_visual_facing == -1, "P2 turn completes")
  if DisplayServer.get_name() != "headless":
