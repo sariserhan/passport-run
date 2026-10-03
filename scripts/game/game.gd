@@ -52,6 +52,7 @@ var link_poll := 0.0
 var arcade: BalloonArcade
 
 func _ready() -> void:
+	if Autoplay.requested(): save_path = Autoplay.SAVE
 	config = GameCatalog.difficulty("easy")
 	profile = PlayerProfile.new(save_path)
 	telemetry = LocalTelemetry.new(save_path + ".events")
@@ -156,6 +157,7 @@ func _ready() -> void:
 	hud.menu_requested.connect(return_to_menu)
 	restart(true, false)
 	menu.show_main()
+	if Autoplay.requested(): add_child(Autoplay.new(self))
 	get_viewport().size_changed.connect(func():
 		if run.phase in [RunState.Phase.READY, RunState.Phase.PREVIEW]:
 			set_overview()

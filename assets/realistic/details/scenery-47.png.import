@@ -15,9 +15,9 @@ dest_files=["res://.godot/imported/scenery-47.png-241fa0801acc9fc0f825c027b1d281
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
-compress/lossy_quality=0.7
+compress/lossy_quality=0.8
 compress/uastc_level=0
 compress/rdo_quality_loss=0.0
 compress/hdr_compression=1

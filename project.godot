@@ -24,6 +24,10 @@ run/main_scene="res://scenes/game.tscn"
 config/quit_on_go_back=false
 config/features=PackedStringArray("4.5", "GL Compatibility")
 
+[debug]
+
+file_logging/enable_file_logging=true
+
 [display]
 
 window/size/viewport_width=480
