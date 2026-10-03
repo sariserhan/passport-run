@@ -99,6 +99,7 @@ var margins := Vector4i(16, 16, 16, 26)
 var autosave_time := 0.0
 var resumed := false
 var finished_tour := false
+var parcel: SouvenirParcel
 var stamp: PassportStamp
 var arrival: TravelTransition
 var stamp_pending := false
@@ -354,6 +355,9 @@ func _ready() -> void:
  add_child(feedback)
  feedback.hide()
  move_child(panel, get_child_count() - 1)
+ parcel = SouvenirParcel.new()
+ add_child(parcel)
+ parcel.setup(style)
  stamp = PassportStamp.new()
  add_child(stamp)
  stamp.setup(style)
@@ -845,6 +849,7 @@ func clear_round() -> void:
   profile.award_arcade_medal(route[country_index], record_difficulty(), coop, ArcadeProgress.medal(country_time, country_retries, country_combo))
   if country_drops == 0 and profile.note_arcade_goal("no_drops"): show_feedback("DAILY GOAL COMPLETE!\nNo-drop destination cleared")
   profile.discover(route[country_index])
+  profile.record_destination(route[country_index], "arcade", maxi(0, score - country_start_score))
   profile.advance_missions(route[country_index], not country_failed, false)
   for id in ["arcade:clean_boss", "arcade:no_drops"]:
    if ((id == "arcade:clean_boss" and not country_failed) or (id == "arcade:no_drops" and country_drops == 0)) and profile.award_badge(id, false): earned_badges.append(id)
@@ -861,19 +866,21 @@ func finish_stamp() -> void:
  stamp_pending = false
  stamp.cancel()
  show_clear_panel()
+ parcel.present(route[country_index], int(profile.souvenir_counts.get(route[country_index], 1)), profile.settings.reduced_motion)
 
 func show_clear_panel() -> void:
  var message := ("PRACTICE COMPLETE!" if round_index == 2 and route_kind == "practice" else "DESTINATION STAMPED!" if round_index == 2 else "ROUND CLEARED!") + "\n" + GameCatalog.country_name(route[country_index]) + " · Score %d" % score
  if round_index == 2: message += "\n\n" + destination_result()
  if round_index == 2 and route_kind != "practice":
   message += "\nSouvenir collected: " + DestinationTheme.souvenir(route[country_index])
-  if CharacterStyle.world_complete(profile.discoveries): message += "\nWORLD CHAMPION CHARACTER UNLOCKED!"
+  for character in profile.last_unlocked_characters:
+   message += "\nTRAVELER UNLOCKED · " + CharacterStyle.CHARACTERS[character].name
  if best_beaten: message += "\nNEW PERSONAL BEST!"
  for id in earned_badges: message += "\n★ " + ArcadeAchievements.BADGES[id].name + " · Wardrobe reward unlocked"
  show_panel(message, "FINISH PRACTICE" if round_index == 2 and route_kind == "practice" else "NEXT DESTINATION" if round_index == 2 else "NEXT ROUND", next_round)
 
 func next_round() -> void:
- if phase != Phase.CLEAR or stamp_pending: return
+ if phase != Phase.CLEAR or stamp_pending or parcel.active: return
  if phase == Phase.CLEAR and round_index == 2 and country_index < route.size() - 1 and not panel.has_meta("travel"):
   panel.set_meta("travel", true)
   show_travel()
@@ -1301,9 +1308,13 @@ func _draw() -> void:
  var tint := Color(CharacterStyle.OUTFITS.get(profile.character_style.outfit, CharacterStyle.OUTFITS.classic).color)
  if invincible > 0 and hurt_time <= 0 and phase == Phase.PLAY and int(clock * 8) % 2: tint.a = 0.45
  if profile.equipped_character() != "classic":
-  var traveler_texture := CharacterStyle.character_texture(profile.equipped_character())
-  var width := 132.0 * traveler_texture.get_width() / traveler_texture.get_height()
-  draw_texture_rect(traveler_texture, Rect2(player_x - width / 2, floor_y - 132, width * side_scale(visual_facing), 132), false, tint)
+  var id := profile.equipped_character()
+  var pose := 5 if hurt_time > 0 or phase == Phase.FAILED else 4 if phase == Phase.CLEAR else int(walk_clock * 7) % 2 if movement != 0 and not profile.settings.reduced_motion else -1
+  var traveler_texture := CharacterStyle.character_texture(id) if pose < 0 else CharacterStyle.motion_texture(id, pose)
+  var scale: float = 132.0 / (traveler_texture.get_height() if pose < 0 else CharacterStyle.motion_height(id))
+  var width: float = scale * traveler_texture.get_width()
+  var height: float = scale * traveler_texture.get_height()
+  draw_texture_rect(traveler_texture, Rect2(player_x - width / 2, floor_y - height, width * side_scale(visual_facing), height), false, tint)
  else:
   draw_explorer(frame, walk_clock, walk_speed, visual_facing, player_x, tint, hurt_time > 0 or phase == Phase.FAILED)
  draw_set_transform(Vector2.ZERO)
@@ -1321,7 +1332,7 @@ func side_scale(direction: float) -> float:
  return -1.0 if direction < 0 else 1.0
 
 func side_target(x: float, direction: float, cell: Vector2, anchor: Vector2, sole: float, width_ratio: float = 1.0) -> Rect2:
- var scale := 132.0 / (sole - anchor.y)
+ var scale: float = 132.0 / (sole - anchor.y)
  var width := cell.x * scale * width_ratio * side_scale(direction)
  # Godot flips a negative-width texture inside its rectangle; its position
  # remains the left edge. Mirror the anchor inside those same bounds.

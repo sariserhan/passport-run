@@ -35,12 +35,37 @@ static func character_unlocked(id: String, discoveries: Array[String], purchased
  if id not in CHARACTERS: return false
  var item: Dictionary = CHARACTERS[id]
  if item.has("world"): return world_complete(discoveries)
- return purchased or discoveries.size() >= item.count
+ return purchased or discoveries.size() >= item.count or CharacterQuests.complete(id, discoveries)
 
 static func character_texture(id: String) -> Texture2D:
  var character: Dictionary = CHARACTERS.get(id, CHARACTERS.classic)
  var path := "res://assets/realistic/fantasy-travelers.png" if character.get("fantasy_art", false) else "res://assets/realistic/travelers.png"
  return RealisticArt.region(load(path), character.index, Vector2i(4, 3))
+
+static var motion_bounds: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://resources/traveler-motion.json"))
+static var motion_regions: Dictionary = {}
+
+static func motion_texture(id: String, pose: int) -> Texture2D:
+ var character: Dictionary = CHARACTERS.get(id, CHARACTERS.classic)
+ var kind := "fantasy" if character.get("fantasy_art", false) else "human"
+ var index := clampi(pose, 0, 5)
+ var key := id + ":" + str(index)
+ if key not in motion_regions:
+  var path := "res://assets/realistic/fantasy-travelers-motion.png" if kind == "fantasy" else "res://assets/realistic/travelers-motion.png"
+  var atlas: Texture2D = load(path)
+  var bounds: Array = motion_bounds[kind][character.index][index]
+  var texture := AtlasTexture.new()
+  texture.atlas = atlas
+  texture.region = Rect2(Vector2(bounds[0], bounds[1]), Vector2(bounds[2] - bounds[0], bounds[3] - bounds[1]))
+  texture.filter_clip = true
+  motion_regions[key] = texture
+ return motion_regions[key]
+
+static func motion_height(id: String) -> float:
+ var character: Dictionary = CHARACTERS.get(id, CHARACTERS.classic)
+ var kind := "fantasy" if character.get("fantasy_art", false) else "human"
+ var bounds: Array = motion_bounds[kind][character.index][0]
+ return maxf(1, bounds[3] - bounds[1])
 
 const OUTFITS := {"classic": {"name": "Classic Explorer", "count": 0, "color": "ffffff"}, "trail": {"name": "Forest Trail", "count": 3, "color": "d3f1de"}, "polar": {"name": "Polar Explorer", "count": 10, "color": "d5eaff"}, "cosmic": {"name": "Cosmic Explorer", "count": 25, "color": "eedcff"}, "balloon_gold": {"name": "Golden Balloon Explorer", "badge": "arcade:clean_boss", "color": "ffe0a0"}, "balloon_sky": {"name": "Sky Balloon Explorer", "badge": "arcade:100_pops", "color": "aedcff"}, "balloon_shadow": {"name": "Twilight Balloon Explorer", "badge": "arcade:no_drops", "color": "dfc5f0"}}
 const HATS := {"none": {"name": "No Hat", "count": 0}, "sun": {"name": "Sun Hat", "count": 3}, "winter": {"name": "Winter Hat", "count": 10}, "space": {"name": "Space Cap", "count": 25}}

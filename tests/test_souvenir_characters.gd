@@ -57,7 +57,7 @@ func run() -> void:
   actor.pose_fall(0.5)
   if CharacterStyle.CHARACTERS[id].get("fantasy_art", false):
    check(actor.body.get_child_count() == 1, "Animal/fantasy gear stays intact without human accessory overlays")
-   check(actor.portrait.texture == texture, "New traveler art appears in gameplay")
+   check(actor.portrait.texture == CharacterStyle.motion_texture(id, 5), "New traveler fall pose appears in gameplay")
   actor.queue_free()
   await process_frame
  if DisplayServer.get_name() != "headless":

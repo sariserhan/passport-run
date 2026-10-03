@@ -150,6 +150,8 @@ func show_main() -> void:
 			mode_buttons[mode].disabled = true
 	action("COLLECTION GOALS", false, show_goals)
 	action("MY TRAVEL ROOM", false, show_room)
+	action("MY TRAVEL ALBUM", false, show_album)
+	action("CHARACTER QUESTS", false, show_character_quests)
 	action("EXPLORER WARDROBE", false, show_wardrobe)
 	action("DAILY TRAVEL MISSIONS", false, show_missions)
 	action("CINEMA WORLDS · SEPARATE PAID ROUTE", false, show_cinema_route)
@@ -267,6 +269,7 @@ func show_passport() -> void:
 	update_page.call()
 	if profile.discoveries.size() == GameCatalog.DESTINATIONS.size():
 		copy("WORLD EXPLORER · Every destination sticker collected!", 21)
+	action("MY TRAVEL ALBUM", false, show_album)
 	action("MY TRAVEL STICKERS", false, show_stickers)
 	action("MY SOUVENIRS", false, show_souvenirs)
 	copy("Recent journey", 22)
@@ -556,7 +559,7 @@ func show_wardrobe() -> void:
 		portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		content.add_child(portrait)
-		var label: String = item.name + (" · EQUIPPED" if profile.equipped_character() == id else " · EQUIP" if earned else " · CLEAR THE WORLD" if item.has("world") else " · %d destinations or character pack" % item.count)
+		var label: String = item.name + (" · EQUIPPED" if profile.equipped_character() == id else " · EQUIP" if earned else " · CLEAR THE WORLD" if item.has("world") else " · %d destinations, quest or pack" % item.count if id in CharacterQuests.QUESTS else " · %d destinations or character pack" % item.count)
 		var button := action(label, earned, func(): profile.character_id = key; profile.save(); show_wardrobe())
 		button.disabled = not earned or profile.equipped_character() == id
 	if character_purchase:
@@ -582,24 +585,132 @@ func show_wardrobe() -> void:
 				else: label += " · %d destinations" % items[id].count if kind != "backpack" else " · finish collection goal"
 			var button := action(label, earned, func(): profile.character_style[group] = key; profile.save(); show_wardrobe())
 			button.disabled = not earned or profile.character_style[kind] == id
+	action("CHARACTER QUESTS", false, show_character_quests)
 	action("BACK", false, show_main)
 
 func show_room() -> void:
-	clear("My travel room", "Your country postcards and local keepsakes. Display six favorites; tap below to swap them.")
+	clear("My travel room", "Drag keepsakes to arrange them. Hang three country postcards and decorate with rewards from your travels.")
 	var room := SouvenirRoom.new()
 	room.destinations = profile.room_display.duplicate()
+	room.postcards = profile.room_postcards.duplicate()
+	room.decor = profile.room_decor.duplicate()
+	room.positions = profile.room_positions.duplicate(true)
+	room.arrangement_changed.connect(func(points: Dictionary): profile.room_positions = points; profile.save())
 	content.add_child(room)
-	if room.destinations.size() == 6: copy("Shelves full. Remove a keepsake to make room for another.", 17)
+	action("RESET SOUVENIR POSITIONS", false, func(): profile.room_positions.clear(); profile.save(); show_room())
+	copy("Decorate your room", 23)
+	for kind in RoomDecor.ITEMS:
+		var group: String = kind
+		copy(kind.capitalize(), 18)
+		var choices := OptionButton.new()
+		choices.custom_minimum_size.y = 54
+		choices.add_theme_font_size_override("font_size", 18)
+		for id in RoomDecor.ITEMS[kind]:
+			var item: Dictionary = RoomDecor.ITEMS[kind][id]
+			var earned := RoomDecor.unlocked(kind, id, profile.discoveries)
+			choices.add_item(item.name + ("" if earned else " · %d destinations" % item.count))
+			var index := choices.item_count - 1
+			choices.set_item_metadata(index, id)
+			choices.set_item_disabled(index, not earned)
+			if profile.room_decor[kind] == id: choices.select(index)
+		choices.item_selected.connect(func(index: int):
+			var id: String = choices.get_item_metadata(index)
+			if RoomDecor.unlocked(group, id, profile.discoveries):
+				profile.room_decor[group] = id
+				profile.save()
+				room.decor = profile.room_decor.duplicate()
+				room.queue_redraw()
+		)
+		content.add_child(choices)
+	copy("Souvenirs · %d / 6 displayed" % room.destinations.size(), 23)
+	if room.destinations.size() == 6: copy("Remove a keepsake to make room for another.", 17)
 	if profile.discoveries.is_empty(): copy("Your shelves are waiting for your first adventure.")
 	for id in profile.discoveries:
 		var key: String = id
-		action(("✓ " if id in room.destinations else "+ ") + GameCatalog.country_name(id) + " · " + DestinationTheme.souvenir(id), false, func():
-			if key in profile.room_display: profile.room_display.erase(key)
+		var button := action(("✓ " if id in room.destinations else "+ ") + GameCatalog.country_name(id) + " · " + DestinationTheme.souvenir(id), false, func():
+			if key in profile.room_display:
+				profile.room_display.erase(key)
+				profile.room_positions.erase(key)
 			elif profile.room_display.size() < 6: profile.room_display.append(key)
 			profile.save()
 			show_room()
 		)
+		button.disabled = room.destinations.size() == 6 and id not in room.destinations
+	copy("Wall postcards · %d / 3 hung" % profile.room_postcards.size(), 23)
+	for id in profile.discoveries:
+		var key: String = id
+		var button := action(("✓ " if id in profile.room_postcards else "+ ") + GameCatalog.country_name(id) + " postcard", false, func():
+			if key in profile.room_postcards: profile.room_postcards.erase(key)
+			elif profile.room_postcards.size() < 3: profile.room_postcards.append(key)
+			profile.save()
+			show_room()
+		)
+		button.disabled = profile.room_postcards.size() == 3 and id not in profile.room_postcards
 	action("MY SOUVENIRS", false, show_souvenirs)
+	action("MY TRAVEL ALBUM", false, show_album)
+	action("BACK", false, show_main)
+
+func show_character_quests() -> void:
+	clear("Character quests", "Collect the stamps in each themed quest to unlock its traveler. Your existing stamps count. Milestone and traveler-pack unlocks still work.")
+	for id in CharacterQuests.QUESTS:
+		var quest: Dictionary = CharacterQuests.QUESTS[id]
+		var complete := CharacterQuests.complete(id, profile.discoveries)
+		copy(("★ " if complete else "○ ") + quest.name, 24)
+		var portrait := TextureRect.new()
+		portrait.texture = CharacterStyle.character_texture(id)
+		portrait.custom_minimum_size.y = 110
+		portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		content.add_child(portrait)
+		copy("Reward: " + CharacterStyle.CHARACTERS[id].name + " · %d / %d" % [CharacterQuests.count(id, profile.discoveries), quest.route.size()], 18)
+		for country in quest.route:
+			copy(("✓ " if country in profile.discoveries else "○ ") + GameCatalog.country_name(country), 17)
+		if complete: copy("QUEST COMPLETE · Equip your traveler in the wardrobe.", 17)
+		elif quest.route.any(func(place): return place in GameCatalog.PREMIUM_DESTINATIONS or place in GameCatalog.CINEMA_DESTINATIONS):
+			copy("These stops are on special routes. You can also use the destination milestone or traveler pack.", 17)
+	action("CONTINUE WORLD TOUR", true, func(): request_mode("world"))
+	action("EXPLORER WARDROBE", false, show_wardrobe)
+	action("BACK", false, show_main)
+
+func show_album() -> void:
+	clear("My travel album", "Country pictures, keepsakes, facts and personal bests from your completed destinations.")
+	var search := LineEdit.new()
+	search.placeholder_text = "Find a country or souvenir"
+	search.custom_minimum_size.y = 54
+	content.add_child(search)
+	var state := {"ids": profile.discoveries.duplicate(), "index": 0}
+	var counter := copy("")
+	var page := VBoxContainer.new()
+	content.add_child(page)
+	var navigation := HBoxContainer.new()
+	content.add_child(navigation)
+	var previous := style.button("← PREVIOUS", false)
+	var next := style.button("NEXT →", true)
+	for button in [previous, next]:
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		navigation.add_child(button)
+	var update := func():
+		for child in page.get_children():
+			page.remove_child(child)
+			child.queue_free()
+		previous.disabled = state.index <= 0
+		next.disabled = state.index + 1 >= state.ids.size()
+		counter.text = "Complete a destination to start your album." if profile.discoveries.is_empty() else "No matching destinations." if state.ids.is_empty() else "Page %d of %d" % [state.index + 1, state.ids.size()]
+		if not state.ids.is_empty():
+			var album := TravelAlbumPage.new()
+			album.destination_id = state.ids[state.index]
+			album.profile = profile
+			page.add_child(album)
+	previous.pressed.connect(func(): state.index -= 1; update.call())
+	next.pressed.connect(func(): state.index += 1; update.call())
+	search.text_changed.connect(func(query: String):
+		state.ids = profile.discoveries.filter(func(id): return query.is_empty() or query.to_lower() in (GameCatalog.country_name(id) + " " + DestinationTheme.souvenir(id)).to_lower())
+		state.index = 0
+		update.call()
+	)
+	update.call()
+	action("MY TRAVEL ROOM", false, show_room)
+	action("MY PASSPORT", false, show_passport)
 	action("BACK", false, show_main)
 
 func show_arcade() -> void:

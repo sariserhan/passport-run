@@ -147,6 +147,9 @@ func run() -> void:
 	clear_round()
 	expect("arcade:clean_boss" not in game.profile.badges and "arcade:no_drops" not in game.profile.badges, "Failed rounds and collected drops disqualify their achievements")
 	arcade.finish_stamp()
+	arcade.parcel.reduced_motion = true
+	arcade.parcel.open_or_finish()
+	arcade.parcel.open_or_finish()
 	arcade.next_round()
 	arcade.next_round()
 	arcade.arrival.finish()
@@ -156,6 +159,9 @@ func run() -> void:
 		if stage < 2: arcade.next_round()
 	expect("arcade:clean_boss" in game.profile.badges and "arcade:no_drops" in game.profile.badges and arcade.earned_badges.size() == 2, "A clean no-drops destination awards both badges")
 	arcade.finish_stamp()
+	arcade.parcel.reduced_motion = true
+	arcade.parcel.open_or_finish()
+	arcade.parcel.open_or_finish()
 	await capture("achievement-rewards")
 	var badges: Array[String] = game.profile.badges.duplicate()
 	var discoveries: Array[String] = game.profile.discoveries.duplicate()

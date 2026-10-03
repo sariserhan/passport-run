@@ -123,6 +123,9 @@ func run() -> void:
  expect("AF" in restored.discoveries and restored.records.has("balloon:easy"), "Arcade stamp and separate local record persist")
  expect("AF" in restored.daily_progress().countries and not restored.daily_progress().flawless, "Arcade stamps count toward missions without mislabeling a damaged run flawless")
  arcade.finish_stamp()
+ arcade.parcel.reduced_motion = true
+ arcade.parcel.open_or_finish()
+ arcade.parcel.open_or_finish()
  arcade.next_round()
  expect(arcade.country_index == 0 and arcade.panel.visible, "Travel supplies opens before moving on")
  arcade.next_round()

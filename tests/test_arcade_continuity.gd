@@ -201,6 +201,9 @@ func run() -> void:
 	arcade.next_round()
 	expect(arcade.country_index == 0 and not arcade.arrival.active, "Travel waits for the stamp celebration")
 	arcade.finish_stamp()
+	arcade.parcel.reduced_motion = true
+	arcade.parcel.open_or_finish()
+	arcade.parcel.open_or_finish()
 	arcade.next_round()
 	arcade.coins = 100
 	expect(arcade.buy_upgrade("time") == false and not arcade.buy_upgrade("heart") and not arcade.buy_upgrade("shield"), "Owned time boosts and obsolete protection cannot be bought")

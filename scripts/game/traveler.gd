@@ -10,6 +10,7 @@ var contact_shadow: MeshInstance3D
 var portrait: Sprite3D
 var animation := "thinking"
 var animation_clock := 0.0
+var motion_pose := -2
 var animation_paused := false
 var reduced_motion := false
 var destination_theme := "stone"
@@ -55,6 +56,7 @@ func _ready() -> void:
 		portrait.region_enabled = false
 		portrait.pixel_size = 2.65 / portrait.texture.get_height()
 		portrait.position.y = 1.345
+		set_motion_pose(-1)
 	if not kids: apply_customization()
 
 func align_portrait() -> void:
@@ -74,6 +76,8 @@ func play_animation(next: String) -> void:
 	body.rotation = Vector3.ZERO
 	body.scale = Vector3.ONE
 	reaction.visible = pressure > 0.65 and next == "thinking"
+	if portrait and not kids and character_id != "classic":
+		set_motion_pose({"jump": 2, "fall": 5, "celebrate": 4, "stamp": 4}.get(next, -1))
 	if portrait and (kids or character_id == "classic"):
 		portrait.frame = {"thinking": 0, "jump": 4, "celebrate": 8, "pocket": 9, "passport": 10, "stamp": 11, "fall": 12}.get(next, 0)
 
@@ -81,6 +85,13 @@ func _process(delta: float) -> void:
 	if animation_paused or reduced_motion:
 		return
 	animation_clock += delta
+	if not kids and character_id != "classic":
+		if animation == "walk":
+			set_motion_pose(int(animation_clock * 7) % 2)
+		elif animation == "celebrate":
+			set_motion_pose(4)
+		if character_id == "astronaut" and animation in ["thinking", "jump", "celebrate"]:
+			body.position.y = (sin(animation_clock * 2.3) + 1) * 0.06
 	if animation == "thinking":
 		if portrait and (kids or character_id == "classic"):
 			portrait.frame = 3 if pressure > 0.65 else int(animation_clock / 0.8) % 4
@@ -99,6 +110,10 @@ func _process(delta: float) -> void:
 
 func pose_jump(progress: float) -> void:
 	if kids or character_id == "classic": portrait.frame = 4 + mini(3, int(progress * 4))
+	if not kids and character_id != "classic":
+		var pose := 2 if progress < 0.65 else 3
+		if character_id in ["dragon", "fairy"] and progress < 0.8: pose = 2 + int(progress * 8) % 2
+		set_motion_pose(pose)
 	contact_shadow.position.y = -sin(progress * PI) * 1.45
 	contact_shadow.scale = Vector3.ONE * (1.0 - sin(progress * PI) * 0.25)
 	body.rotation.z = sin(progress * PI) * 0.08
@@ -106,6 +121,7 @@ func pose_jump(progress: float) -> void:
 
 func pose_fall(progress: float) -> void:
 	if kids or character_id == "classic": portrait.frame = 12 + mini(3, int(progress * 4))
+	if not kids and character_id != "classic": set_motion_pose(5)
 	contact_shadow.hide()
 	body.rotation.z = progress * 0.7
 	body.scale = Vector3.ONE * (1.0 - progress * 0.18)
@@ -125,3 +141,10 @@ func apply_customization() -> void:
 	MeshFactory.cylinder(body, 0.31, 0.24, 0.18, Vector3(0, 2.53, 0.08), fabric)
 	if hat == "sun": MeshFactory.cylinder(body, 0.43, 0.43, 0.035, Vector3(0, 2.45, 0.08), fabric)
 	if hat == "winter": MeshFactory.sphere(body, 0.09, Vector3(0, 2.7, 0.08), fabric)
+
+func set_motion_pose(pose: int) -> void:
+	if motion_pose == pose: return
+	motion_pose = pose
+	portrait.texture = CharacterStyle.character_texture(character_id) if pose < 0 else CharacterStyle.motion_texture(character_id, pose)
+	portrait.pixel_size = 2.65 / (portrait.texture.get_height() if pose < 0 else CharacterStyle.motion_height(character_id))
+	portrait.position.y = portrait.texture.get_height() * portrait.pixel_size / 2 + 0.02

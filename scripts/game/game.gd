@@ -32,6 +32,7 @@ var retry_run_id := ""
 var decision_remaining := GameCatalog.DECISION_SECONDS
 var failure_reason := ""
 var celebrating := false
+var parcel: SouvenirParcel
 var passport_stamp: PassportStamp
 var purchase: RoutePurchase
 var cinema_purchase: RoutePurchase
@@ -84,6 +85,9 @@ func _ready() -> void:
 	add_child(travel)
 	travel.setup(hud)
 	travel.arrived.connect(func(): load_country(true))
+	parcel = SouvenirParcel.new()
+	add_child(parcel)
+	parcel.setup(hud)
 	passport_stamp = PassportStamp.new()
 	add_child(passport_stamp)
 	passport_stamp.setup(hud)
@@ -215,6 +219,7 @@ func start_game(mode: String, difficulty_key: String) -> void:
 		telemetry.track(mode + "_started", metadata())
 
 func cancel_motion() -> void:
+	if parcel: parcel.cancel()
 	celebrating = false
 	if passport_stamp:
 		passport_stamp.cancel()
@@ -681,6 +686,7 @@ func complete_country() -> void:
 	country_awarded = true
 	session.complete_country(config.row_count)
 	profile.discover(session.current_country())
+	profile.record_destination(session.current_country(), "jump", config.row_count)
 	if session.current_country() not in failed_countries:
 		profile.award_badge("perfect:" + session.current_country())
 	save_record()
@@ -696,7 +702,8 @@ func complete_country() -> void:
 		actions.append({"text": ("FLY TO " if options.size() > 1 else "CONTINUE TO ") + GameCatalog.country_name(id).to_upper(), "primary": true, "callback": func(): travel_to(id)})
 	var title := "Passport stamped!"
 	var body := "%s\n%d %s · %d tiles" % [GameCatalog.country_name(session.current_country()), session.completed_countries, "destination" if session.completed_countries == 1 else "destinations", session.banked_tiles]
-	if CharacterStyle.world_complete(profile.discoveries): body += "\nWORLD CHAMPION CHARACTER UNLOCKED!"
+	for character in profile.last_unlocked_characters:
+		body += "\nTRAVELER UNLOCKED · " + CharacterStyle.CHARACTERS[character].name
 	body += "\nSouvenir collected: " + DestinationTheme.souvenir(session.current_country())
 	body += "\nDaily missions: %d / 3 complete" % profile.mission_count()
 	if session.current_country() not in failed_countries:
@@ -718,6 +725,7 @@ func complete_country() -> void:
 		actions.append({"text": "SHARE LINK + SAVE CARD", "callback": share_challenge})
 	actions.append({"text": "MAIN MENU", "callback": return_to_menu})
 	hud.show_journey_result(title, body, actions)
+	parcel.present(session.current_country(), int(profile.souvenir_counts.get(session.current_country(), 1)), profile.settings.reduced_motion)
 	if options.is_empty() and online:
 		submit_online()
 

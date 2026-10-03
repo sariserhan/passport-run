@@ -17,7 +17,12 @@ var character_style := {"outfit": "classic", "hat": "none", "backpack": "classic
 var character_id := "classic"
 var character_pack_unlocked := false
 var souvenir_counts: Dictionary = {}
+var last_unlocked_characters: Array[String] = []
 var room_display: Array[String] = []
+var room_decor: Dictionary = RoomDecor.DEFAULTS.duplicate()
+var room_positions: Dictionary = {}
+var room_postcards: Array[String] = []
+var destination_records: Dictionary = {}
 var arcade_saves: Dictionary = {}
 var arcade_pops := 0
 var arcade_practice_records: Dictionary = {}
@@ -104,6 +109,27 @@ func load_profile() -> void:
 	if data.get("room_display") is Array:
 		for id in data.room_display:
 			if id is String and id in discoveries and id not in room_display and room_display.size() < 6: room_display.append(id)
+	if data.get("room_decor") is Dictionary:
+		for kind in room_decor:
+			var id: Variant = data.room_decor.get(kind)
+			if id is String and RoomDecor.unlocked(kind, id, discoveries): room_decor[kind] = id
+	if data.get("room_positions") is Dictionary:
+		for id in room_display:
+			var point: Variant = data.room_positions.get(id)
+			if point is Array and point.size() == 2 and point.all(func(value): return (value is int or value is float) and is_finite(float(value))):
+				room_positions[id] = [clampf(point[0], 0, 1), clampf(point[1], 0, 1)]
+	if data.get("room_postcards") is Array:
+		for id in data.room_postcards:
+			if id is String and id in discoveries and id not in room_postcards and room_postcards.size() < 3: room_postcards.append(id)
+	if data.get("destination_records") is Dictionary:
+		for id in discoveries:
+			var record: Variant = data.destination_records.get(id)
+			if record is Dictionary:
+				var clean := {}
+				for key in ["jump", "arcade"]:
+					var score: Variant = record.get(key)
+					if score is int or score is float: clean[key] = clampi(int(score), 0, 10000000)
+				if not clean.is_empty(): destination_records[id] = clean
 	if data.get("settings") is Dictionary:
 		for key in settings:
 			var value: Variant = data.settings.get(key)
@@ -130,6 +156,10 @@ func save() -> bool:
 	var data := {"version": SCHEMA_VERSION, "anonymous_id": anonymous_id, "home_country": home_country, "difficulty": difficulty, "tutorial_done": tutorial_done, "discoveries": discoveries, "history": history, "records": records, "badges": badges, "passport_cover": passport_cover, "daily_missions": daily_missions, "character_style": character_style, "room_display": room_display, "settings": settings, "arcade_saves": arcade_saves}
 	data["character_id"] = character_id
 	data["souvenir_counts"] = souvenir_counts
+	data["room_decor"] = room_decor
+	data["room_positions"] = room_positions
+	data["room_postcards"] = room_postcards
+	data["destination_records"] = destination_records
 	data["arcade_pops"] = arcade_pops
 	data["arcade_practice_records"] = arcade_practice_records
 	data["arcade_mastery"] = arcade_mastery
@@ -179,10 +209,16 @@ func can_visit_route(ids: Array) -> bool:
 	return not ids.is_empty() and ids.all(func(id): return id is String and can_visit(id))
 
 func discover(id: String) -> void:
+	last_unlocked_characters.clear()
 	if id not in GameCatalog.DESTINATIONS:
 		return
+	var locked: Array[String] = []
+	for character in CharacterStyle.CHARACTERS:
+		if not CharacterStyle.character_unlocked(character, discoveries, character_pack_unlocked): locked.append(character)
 	if id not in discoveries:
 		discoveries.append(id)
+	for character in locked:
+		if CharacterStyle.character_unlocked(character, discoveries, character_pack_unlocked): last_unlocked_characters.append(character)
 	souvenir_counts[id] = mini(10000000, int(souvenir_counts.get(id, 0)) + 1)
 	if room_display.size() < 6 and id not in room_display: room_display.append(id)
 	history.append(id)
@@ -257,3 +293,10 @@ func mission_count() -> int:
 
 func equipped_character() -> String:
 	return character_id if CharacterStyle.character_unlocked(character_id, discoveries, character_pack_unlocked) else "classic"
+
+func record_destination(id: String, mode: String, score: int) -> void:
+	if id not in discoveries or mode not in ["jump", "arcade"]: return
+	var record: Dictionary = destination_records.get(id, {})
+	record[mode] = maxi(int(record.get(mode, 0)), clampi(score, 0, 10000000))
+	destination_records[id] = record
+	save()

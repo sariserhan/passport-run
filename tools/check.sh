@@ -40,3 +40,5 @@ python3 tests/test_iphone_export.py
 "$GODOT_BIN" --headless --path . --script tests/test_arcade_mastery.gd
 
 "$GODOT_BIN" --headless --path . --script tests/test_souvenir_characters.gd
+
+"$GODOT_BIN" --headless --path . --script tests/test_travel_rewards.gd

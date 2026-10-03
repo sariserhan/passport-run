@@ -56,6 +56,9 @@ func run() -> void:
 		expect(arcade.phase == BalloonArcade.Phase.CLEAR and arcade.backdrop == scenery, "The current scenery remains until its rounds are passed")
 		if stage < 2: arcade.next_round()
 	arcade.finish_stamp()
+	arcade.parcel.reduced_motion = true
+	arcade.parcel.open_or_finish()
+	arcade.parcel.open_or_finish()
 	arcade.next_round()
 	expect(arcade.country_index == 0 and arcade.backdrop == scenery, "Travel supplies still shows the completed destination")
 	arcade.next_round()
