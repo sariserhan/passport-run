@@ -11,7 +11,7 @@ export const syncPassport = mutation({
     if (args.discoveries.length > DESTINATIONS.length || args.discoveries.some((id) => !DESTINATIONS.includes(id as typeof DESTINATIONS[number])) || (args.homeCountry !== "" && !DESTINATIONS.includes(args.homeCountry as typeof DESTINATIONS[number]))) throw new Error("Invalid passport");
     const previous = await ctx.db.query("players").withIndex("by_userId", (q) => q.eq("userId", userId)).unique();
     const discoveries = [...new Set([...(previous?.discoveries ?? []), ...args.discoveries])];
-    const profile = { homeCountry: args.homeCountry || previous?.homeCountry || "", discoveries };
+    const profile = { homeCountry: previous?.homeCountry || args.homeCountry || "", discoveries };
     if (previous) await ctx.db.patch(previous._id, profile);
     else await ctx.db.insert("players", {userId, ...profile});
     return profile;

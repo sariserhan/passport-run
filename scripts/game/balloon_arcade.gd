@@ -284,7 +284,7 @@ func show_panel(message: String, action_text: String, callback: Callable) -> voi
  box.add_child(label)
  var map := PassportWorldMap.new()
  map.discoveries = profile.discoveries.duplicate()
- map.route.assign(route.slice(maxi(0, country_index - 2), mini(route.size(), country_index + 6)))
+ map.route.assign(route.slice(maxi(0, country_index - 2), country_index + 1))
  map.current_country = route[country_index]
  box.add_child(map)
  var button := style.button(action_text, true)
@@ -292,7 +292,7 @@ func show_panel(message: String, action_text: String, callback: Callable) -> voi
  box.add_child(button)
  if phase == Phase.READY and route_kind != "daily":
   var mode_button := style.button("LOCAL CO-OP" if not coop else "SOLO PLAY", false)
-  mode_button.pressed.connect(func(): coop = not coop; layout(); show_panel("LOCAL CO-OP: P1 moves/fires · P2 J/L moves, K fires. Fire together four times to charge TEAM BURST. Stay near a fallen partner to revive for bonus coins.\n" if coop else "SOLO BALLOON TOUR", "START", begin_round))
+  mode_button.pressed.connect(func(): coop = not coop; layout(); show_panel("LOCAL CO-OP: P1 moves/fires · P2 J/L moves, K fires. Fire together four times to charge TEAM BURST. One balloon hit ends the game for both players.\n" if coop else "SOLO BALLOON TOUR", "START", begin_round))
   box.add_child(mode_button)
  var drops_button := style.button("? DROPS: COLLECT" if accept_drops else "? DROPS: AVOID", false)
  drops_button.pressed.connect(func(): accept_drops = not accept_drops; drops_button.text = "? DROPS: COLLECT" if accept_drops else "? DROPS: AVOID")
@@ -561,6 +561,7 @@ func clear_round() -> void:
  show_panel(("DESTINATION STAMPED!" if round_index == 2 else "ROUND CLEARED!") + "\n" + GameCatalog.country_name(route[country_index]) + " · Score %d" % score, "NEXT DESTINATION" if round_index == 2 else "NEXT ROUND", next_round)
 
 func next_round() -> void:
+ if phase != Phase.CLEAR: return
  if phase == Phase.CLEAR and round_index == 2 and country_index < route.size() - 1 and not panel.has_meta("travel"):
   panel.set_meta("travel", true)
   show_travel()

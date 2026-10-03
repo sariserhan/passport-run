@@ -108,6 +108,15 @@ func save() -> bool:
 	last_error = "" if error == OK else "Progress could not be saved on this device."
 	return error == OK
 
+func choose_start_country(id: String) -> bool:
+	if home_country in GameCatalog.FREE_DESTINATIONS or id not in GameCatalog.FREE_DESTINATIONS:
+		return false
+	var previous := home_country
+	home_country = id
+	if save(): return true
+	home_country = previous
+	return false
+
 func discover(id: String) -> void:
 	if id not in GameCatalog.DESTINATIONS:
 		return

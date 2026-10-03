@@ -56,11 +56,12 @@ test("invalid timing rolls back run and board writes", async () => {
   expect((await t.run((ctx) => ctx.db.get(issued.runId)))?.status).toBe("active");
   expect(await t.query(api.runs.leaderboard, {mode: "daily", difficulty: "hard"})).toEqual([]);
 });
-test("passport conflicts merge discoveries and never write ranking entries", async () => {
+test("passport sync locks the first starting country, merges discoveries and never writes ranking entries", async () => {
   const {t, client} = await setup();
+  await client.mutation(api.players.syncPassport, {homeCountry: "", discoveries: []});
   await client.mutation(api.players.syncPassport, {homeCountry: "FR", discoveries: ["FR"]});
   const result = await client.mutation(api.players.syncPassport, {homeCountry: "JP", discoveries: ["JP"]});
-  expect(result).toEqual({homeCountry: "JP", discoveries: ["FR", "JP"]});
+  expect(result).toEqual({homeCountry: "FR", discoveries: ["FR", "JP"]});
   await expect(client.mutation(api.players.syncPassport, {homeCountry: "XX", discoveries: []})).rejects.toThrow();
   expect(await t.run((ctx) => ctx.db.query("leaderboardEntries").take(5))).toEqual([]);
 });
@@ -118,6 +119,7 @@ test("territories and landmarks sync a complete passport without changing Daily 
   expect(saved.discoveries).toContain("SAHARA");
   const merged = await client.mutation(api.players.syncPassport, {homeCountry: "GL", discoveries: ["FR", "PETRA"]});
   expect(merged.discoveries).toHaveLength(282);
+  expect(merged.homeCountry).toBe("EVEREST");
   await expect(client.mutation(api.players.syncPassport, {homeCountry: "UNKNOWN", discoveries: []})).rejects.toThrow("Invalid passport");
   const issued = await client.mutation(api.runs.begin, {mode: "daily", difficulty: "hard"});
   expect(issued.route).toHaveLength(197);

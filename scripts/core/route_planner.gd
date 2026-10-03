@@ -66,3 +66,19 @@ static func standardized(home: String, seed_value: int, version: int = GameCatal
 			break
 		planner.travel_to(options[0])
 	return planner.route.duplicate()
+
+static func tour(home: String) -> Array[String]:
+	var planner := RoutePlanner.new()
+	planner.include_territories = true
+	planner.start(home, GameCatalog.daily_seed("guided-tour-v1", home))
+	while planner.route.size() < planner.catalog().size():
+		planner.complete_current()
+		var options := planner.choices()
+		if options.is_empty(): break
+		planner.travel_to(options[0])
+	return planner.route.duplicate()
+
+static func next_uncleared(route_ids: Array[String], discoveries: Array[String]) -> int:
+	for index in route_ids.size():
+		if route_ids[index] not in discoveries: return index
+	return 0

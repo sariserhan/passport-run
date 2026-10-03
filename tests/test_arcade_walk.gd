@@ -11,8 +11,10 @@ func _initialize() -> void:
 func run() -> void:
  var game = load("res://scenes/game.tscn").instantiate()
  game.save_path = "user://arcade-walk-test.json"
+ for suffix in ["", ".bak", ".tmp"]: DirAccess.remove_absolute(game.save_path + suffix)
  root.add_child(game)
  await process_frame
+ game.profile.choose_start_country("FR")
  game.start_arcade("world")
  var arcade: BalloonArcade = game.arcade
  arcade.set_physics_process(false)

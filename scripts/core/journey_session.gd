@@ -43,7 +43,7 @@ func begin(selected_mode: String, selected_difficulty: String, home: String, new
 		target = int(challenge.target_score)
 	elif mode in ["world", "kids"]:
 		planner.include_territories = true
-		planner.start(home, seed_value)
+		planner.start(home, GameCatalog.daily_seed("guided-tour-v1", home))
 
 func current_country() -> String:
 	if mode in ["world", "kids"]:
@@ -63,7 +63,7 @@ func complete_country(rows: int) -> void:
 
 func choices() -> Array[String]:
 	if mode in ["world", "kids"]:
-		return planner.choices()
+		return planner.choices().slice(0, 1)
 	var result: Array[String] = []
 	if country_index + 1 < fixed_route.size():
 		result.append(fixed_route[country_index + 1])

@@ -30,6 +30,7 @@ With the server running, from the project root:
 
 ```sh
 /Applications/Godot.app/Contents/MacOS/Godot --headless --path . --script tests/test_online.gd
+/Applications/Godot.app/Contents/MacOS/Godot --headless --path . --script tests/test_start_country_sync.gd
 ```
 
 `tests/export_contract.gd` regenerates the compatibility fixtures used by the backend tests. Treat generator and balance version 1 as immutable.
@@ -42,7 +43,7 @@ Server manifests choose Daily date/seed/route and Infinite seed. Retries referen
 
 A client replay proves consistency with game rules; it cannot prove that a human remembered the path. Bot resistance and release abuse controls still need work. Replays are bounded to 4,096 choices; longer runs remain playable locally but are not ranked. Ending a run via the menu does not submit a ranked score.
 
-Passport discoveries merge as a union; home country uses last writer. Local history/preferences and all Kids play remain local. Passport synchronization never grants leaderboard points.
+Passport discoveries merge as a union; the first nonempty starting-country choice is permanent, and later syncs return that saved choice. Local history/preferences and all Kids play remain local. Passport synchronization never grants leaderboard points.
 
 Local HTTP cannot serve hosted OIDC discovery, so local auth verifies inline public keys. `devAuth:signIn` delegates actual Convex Auth session creation and re-signs its claims with the required key ID; it rejects non-loopback deployments. Hosted clients use standard `auth:signIn` and OIDC. Verify hosted auth and refresh separately before release.
 

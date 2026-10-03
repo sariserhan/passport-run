@@ -29,6 +29,7 @@ var difficulty_picker: OptionButton
 var home_button: Button
 var challenge_input: TextEdit
 var pending_mode: String = ""
+var pending_arcade: String = ""
 var status: Label
 var safe_margin: MarginContainer
 
@@ -41,7 +42,7 @@ func setup(saved_profile: PlayerProfile, hud_style: GameHUD) -> void:
 	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(root)
 	var artwork := TextureRect.new()
-	artwork.texture = preload("res://assets/backdrops/FR.png")
+	artwork.texture = preload("res://assets/menu-key-art.png")
 	artwork.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	artwork.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 	artwork.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -117,7 +118,8 @@ func show_main() -> void:
 	hero.custom_minimum_size.y = 210
 	hero.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	content.add_child(hero)
-	home_button = action("Start: " + (GameCatalog.country_name(profile.home_country) if not profile.home_country.is_empty() else "Choose your starting destination"), false, func(): show_countries())
+	home_button = action("Start: " + GameCatalog.country_name(profile.home_country) + " · LOCKED" if profile.home_country in GameCatalog.FREE_DESTINATIONS else "CHOOSE YOUR START · ONE TIME", false, show_countries)
+	home_button.disabled = profile.home_country in GameCatalog.FREE_DESTINATIONS
 	difficulty_picker = OptionButton.new()
 	difficulty_picker.custom_minimum_size.y = 52
 	difficulty_picker.add_theme_font_size_override("font_size", 19)
@@ -167,7 +169,16 @@ func request_mode(mode: String) -> void:
 	start_requested.emit(mode, profile.difficulty)
 
 func show_countries() -> void:
-	clear("Where should your\njourney begin?", "Choose a starting point. Changing it keeps all your passport stamps.")
+	if profile.home_country in GameCatalog.FREE_DESTINATIONS:
+		var mode := pending_mode
+		var kind := pending_arcade
+		pending_mode = ""
+		pending_arcade = ""
+		if not kind.is_empty(): arcade_requested.emit(kind)
+		elif not mode.is_empty(): start_requested.emit(mode, profile.difficulty)
+		else: show_main()
+		return
+	clear("Where should your\njourney begin?", "Choose once. Your starting country is permanent. We plan the route; clear each destination to reveal the next.")
 	var search := LineEdit.new()
 	search.placeholder_text = "Search countries and territories"
 	search.custom_minimum_size.y = 54
@@ -177,10 +188,15 @@ func show_countries() -> void:
 	for id in GameCatalog.sorted_destinations():
 		var country: String = id
 		var control := action(country + "   " + GameCatalog.country_name(country), country == profile.home_country, func():
-			profile.home_country = country
+			if not profile.choose_start_country(country):
+				copy(profile.last_error if not profile.last_error.is_empty() else "Your starting country is already locked.")
+				return
 			home_country_selected.emit(country)
-			profile.save()
-			if not pending_mode.is_empty():
+			if not pending_arcade.is_empty():
+				var kind := pending_arcade
+				pending_arcade = ""
+				arcade_requested.emit(kind)
+			elif not pending_mode.is_empty():
 				var mode := pending_mode
 				pending_mode = ""
 				start_requested.emit(mode, profile.difficulty)
@@ -196,7 +212,7 @@ func show_countries() -> void:
 	)
 	copy("Geography: mledoze/countries · ODbL 1.0", 15)
 	copy("%d destinations to explore: countries and territories. Special places have their own paid route." % GameCatalog.FREE_DESTINATIONS.size(), 15)
-	action("BACK", false, func(): pending_mode = ""; show_main())
+	action("BACK", false, func(): pending_mode = ""; pending_arcade = ""; show_main())
 
 func show_passport() -> void:
 	clear("My passport", "%d / %d destinations discovered" % [profile.discoveries.size(), GameCatalog.DESTINATIONS.size()])
@@ -323,7 +339,7 @@ func show_settings() -> void:
 	copy("Progress and a bounded gameplay log stay on this device. Online modes connect only when configured. No chat, advertisements, or remote analytics are active.", 15)
 	if not OS.has_feature("mobile"):
 		action("OPEN USER DATA FOLDER", false, func(): OS.shell_open(ProjectSettings.globalize_path("user://")))
-	action("CHANGE HOME COUNTRY", false, show_countries)
+	copy("Starting country: " + GameCatalog.country_name(profile.home_country) + " · permanent" if profile.home_country in GameCatalog.FREE_DESTINATIONS else "Choose your starting country when you begin your first tour.", 15)
 	action("REPLAY TUTORIAL", false, func(): start_requested.emit("tutorial", "easy"))
 	action("BACK", true, show_main)
 
@@ -382,11 +398,14 @@ func show_paid_route(cinema: bool) -> void:
 		var heading := style.label(GameCatalog.country_name(place), 23, GameHUD.CREAM)
 		heading.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		card.add_child(heading)
-		var artwork := TravelArtwork.new()
-		artwork.country_id = place
-		artwork.show_traveler = false
-		artwork.custom_minimum_size.y = 145
-		card.add_child(artwork)
+		if place in profile.discoveries:
+			var artwork := TravelArtwork.new()
+			artwork.country_id = place
+			artwork.show_traveler = false
+			artwork.custom_minimum_size.y = 145
+			card.add_child(artwork)
+		else:
+			card.add_child(style.label("? · Scenery revealed when you reach this destination", 17, GameHUD.CREAM))
 		var play := style.button("PLAY " + GameCatalog.country_name(place).to_upper() if manager and manager.unlocked else "LOCKED · ROUTE PACK REQUIRED", manager and manager.unlocked)
 		play.disabled = not manager or not manager.unlocked or manager.busy
 		play.pressed.connect(func():
@@ -536,10 +555,20 @@ func show_room() -> void:
 	action("BACK", false, show_main)
 
 func show_arcade() -> void:
-	clear("Balloon Tour", "Split balloons, survive destination challenges and defeat armored bosses to stamp your passport. Mystery drops upgrade and combine weapons—or curse you. Dodge them or turn collection off in Pause.\nSolo: arrows or A/D + Space. Local co-op: choose it before START; P2 uses J/L + K, or their own touch buttons. Stay near a fallen teammate for 2 seconds to revive.")
+	clear("Balloon Tour", "Clear three rounds at each destination to reveal the next. Your route is planned for you. One balloon hit ends the game.\nMove ◀ ▶ and FIRE ↑. Keyboard: arrows or A/D + Space. Co-op: P2 uses J/L + K. Mystery drops can help or hurt; collect or avoid them in Pause.")
+	if profile.home_country in GameCatalog.FREE_DESTINATIONS:
+		copy("Start: " + GameCatalog.country_name(profile.home_country) + " · permanent", 17)
 	action("DAILY ARCADE · SAME CHALLENGE FOR EVERYONE", false, func(): arcade_requested.emit("daily"))
-	action("WORLD BALLOON TOUR · 250 DESTINATIONS", true, func(): arcade_requested.emit("world"))
+	action("WORLD BALLOON TOUR · 250 DESTINATIONS", true, func(): request_arcade("world"))
 	action("SPECIAL BALLOON TOUR · EXPEDITIONS PACK", false, func(): arcade_requested.emit("special"))
 	action("CINEMA BALLOON TOUR · CINEMA PACK", false, func(): arcade_requested.emit("cinema"))
-	action("CHOOSE STARTING COUNTRY", false, show_countries)
+	if profile.home_country not in GameCatalog.FREE_DESTINATIONS:
+		action("CHOOSE STARTING COUNTRY · ONE TIME", false, show_countries)
 	action("BACK", false, show_main)
+
+func request_arcade(kind: String) -> void:
+	if kind == "world" and profile.home_country not in GameCatalog.FREE_DESTINATIONS:
+		pending_arcade = kind
+		show_countries()
+		return
+	arcade_requested.emit(kind)

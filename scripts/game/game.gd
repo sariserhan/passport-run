@@ -869,6 +869,8 @@ func sync_online_passport() -> void:
 	var response := await backend.call_function("mutation", "players:syncPassport", {"homeCountry": profile.home_country, "discoveries": profile.discoveries})
 	var value: Variant = response.get("value")
 	if value is Dictionary and value.get("discoveries") is Array:
+		if value.get("homeCountry", "") in GameCatalog.FREE_DESTINATIONS:
+			profile.home_country = value.homeCountry
 		for id in value.discoveries:
 			if id is String and id in GameCatalog.DESTINATIONS and id not in profile.discoveries:
 				profile.discoveries.append(id)
@@ -897,6 +899,10 @@ func start_arcade(kind: String) -> void:
 	if kind == "cinema" and not cinema_purchase.unlocked:
 		menu.show_cinema_route()
 		return
+	if kind == "world" and profile.home_country not in GameCatalog.FREE_DESTINATIONS:
+		menu.pending_arcade = kind
+		menu.show_countries()
+		return
 	return_to_menu()
 	paused = true
 	menu.root.hide()
@@ -913,17 +919,11 @@ func start_arcade(kind: String) -> void:
 	if kind == "daily":
 		arcade.configure_daily(Time.get_datetime_string_from_unix_time(int(Time.get_unix_time_from_system())).substr(0, 10))
 	elif kind == "world":
-		var planner := RoutePlanner.new()
-		planner.include_territories = true
-		planner.start(profile.home_country if profile.home_country in GameCatalog.FREE_DESTINATIONS else "FR", GameCatalog.daily_seed("balloon", profile.difficulty))
-		while planner.route.size() < planner.catalog().size():
-			planner.complete_current()
-			var options := planner.choices()
-			if options.is_empty(): break
-			planner.travel_to(options[0])
-		arcade.route = planner.route.duplicate()
+		arcade.route = RoutePlanner.tour(profile.home_country)
+		arcade.country_index = RoutePlanner.next_uncleared(arcade.route, profile.discoveries)
 	else:
 		arcade.route.assign(GameCatalog.PREMIUM_DESTINATIONS.keys() if kind == "special" else GameCatalog.CINEMA_DESTINATIONS.keys())
+		arcade.country_index = RoutePlanner.next_uncleared(arcade.route, profile.discoveries)
 	arcade.exited.connect(return_to_menu)
 	layer.add_child(arcade)
 

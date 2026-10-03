@@ -87,7 +87,7 @@ For the iPhone project with challenge-link support, run `python3 tools/export_ip
 
 ## Balloon Tour
 
-Choose **BALLOON TOUR · ARCADE** from the main menu. Move with arrows or A/D and fire with Space; on phone, hold ◀/▶ and FIRE together. Split and clear every balloon in three rounds to stamp a destination. World, Special and Cinema tours reuse each destination's unique background and music; paid routes retain their pack gates. **WORLD MAP** now links pins in recent travel order. Arcade scores are local and separate from memory-game rankings.
+Choose **BALLOON TOUR · ARCADE** from the main menu. Move with arrows or A/D and fire with Space; on phone, hold ◀/▶ and FIRE together. Split and clear every balloon in three rounds to stamp a destination. World, Special and Cinema tours reuse each destination's unique background and music; paid routes retain their pack gates. Choose your free-tour starting country once; the saved choice is permanent. The game assigns a stable route that does not change with difficulty. Balloon tours resume at the first uncleared destination using saved passport stamps. Future stops are hidden on the tour map, and the next background appears only after all three rounds at the current stop are cleared. Undiscovered destinations have no scenery preview in pack menus. **WORLD MAP** now links pins in recent travel order. Arcade scores are local and separate from memory-game rankings.
 
 ## Expanded mystery arcade — 2026-10-03
 
