@@ -4,6 +4,8 @@ extends Node3D
 var config: DifficultyConfig
 var country_id: String = ""
 var endless: bool = false
+var reduced_motion := false
+var atmosphere: WorldAtmosphere
 const INFINITE_BACKDROP := preload("res://assets/infinite-backdrop.png")
 
 # Lighting and physical platforms over an illustrated destination matte.
@@ -38,6 +40,11 @@ func _ready() -> void:
 	image.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	image.texture = INFINITE_BACKDROP if endless else GameCatalog.backdrop(country_id)
 	backdrop.add_child(image)
+	atmosphere = WorldAtmosphere.new()
+	atmosphere.reduced_motion = reduced_motion
+	atmosphere.cosmic = country_id in ["SPACE", "MOON", "MARS", "SATURN"]
+	atmosphere.underwater = country_id == "UNDERWATER"
+	backdrop.add_child(atmosphere)
 	var finish_z: float = -(config.row_count + 1) * config.row_spacing - 1.15
 	var stone := MeshFactory.stone_material(Color("bea68b"))
 	MeshFactory.beveled_box(self, Vector3(config.lane_count * config.lane_spacing + 0.5, 0.6, 3.9), Vector3(0, -0.3, 0.7), stone)

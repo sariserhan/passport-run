@@ -25,8 +25,13 @@ func apply_settings(values: Dictionary) -> void:
 
 func play_cue(key: String) -> void:
 	if DisplayServer.get_name() != "headless" and cues.has(key) and float(settings.get("sound", 0)) > 0:
+		effect.pitch_scale = 1.0
 		effect.stream = cues[key]
 		effect.play()
+
+func play_streak(count: int) -> void:
+	play_cue("land")
+	effect.pitch_scale = 1.0 + minf(count, 10) * 0.035
 
 func set_paused(value: bool) -> void:
 	music.stream_paused = value

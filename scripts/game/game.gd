@@ -36,6 +36,9 @@ var passport_stamp: PassportStamp
 var purchase: RoutePurchase
 var cinema_purchase: RoutePurchase
 var cinema_start := "HOBBIT_VILLAGE"
+var trip_id := "europe"
+var jump_streak := 0
+var failed_countries: Array[String] = []
 var special_start := "EVEREST"
 
 func _ready() -> void:
@@ -98,6 +101,7 @@ func _ready() -> void:
 			return_to_menu()
 			menu.show_cinema_route()
 	)
+	menu.trip_requested.connect(func(id: String): trip_id = id; start_game("trip", profile.difficulty))
 	menu.cinema_requested.connect(func(id: String): cinema_start = id; start_game("cinema", profile.difficulty))
 	menu.special_requested.connect(func(id: String): special_start = id; start_game("special", profile.difficulty))
 	menu.start_requested.connect(start_game)
@@ -119,6 +123,7 @@ func _ready() -> void:
 	)
 
 func start_game(mode: String, difficulty_key: String) -> void:
+	var is_retry := not retry_run_id.is_empty()
 	if network_busy:
 		return
 	var requested_online := mode.begins_with("online_")
@@ -152,7 +157,7 @@ func start_game(mode: String, difficulty_key: String) -> void:
 		if not cinema_purchase.unlocked:
 			menu.show_cinema_route()
 			return
-	if mode not in ["world", "infinite", "daily", "kids", "tutorial", "challenge", "special", "cinema"]:
+	if mode not in ["world", "infinite", "daily", "kids", "tutorial", "challenge", "special", "cinema", "trip"]:
 		return
 	if mode in ["world", "kids"] and profile.home_country not in GameCatalog.FREE_DESTINATIONS:
 		menu.pending_mode = mode
@@ -160,7 +165,9 @@ func start_game(mode: String, difficulty_key: String) -> void:
 		return
 	if mode == "challenge" and imported_challenge.is_empty():
 		return
-	session.begin(mode, difficulty_key, special_start if mode == "special" else (cinema_start if mode == "cinema" else profile.home_country), randi_range(1, PathGenerator.MODULUS - 2), imported_challenge)
+	if not is_retry:
+		failed_countries.clear()
+	session.begin(mode, difficulty_key, special_start if mode == "special" else (cinema_start if mode == "cinema" else profile.home_country), randi_range(1, PathGenerator.MODULUS - 2), {"route": TravelGoals.TRIPS[trip_id].route} if mode == "trip" else imported_challenge)
 	if online:
 		session.balance_version = int(issued.balanceVersion)
 		session.seed_value = int(issued.seed)
@@ -207,7 +214,7 @@ func restart(new_path: bool = false, auto_preview: bool = true) -> void:
 	# A daily retry stays pinned to the UTC date it started, even across midnight.
 	var old_date := session.date
 	var old_route: Array[String] = session.fixed_route.duplicate()
-	session.begin(session.mode, session.difficulty, special_start if session.mode == "special" else (cinema_start if session.mode == "cinema" else profile.home_country), next_seed, imported_challenge)
+	session.begin(session.mode, session.difficulty, special_start if session.mode == "special" else (cinema_start if session.mode == "cinema" else profile.home_country), next_seed, {"route": TravelGoals.TRIPS[trip_id].route} if session.mode == "trip" else imported_challenge)
 	if session.mode == "daily" and not old_date.is_empty():
 		session.date = old_date
 		session.seed_value = next_seed
@@ -220,6 +227,8 @@ func load_country(auto_preview: bool) -> void:
 	cancel_motion()
 	menu.root.hide()
 	hud.root.show()
+	jump_streak = 0
+	hud.phase_hint.modulate = Color.WHITE
 	segment_start = 0
 	country_awarded = false
 	failure_reason = ""
@@ -246,6 +255,8 @@ func load_country(auto_preview: bool) -> void:
 	if session.mode == "infinite":
 		hud.phase_title.text = "Infinite Memory"
 		hud.phase_hint.text = "Same path after every fall. Go a little farther."
+	elif session.mode == "trip":
+		hud.phase_hint.text = "%s · Country %d of 3" % [TravelGoals.TRIPS[trip_id].name, session.country_index + 1]
 	elif session.mode == "tutorial":
 		hud.phase_title.text = "Your first three steps"
 	telemetry.track("country_started", metadata())
@@ -257,6 +268,7 @@ func rebuild_environment() -> void:
 		remove_child(environment)
 		environment.queue_free()
 	environment = TestEnvironment.new()
+	environment.reduced_motion = profile.settings.reduced_motion
 	environment.config = config
 	environment.country_id = session.current_country()
 	environment.endless = session.mode == "infinite"
@@ -299,6 +311,8 @@ func start_preview() -> void:
 	hud.update_preview(preview_remaining, config.preview_seconds)
 
 func _process(delta: float) -> void:
+	if is_instance_valid(environment) and environment.atmosphere:
+		environment.atmosphere.frozen = paused or menu.root.visible
 	if paused or (menu and menu.root.visible):
 		return
 	if run.phase == RunState.Phase.PREVIEW:
@@ -393,9 +407,15 @@ func land(row: int, lane: int) -> void:
 	var tile := grid.tile_at(row, lane)
 	if run.land():
 		tile.set_state(PathTile.State.CORRECT)
-		audio.play_cue("land")
+		jump_streak += 1
+		audio.play_streak(jump_streak)
 		vibrate(15)
 		update_play_hud()
+		hud.phase_hint.text = "PERFECT STREAK · %d" % jump_streak
+		hud.phase_hint.modulate = Color("ffde8a") if jump_streak >= 3 else Color.WHITE
+		if jump_streak % 3 == 0 and not profile.settings.reduced_motion:
+			traveler.body.scale = Vector3.ONE * 1.08
+			create_tween().tween_property(traveler.body, "scale", Vector3.ONE, 0.2)
 		if run.phase == RunState.Phase.COMPLETE:
 			celebrate()
 		elif session.mode == "infinite" and run.completed_rows % config.row_count == 0:
@@ -436,6 +456,8 @@ func follow_player() -> void:
 	camera_tween.tween_property(camera, "rotation", rotation, 0.5)
 
 func fall(tile: PathTile = null) -> void:
+	if not session.current_country().is_empty() and session.current_country() not in failed_countries:
+		failed_countries.append(session.current_country())
 	hud.show_falling()
 	traveler.play_animation("fall")
 	if failure_reason == "timeout":
@@ -444,6 +466,10 @@ func fall(tile: PathTile = null) -> void:
 	if session.mode == "kids":
 		hud.phase_title.text = "Almost!"
 		hud.phase_hint.text = "Great try. Remember it and go again."
+	var correct_tile := grid.tile_at(run.completed_rows, run.safe_lane(run.completed_rows))
+	if correct_tile:
+		correct_tile.set_state(PathTile.State.REVEALED)
+		hud.phase_hint.text = "The checkmark shows the step you missed."
 	if tile:
 		tile.set_state(PathTile.State.CRACKING)
 	audio.play_cue("fall")
@@ -495,6 +521,9 @@ func show_failure() -> void:
 		body = "%d tiles remembered\nRetry starts at step 1\nwith the exact same path." % run.completed_rows
 	if session.mode == "tutorial":
 		body = "Remember the checkmarks,\nthen tap the next row."
+	if session.mode != "infinite":
+		var remaining := config.row_count - run.completed_rows
+		body += "\n%d %s from your next stamp!" % [remaining, "jump" if remaining == 1 else "jumps"]
 	var actions: Array = [{"text": "TRY AGAIN", "primary": true, "callback": func(): restart(false, true)}]
 	if session.mode == "infinite":
 		actions.append({"text": "NEW PATH", "callback": func(): restart(true, true)})
@@ -504,6 +533,8 @@ func show_failure() -> void:
 	hud.show_journey_result("Great try!", body, actions)
 
 func celebrate() -> void:
+	if session.current_country() not in failed_countries:
+		environment.atmosphere.celebration_remaining = 2.0
 	celebrating = true
 	hud.show_celebration()
 	follow_player()
@@ -550,6 +581,8 @@ func complete_country() -> void:
 	country_awarded = true
 	session.complete_country(config.row_count)
 	profile.discover(session.current_country())
+	if session.current_country() not in failed_countries:
+		profile.award_badge("perfect:" + session.current_country())
 	save_record()
 	telemetry.track("country_completed", metadata())
 	telemetry.flush()
@@ -562,6 +595,8 @@ func complete_country() -> void:
 		actions.append({"text": ("FLY TO " if options.size() > 1 else "CONTINUE TO ") + GameCatalog.country_name(id).to_upper(), "primary": true, "callback": func(): travel_to(id)})
 	var title := "Passport stamped!"
 	var body := "%s\n%d %s · %d tiles" % [GameCatalog.country_name(session.current_country()), session.completed_countries, "destination" if session.completed_countries == 1 else "destinations", session.banked_tiles]
+	if session.current_country() not in failed_countries:
+		body += "\nFLAWLESS COUNTRY · Perfect-jump badge earned!"
 	if session.mode == "kids":
 		body += "\nSticker collected!\n" + CountryRewards.fact(session.current_country())
 	if options.is_empty():
@@ -569,6 +604,9 @@ func complete_country() -> void:
 		telemetry.flush()
 		title = "Journey complete!"
 		body += "\nYou crossed the whole route."
+		if session.mode == "trip":
+			profile.award_badge("trip:" + trip_id)
+			body += "\nAdventure badge earned! Find it in Collection Goals."
 		if session.mode == "challenge":
 			body += "\n" + ("You beat the target!" if total_score() > session.target else "Target matched!" if total_score() == session.target else "Target: %d" % session.target)
 		actions.append({"text": "PLAY AGAIN", "primary": true, "callback": func(): restart(false, true)})

@@ -10,6 +10,8 @@ var tutorial_done: bool = false
 var discoveries: Array[String] = []
 var history: Array[String] = []
 var records: Dictionary = {}
+var badges: Array[String] = []
+var passport_cover := "classic"
 var settings: Dictionary = {"music": 0.35, "sound": 0.65, "reduced_motion": false, "high_contrast": false, "haptics": true}
 var last_error: String = ""
 
@@ -39,6 +41,11 @@ func load_profile() -> void:
 						history.append(id)
 					elif id not in discoveries:
 						discoveries.append(id)
+	if data.get("badges") is Array:
+		for badge in data.badges.slice(0, 300):
+			if badge is String and valid_badge(badge) and badge not in badges: badges.append(badge)
+	if data.get("passport_cover", "classic") in TravelGoals.earned_covers(discoveries):
+		passport_cover = data.get("passport_cover", "classic")
 	if data.get("records") is Dictionary:
 		for key in data.records.keys().slice(0, 200):
 			if key is String and key.length() <= 64 and (data.records[key] is float or data.records[key] is int):
@@ -66,7 +73,7 @@ func read_valid(path: String) -> Dictionary:
 	return {}
 
 func save() -> bool:
-	var data := {"version": SCHEMA_VERSION, "anonymous_id": anonymous_id, "home_country": home_country, "difficulty": difficulty, "tutorial_done": tutorial_done, "discoveries": discoveries, "history": history, "records": records, "settings": settings}
+	var data := {"version": SCHEMA_VERSION, "anonymous_id": anonymous_id, "home_country": home_country, "difficulty": difficulty, "tutorial_done": tutorial_done, "discoveries": discoveries, "history": history, "records": records, "badges": badges, "passport_cover": passport_cover, "settings": settings}
 	var file := FileAccess.open(file_path + ".tmp", FileAccess.WRITE)
 	if file == null:
 		last_error = "Progress could not be saved on this device."
@@ -97,3 +104,12 @@ func record(mode: String, difficulty_key: String, score: int, date: String = "")
 	while records.size() > 200:
 		records.erase(records.keys()[0])
 	save()
+
+func valid_badge(id: String) -> bool:
+	return (id.begins_with("trip:") and id.trim_prefix("trip:") in TravelGoals.TRIPS) or (id.begins_with("perfect:") and id.trim_prefix("perfect:") in GameCatalog.DESTINATIONS)
+
+func award_badge(id: String) -> bool:
+	if not valid_badge(id) or id in badges: return false
+	badges.append(id)
+	save()
+	return true

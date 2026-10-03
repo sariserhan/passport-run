@@ -48,3 +48,7 @@ This continuation passed 10,427 Godot checks, three Python tests, 155 backend te
 ## Preview, Infinite and collection UI — 2026-10-02
 
 New balance-v3 games use a three-second preview across modes. Old v1/v2 challenges and rankings retain their rules; new boards separate b3. Infinite now uses a dedicated original dreamscape without country labels. A geographic 2D map pins completed countries/territories, and the passport presents illustrated stamped paper pages with navigation and search. World map and passport UI are implemented; account recovery and physical-device validation remain pending.
+
+## Enjoyment pass — 2026-10-02
+
+All five approved proposals are implemented: three short adventure routes/badges, cosmetic jump streaks, missed-step/proximity retry feedback, animated background ambience, and collection covers with regional map progress. Covers and badges persist locally and never grant purchase access or scoring advantages. Nine Godot suites, three Python tests, rendered 95-check gameplay verification, 19 real backend integration checks, signed native build and exported-pack inspection passed. Real player enjoyment and device performance remain to be tested.

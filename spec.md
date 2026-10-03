@@ -8,6 +8,10 @@ The user explicitly requests broad country coverage, superseding the five-countr
 
 250 free countries and territories, a separately purchased 24-destination Special Expeditions route (16 landmarks plus eight fantasy worlds), and an independently purchased eight-destination Cinema Worlds route. Total passport coverage: 282 destinations. Ranked Daily retains its immutable 197-country catalog. Special Expeditions includes Everest, Sahara, underwater, space, Moon and Mars. Cinema Worlds contains original scenes inspired by Lord of the Rings, Harry Potter, dinosaur adventures and Wonderland. Each pack uses its own one-time non-consumable Apple purchase; buying one never unlocks the other. Free country travel excludes paid places. Paid challenge codes require the relevant ownership. Every completed destination uses the same jump, celebration and passport-stamp mechanics.
 
+## Latest approved enjoyment pass — 2026-10-02
+
+Implement all five proposed improvements: short three-country adventures with a clear finish and badge; cosmetic correct-jump streak effects and rising notes; reveal the missed step and show jumps remaining with immediate same-path retry; subtle animated clouds, birds, water glints and world-appropriate ambient effects; collection goals awarding passport covers with regional map progress. First-try country clears receive a cosmetic badge and celebration particles. Rewards never change previews, paths, scoring or ranked fairness. Scenery pauses with gameplay and honors Reduced Motion.
+
 ## Latest approved preview and collection UI — 2026-10-02
 
 New games use a three-second memorization preview in every mode, including Kids and tutorial. Balance v3 preserves balance-v1/v2 challenge and ranked timing, and competitive boards separate these versions. The ten-second per-row decision rule remains unchanged. Infinite uses its own dreamscape, with no country/city scenery or label. Add a 2D world map pinning cleared real countries/territories from durable passport discoveries. The passport uses bound paper visa pages: every completed destination gets scenery and a completion stamp, with page navigation and earned-page search.

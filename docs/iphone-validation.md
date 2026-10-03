@@ -57,3 +57,7 @@ Final desktop checks: 10,427 Godot assertions across eight suites, three Python 
 ## Preview and collection UI continuation — 2026-10-02
 
 Latest signed native project: `/private/tmp/passport-native-map/PassportRun.xcodeproj`, built successfully with StoreKit linked. Exported-pack inspection loads the 250-coordinate geographic map, passport page renderer, dedicated Infinite texture and current/legacy preview configurations. Desktop renders at 480×900 and 390×844 verify passport navigation/search, five saved map pins and Infinite section transitions. Three-second previews use balance v3; server typecheck and 156 tests, local HTTP smoke and 19 Godot/backend integration checks passed. Physical iPhone launch, performance and live purchases remain pending.
+
+## Enjoyment pass native build — 2026-10-02
+
+Latest signed project is `/private/tmp/passport-native-fun/PassportRun.xcodeproj`. Build and resource-pack inspection passed, including short trips, collection cover definitions, scenery animator and menu. New gameplay checks passed headlessly and rendered at 390×844. No physical-phone launch/FPS or live purchase acceptance is inferred.

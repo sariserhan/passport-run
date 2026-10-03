@@ -3,6 +3,7 @@ extends Control
 
 var destination_id := "FR"
 var page_number := 1
+var cover_id := "classic"
 
 func _ready() -> void:
 	custom_minimum_size.y = 410
@@ -12,7 +13,8 @@ func _ready() -> void:
 func _draw() -> void:
 	var font := ThemeDB.fallback_font
 	var paper := Rect2(8, 5, size.x - 16, size.y - 10)
-	draw_rect(Rect2(Vector2.ZERO, size), Color("142e45"))
+	var cover := Color(TravelGoals.TRIPS[cover_id].color) if cover_id in TravelGoals.TRIPS else Color("142e45")
+	draw_rect(Rect2(Vector2.ZERO, size), cover)
 	draw_rect(paper, Color("fff3d5"))
 	draw_rect(paper.grow(-5), Color("c8b897"), false, 1)
 	draw_line(Vector2(22, 14), Vector2(22, size.y - 14), Color("baaa8b"), 2)

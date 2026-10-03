@@ -6,6 +6,7 @@ signal challenge_requested(data: Dictionary)
 signal settings_changed
 signal home_country_selected(id: String)
 signal difficulty_selected(key: String)
+signal trip_requested(id: String)
 signal cinema_requested(id: String)
 signal special_requested(id: String)
 signal online_records_requested
@@ -130,9 +131,11 @@ func show_main() -> void:
 	content.add_child(difficulty_picker)
 	if not profile.tutorial_done:
 		action("LEARN THE PATH", true, func(): start_requested.emit("tutorial", "easy"))
+	action("SHORT ADVENTURES · 3 COUNTRIES", true, show_trips)
 	for item in [["world", "WORLD TOUR"], ["infinite", "INFINITE MEMORY"], ["daily", "DAILY WORLD TOUR"], ["kids", "KIDS ADVENTURE"]]:
 		var mode: String = item[0]
 		mode_buttons[mode] = action(item[1], mode == "world", func(): request_mode(mode))
+	action("COLLECTION GOALS", false, show_goals)
 	action("CINEMA WORLDS · SEPARATE PAID ROUTE", false, show_cinema_route)
 	action("SPECIAL EXPEDITIONS · PAID ROUTE", false, show_special_route)
 	copy("Daily: same UTC date + difficulty = same route. Scores are local until online rankings are connected.", 15)
@@ -198,6 +201,7 @@ func show_passport() -> void:
 	var pages: Array[String] = profile.discoveries.duplicate()
 	var state := {"index": 0, "ids": pages}
 	var book := PassportPage.new()
+	book.cover_id = profile.passport_cover
 	content.add_child(book)
 	var empty := copy("Complete a destination to receive your first stamped page.")
 	var counter := copy("")
@@ -250,6 +254,12 @@ func show_world_map() -> void:
 	else:
 		for id in cleared:
 			copy("● " + GameCatalog.country_name(id), 17)
+	copy("Regional progress", 23)
+	var regions := TravelGoals.regions(profile.discoveries)
+	for region in regions:
+		var progress: Dictionary = regions[region]
+		if progress.completed > 0:
+			copy("%s · %d / %d%s" % [region, progress.completed, progress.total, " · COMPLETE ★" if progress.completed == progress.total else ""], 17)
 	copy("Fantasy worlds and special-place stamps are in your passport.", 15)
 	action("MY PASSPORT", false, show_passport)
 	action("BACK", true, show_main)
@@ -386,3 +396,34 @@ func purchase_changed() -> void:
 		show_cinema_route()
 	elif special_page and root.visible:
 		show_special_route()
+
+func show_trips() -> void:
+	clear("Short adventures", "Three countries. One clear finish. Earn an adventure badge.")
+	for id in TravelGoals.TRIPS:
+		var trip: Dictionary = TravelGoals.TRIPS[id]
+		copy(trip.name, 24)
+		var names: Array[String] = []
+		for country in trip.route: names.append(GameCatalog.country_name(country))
+		copy(" → ".join(names), 18)
+		copy("★ Adventure badge collected" if "trip:" + id in profile.badges else "Complete all three in one run for your badge.", 16)
+		var trip_key: String = id
+		action("START " + trip.name.to_upper(), true, func(): trip_requested.emit(trip_key))
+	action("BACK", false, show_main)
+
+func show_goals() -> void:
+	clear("Collection goals", "Explore the world to earn passport covers. Cosmetics never change your gameplay.")
+	var earned := TravelGoals.earned_covers(profile.discoveries)
+	for id in TravelGoals.TRIPS:
+		var goal: Dictionary = TravelGoals.TRIPS[id]
+		copy(goal.name + " · " + goal.cover + " cover", 23)
+		for country in goal.route:
+			copy(("✓ " if country in profile.discoveries else "○ ") + GameCatalog.country_name(country), 18)
+		var cover_key: String = id
+		var button := action("EQUIPPED" if profile.passport_cover == id else ("EQUIP " + goal.cover.to_upper() if id in earned else "COMPLETE THESE COUNTRIES TO UNLOCK"), id in earned, func(): profile.passport_cover = cover_key; profile.save(); show_goals())
+		button.disabled = id not in earned or profile.passport_cover == id
+		if "trip:" + id in profile.badges: copy("★ " + goal.name + " adventure badge", 17)
+	copy("First-try country badges: %d" % profile.badges.filter(func(id: String): return id.begins_with("perfect:")).size(), 20)
+	action("CLASSIC PASSPORT COVER", false, func(): profile.passport_cover = "classic"; profile.save(); show_goals())
+	action("SHORT ADVENTURES", true, show_trips)
+	action("MY PASSPORT", false, show_passport)
+	action("BACK", false, show_main)
