@@ -6,6 +6,7 @@ const WORLD := Vector2(720, 600)
 var floor_y := 570.0
 var world_height := 600.0
 var touches: Dictionary = {}
+const TURN := preload("res://assets/arcade-turn.png")
 const WALK := preload("res://assets/arcade-walk-v2.png")
 const PORTRAIT := preload("res://assets/arcade-poses.png")
 const DROPS := ["double", "sticky", "gun", "triple", "spread", "laser", "rocket", "shield", "freeze", "slow", "boots", "heart", "time", "coin", "bomb", "magnet", "speed", "multiply", "heavy", "reverse", "jam", "shrink_time"]
@@ -57,6 +58,8 @@ var death_reason := ""
 var pause_from := Phase.PLAY
 var movement := 0.0
 var facing := 1.0
+var visual_facing := 1.0
+var partner_visual_facing := 1.0
 var walk_clock := 0.0
 var walk_speed := 0.0
 var partner_walk_speed := 0.0
@@ -327,6 +330,9 @@ func begin_round() -> void:
  walk_speed = 0
  partner_walk_speed = 0
  partner_facing = 1
+ facing = 1
+ visual_facing = 1
+ partner_visual_facing = 1
  revive_time = 0
  down_time = 0
  slide_speed = 0
@@ -681,10 +687,11 @@ func simulate(delta: float) -> void:
   movement = 0
   slide_speed = 0
  var desired := clampf(movement, -1, 1) * move_speed
- slide_speed = move_toward(slide_speed, desired, delta * (260 if mechanic == "ice" else 4000))
+ slide_speed = move_toward(slide_speed, desired, delta * movement_acceleration(slide_speed, desired))
  var wind := sin(clock * 1.7) * 32 if mechanic == "sand" else 0.0
  var previous_player_x := player_x
  player_x = clampf(player_x + (slide_speed + (wind if not player_down else 0.0)) * delta, 26, WORLD.x - 26)
+ visual_facing = update_turn(visual_facing, facing, delta) if not player_down else visual_facing
  walk_speed = absf(player_x - previous_player_x) / maxf(delta, 0.0001)
  walk_clock += absf(player_x - previous_player_x) * 8.0 / 110.0
  if coop:
@@ -693,12 +700,13 @@ func simulate(delta: float) -> void:
   partner_movement = axis if not partner_down else 0.0
   var previous_partner_x := partner_x
   if not partner_down:
-   partner_slide = move_toward(partner_slide, axis * move_speed, delta * (260 if mechanic == "ice" else 4000))
+   partner_slide = move_toward(partner_slide, axis * move_speed, delta * movement_acceleration(partner_slide, axis * move_speed))
    partner_x = clampf(partner_x + (partner_slide + wind) * delta, 26, WORLD.x - 26)
    if Input.is_physical_key_pressed(KEY_K) or partner_held.has("P2 FIRE") or "P2 FIRE" in touches.values(): fire(partner_x)
   partner_walk_speed = absf(partner_x - previous_partner_x) / maxf(delta, 0.0001)
   partner_walk += absf(partner_x - previous_partner_x) * 8.0 / 110.0
   if axis != 0: partner_facing = signf(axis)
+  if not partner_down: partner_visual_facing = update_turn(partner_visual_facing, partner_facing, delta)
   if player_down or partner_down:
    down_time -= delta
    revive_time = revive_time + delta if absf(partner_x - player_x) < 70 and player_down != partner_down else 0.0
@@ -891,7 +899,7 @@ func _draw() -> void:
   draw_rect(Rect2(0,floor_y-depth,720,depth),Color(0.15,0.65,0.92,0.35))
  if coop:
   var teammate_frame := 15 if partner_down else 8 + mini(3,int((0.32-partner_shot)/0.32*4)) if partner_shot > 0 else int(partner_walk)%4 if partner_movement != 0 else 0
-  draw_explorer(teammate_frame, partner_walk, partner_walk_speed, partner_facing, partner_x, Color("a4ddff"), partner_down)
+  draw_explorer(teammate_frame, partner_walk, partner_walk_speed, partner_visual_facing, partner_x, Color("a4ddff"), partner_down)
   draw_string(ThemeDB.fallback_font,Vector2(partner_x-14,floor_y-125),"P2",HORIZONTAL_ALIGNMENT_LEFT,-1,18,Color("a4ddff"))
   draw_string(ThemeDB.fallback_font,Vector2(player_x-14,floor_y-125),"P1",HORIZONTAL_ALIGNMENT_LEFT,-1,18,Color("ffdd79"))
   if player_down or partner_down:
@@ -899,18 +907,42 @@ func _draw() -> void:
  var frame := character_frame()
  var tint := Color(CharacterStyle.OUTFITS.get(profile.character_style.outfit, CharacterStyle.OUTFITS.classic).color)
  if invincible > 0 and hurt_time <= 0 and phase == Phase.PLAY and int(clock * 8) % 2: tint.a = 0.45
- draw_explorer(frame, walk_clock, walk_speed, facing, player_x, tint, player_down or hurt_time > 0 or phase == Phase.FAILED)
+ draw_explorer(frame, walk_clock, walk_speed, visual_facing, player_x, tint, player_down or hurt_time > 0 or phase == Phase.FAILED)
  if shield:
   draw_arc(Vector2(player_x, floor_y - 44), 52, 0, TAU, 40, Color("9eecff"), 3, true)
   if coop: draw_arc(Vector2(partner_x, floor_y - 44), 52, 0, TAU, 40, Color("9eecff"), 3, true)
  draw_set_transform(Vector2.ZERO)
  if hit_flash > 0: draw_rect(play, Color(1, 0.25, 0.2, hit_flash * 0.35))
 
+func movement_acceleration(velocity: float, desired: float) -> float:
+ if mechanic == "ice": return 260.0
+ return 1800.0 if velocity * desired < 0 else 4000.0
+
+func update_turn(current: float, target: float, delta: float) -> float:
+ return target if profile.settings.reduced_motion else move_toward(current, target, delta * 8.0)
+
+func draw_turn(x: float, direction: float, tint: Color) -> void:
+ var cell := Vector2(TURN.get_size()) / Vector2(5, 1)
+ var pose := clampf((1 - direction) * 2, 0, 4)
+ var first := floori(pose)
+ var blend := pose - first
+ var width := 140.0 * cell.x / cell.y
+ var target := Rect2(x - width / 2, floor_y - 131.6, width, 140)
+ var first_tint := tint
+ first_tint.a *= 1 - blend
+ draw_texture_rect_region(TURN, target, Rect2(Vector2(first * cell.x, 0), cell), first_tint)
+ if blend > 0:
+  var next_tint := tint
+  next_tint.a *= blend
+  draw_texture_rect_region(TURN, target, Rect2(Vector2((first + 1) * cell.x, 0), cell), next_tint)
+
 func walking_frame(gait: float) -> int:
  return posmod(int(gait), 8)
 
 func draw_explorer(frame: int, gait: float, speed: float, direction: float, x: float, tint: Color, incapacitated: bool) -> void:
- if speed > 1 and not incapacitated:
+ if not incapacitated and (absf(direction) < 0.999 or (speed <= 1 and frame < 4)):
+  draw_turn(x, direction, tint)
+ elif speed > 1 and not incapacitated:
   var cell := Vector2(WALK.get_size()) / Vector2(4, 2)
   var step := walking_frame(gait)
   var source := Rect2(Vector2(step % 4, step / 4) * cell, cell)
