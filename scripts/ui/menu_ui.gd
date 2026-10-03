@@ -1,6 +1,14 @@
 class_name MenuUI
 extends CanvasLayer
 
+signal player_slot_requested(slot: int)
+signal profile_reload_requested
+var player_slot := 0
+var player_count := 2
+var multiplayer_scores: Dictionary = {}
+var turn_challenge: Dictionary = {}
+var active_turn := false
+var base_save_path := "user://profile.json"
 signal activity_route_requested(data: Dictionary)
 signal activity_sound_requested(key: String)
 var photo_draft: Dictionary = {}
@@ -93,6 +101,7 @@ func clear(title: String, subtitle: String) -> void:
 		content.remove_child(child)
 		child.queue_free()
 	mode_buttons.clear()
+	apply_menu_accessibility.call_deferred()
 	scroll.scroll_vertical = 0
 	var heading := style.label(title, 34, GameHUD.CREAM)
 	heading.add_theme_color_override("font_outline_color", Color("123352"))
@@ -109,7 +118,7 @@ func copy(text: String, size: int = 17) -> Label:
 
 func action(text: String, primary: bool, callback: Callable) -> Button:
 	var control := style.button(text, primary)
-	control.custom_minimum_size.y = 58
+	control.custom_minimum_size.y = 68 if profile.settings.large_controls else 58
 	control.pressed.connect(callback)
 	content.add_child(control)
 	return control
@@ -160,6 +169,7 @@ func show_main() -> void:
 		if mode == "daily" and not profile.can_visit_route(GameCatalog.COUNTRIES.keys()):
 			mode_buttons[mode].text = "? · DAILY WORLD TOUR · REACH ITS STOPS FIRST"
 			mode_buttons[mode].disabled = true
+	action("NEW JOURNEYS & WORKSHOP", false, func(): TravelExtrasUI.new(self).show("hub"))
 	action("MORE ADVENTURES & CREATIVE TOOLS", false, func(): TravelActivityUI.new(self).show("hub"))
 	action("DEPARTURE LOUNGE", false, func(): TravelActivityUI.new(self).show("lounge"))
 	action("COLLECTION GOALS", false, show_goals)
@@ -991,3 +1001,15 @@ func show_replay() -> void:
 	replay.profile = profile
 	content.add_child(replay)
 	action("BACK", false, show_main)
+
+func apply_menu_accessibility() -> void:
+	if not content or not is_instance_valid(content): return
+	apply_control_accessibility(content)
+
+func apply_control_accessibility(node: Node) -> void:
+	if node is Control and node is Label or node is Button or node is OptionButton or node is TextEdit or node is LineEdit:
+		if not node.has_meta("base_font_size"): node.set_meta("base_font_size", node.get_theme_font_size("font_size"))
+		node.add_theme_font_size_override("font_size", int(node.get_meta("base_font_size") * profile.settings.text_scale))
+		if node is Button:
+			node.custom_minimum_size.y = maxf(node.custom_minimum_size.y, 68 if profile.settings.large_controls else 56)
+	for child in node.get_children(): apply_control_accessibility(child)

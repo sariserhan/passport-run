@@ -6,6 +6,8 @@ var config: DifficultyConfig
 var first_row: int = 0
 var destination_id := ""
 var layout := "classic"
+var transport_kind := ""
+var climb_step := 0.0
 var moving := false
 var frozen := true
 var motion_clock := 0.0
@@ -32,11 +34,23 @@ func build(settings: DifficultyConfig, start_row: int = 0, count: int = -1) -> v
 					var side := -1.0 if lane == 0 else 1.0
 					MeshFactory.box(tile.decoration, Vector3(0.07, 0.75, 0.07), Vector3(side * 1.1, 0.18, 0), wood)
 					MeshFactory.box(tile.decoration, Vector3(0.05, 0.05, config.row_spacing), Vector3(side * 1.1, 0.45, 0), wood)
+			if not transport_kind.is_empty():
+				tile.neutral.albedo_texture = null
+				tile.neutral.albedo_color = Color("b68857") if transport_kind == "boat" else Color("d9bf83")
+				var deck := MeshFactory.material(Color("b68857") if transport_kind == "boat" else Color("d9bf83"))
+				MeshFactory.box(tile.decoration, Vector3(config.tile_size.x, 0.1, config.tile_size.z), Vector3(0, -0.3, 0), deck)
+				if lane == 0 or lane == config.lane_count - 1:
+					var side := -1.0 if lane == 0 else 1.0
+					MeshFactory.box(tile.decoration, Vector3(0.06, 0.5, config.tile_size.z), Vector3(side * config.tile_size.x * 0.45, 0.3, 0), deck)
+					if transport_kind in ["train", "tram"]:
+						MeshFactory.sphere(tile.decoration, 0.28, Vector3(side * 0.8, -0.28, 0), MeshFactory.material(Color("334659")))
+					elif transport_kind == "cable_car": MeshFactory.box(tile.decoration, Vector3(0.04, 3, 0.04), Vector3(side * 0.8, 1.5, 0), deck)
 			tiles.append(tile)
 
 func position_for(row: int, lane: int) -> Vector3:
 	var bend := sin((row + 1) * 0.45) * 0.65 if layout in ["curve", "bridge"] else 0.0
 	var height := (1.0 - cos((row + 1) * 0.35)) * 0.22 if layout == "climb" else 0.0
+	if climb_step > 0: height += row * climb_step
 	return Vector3((lane - (config.lane_count - 1) / 2.0) * config.lane_spacing + bend, height, -(row + 1) * config.row_spacing)
 
 func _process(delta: float) -> void:

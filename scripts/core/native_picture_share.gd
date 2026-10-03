@@ -2,7 +2,7 @@ class_name NativePictureShare
 extends RefCounted
 const REQUEST := "user://passport-share-request.json"
 const RESULT := "user://passport-share-result.json"
-const FILENAMES := ["passport-run-room.png", "passport-run-album.png", "passport-run-journal.png", "passport-run-photo.png", "passport-run-scrapbook.png"]
+const FILENAMES := ["passport-run-room.png", "passport-run-album.png", "passport-run-journal.png", "passport-run-photo.png", "passport-run-scrapbook.png", "passport-run-movie.gif", "passport-run-backup.json"]
 
 static func request(owner: Node, filename: String) -> String:
  if OS.get_name() != "iOS": return "unavailable"

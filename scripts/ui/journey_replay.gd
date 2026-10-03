@@ -1,6 +1,7 @@
 class_name JourneyReplay
 extends VBoxContainer
 var profile: PlayerProfile
+var route_override: Array[String] = []
 var route: Array[String] = []
 var index := 0
 var elapsed := 0.0
@@ -15,7 +16,7 @@ var seek: HSlider
 
 func _ready() -> void:
  add_theme_constant_override("separation", 12)
- route = profile.discoveries.duplicate()
+ route = route_override.duplicate() if not route_override.is_empty() else profile.discoveries.duplicate()
  playing = not profile.settings.reduced_motion and route.size() > 1
  map = JourneyReplayMap.new()
  add_child(map)

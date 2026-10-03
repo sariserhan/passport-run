@@ -1,6 +1,10 @@
 class_name GameHUD
 extends CanvasLayer
 
+signal lane_requested(lane: int)
+var lane_controls: HBoxContainer
+var large_controls := false
+var text_scale := 1.0
 signal start_requested
 signal retry_requested
 signal new_path_requested
@@ -177,6 +181,7 @@ func update_safe_area() -> void:
 	modal_card.custom_minimum_size.x = maxf(1, minf(364, available_width))
 
 func show_ready(lanes: int, rows: int) -> void:
+	if lane_controls: lane_controls.hide()
 	footer_panel.offset_top = -158
 	overlay.hide()
 	phase_title.text = "Ready for takeoff?"
@@ -187,6 +192,7 @@ func show_ready(lanes: int, rows: int) -> void:
 	pause_button.disabled = false
 
 func show_preview() -> void:
+	if lane_controls: lane_controls.hide()
 	footer_panel.offset_top = -104
 	begin_button.hide()
 	pause_button.disabled = false
@@ -198,6 +204,8 @@ func update_preview(remaining: float, total: float) -> void:
 	timer_label.text = "MEMORIZE   ·   %d" % ceili(remaining)
 
 func show_play(completed: int, total: int) -> void:
+	if lane_controls: lane_controls.visible = large_controls and completed < total
+	footer_panel.offset_top = -186 if large_controls else -104
 	phase_title.text = "…and go!"
 	phase_hint.text = "Tap a tile in the next row."
 	timer_label.text = "STEP %02d OF %02d" % [mini(completed + 1, total), total]
@@ -213,12 +221,14 @@ func update_decision(remaining: float, total: float) -> void:
 	timer_bar.add_theme_stylebox_override("fill", panel_style(Color("ff956e") if remaining <= 3 else Color("b3ec69"), 5))
 
 func show_celebration() -> void:
+	if lane_controls: lane_controls.hide()
 	phase_title.text = "You made it!"
 	phase_hint.text = "One more destination for your passport."
 	timer_label.text = "COUNTRY COMPLETE"
 	timer_bar.value = 1
 
 func show_falling() -> void:
+	if lane_controls: lane_controls.hide()
 	phase_title.text = "Whoops!"
 	phase_hint.text = "One more step to remember."
 
@@ -255,7 +265,8 @@ func add_action(text: String, primary: bool, callback: Callable) -> void:
 func label(text: String, size: int, color: Color) -> Label:
 	var node := Label.new()
 	node.text = text
-	node.add_theme_font_size_override("font_size", size)
+	node.set_meta("base_font_size", size)
+	node.add_theme_font_size_override("font_size", int(size * text_scale))
 	node.add_theme_color_override("font_color", color)
 	node.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return node
@@ -267,7 +278,8 @@ func button(text: String, primary: bool) -> Button:
 	node.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	node.custom_minimum_size.y = 56
 	node.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-	node.add_theme_font_size_override("font_size", 19)
+	node.set_meta("base_font_size", 19)
+	node.add_theme_font_size_override("font_size", int(19 * text_scale))
 	node.add_theme_color_override("font_color", Color("18262c") if primary else CREAM)
 	node.add_theme_color_override("font_focus_color", Color("18262c") if primary else CREAM)
 	node.add_theme_color_override("font_hover_color", Color("18262c") if primary else CREAM)
@@ -301,3 +313,29 @@ func show_journey_result(title: String, body: String, actions: Array) -> void:
 	for item in actions:
 		add_action(item.text, item.get("primary", false), item.callback)
 	overlay.show()
+
+func configure_lanes(count: int) -> void:
+	if not lane_controls:
+		lane_controls = HBoxContainer.new()
+		footer.add_child(lane_controls)
+		lane_controls.add_theme_constant_override("separation", 6)
+	for child in lane_controls.get_children():
+		lane_controls.remove_child(child)
+		child.queue_free()
+	for lane in count:
+		var index := lane
+		var control := button(str(lane + 1), false)
+		control.custom_minimum_size = Vector2(0, 68)
+		control.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		control.tooltip_text = "Choose lane %d" % (lane + 1)
+		control.pressed.connect(func(): lane_requested.emit(index))
+		lane_controls.add_child(control)
+	lane_controls.hide()
+
+func apply_text_scale() -> void:
+	if root: scale_text(root)
+
+func scale_text(node: Node) -> void:
+	if node is Control and node.has_meta("base_font_size"):
+		node.add_theme_font_size_override("font_size", int(node.get_meta("base_font_size") * text_scale))
+	for child in node.get_children(): scale_text(child)

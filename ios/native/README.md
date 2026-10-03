@@ -16,3 +16,5 @@ Run `python3 tools/check_iphone_sharing.py` to compile and launch the exact brid
 Physical-device acceptance: export through `tools/export_iphone.py`, install the resulting Xcode build, then share room, album, journal, photo and scrapbook pictures. Check cancellation, sharing again, saving to Photos and returning to gameplay. Recipient delivery requires choosing and confirming a destination in the system share sheet.
 
 The batch also includes `tools/check_iphone_sharing_device.py`, which accepts an explicitly selected paired device and an existing provisioning profile. It compiles a separate sharing test app, verifies presentation/cancellation-handler execution on the phone, and uninstalls that test app. No production app or profile is replaced. The iPhone 14 Pro check passed on 2026-10-03.
+
+The new journeys batch adds `passport-run-movie.gif` and `passport-run-backup.json` to the share whitelist. These are shared as file URLs so the original animated movie and portable backup survive export. The isolated native smoke app tests picture, backup, and movie presentation and cancellation; it does not send them to a recipient.

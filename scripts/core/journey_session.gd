@@ -7,6 +7,7 @@ var seed_value: int = 1
 var date: String = ""
 var planner := RoutePlanner.new()
 var fixed_route: Array[String] = []
+var branches: Array = []
 var country_index: int = 0
 var completed_countries: int = 0
 var banked_tiles: int = 0
@@ -22,6 +23,7 @@ func begin(selected_mode: String, selected_difficulty: String, home: String, new
 	completed_countries = 0
 	banked_tiles = 0
 	fixed_route.clear()
+	branches.clear()
 	target = 0
 	date = ""
 	if mode == "daily":
@@ -36,6 +38,8 @@ func begin(selected_mode: String, selected_difficulty: String, home: String, new
 		fixed_route.assign([home])
 	elif mode in ["trip", "expedition"]:
 		fixed_route.assign(challenge.get("route", []))
+		if mode == "expedition" and challenge.has("seed"): seed_value = int(challenge.seed)
+		if mode == "expedition" and challenge.get("kind") == "branch": branches = challenge.get("branches", []).duplicate(true)
 	elif mode == "challenge":
 		seed_value = int(challenge.seed)
 		difficulty = challenge.difficulty
@@ -62,6 +66,10 @@ func complete_country(rows: int) -> void:
 		planner.complete_current()
 
 func choices() -> Array[String]:
+	if mode == "expedition" and not branches.is_empty():
+		var options: Array[String] = []
+		if country_index < branches.size(): options.assign(branches[country_index])
+		return options
 	if mode in ["world", "kids"]:
 		return planner.choices().slice(0, 1)
 	var result: Array[String] = []
@@ -74,6 +82,7 @@ func travel_to(id: String) -> bool:
 		return false
 	if mode in ["world", "kids"] and not planner.travel_to(id):
 		return false
+	if mode == "expedition" and not branches.is_empty(): fixed_route.append(id)
 	country_index += 1
 	return true
 

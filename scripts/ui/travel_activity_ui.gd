@@ -59,6 +59,7 @@ func show(page: String, argument: String = "") -> void:
   "checklist": checklist()
  button("BACK", menu.show_main if page == "hub" else func(): show("hub"))
 func hub() -> void:
+ button("NEW JOURNEYS & WORKSHOP", func(): TravelExtrasUI.new(menu).show("hub"))
  for entry in [["arrival", "Country arrival scenes"], ["souvenirs", "Interactive souvenirs"], ["quests", "Buddy adventures"], ["scrapbook", "Travel scrapbook"], ["weekly", "This week’s expedition"], ["photo", "Photo mode"], ["passport", "Personalize my passport"], ["mastery", "Destination mastery"], ["hunt", "Treasure hunt"], ["bingo", "Travel bingo"], ["lounge", "Departure lounge"], ["timeline", "Travel timeline"], ["weather", "Weather & time of day"], ["knowledge", "Knowledge stickers"], ["celebrations", "Celebration choices"], ["checklist", "Discovery checklist"]]:
   var key: String = entry[0]
   button(entry[1], func(): show(key))

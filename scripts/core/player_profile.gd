@@ -32,7 +32,7 @@ var arcade_drop_journal: Array[String] = []
 var arcade_daily: Dictionary = {}
 var cached_home := ""
 var cached_tour: Array[String] = []
-var settings: Dictionary = {"music": 0.35, "sound": 0.65, "reduced_motion": false, "high_contrast": false, "haptics": true, "arcade_swap": false, "arcade_large": false}
+var settings: Dictionary = {"music": 0.35, "sound": 0.65, "reduced_motion": false, "high_contrast": false, "haptics": true, "arcade_swap": false, "arcade_large": false, "large_controls": false, "text_scale": 1.0}
 var travel_buddy := "bird"
 var champion_seen := false
 var travel_journal: Dictionary = {}
@@ -40,6 +40,7 @@ var journal_pages: Dictionary = {}
 var regions_seen: Array[String] = []
 var rare_keepsakes: Dictionary = {}
 var activities: Dictionary = TravelActivities.clean({})
+var extras: Dictionary = TravelExtras.clean({})
 var last_error: String = ""
 
 func _init(path: String = "user://profile.json") -> void:
@@ -60,6 +61,7 @@ func load_profile() -> void:
 	if data.get("anonymous_id") is String and data.anonymous_id.length() == 32 and data.anonymous_id.is_valid_hex_number():
 		anonymous_id = data.anonymous_id
 	activities = TravelActivities.clean(data.get("activities"))
+	extras = TravelExtras.clean(data.get("extras"))
 	travel_buddy = data.get("travel_buddy", "bird") if data.get("travel_buddy", "bird") in ["none", "bird", "robot", "dragon"] else "bird"
 	if data.get("regions_seen") is Array:
 		for name in data.regions_seen:
@@ -173,9 +175,9 @@ func load_profile() -> void:
 	if data.get("settings") is Dictionary:
 		for key in settings:
 			var value: Variant = data.settings.get(key)
-			if key in ["music", "sound"] and (value is int or value is float):
-				settings[key] = clampf(float(value), 0, 1)
-			elif value is bool and key not in ["music", "sound"]:
+			if key in ["music", "sound", "text_scale"] and (value is int or value is float):
+				settings[key] = clampf(float(value), 1, 1.3) if key == "text_scale" else clampf(float(value), 0, 1)
+			elif value is bool and key not in ["music", "sound", "text_scale"]:
 				settings[key] = value
 
 	for id in discoveries: activities.mastery[id] = maxi(1, int(activities.mastery.get(id, 0)))
@@ -209,6 +211,7 @@ func save() -> bool:
 	data["regions_seen"] = regions_seen
 	data["rare_keepsakes"] = rare_keepsakes
 	data["activities"] = activities
+	data["extras"] = extras
 	data["character_id"] = character_id
 	data["souvenir_counts"] = souvenir_counts
 	data["room_decor"] = room_decor
@@ -437,6 +440,7 @@ func activity_tick(key: String) -> void:
 
 func note_completion(id: String, key: String, flawless: bool, weekly_run: bool = false, arcade_medal: int = 0) -> void:
 	if id not in discoveries: return
+	note_extra_completion(id)
 	var medal := arcade_medal if arcade_medal > 0 else (3 if key == "hard" and flawless else 2 if key == "moderate" and flawless else 1)
 	var old := int(activities.mastery.get(id, 0))
 	activities.mastery[id] = maxi(old, medal)
@@ -527,3 +531,70 @@ func switch_room_space(space: String) -> bool:
 			var point: Variant = slot.positions.get(id)
 			if point is Array and point.size() == 2 and point.all(func(value): return (value is int or value is float) and is_finite(float(value))): room_positions[id] = [clampf(point[0], 0, 1), clampf(point[1], 0, 1)]
 	return save()
+
+func finish_extra_stage(kind: String, key: String, country: String) -> bool:
+	var entry := TravelExtras.stage(kind, key)
+	if entry.is_empty() or entry.country != country or not TravelExtras.unlocked(self, kind, key): return false
+	var token := kind + ":" + key
+	if token in extras.completed: return false
+	extras.completed.append(token)
+	activities.rewards[token] = entry.keepsake
+	timeline_note("Collected " + entry.keepsake)
+	return save()
+
+func note_extra_completion(id: String) -> void:
+	extras.materials = mini(999, extras.materials + 1)
+	for key in extras.characters:
+		var request: Dictionary = extras.characters[key]
+		if id in TravelExtras.CHARACTERS[key].route and id not in request.countries: request.countries.append(id)
+		if request.countries.size() == TravelExtras.CHARACTERS[key].route.size() and not request.rewarded:
+			request.rewarded = true
+			activities.rewards["character:" + key] = TravelExtras.CHARACTERS[key].reward
+			timeline_note("Helped " + TravelExtras.CHARACTERS[key].name)
+	save()
+
+func accept_character(key: String) -> bool:
+	if key not in TravelExtras.CHARACTERS or key in extras.characters: return false
+	extras.characters[key] = {"countries": [], "rewarded": false}
+	return save()
+
+func craft_extra(key: String) -> bool:
+	if key not in TravelExtras.RECIPES or key in extras.crafted: return false
+	var recipe: Dictionary = TravelExtras.RECIPES[key]
+	if extras.materials < recipe.cost or not recipe.countries.all(func(id): return id in discoveries): return false
+	var old: int = extras.materials
+	var old_ornament: String = extras.ornament
+	extras.materials -= recipe.cost
+	extras.crafted.append(key)
+	extras.ornament = key
+	if save(): return true
+	extras.materials = old
+	extras.crafted.erase(key)
+	extras.ornament = old_ornament
+	return false
+
+func room_snapshot() -> Dictionary:
+	return {"display": room_display.duplicate(), "decor": room_decor.duplicate(), "postcards": room_postcards.duplicate(), "positions": room_positions.duplicate(true)}
+
+func save_room_preset(name: String) -> bool:
+	if extras.presets.size() >= 6: return false
+	extras.presets.append({"name": name.strip_edges().left(32), "room": room_snapshot(), "ornament": extras.ornament})
+	return save()
+
+func apply_room_preset(index: int) -> bool:
+	if index < 0 or index >= extras.presets.size(): return false
+	var preset: Dictionary = extras.presets[index]
+	var room := TravelExtras.clean_room(preset.room)
+	room_display.assign(room.display.filter(func(id): return id in discoveries))
+	room_postcards.assign(room.postcards.filter(func(id): return id in discoveries))
+	room_positions = room.positions
+	for kind in room.decor:
+		room_decor[kind] = room.decor[kind] if RoomDecor.unlocked(kind, room.decor[kind], discoveries) else RoomDecor.DEFAULTS[kind]
+	extras.ornament = preset.ornament if preset.ornament in extras.crafted else "none"
+	return save()
+
+func record_recap(name: String, ids: Array, tiles: int) -> void:
+	if ids.is_empty(): return
+	extras.recaps.append({"name": name.left(64), "date": GameCatalog.today_utc(), "route": ids.duplicate(), "tiles": tiles})
+	extras.recaps = extras.recaps.slice(-10)
+	save()

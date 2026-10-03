@@ -152,3 +152,5 @@ Adventure validation: all 17 Godot regression suites and four Python checks pass
 ### Creative travel activities batch
 
 See [travel-activities.md](travel-activities.md) for the 19-feature inventory, progression rules, storage bounds and validation. The native sharing bridge passed on a physical iPhone 14 Pro using a separate temporary test app; actual recipient delivery and a full physical-device Godot build remain unverified.
+
+The next fifteen-feature batch adds playable city/landmark/transport/viewpoint stages, branching trips, monthly festivals, character requests, crafting, room presets, a rotating globe, exported GIF journey recaps, four local traveler slots and shared matches, route-code creation, accessibility controls, and portable JSON backup/restore. See `docs/new-journeys.md` for behavior and verification limits.

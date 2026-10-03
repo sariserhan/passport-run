@@ -21,14 +21,19 @@ static void passportPollShare(void) {
     NSString *identifier = request[@"id"];
     NSString *filename = request[@"filename"];
     if (![identifier isKindOfClass:NSString.class] || identifier.length != 24) return;
-    if (![filename isKindOfClass:NSString.class] || ![@[@"passport-run-room.png", @"passport-run-album.png", @"passport-run-journal.png", @"passport-run-photo.png", @"passport-run-scrapbook.png"] containsObject:filename] || ![request[@"expires"] isKindOfClass:NSNumber.class] || [request[@"expires"] doubleValue] < NSDate.date.timeIntervalSince1970) {
+    if (![filename isKindOfClass:NSString.class] || ![@[@"passport-run-room.png", @"passport-run-album.png", @"passport-run-journal.png", @"passport-run-photo.png", @"passport-run-scrapbook.png", @"passport-run-movie.gif", @"passport-run-backup.json"] containsObject:filename] || ![request[@"expires"] isKindOfClass:NSNumber.class] || [request[@"expires"] doubleValue] < NSDate.date.timeIntervalSince1970) {
         passportShareResult(identifier, @"error"); return;
     }
     NSString *picturePath = [passportShareDirectory() stringByAppendingPathComponent:filename];
     NSDictionary *attributes = [NSFileManager.defaultManager attributesOfItemAtPath:picturePath error:nil];
     if (!attributes || [attributes fileSize] > 20000000) { passportShareResult(identifier, @"error"); return; }
-    UIImage *image = [UIImage imageWithContentsOfFile:picturePath];
-    if (!image) { passportShareResult(identifier, @"error"); return; }
+    BOOL document = [filename isEqualToString:@"passport-run-backup.json"] || [filename isEqualToString:@"passport-run-movie.gif"];
+    id item = document ? [NSURL fileURLWithPath:picturePath] : [UIImage imageWithContentsOfFile:picturePath];
+    if (!item) { passportShareResult(identifier, @"error"); return; }
+    if ([filename isEqualToString:@"passport-run-backup.json"]) {
+        id backup = [NSJSONSerialization JSONObjectWithData:[NSData dataWithContentsOfFile:picturePath] options:0 error:nil];
+        if (![backup isKindOfClass:NSDictionary.class] || ![backup[@"format"] isEqual:@"passport-run-backup-v1"]) { passportShareResult(identifier, @"error"); return; }
+    }
     UIWindow *window = nil;
     for (UIScene *scene in UIApplication.sharedApplication.connectedScenes) {
         if (![scene isKindOfClass:UIWindowScene.class] || scene.activationState != UISceneActivationStateForegroundActive) continue;
@@ -40,7 +45,7 @@ static void passportPollShare(void) {
     while (presenter.presentedViewController) presenter = presenter.presentedViewController;
     if (!presenter || !presenter.view.window || presenter.isBeingDismissed || presenter.isBeingPresented) { passportShareResult(identifier, @"error"); return; }
     passportShareBusy = YES;
-    UIActivityViewController *share = [[UIActivityViewController alloc] initWithActivityItems:@[image] applicationActivities:nil];
+    UIActivityViewController *share = [[UIActivityViewController alloc] initWithActivityItems:@[item] applicationActivities:nil];
     share.popoverPresentationController.sourceView = presenter.view;
     share.popoverPresentationController.sourceRect = CGRectMake(CGRectGetMidX(presenter.view.bounds), CGRectGetMidY(presenter.view.bounds), 1, 1);
     share.popoverPresentationController.permittedArrowDirections = 0;

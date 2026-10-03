@@ -89,6 +89,21 @@ func _draw() -> void:
  if decor.wallpaper == "night":
   for index in 28:
    draw_circle(Vector2(fmod(index * 47.0 + 13, size.x), 18 + fmod(index * 79.0, 530)), 2, Color("ffe2a0"))
+ if profile and profile.extras.ornament in TravelExtras.RECIPES:
+  var key: String = profile.extras.ornament
+  var center := Vector2(size.x - 42, floor_y - 34)
+  var color := Color(TravelExtras.RECIPES[key].color)
+  draw_line(center + Vector2(0, -36), center + Vector2(0, 14), Color("785743"), 3)
+  if key == "lantern":
+   draw_rect(Rect2(center - Vector2(17, 22), Vector2(34, 40)), color)
+   for x in [-10, 0, 10]: draw_line(center + Vector2(x, -22), center + Vector2(x, 18), Color("b99155"), 2)
+  elif key == "mobile":
+   for x in [-18, 0, 18]:
+    draw_line(center + Vector2(0, -28), center + Vector2(x, -10), color, 2)
+    draw_circle(center + Vector2(x, -6), 5, color)
+  else:
+   draw_circle(center, 24, Color(0.7, 0.9, 0.8, 0.6))
+   for x in [-10, 0, 10]: draw_circle(center + Vector2(x, -6), 7, color)
  draw_rect(Rect2(0, floor_y, size.x, maxf(0, size.y - floor_y)), Color("b8916e"))
  for y in range(floor_y + 11, int(size.y), 18): draw_line(Vector2(0, y), Vector2(size.x, y), Color("9c795c"), 1)
  draw_rect(Rect2(0, 0, size.x, 5), Color("8f6945"))
