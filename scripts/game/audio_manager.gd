@@ -24,6 +24,12 @@ func _ready() -> void:
 	add_child(outgoing)
 	for item in [["jump", [440.0, 660.0]], ["land", [660.0]], ["fall", [280.0, 210.0, 140.0]], ["stamp", [523.25, 659.25, 783.99]], ["ui", [520.0]], ["travel", [392.0, 523.25, 659.25, 783.99]]]:
 		cues[item[0]] = melody(item[1], 0.075, false)
+	for key in ["wire", "double", "triple", "sticky", "gun", "spread", "laser", "rocket"]:
+		var pitch := 180.0 + ["wire", "double", "triple", "sticky", "gun", "spread", "laser", "rocket"].find(key) * 85
+		cues["shot_" + key] = melody([pitch * 1.8, pitch, pitch * 0.6], 0.025, false)
+	cues.burst = melody([980.0, 420.0, 120.0], 0.025, false)
+	cues.armor = melody([1800.0, 1250.0], 0.03, false)
+	cues.team = melody([330.0, 440.0, 660.0, 880.0], 0.055, false)
 	music.stream = melody([261.63, 329.63, 392.0, 329.63, 293.66, 349.23, 440.0, 349.23, 261.63, 329.63, 392.0, 523.25, 392.0, 329.63, 293.66, 196.0], 0.45, true)
 	if DisplayServer.get_name() != "headless":
 		music.play()

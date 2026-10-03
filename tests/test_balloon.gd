@@ -127,6 +127,8 @@ func run() -> void:
  expect("AF" in restored.discoveries and restored.records.has("balloon:easy"), "Arcade stamp and separate local record persist")
  expect("AF" in restored.daily_progress().countries and not restored.daily_progress().flawless, "Arcade stamps count toward missions without mislabeling a damaged run flawless")
  arcade.next_round()
+ expect(arcade.country_index == 0 and arcade.panel.visible, "Travel supplies opens before moving on")
+ arcade.next_round()
  expect(arcade.country_index == 1 and arcade.round_index == 0, "Next destination resets round count")
  expect(arcade.backdrop == GameCatalog.backdrop(arcade.route[1]), "Every destination changes arcade scenery")
  expect(game.audio.music_destination == arcade.route[1], "Arcade music follows the destination")

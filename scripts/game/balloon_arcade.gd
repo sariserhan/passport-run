@@ -82,11 +82,75 @@ var weapon_level := 1
 var weapon_trait := ""
 var accept_drops := true
 var mystery_chain := 0
+var coins := 0
+var round_coins := 0
+var travel_choice := "safe"
+var extra_hearts := 0
+var starting_shield := false
+var starting_weapon := "wire"
+var daily_day := ""
+var daily_modifier := ""
+var team_charge := 0
+var last_shooter := -1
+var last_shot_at := -10.0
+var partner_cooldown := 0.0
+var shake := 0.0
+var hit_flash := 0.0
 var margins := Vector4i(16, 16, 16, 26)
+
+func record_mode() -> String:
+ return "balloon-daily:" + daily_day if route_kind == "daily" else "balloon-coop" if coop else "balloon"
+
+func configure_daily(day: String) -> void:
+ daily_day = day
+ country_index = 0
+ round_index = 0
+ var seed_value := GameCatalog.daily_seed(day, "balloon-daily-v1")
+ var destinations: Array = GameCatalog.FREE_DESTINATIONS.keys()
+ destinations.sort()
+ route.assign([destinations[posmod(seed_value, destinations.size())]])
+ starting_weapon = WEAPONS[posmod(seed_value / 7, WEAPONS.size())]
+ daily_modifier = ["zigzag", "armored", "timed", "dodge"][posmod(seed_value / 31, 4)]
+
+func buy_upgrade(kind: String) -> bool:
+ if phase != Phase.CLEAR or round_index != 2 or route_kind == "daily": return false
+ var cost := 30 if kind == "heart" else 25 if kind == "shield" else 40
+ if coins < cost or (kind == "heart" and extra_hearts >= 2) or (kind == "shield" and starting_shield) or (kind not in ["heart", "shield"] and kind not in WEAPONS): return false
+ coins -= cost
+ if kind == "heart": extra_hearts += 1
+ elif kind == "shield": starting_shield = true
+ else: starting_weapon = kind
+ show_travel()
+ return true
+
+func show_travel() -> void:
+ show_panel("TRAVEL SUPPLIES · %d coins\nNext: %s\nSafe route: shield, normal rewards.\nHard detour: faster armored balloons, double coins.\nSupplies apply to every following destination." % [coins, GameCatalog.country_name(route[country_index + 1])], "TRAVEL · " + travel_choice.to_upper(), next_round)
+ var box := panel.get_child(0).get_child(0).get_child(0)
+ var route_button := style.button("CHOOSE HARD DETOUR" if travel_choice == "safe" else "CHOOSE SAFE ROUTE", false)
+ route_button.pressed.connect(func(): travel_choice = "detour" if travel_choice == "safe" else "safe"; show_travel())
+ box.add_child(route_button)
+ box.move_child(route_button, 1)
+ var shop_index := 2
+ for kind in ["heart", "shield"] + WEAPONS:
+  var cost := 30 if kind == "heart" else 25 if kind == "shield" else 40
+  var button := style.button("%s · %d COINS" % [kind.to_upper(), cost], false)
+  button.disabled = coins < cost or (kind == "heart" and extra_hearts >= 2) or (kind == "shield" and starting_shield)
+  button.pressed.connect(func(): buy_upgrade(kind))
+  box.add_child(button)
+  box.move_child(button, shop_index)
+  shop_index += 1
+
+func team_attack() -> void:
+ team_charge = 0
+ score += 300
+ freeze = maxf(freeze, 1.5)
+ for index in range(balls.size() - 1, -1, -1): pop_ball(index)
+ notice.text = "TEAM BURST! +300 · Balloons frozen"
+ audio.play_cue("team")
 
 func _ready() -> void:
  set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
- heading = style.label("", 24, GameHUD.CREAM)
+ heading = style.label("", 20, GameHUD.CREAM)
  stats = style.label("", 17, GameHUD.CREAM)
  add_child(heading)
  add_child(stats)
@@ -122,7 +186,7 @@ func _ready() -> void:
  resized.connect(layout)
  layout()
  load_destination()
- show_panel("BALLOON TOUR\nMove ◀ ▶ and FIRE ↑.\nSplit balloons; clear 3 rounds.\n? drops may help or hurt.", "START", begin_round)
+ show_panel(("DAILY ARCADE · " + daily_day + "\n" + starting_weapon.to_upper() + " · " + daily_modifier.to_upper() + "\nBest today: %d pts\n" % int(profile.records.get(record_mode() + ":moderate", 0)) if route_kind == "daily" else "") + "BALLOON TOUR\nMove ◀ ▶ and FIRE ↑.\nSplit balloons; clear 3 rounds.\n? drops may help or hurt.", "START", begin_round)
 
 func set_control(key: String, pressed: bool) -> void:
  if key == "◀": left_held = pressed
@@ -153,6 +217,8 @@ func layout() -> void:
  heading.size.x = maxf(150, size.x - margins.x - margins.z - 66)
  heading.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
  stats.position = Vector2(margins.x, margins.y + 56)
+ stats.size.x = size.x - margins.x - margins.z
+ stats.clip_text = true
  notice.position = Vector2(margins.x, margins.y + 82)
  notice.size.x = size.x - margins.x - margins.z
  notice.clip_text = true
@@ -175,7 +241,7 @@ func arena() -> Rect2:
 func load_destination() -> void:
  backdrop = GameCatalog.backdrop(route[country_index])
  audio.play_destination(route[country_index])
- heading.text = GameCatalog.country_name(route[country_index]) + " · Round %d / 3" % (round_index + 1)
+ heading.text = ("DAILY · " if route_kind == "daily" else "") + GameCatalog.country_name(route[country_index]) + " · %d/3" % (round_index + 1)
 
 func show_panel(message: String, action_text: String, callback: Callable) -> void:
  left_held = false
@@ -211,9 +277,9 @@ func show_panel(message: String, action_text: String, callback: Callable) -> voi
  var button := style.button(action_text, true)
  button.pressed.connect(callback)
  box.add_child(button)
- if phase == Phase.READY:
+ if phase == Phase.READY and route_kind != "daily":
   var mode_button := style.button("LOCAL CO-OP" if not coop else "SOLO PLAY", false)
-  mode_button.pressed.connect(func(): coop = not coop; layout(); show_panel("LOCAL CO-OP: P1 moves/fires · P2 J/L moves, K fires. Stay near a fallen partner to revive.\n" if coop else "SOLO BALLOON TOUR", "START", begin_round))
+  mode_button.pressed.connect(func(): coop = not coop; layout(); show_panel("LOCAL CO-OP: P1 moves/fires · P2 J/L moves, K fires. Fire together four times to charge TEAM BURST. Stay near a fallen partner to revive for bonus coins.\n" if coop else "SOLO BALLOON TOUR", "START", begin_round))
   box.add_child(mode_button)
  var drops_button := style.button("? DROPS: COLLECT" if accept_drops else "? DROPS: AVOID", false)
  drops_button.pressed.connect(func(): accept_drops = not accept_drops; drops_button.text = "? DROPS: COLLECT" if accept_drops else "? DROPS: AVOID")
@@ -225,13 +291,17 @@ func show_panel(message: String, action_text: String, callback: Callable) -> voi
  queue_redraw()
 
 func begin_round() -> void:
- if phase == Phase.FAILED: score = round_score
- else: round_score = score
+ if phase == Phase.FAILED:
+  score = round_score
+  coins = round_coins
+ else:
+  round_score = score
+  round_coins = coins
  phase = Phase.PLAY
  panel.hide()
  load_destination()
- lives = 3
- remaining = 85.0 if profile.difficulty == "easy" else 80.0 if profile.difficulty == "moderate" else 75.0
+ lives = 3 + extra_hearts
+ remaining = 80.0 if route_kind == "daily" else 85.0 if profile.difficulty == "easy" else 80.0 if profile.difficulty == "moderate" else 75.0
  player_x = 280 if coop else 360
  partner_x = 440
  partner_down = false
@@ -252,12 +322,18 @@ func begin_round() -> void:
  challenge = ["swarm", "no_fire", "flood"][country_index % 3] if round_index == 1 else ""
  if challenge != "": remaining = 25
  invincible = 1.5
- shield = false
+ shield = starting_shield or (country_index > 0 and travel_choice == "safe" and route_kind != "daily")
  freeze = 0
  double_wire = 0
  cooldown = 0
- weapon = "wire"
- weapon_time = 0
+ weapon = starting_weapon
+ weapon_time = 18.0 if weapon != "wire" else 0.0
+ partner_cooldown = 0
+ team_charge = 0
+ last_shooter = -1
+ last_shot_at = -10
+ shake = 0
+ hit_flash = 0
  effects.clear()
  particles.clear()
  shot_time = 0
@@ -266,7 +342,7 @@ func begin_round() -> void:
  movement = 0
  combo = 0
  combo_time = 0
- rng.seed = GameCatalog.daily_seed(route[country_index] + str(round_index), "arcade-drops-v1")
+ rng.seed = GameCatalog.daily_seed(daily_day + route[country_index] + str(round_index), "arcade-drops-v1")
  notice.text = round_brief()
  balls.clear()
  wires.clear()
@@ -276,24 +352,28 @@ func begin_round() -> void:
  if round_index > 0: platforms.append(Rect2(250, floor_y * 0.5, 220, 18))
  var count := round_index + 1 + mini(2, country_index / 12)
  for index in count:
-  balls.append(make_ball(Vector2(90 + index * 115, floor_y * 0.3), 2, -1 if index % 2 else 1))
+  balls.append(make_ball(Vector2(90 + index * 115, floor_y * 0.3), 2, -1 if index % 2 else 1, ["normal", "zigzag", "armored", "timed", "dodge"][posmod(country_index + round_index + index, 5)]))
  if round_index == 2:
   balls.clear()
   var boss := make_ball(Vector2(360, maxf(85, floor_y * 0.3)), 2, 1)
   boss.radius = 68.0
   boss.boss = true
-  boss.hp = 5 if profile.difficulty == "easy" else 7 if profile.difficulty == "moderate" else 9
+  boss.hp = 7 if route_kind == "daily" else 5 if profile.difficulty == "easy" else 7 if profile.difficulty == "moderate" else 9
   boss.max_hp = boss.hp
   balls.append(boss)
  queue_redraw()
 
 func round_brief() -> String:
  var rule: String = {"swarm": "SURVIVE THE SWARM · 25s", "no_fire": "DODGE ONLY · No firing · 25s", "flood": "RISING WATER · Clear before it floods"}.get(challenge, "ARMORED BOSS · Break armor, dodge its swarm" if round_index == 2 else "Mystery drops: collect or avoid them in Pause")
- return mechanic.to_upper() + " · " + rule
+ return ("DAILY " + daily_modifier.to_upper() + " · " if route_kind == "daily" else "") + mechanic.to_upper() + " · " + rule
 
-func make_ball(position_value: Vector2, tier: int, direction: int) -> Dictionary:
- var speed := (115.0 + mini(country_index, 20) * 4 + round_index * 15) * (1.25 if profile.difficulty == "hard" else 0.95 if profile.difficulty == "easy" else 1.1)
- return {"position": position_value, "velocity": Vector2(direction * speed, -220.0), "tier": tier, "radius": [14.0, 27.0, 48.0][tier]}
+func make_ball(position_value: Vector2, tier: int, direction: int, behavior_value: String = "normal") -> Dictionary:
+ var speed := (115.0 + mini(country_index, 20) * 4 + round_index * 15) * (1.1 if route_kind == "daily" else 1.25 if profile.difficulty == "hard" else 0.95 if profile.difficulty == "easy" else 1.1)
+ var behavior: String = daily_modifier if route_kind == "daily" else behavior_value
+ if travel_choice == "detour" and country_index > 0:
+  speed *= 1.25
+  if tier > 0: behavior = "armored"
+ return {"behavior": behavior, "armor": 2 if behavior == "armored" else 1, "age": 0.0, "flash": 0.0, "position": position_value, "velocity": Vector2(direction * speed, -220.0), "tier": tier, "radius": [14.0, 27.0, 48.0][tier]}
 
 func fire(origin: float = -1) -> bool:
  var equipped := "double" if double_wire > 0 and weapon == "wire" else weapon
@@ -301,19 +381,44 @@ func fire(origin: float = -1) -> bool:
  var volley := 2 if equipped == "double" else 3 if equipped == "triple" else 5 if equipped == "spread" else 1
  if weapon_trait == "volley": volley += 1
  limit = maxi(limit, volley * 2) if weapon_level > 1 or weapon_trait == "volley" else limit
- if phase != Phase.PLAY or challenge == "no_fire" or (origin < 0 and player_down) or cooldown > 0 or effects.get("jam", 0) > 0 or wires.size() + volley > limit: return false
+ if coop: limit *= 2
+ if phase != Phase.PLAY or challenge == "no_fire" or (player_down if origin < 0 else partner_down) or (cooldown if origin < 0 else partner_cooldown) > 0 or effects.get("jam", 0) > 0 or wires.size() + volley > limit: return false
  for index in volley:
   var offset := (index - (volley - 1) / 2.0) * 24
   wires.append({"x": clampf((player_x if origin < 0 else origin) + offset, 8, WORLD.x - 8), "top": floor_y - 72, "bottom": floor_y, "age": 0.0, "kind": equipped, "vx": offset * 6 if equipped == "spread" else 0.0, "stuck": false, "hold": 0.0, "sticky": equipped == "sticky" or weapon_trait == "sticky", "pierce": equipped == "laser" or weapon_trait == "pierce", "blast": equipped == "rocket" or weapon_trait == "blast"})
- cooldown = 0.12 if equipped == "gun" else 0.6 if equipped in ["rocket", "laser"] else 0.28
- cooldown /= 1 + (weapon_level - 1) * 0.35 + (0.5 if weapon_trait == "rapid" else 0.0)
- if origin < 0: shot_time = 0.32
- else: partner_shot = 0.32
- audio.play_cue("jump")
+ var shot_cooldown := 0.12 if equipped == "gun" else 0.6 if equipped in ["rocket", "laser"] else 0.28
+ shot_cooldown /= 1 + (weapon_level - 1) * 0.35 + (0.5 if weapon_trait == "rapid" else 0.0)
+ if origin < 0:
+  shot_time = 0.32
+  cooldown = shot_cooldown
+ else:
+  partner_shot = 0.32
+  partner_cooldown = shot_cooldown
+ var special_fired := false
+ if coop:
+  var shooter := 0 if origin < 0 else 1
+  if last_shooter != -1 and shooter != last_shooter and clock - last_shot_at <= 0.25:
+   team_charge += 1
+   last_shooter = -1
+   if team_charge >= 4:
+    team_attack()
+    special_fired = true
+  else:
+   last_shooter = shooter
+   last_shot_at = clock
+ audio.play_cue("team" if special_fired else "shot_" + equipped)
  return true
 
 func pop_ball(index: int) -> void:
  var ball: Dictionary = balls[index]
+ ball.flash = 0.18
+ shake = maxf(shake, 0.12)
+ if not ball.get("boss", false) and int(ball.get("armor", 1)) > 1:
+  ball.armor -= 1
+  burst(ball.position, Color("a4ddff"))
+  notice.text = "ARMOR BROKEN!"
+  audio.play_cue("armor")
+  return
  if ball.get("boss", false):
   ball.hp -= 1
   burst(ball.position, Color("ffc75b"))
@@ -329,16 +434,17 @@ func pop_ball(index: int) -> void:
  score += (3 - int(ball.tier)) * 100 + mini(5, combo - 1) * 20
  burst(ball.position, Color("ffe8a4"))
  pops += 1
- audio.play_cue("land")
+ coins += 2 if travel_choice == "detour" and country_index > 0 else 1
+ audio.play_cue("burst")
  if int(ball.tier) > 0 and not ball.get("boss", false):
   for direction in [-1, 1]: balls.append(make_ball(ball.position, int(ball.tier) - 1, direction))
  if pickups.size() < 10 and (pops % 3 == 0 or rng.randf() < 0.22):
   pickups.append({"position": ball.position, "kind": DROPS[rng.randi_range(0, DROPS.size() - 1)], "age": 0.0})
 
 func burst(point: Vector2, color: Color) -> void:
- for index in 8:
-  var angle := index * TAU / 8
-  particles.append({"position": point, "velocity": Vector2(cos(angle), sin(angle)) * 90, "life": 0.45, "color": color})
+ for index in 18:
+  var angle := index * TAU / 18
+  particles.append({"position": point, "velocity": Vector2(cos(angle), sin(angle)) * (130 + index % 3 * 45), "life": 0.45, "color": color})
 
 func collect(kind: String) -> void:
  if kind in WEAPONS:
@@ -362,7 +468,9 @@ func collect(kind: String) -> void:
    else: shield = true
   else: lives = mini(5, lives + 1)
  elif kind == "time": remaining = minf(110, remaining + 12)
- elif kind == "coin": score += 750
+ elif kind == "coin":
+  score += 750
+  coins += 15
  elif kind == "shrink_time": remaining = maxf(1, remaining - 12)
  elif kind == "multiply":
   # ponytail: multiplication caps at 40; splitting can yield 160 descendants. Profile before raising it.
@@ -382,7 +490,7 @@ func collect(kind: String) -> void:
     for direction in [-1, 1]: balls.append(make_ball(ball.position, int(ball.tier) - 1, direction))
  else: effects[kind] = 8.0 if kind in ["speed", "heavy", "reverse"] else 3.0 if kind == "jam" else 10.0
  if kind not in WEAPONS:
-  notice.text = {"shield": "SHIELD · One hit protected", "freeze": "FREEZE · 4s", "heart": "EXTRA HEART", "time": "+12 SECONDS", "coin": "+750 BONUS", "multiply": "SURPRISE! BALLOONS MULTIPLIED", "speed": "CURSE: FASTER BALLOONS · 8s", "heavy": "CURSE: HEAVY BOOTS · 8s", "reverse": "CURSE: REVERSED CONTROLS · 8s", "jam": "CURSE: WEAPON JAM · 3s", "shrink_time": "CURSE: −12 SECONDS", "slow": "SLOW BALLOONS · 10s", "boots": "QUICK BOOTS · 10s", "magnet": "MYSTERY MAGNET · 10s", "bomb": "BURST BOMB · Splits every big balloon"}.get(kind, kind.to_upper())
+  notice.text = {"shield": "SHIELD · One hit protected", "freeze": "FREEZE · 4s", "heart": "EXTRA HEART", "time": "+12 SECONDS", "coin": "+15 COINS · +750 BONUS", "multiply": "SURPRISE! BALLOONS MULTIPLIED", "speed": "CURSE: FASTER BALLOONS · 8s", "heavy": "CURSE: HEAVY BOOTS · 8s", "reverse": "CURSE: REVERSED CONTROLS · 8s", "jam": "CURSE: WEAPON JAM · 3s", "shrink_time": "CURSE: −12 SECONDS", "slow": "SLOW BALLOONS · 10s", "boots": "QUICK BOOTS · 10s", "magnet": "MYSTERY MAGNET · 10s", "bomb": "BURST BOMB · Splits every big balloon"}.get(kind, kind.to_upper())
  notice.add_theme_color_override("font_color", Color("ffb0a3") if kind in ["multiply", "speed", "heavy", "reverse", "jam", "shrink_time"] else Color("b4ffd0"))
  audio.play_cue("ui")
 
@@ -394,13 +502,22 @@ func fail_round(reason: String) -> void:
  right_held = false
  fire_held = false
  touches.clear()
- profile.record("balloon-coop" if coop else "balloon", profile.difficulty, score)
+ profile.record(record_mode(), "moderate" if route_kind == "daily" else profile.difficulty, score)
  queue_redraw()
 
 func hit() -> void:
+ if invincible <= 0 and not player_down:
+  hit_flash = 0.3
+  shake = 0.22
+  notice.text = "SHIELD BLOCKED!" if shield else "HIT! · Find cover"
  if coop:
   if invincible <= 0 and not player_down:
    if shield: shield = false; invincible = 2; return
+   if lives > 3:
+    lives -= 1
+    invincible = 3
+    notice.text = "EXTRA HEART SAVED P1!"
+    return
    player_down = true
    country_failed = true
    down_time = 15
@@ -422,7 +539,8 @@ func clear_round() -> void:
  if phase != Phase.PLAY: return
  phase = Phase.CLEAR
  score += int(remaining) * 10
- profile.record("balloon-coop" if coop else "balloon", profile.difficulty, score)
+ coins += 10 if round_index < 2 else 30
+ profile.record(record_mode(), "moderate" if route_kind == "daily" else profile.difficulty, score)
  if round_index == 2:
   profile.discover(route[country_index])
   profile.advance_missions(route[country_index], not country_failed, false)
@@ -430,6 +548,12 @@ func clear_round() -> void:
  show_panel(("DESTINATION STAMPED!" if round_index == 2 else "ROUND CLEARED!") + "\n" + GameCatalog.country_name(route[country_index]) + " · Score %d" % score, "NEXT DESTINATION" if round_index == 2 else "NEXT ROUND", next_round)
 
 func next_round() -> void:
+ if phase == Phase.CLEAR and round_index == 2 and country_index < route.size() - 1 and not panel.has_meta("travel"):
+  panel.set_meta("travel", true)
+  show_travel()
+  return
+ panel.remove_meta("travel")
+
  if round_index == 2:
   if country_index == route.size() - 1:
    exit_game()
@@ -452,7 +576,7 @@ func set_paused(value: bool) -> void:
   audio.set_paused(false)
 
 func exit_game() -> void:
- profile.record("balloon-coop" if coop else "balloon", profile.difficulty, score)
+ profile.record(record_mode(), "moderate" if route_kind == "daily" else profile.difficulty, score)
  audio.set_paused(false)
  exited.emit()
 
@@ -502,6 +626,9 @@ func simulate(delta: float) -> void:
   return
  if phase != Phase.PLAY: return
  clock += delta
+ shake = maxf(0, shake - delta)
+ hit_flash = maxf(0, hit_flash - delta)
+ partner_cooldown = maxf(0, partner_cooldown - delta)
  round_elapsed += delta
  partner_grace = maxf(0, partner_grace - delta)
  partner_shot = maxf(0, partner_shot - delta)
@@ -558,7 +685,9 @@ func simulate(delta: float) -> void:
     invincible = 3
     partner_grace = 3
     revive_time = 0
-    notice.text = "TEAMMATE REVIVED!"
+    score += 500
+    coins += 10
+    notice.text = "TEAMMATE RESCUED! +500 · +10 coins"
    elif down_time <= 0: fail_round("REVIVE MISSED · Stay near your teammate")
   if phase != Phase.PLAY: return
  wave_clock += delta
@@ -568,8 +697,16 @@ func simulate(delta: float) -> void:
   for wave in (2 if enraged else 1):
    if balls.size() < 20: balls.append(make_ball(Vector2(rng.randf_range(40,680), 40), 0, 1 if rng.randf() > 0.5 else -1))
  if fire_held or "FIRE ↑" in touches.values() or Input.is_physical_key_pressed(KEY_SPACE): fire()
+ for ball in balls: ball.flash = maxf(0, float(ball.get("flash", 0)) - delta)
  if freeze <= 0:
   for ball in balls:
+   ball.age = float(ball.get("age", 0)) + delta
+   if ball.get("behavior", "") == "zigzag": ball.position.x += sin(ball.age * 7) * delta * 95
+   if ball.get("behavior", "") == "dodge":
+    for wire in wires:
+     if absf(wire.x - ball.position.x) < ball.radius + 30 and wire.top > ball.position.y:
+      ball.position.x += (-1 if wire.x >= ball.position.x else 1) * delta * 180
+      break
    var previous: Vector2 = ball.position
    ball.velocity.y += delta * (90 if route[country_index] == "MOON" else 160 if mechanic == "space" else 230 if mechanic == "ocean" else 600)
    if mechanic == "sand": ball.position.x += sin(clock * 1.7) * delta * 32
@@ -595,9 +732,16 @@ func simulate(delta: float) -> void:
     var partner_body := Rect2(partner_x - 17, floor_y - 65, 34, 65)
     var partner_near := Vector2(clampf(ball.position.x, partner_body.position.x, partner_body.end.x), clampf(ball.position.y, partner_body.position.y, partner_body.end.y))
     if partner_near.distance_squared_to(ball.position) <= radius * radius:
+     hit_flash = 0.3
+     shake = 0.22
+     audio.play_cue("fall")
      if shield:
       shield = false
       partner_grace = 2
+     elif lives > 3:
+      lives -= 1
+      partner_grace = 3
+      notice.text = "EXTRA HEART SAVED P2!"
      else:
       partner_down = true
       partner_slide = 0
@@ -605,6 +749,12 @@ func simulate(delta: float) -> void:
       down_time = 15
       if player_down: fail_round("BOTH EXPLORERS DOWN")
    if phase != Phase.PLAY: return
+ for index in range(balls.size() - 1, -1, -1):
+  var timed: Dictionary = balls[index]
+  if freeze <= 0 and timed.get("behavior", "") == "timed" and timed.get("age", 0) >= 5 and int(timed.tier) > 0 and not timed.get("boss", false):
+   balls.remove_at(index)
+   burst(timed.position, Color("c7ff91"))
+   for direction in [-1, 1]: balls.append(make_ball(timed.position, int(timed.tier) - 1, direction))
  for index in range(wires.size() - 1, -1, -1):
   var wire: Dictionary = wires[index]
   var kind: String = wire.get("kind", "wire")
@@ -653,8 +803,10 @@ func simulate(delta: float) -> void:
    pickups.remove_at(index)
   elif pickup.age > 12: pickups.remove_at(index)
  stats.text = "♥ %d   %ds   %d pts · %s%s" % [lives, ceili(remaining), score, weapon.to_upper(), " ×%d" % mini(6, combo) if combo > 1 and combo_time > 0 else ""]
- if coop: stats.text = "TEAM %d/2 · %ds · %d pts · %s" % [2 - int(player_down) - int(partner_down), ceili(remaining), score, weapon.to_upper()]
- stats.add_theme_font_size_override("font_size", 15)
+ if coop: stats.text = "%d/2 · %ds · %dpts · %s" % [2 - int(player_down) - int(partner_down), ceili(remaining), score, weapon.to_upper()]
+ stats.text += " · %d¢" % coins
+ if coop: stats.text += " · BURST %d/4" % team_charge
+ stats.add_theme_font_size_override("font_size", 12 if coop else 14)
  if challenge in ["swarm", "no_fire"]:
   if remaining <= 0: clear_round()
  elif balls.is_empty(): clear_round()
@@ -670,7 +822,8 @@ func _draw() -> void:
  draw_texture_rect(backdrop, Rect2(Vector2.ZERO, size), false)
  draw_rect(Rect2(Vector2.ZERO, Vector2(size.x, arena().position.y - 4)), Color(0.04, 0.15, 0.22, 0.85))
  var play := arena()
- draw_set_transform(play.position, 0, play.size / Vector2(WORLD.x, world_height))
+ var jitter := Vector2(sin(clock * 93), cos(clock * 77)) * shake * 12 if not profile.settings.reduced_motion else Vector2.ZERO
+ draw_set_transform(play.position + jitter, 0, play.size / Vector2(WORLD.x, world_height))
  for platform in platforms:
   draw_style_box(style.panel_style(Color("a18a68"), 8), platform)
  draw_style_box(style.panel_style(DestinationTheme.color(route[country_index]), 8), Rect2(0, floor_y, WORLD.x, 30))
@@ -689,7 +842,11 @@ func _draw() -> void:
  for ball in balls:
   var color: Color = [Color("63d9f4"), Color("ffbf58"), Color("f57583")][int(ball.tier)]
   draw_circle(ball.position + Vector2(3, 5), ball.radius, Color(0, 0, 0, 0.24))
-  draw_circle(ball.position, ball.radius, color)
+  draw_circle(ball.position, ball.radius, Color.WHITE if ball.get("flash", 0) > 0 else color)
+  var behavior: String = ball.get("behavior", "normal")
+  if behavior != "normal" and not ball.get("boss", false):
+   draw_string(ThemeDB.fallback_font, ball.position + Vector2(-7, 5), {"zigzag": "Z", "armored": "A", "timed": "5", "dodge": "D"}.get(behavior, ""), HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color("143e55"))
+  if int(ball.get("armor", 1)) > 1: draw_arc(ball.position, ball.radius + 4, 0, TAU, 32, Color("a4ddff"), 4, true)
   draw_arc(ball.position, ball.radius - 2, 0, TAU, 32, color.darkened(0.35), 3, true)
   draw_circle(ball.position - Vector2(ball.radius * 0.28, ball.radius * 0.3), ball.radius * 0.25, Color(1, 1, 1, 0.65))
   if ball.get("boss", false):
@@ -728,8 +885,11 @@ func _draw() -> void:
   character.position.x += character.size.x
   character.size.x *= -1
  draw_texture_rect_region(PORTRAIT, character, source, tint)
- if shield: draw_arc(Vector2(player_x, floor_y - 44), 52, 0, TAU, 40, Color("9eecff"), 3, true)
+ if shield:
+  draw_arc(Vector2(player_x, floor_y - 44), 52, 0, TAU, 40, Color("9eecff"), 3, true)
+  if coop: draw_arc(Vector2(partner_x, floor_y - 44), 52, 0, TAU, 40, Color("9eecff"), 3, true)
  draw_set_transform(Vector2.ZERO)
+ if hit_flash > 0: draw_rect(play, Color(1, 0.25, 0.2, hit_flash * 0.35))
 
 func character_frame() -> int:
  if player_down: return 15

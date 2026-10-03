@@ -22,3 +22,5 @@ python3 tests/test_iphone_export.py
 "$GODOT_BIN" --headless --path . --script tests/test_arcade_rich.gd
 "$GODOT_BIN" --headless --path . --script tests/test_landscape.gd
 "$GODOT_BIN" --headless --path . --script tests/test_arcade_adventures.gd
+
+"$GODOT_BIN" --headless --path . --script tests/test_arcade_return.gd

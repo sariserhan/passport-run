@@ -890,7 +890,7 @@ func open_challenge_link(link: String) -> bool:
 	return true
 
 func start_arcade(kind: String) -> void:
-	if kind not in ["world", "special", "cinema"]: return
+	if kind not in ["world", "special", "cinema", "daily"]: return
 	if kind == "special" and not purchase.unlocked:
 		menu.show_special_route()
 		return
@@ -910,7 +910,9 @@ func start_arcade(kind: String) -> void:
 	arcade.audio = audio
 	arcade.style = hud
 	arcade.route_kind = kind
-	if kind == "world":
+	if kind == "daily":
+		arcade.configure_daily(Time.get_datetime_string_from_unix_time(int(Time.get_unix_time_from_system())).substr(0, 10))
+	elif kind == "world":
 		var planner := RoutePlanner.new()
 		planner.include_territories = true
 		planner.start(profile.home_country if profile.home_country in GameCatalog.FREE_DESTINATIONS else "FR", GameCatalog.daily_seed("balloon", profile.difficulty))
@@ -927,7 +929,7 @@ func start_arcade(kind: String) -> void:
 
 func close_arcade() -> void:
 	if not is_instance_valid(arcade): return
-	profile.record("balloon-coop" if arcade.coop else "balloon", profile.difficulty, arcade.score)
+	profile.record(arcade.record_mode(), "moderate" if arcade.route_kind == "daily" else profile.difficulty, arcade.score)
 	var layer := arcade.get_parent()
 	arcade = null
 	layer.queue_free()
