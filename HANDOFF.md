@@ -63,6 +63,14 @@ This is build evidence, not physical-device installation or acceptance. Temporar
 
 Relevant artifacts: `artifacts/batch-*.png`, `artifacts/extras-*.png`, `artifacts/extras-journey-movie.gif`, and `artifacts/germany-retry.png`.
 
+## Phone fixes after first device install (2026-10-03)
+
+- `TouchScroll` (`scripts/ui/touch_scroll.gd`) replaces every menu/dialog ScrollContainer: Godot does not forward touch drags past STOP buttons, so phone swipes starting on a button never scrolled.
+- Landscape Balloon Tour: single-row header, arrows/FIRE in side gutters (co-op: one gutter per player), arena uses the full height. Landscape main menu hides the key art.
+- Globe handled touch and emulated mouse events, rotating twice per swipe on phones; it now handles mouse only.
+- `PerfLog` writes `profile.json.perf.csv` (FPS, worst frame, memory, scene) every 5 s. Pull it with `xcrun devicectl device copy from --device <id> --domain-type appDataContainer --domain-identifier com.serhansari.passportrun --source Documents/profile.json.perf.csv --destination perf.csv`.
+- TestFlight not attempted: needs the App Store Connect issuer ID for key `5QYF99NV59`, an app record for `com.serhansari.passportrun`, and the two purchase products. Hosted Convex not attempted: needs an authorized deployment target.
+
 ## What remains
 
 1. **Done (install/launch only):** full `tools/check.sh` passed with zero failures at `4bd13f0`. That build was exported, development-signed and installed on the iPhone 14 Pro (`00008120-001E28663CE3C01E`) at `/private/tmp/passport-native-device`. It launched and kept running; it wrote the GLES3 shader cache to `Documents`. The app was not previously installed, so no save was overwritten. This is not gameplay acceptance; items 2–5 still need a person holding the phone.
