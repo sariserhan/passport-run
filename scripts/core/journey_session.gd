@@ -46,8 +46,6 @@ func current_country() -> String:
 		return planner.current()
 	if not fixed_route.is_empty():
 		return fixed_route[country_index]
-	if mode == "infinite":
-		return GameCatalog.FREE_DESTINATIONS.keys()[country_index % GameCatalog.FREE_DESTINATIONS.size()]
 	return ""
 
 func path_seed() -> int:

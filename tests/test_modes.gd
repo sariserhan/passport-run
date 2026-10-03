@@ -97,6 +97,9 @@ func run_all() -> void:
 			tap(control.get_global_rect().get_center())
 			break
 	await wait()
+	for key in ["easy", "moderate", "hard", "kids"]:
+		expect(GameCatalog.difficulty(key).preview_seconds == 3, "All new modes memorize for three seconds")
+		expect(GameCatalog.difficulty(key, 2).preview_seconds == {"easy": 5, "moderate": 3, "hard": 2, "kids": 8}[key], "Legacy previews remain compatible")
 	expect(game.session.mode == "world" and game.session.current_country() == "FR", "Touch selecting France starts World Tour")
 	game.start_preview()
 	await wait()
@@ -129,7 +132,32 @@ func run_all() -> void:
 	game.return_to_menu()
 	game.menu.show_passport()
 	await wait()
+	var book: PassportPage = game.menu.content.get_children().filter(func(child): return child is PassportPage)[0]
+	expect(book.destination_id == game.profile.discoveries[0] and book.page_number == 1, "Passport opens a completed destination with art and stamp")
+	var page_controls: HBoxContainer = game.menu.content.get_children().filter(func(child): return child is HBoxContainer)[0]
+	page_controls.get_child(1).pressed.emit()
+	expect(book.destination_id == game.profile.discoveries[1] and book.page_number == 2, "Passport turns to the next completed destination")
+	page_controls.get_child(0).pressed.emit()
+	expect(book.destination_id == game.profile.discoveries[0], "Passport turns back")
+	var passport_search: LineEdit = game.menu.content.get_children().filter(func(child): return child is LineEdit)[0]
+	passport_search.text_changed.emit("France")
+	expect(book.visible and book.destination_id == "FR", "Passport search finds a stamped illustrated page")
+	passport_search.text_changed.emit("not-a-destination")
+	expect(not book.visible, "Passport search never creates unearned stamps")
+	passport_search.text_changed.emit("")
+	expect(book.visible and book.destination_id == game.profile.discoveries[0], "Clearing search restores passport pages")
+	await wait()
 	await capture("15-passport")
+	game.menu.show_world_map()
+	await wait()
+	var map: PassportWorldMap = game.menu.content.get_children().filter(func(child): return child is PassportWorldMap)[0]
+	expect(map.discoveries == game.profile.discoveries, "World map uses the saved passport")
+	for id in game.profile.discoveries:
+		expect(PassportWorldMap.GEOGRAPHY.pins.has(id), "Cleared country has real map coordinates")
+	if render:
+		expect(map.pins.size() == 5, "Map draws a pin for every cleared country")
+	await capture("34-world-map")
+
 	game.menu.show_records()
 	await wait()
 	await capture("16-records")
@@ -154,6 +182,8 @@ func run_all() -> void:
 		await wait(0.08)
 		expect(game.run.completed_rows == 1, "Touch input works for " + key)
 	game.start_game("infinite", "easy")
+	expect(game.session.current_country().is_empty() and game.hud.destination.text == "INFINITE MEMORY", "Infinite has no country or city label")
+	expect(game.environment.get_node("Scenery/Backdrop").texture == TestEnvironment.INFINITE_BACKDROP, "Infinite uses its own scenery")
 	var seed_value: int = game.run.path_seed
 	game.config.jump_seconds = 0.005
 	await finish_preview()
@@ -164,6 +194,7 @@ func run_all() -> void:
 		await wait_for_landing()
 		expect(game.grid.tiles.size() <= 33, "Infinite resident tile bound")
 	expect(game.run.completed_rows == 34 and game.run.path.size() == 10, "Infinite progression avoids growing path arrays")
+	expect(game.environment.get_node("Scenery/Backdrop").texture == TestEnvironment.INFINITE_BACKDROP and game.session.current_country().is_empty(), "Infinite keeps its own scenery across chunks")
 	await capture("18-infinite")
 	game.choose_tile(34, (game.run.safe_lane(34) + 1) % 3)
 	await wait(1.2)
@@ -178,7 +209,7 @@ func run_all() -> void:
 	expect(game.session.seed_value == daily_seed and game.session.fixed_route == daily_route, "Daily cannot randomize on retry")
 	await capture("19-daily")
 	game.start_game("kids", "hard")
-	expect(game.config.lane_count == 3 and game.config.row_count == 6 and game.config.preview_seconds == 8, "Kids overrides competitive difficulty")
+	expect(game.config.lane_count == 3 and game.config.row_count == 6 and game.config.preview_seconds == 3, "Kids overrides competitive difficulty")
 	await cross_country()
 	for control in game.hud.modal_actions.get_children():
 		expect("CHALLENGE" not in control.text, "Kids excludes sharing actions")

@@ -33,7 +33,7 @@ func run_tests() -> void:
 		print(client.last_error)
 		quit(1)
 		return
-	expect(issued.balanceVersion == 2, "New server manifests use the timed balance rules")
+	expect(issued.balanceVersion == 3, "New server manifests use the timed balance rules")
 	var recorder := ReplayRecorder.new()
 	recorder.begin(issued.runId)
 	await create_timer(5.05).timeout

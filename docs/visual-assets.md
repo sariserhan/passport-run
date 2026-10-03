@@ -48,3 +48,8 @@ Use case: stylized-concept. Asset type: production mobile travel-game background
 ## Expanded landmark, fantasy and cinema scenes
 
 Eight new four-scene atlases provide individual backgrounds for all 32 paid locations. Polar territories share the aurora scene. Asset paths, exact prompts and built-in image-generation provenance are recorded in [destination art prompts](destination-art-prompts.md). Rendered 390×844 screenshots cover every new scene in `artifacts/special-*.png` and `artifacts/cinema-*.png`. Ownership in these captures uses the excluded test simulation, not a live purchase.
+# Infinite scenery — 2026-10-02
+
+`assets/infinite-backdrop.png` was generated with the built-in image-generation tool and inspected in the rendered game. Infinite uses this dedicated dreamscape in every section, with no country/city label or destination scenery. The path generator and bounded tile window remain unchanged.
+
+Exact prompt: Original production background for an Infinite Memory mobile game, portrait 2:3, rich polished painterly 3D adventure aesthetic matching a detailed backpacker game. An endless dreamlike turquoise mist ocean, soft luminous abstract floating rock arches at far side edges, subtle glowing particles, layered lavender and teal clouds disappearing into an infinite horizon. Upper third airy atmospheric sky; center and lower half calm open turquoise water and mist for separately overlaid stepping-stone gameplay. NO city, NO buildings, NO world map, NO flags, NO country landmarks, NO planet, NO characters, NO stepping stones, NO UI, NO text. Detailed textured surfaces at side edges, warm gentle golden rim light, beautiful depth, readable calm composition.

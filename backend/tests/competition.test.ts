@@ -6,14 +6,15 @@ import fixtures from "./fixtures/v1.json";
 function validRun(manifest: Manifest, rows = 20): { events: Selection[]; end: number } {
   const balance = BALANCE[manifest.difficulty];
   const events: Selection[] = [];
-  let atMs = balance.previewMs;
+  const previewMs = manifest.balanceVersion >= 3 ? 3000 : balance.previewMs;
+  let atMs = previewMs;
   for (let index = 0; index < rows; index++) {
     const countryIndex = manifest.mode === "daily" ? Math.floor(index / balance.rows) : 0;
     const row = manifest.mode === "daily" ? index % balance.rows : index;
     const seed = manifest.mode === "daily" ? derivedSeed(manifest.seed, countryIndex) : manifest.seed;
     events.push({ countryIndex, row, lane: laneAt(seed, balance.lanes, row), atMs, decisionMs: 0 });
     atMs += balance.jumpMs;
-    if ((index + 1) % balance.rows === 0) atMs += balance.previewMs + (manifest.mode === "daily" ? 500 : 0);
+    if ((index + 1) % balance.rows === 0) atMs += previewMs + (manifest.mode === "daily" ? 500 : 0);
   }
   return { events, end: atMs };
 }
@@ -33,7 +34,7 @@ describe("replay validation", () => {
     const infinite = manifestFor("infinite", "hard", 0);
     const { events, end } = validRun(infinite, 50);
     expect(verifyReplay(infinite, events, end, end).score).toBe(50);
-    events[20].atMs -= BALANCE.hard.previewMs;
+    events[20].atMs -= 3000;
     expect(() => verifyReplay(infinite, events, end, end)).toThrow();
   });
   test.each(["skip", "duplicate", "lane", "fraction", "speed", "future", "after-failure", "overflow"])("rejects %s", (kind) => {
@@ -64,7 +65,7 @@ describe("replay validation", () => {
     expect(() => verifyReplay(manifest, events, end, end)).toThrow();
   });
   test("v1 replays keep their original untimed rules", () => {
-    const {events, end} = validRun(manifest, 1);
+    const {events, end} = validRun({...manifest, balanceVersion: 1}, 1);
     delete events[0].decisionMs;
     expect(verifyReplay({...manifest, balanceVersion: 1}, events, end, end).score).toBe(1);
   });
@@ -90,4 +91,18 @@ test("expanded catalog routes and boards stay deterministic and separate from le
   expect(boardKey(current)).not.toBe(boardKey({...current, catalogVersion: undefined}));
   const {events, end} = validRun(current, 3940);
   expect(verifyReplay(current, events, end, end)).toEqual({score: 3940, countries: 197});
+});
+
+ test("three-second previews apply to every new difficulty while legacy timing stays intact", () => {
+  for (const difficulty of ["easy", "moderate", "hard"] as Difficulty[]) {
+    const manifest = manifestFor("infinite", difficulty, 0);
+    expect(manifest.balanceVersion).toBe(3);
+    const event = {countryIndex: 0, row: 0, lane: laneAt(manifest.seed, BALANCE[difficulty].lanes, 0), atMs: 3000, decisionMs: 0};
+    expect(verifyReplay(manifest, [event], 3380, 3380).score).toBe(1);
+    expect(() => verifyReplay(manifest, [{...event, atMs: 2999}], 3380, 3380)).toThrow();
+    const old = {...manifest, balanceVersion: 2 as const};
+    const oldAt = BALANCE[difficulty].previewMs;
+    expect(verifyReplay(old, [{...event, atMs: oldAt}], oldAt + 380, oldAt + 380).score).toBe(1);
+    expect(boardKey(old)).not.toBe(boardKey(manifest));
+  }
 });

@@ -94,7 +94,7 @@ func begin_run(mode: String, difficulty: String, retry_id: String = "") -> Dicti
 		args.retryRunId = retry_id
 	var response := await call_function("mutation", "runs:begin", args)
 	var value: Variant = response.get("value")
-	if not value is Dictionary or value.get("generatorVersion") != 1 or (value.get("balanceVersion") != 1 and value.get("balanceVersion") != 2) or not value.get("runId") is String or value.get("difficulty") != difficulty or value.get("mode") != mode:
+	if not value is Dictionary or value.get("generatorVersion") != 1 or (value.get("balanceVersion") != 1 and value.get("balanceVersion") != 2 and value.get("balanceVersion") != 3) or not value.get("runId") is String or value.get("difficulty") != difficulty or value.get("mode") != mode:
 		return {}
 	if not (value.get("seed") is int or value.get("seed") is float) or value.seed < 0 or value.seed >= PathGenerator.MODULUS - 1 or float(value.seed) != floor(float(value.seed)):
 		return {}

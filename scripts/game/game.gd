@@ -170,11 +170,10 @@ func start_game(mode: String, difficulty_key: String) -> void:
 	else:
 		replay.begin("")
 	retry_run_id = ""
-	config = GameCatalog.difficulty(session.difficulty)
+	config = GameCatalog.difficulty(session.difficulty, session.balance_version)
 	if mode == "tutorial":
 		config = GameCatalog.difficulty("easy")
 		config.row_count = 3
-		config.preview_seconds = 5
 	load_country(false)
 	telemetry.track("run_started", metadata())
 	if mode in ["tutorial", "infinite", "daily", "kids"]:
@@ -239,7 +238,7 @@ func load_country(auto_preview: bool) -> void:
 	rebuild_environment()
 	set_overview()
 	hud.show_ready(config.lane_count, config.row_count)
-	hud.destination.text = GameCatalog.country_name(session.current_country()) if not session.current_country().is_empty() else "PASSPORT RUN"
+	hud.destination.text = "INFINITE MEMORY" if session.mode == "infinite" else GameCatalog.country_name(session.current_country()) if not session.current_country().is_empty() else "PASSPORT RUN"
 	hud.update_score(0, config.row_count)
 	if not session.current_country().is_empty():
 		hud.phase_title.text = GameCatalog.country_name(session.current_country())
@@ -412,7 +411,6 @@ func next_infinite_segment() -> void:
 	grid.build(config, segment_start - 1, config.row_count + 1)
 	grid.tile_at(segment_start - 1, run.selected_lane).set_state(PathTile.State.CORRECT)
 	# Rebase scenery per chunk; the path seed never changes with the environment.
-	session.country_index = int(run.completed_rows / 50)
 	rebuild_environment()
 	set_overview()
 	run.phase = RunState.Phase.READY

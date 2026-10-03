@@ -22,7 +22,7 @@ func _initialize() -> void:
 	for key in GameCatalog.DIFFICULTIES:
 		var config := GameCatalog.difficulty(key)
 		expect(config.lane_count == 3 + GameCatalog.DIFFICULTIES.find(key), "Difficulty lane counts")
-		expect(config.preview_seconds == {"easy": 5.0, "moderate": 3.0, "hard": 2.0}[key], "Difficulty preview durations")
+		expect(config.preview_seconds == 3.0, "Difficulty preview durations")
 	# Every starting country must reach every destination without repetitions or dead ends.
 	for id in GameCatalog.COUNTRIES:
 		for seed_value in [0, 88, 817294]:

@@ -56,7 +56,7 @@ func run_tests() -> void:
 	await wait()
 	game.profile.home_country = "FR"
 	await start_play()
-	expect(game.session.balance_version == 2, "New runs use timed balance version 2")
+	expect(game.session.balance_version == 3, "New runs use timed balance version 3")
 	expect(game.decision_remaining > 9.8 and game.decision_remaining <= 10, "Preview gives a fresh 10-second decision window")
 	game.traveler._process(0.85)
 	expect(game.traveler.portrait.frame in [1, 2, 3], "Waiting cycles through thoughtful poses")
@@ -99,7 +99,7 @@ func run_tests() -> void:
 	game._process(11)
 	expect(game.session.balance_version == 1 and game.run.phase == RunState.Phase.PLAY, "Legacy challenge keeps untimed rules")
 	var new_code := ChallengeCode.decode(ChallengeCode.encode(5, "easy", route, 0))
-	expect(new_code.balance_version == 2, "New challenge code carries timed rules")
+	expect(new_code.balance_version == 3, "New challenge code carries timed rules")
 	await start_play()
 	await clear_country()
 	expect(game.celebrating and not game.country_awarded, "Completion starts celebration before passport award")

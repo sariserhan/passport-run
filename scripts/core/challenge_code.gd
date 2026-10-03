@@ -29,7 +29,7 @@ static func decode(code: String) -> Dictionary:
 		return {}
 	var data: Dictionary = value
 	var balance: Variant = data.get("balance_version", 1)
-	if not (balance is int or balance is float) or (balance != 1 and balance != 2):
+	if not (balance is int or balance is float) or (balance != 1 and balance != 2 and balance != 3):
 		return {}
 	data.balance_version = int(data.get("balance_version", 1))
 	if data.get("generator_version") != PathGenerator.VERSION or data.get("difficulty") not in GameCatalog.DIFFICULTIES:

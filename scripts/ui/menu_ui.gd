@@ -141,6 +141,7 @@ func show_main() -> void:
 		action("ONLINE DAILY", false, func(): start_requested.emit("online_daily", profile.difficulty))
 		action("ONLINE INFINITE", false, func(): start_requested.emit("online_infinite", profile.difficulty))
 		action("ONLINE RANKINGS", false, func(): online_records_requested.emit())
+	action("WORLD MAP", false, show_world_map)
 	action("MY PASSPORT", false, show_passport)
 	action("LOCAL RECORDS", false, show_records)
 	action("PLAY A CHALLENGE CODE", false, show_challenge)
@@ -181,7 +182,7 @@ func show_countries() -> void:
 	search.text_changed.connect(func(query: String):
 		for control in buttons:
 			var id: String = control.get_meta("destination_id")
-			control.visible = query.to_lower() in (control.text + " " + str(GameCatalog.DESTINATIONS[id].aliases)).to_lower()
+			control.visible = query.is_empty() or query.to_lower() in (control.text + " " + str(GameCatalog.DESTINATIONS[id].aliases)).to_lower()
 	)
 	copy("Geography: mledoze/countries · ODbL 1.0", 15)
 	copy("%d destinations to explore: countries and territories. Special places have their own paid route." % GameCatalog.FREE_DESTINATIONS.size(), 15)
@@ -194,21 +195,39 @@ func show_passport() -> void:
 	search.custom_minimum_size.y = 54
 	search.add_theme_font_size_override("font_size", 20)
 	content.add_child(search)
-	var panels: Dictionary = {}
-	for id in GameCatalog.DESTINATIONS:
-		var visited: bool = id in profile.discoveries
-		var panel := PanelContainer.new()
-		panel.add_theme_stylebox_override("panel", style.panel_style(Color("fff6df") if visited else Color("28546b"), 12))
-		var text_label := style.label("  %s   %s\n  %s" % [id, GameCatalog.country_name(id), "STAMPED · " + str(GameCatalog.DESTINATIONS[id].region) if visited else "Waiting to be discovered"], 19, GameHUD.INK if visited else Color("c4dce5"))
-		text_label.custom_minimum_size.y = 82
-		text_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		panel.add_child(text_label)
-		content.add_child(panel)
-		panels[id] = panel
+	var pages: Array[String] = profile.discoveries.duplicate()
+	var state := {"index": 0, "ids": pages}
+	var book := PassportPage.new()
+	content.add_child(book)
+	var empty := copy("Complete a destination to receive your first stamped page.")
+	var counter := copy("")
+	var navigation := HBoxContainer.new()
+	content.add_child(navigation)
+	var previous := style.button("← PREVIOUS", false)
+	var next := style.button("NEXT →", true)
+	previous.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	next.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	navigation.add_child(previous)
+	navigation.add_child(next)
+	var update_page := func():
+		var ids: Array = state.ids
+		book.visible = not ids.is_empty()
+		empty.visible = ids.is_empty()
+		previous.disabled = state.index <= 0
+		next.disabled = state.index + 1 >= ids.size()
+		counter.text = "No matching completed destinations" if ids.is_empty() else "Page %d of %d · %s" % [state.index + 1, ids.size(), GameCatalog.country_name(ids[state.index])]
+		if not ids.is_empty():
+			book.destination_id = ids[state.index]
+			book.page_number = profile.discoveries.find(book.destination_id) + 1
+			book.queue_redraw()
+	previous.pressed.connect(func(): state.index -= 1; update_page.call())
+	next.pressed.connect(func(): state.index += 1; update_page.call())
 	search.text_changed.connect(func(query: String):
-		for id in panels:
-			panels[id].visible = query.to_lower() in (id + " " + GameCatalog.country_name(id) + " " + str(GameCatalog.DESTINATIONS[id].aliases)).to_lower()
+		state.ids = pages.filter(func(id: String): return query.is_empty() or query.to_lower() in (id + " " + GameCatalog.country_name(id) + " " + str(GameCatalog.DESTINATIONS[id].aliases)).to_lower())
+		state.index = 0
+		update_page.call()
 	)
+	update_page.call()
 	if profile.discoveries.size() == GameCatalog.DESTINATIONS.size():
 		copy("WORLD EXPLORER · Every destination sticker collected!", 21)
 	action("MY TRAVEL STICKERS", false, show_stickers)
@@ -217,6 +236,22 @@ func show_passport() -> void:
 	for id in profile.history.slice(-12):
 		names.append(GameCatalog.country_name(id))
 	copy(" → ".join(names) if not names.is_empty() else "Complete a destination to collect your first stamp.")
+	action("BACK", true, show_main)
+
+func show_world_map() -> void:
+	clear("My world map", "Gold pins mark countries and territories you have completed.")
+	var map := PassportWorldMap.new()
+	map.discoveries = profile.discoveries.duplicate()
+	content.add_child(map)
+	var cleared: Array = profile.discoveries.filter(func(id: String): return id in GameCatalog.FREE_DESTINATIONS)
+	copy("%d / %d countries and territories stamped" % [cleared.size(), GameCatalog.FREE_DESTINATIONS.size()], 20)
+	if cleared.is_empty():
+		copy("Complete your first country to pin it on the map.")
+	else:
+		for id in cleared:
+			copy("● " + GameCatalog.country_name(id), 17)
+	copy("Fantasy worlds and special-place stamps are in your passport.", 15)
+	action("MY PASSPORT", false, show_passport)
 	action("BACK", true, show_main)
 
 func show_stickers() -> void:
@@ -342,7 +377,7 @@ func show_paid_route(cinema: bool) -> void:
 		cards[place] = card
 	search.text_changed.connect(func(query: String):
 		for id in cards:
-			cards[id].visible = query.to_lower() in (GameCatalog.country_name(id) + " " + str(GameCatalog.DESTINATIONS[id].aliases)).to_lower()
+			cards[id].visible = query.is_empty() or query.to_lower() in (GameCatalog.country_name(id) + " " + str(GameCatalog.DESTINATIONS[id].aliases)).to_lower()
 	)
 	action("BACK", false, show_main)
 

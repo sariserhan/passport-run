@@ -4,6 +4,7 @@ extends Node3D
 var config: DifficultyConfig
 var country_id: String = ""
 var endless: bool = false
+const INFINITE_BACKDROP := preload("res://assets/infinite-backdrop.png")
 
 # Lighting and physical platforms over an illustrated destination matte.
 func _ready() -> void:
@@ -26,14 +27,16 @@ func _ready() -> void:
 	sun.directional_shadow_max_distance = 90
 	add_child(sun)
 	var backdrop := CanvasLayer.new()
+	backdrop.name = "Scenery"
 	backdrop.layer = -1
 	add_child(backdrop)
 	var image := TextureRect.new()
+	image.name = "Backdrop"
 	image.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 	image.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	image.texture = GameCatalog.backdrop(country_id)
+	image.texture = INFINITE_BACKDROP if endless else GameCatalog.backdrop(country_id)
 	backdrop.add_child(image)
 	var finish_z: float = -(config.row_count + 1) * config.row_spacing - 1.15
 	var stone := MeshFactory.stone_material(Color("bea68b"))

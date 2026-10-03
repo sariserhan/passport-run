@@ -1,7 +1,7 @@
 class_name GameCatalog
 extends RefCounted
 
-const BALANCE_VERSION := 2
+const BALANCE_VERSION := 3
 const DECISION_SECONDS := 10.0
 const DIFFICULTIES := ["easy", "moderate", "hard"]
 const CATALOG_VERSION := 2
@@ -69,9 +69,12 @@ static func sorted_destinations(premium: bool = false) -> Array:
 	ids.sort_custom(func(a: String, b: String): return country_name(a) < country_name(b))
 	return ids
 
-static func difficulty(key: String) -> DifficultyConfig:
+static func difficulty(key: String, balance_version: int = BALANCE_VERSION) -> DifficultyConfig:
 	var resource: DifficultyConfig = load("res://resources/" + (key if key in DIFFICULTIES or key == "kids" else "easy") + ".tres")
-	return resource.duplicate()
+	var config: DifficultyConfig = resource.duplicate()
+	if balance_version >= 3:
+		config.preview_seconds = 3.0
+	return config
 
 static func country_name(id: String) -> String:
 	return str(DESTINATIONS.get(id, {"name": "Practice Island"}).name)

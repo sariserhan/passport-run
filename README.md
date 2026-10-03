@@ -72,3 +72,5 @@ No private signing credentials are committed. Godot export and unsigned Xcode co
 - `artifacts/` — rendered screenshots; excluded from runtime imports
 
 Destination coverage, artwork sharing, data attribution and update instructions: [world destinations](docs/destinations.md).
+
+New games memorize the path for **3 seconds**. Infinite has its own dreamscape. **WORLD MAP** pins cleared countries, and **MY PASSPORT** shows illustrated stamped pages with navigation/search. Earlier challenges retain their original preview timing. See [map and passport notes](docs/world-map.md).

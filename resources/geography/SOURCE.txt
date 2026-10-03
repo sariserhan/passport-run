@@ -4,3 +4,4 @@ Includes independent entries plus Palestine, Taiwan, Kosovo; 197 travel destinat
 Country names, capitals, subregions, and filtered land-border neighbors are snapshot data.
 Dubai is offered under the United Arab Emirates; artwork is stylized regional scenery.
 The separate territories.json adapts 53 additional country/territory entries from the same snapshot under ODbL-1.0.
+World map outlines: Natural Earth 1:110m admin-0 countries, public domain. Source: https://github.com/nvkelso/natural-earth-vector/blob/master/geojson/ne_110m_admin_0_countries.geojson . Downloaded 2026-10-02. Source SHA-256: 6866c877d39cba9c357620878839b336d569f8c662d3cfab4cb1dbe2d39c977f . Map pin coordinates use the same mledoze/countries snapshot and ODbL attribution as country data.
