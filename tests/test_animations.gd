@@ -133,6 +133,7 @@ func run_tests() -> void:
 	await capture("28-passport-stamped")
 	await until(func(): return game.country_awarded)
 	expect(game.profile.discoveries == ["FR"] and game.session.banked_tiles == 10, "Stamp awards actual completed country and score")
+	expect(game.traveler.position.distance_to(game.environment.finish_position) < 0.01, "Character reaches the solid finish stone before passport completion")
 	game.finish_celebration()
 	expect(game.profile.history.size() == 1 and game.session.banked_tiles == 10, "Repeated completion cannot double-award")
 	game.passport_stamp.present("JP", Vector2.ZERO, false)

@@ -557,13 +557,22 @@ func celebrate() -> void:
 	follow_player()
 	var token: int = generation
 	var start := traveler.position
+	var destination := environment.finish_position
+	traveler.play_animation("jump")
+	audio.play_cue("jump")
 	active_tween = create_tween()
 	active_tween.tween_method(func(progress: float):
+		traveler.position = start.lerp(destination, progress)
 		if not profile.settings.reduced_motion:
-			traveler.position = start + Vector3.UP * sin(progress * PI) * 0.7
+			traveler.position += Vector3.UP * sin(progress * PI) * config.jump_height
 			traveler.pose_jump(progress)
 	, 0.0, 1.0, 0.5)
-	active_tween.tween_callback(func(): traveler.play_animation("celebrate"))
+	active_tween.tween_callback(func():
+		traveler.position = destination
+		audio.play_cue("land")
+		follow_player()
+		traveler.play_animation("celebrate")
+	)
 	active_tween.tween_interval(0.2 if profile.settings.reduced_motion else 0.55)
 	active_tween.tween_callback(func(): traveler.play_animation("pocket"))
 	active_tween.tween_interval(0.15 if profile.settings.reduced_motion else 0.35)

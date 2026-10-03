@@ -1,5 +1,7 @@
 # Passport Run — agent handoff (2026-10-02)
 
+Latest continuation: finite-path completion now moves the traveler onto `TestEnvironment.finish_position`, centered on the solid finish platform, before celebration and passport stamping. The existing completion hop is reused, preserving completion timing/scoring and pause behavior. Reduced Motion moves without a vertical arc. Nine Godot suites and three Python tests passed; rendered animation/timer checks passed 53 assertions and real local backend integration passed 19. Native export and signed build passed at `/private/tmp/passport-native-finish/PassportRun.xcodeproj`. Captures `artifacts/27-passport-pocket.png` and `28-passport-stamped.png` show the finish landing. Physical-device acceptance remains pending.
+
 Read `spec.md`, this file, [build status](docs/build-status.md), and [iPhone validation](docs/iphone-validation.md). The user authorized continued implementation: **“dont stop and finish as much as you can do without needing me.”** Continue feasible local work; do not reimpose the original M0–M2 boundary. Do not publish or claim production/device validation without evidence.
 
 ## Current state

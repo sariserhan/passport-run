@@ -1,5 +1,7 @@
 # Build status — 2026-10-02
 
+Latest finish pass: the character reaches the solid finish platform before celebration and passport stamping. Nine Godot suites, three Python tests, 53 rendered animation/timer checks, 19 real local-backend checks and the signed iPhone build passed. Finite completion timing and scoring are unchanged.
+
 The game with 250 free destinations and 32 separately purchased locations is a playable prototype. Online competition now works against a real local Convex instance; no hosted service or commercial release is claimed. [HANDOFF.md](../HANDOFF.md) contains continuation instructions.
 
 | Milestone | Implemented | Remaining acceptance/work |

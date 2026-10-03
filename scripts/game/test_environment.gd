@@ -6,6 +6,7 @@ var country_id: String = ""
 var endless: bool = false
 var reduced_motion := false
 var atmosphere: WorldAtmosphere
+var finish_position := Vector3.ZERO
 var starting_tile: PathTile
 const INFINITE_BACKDROP := preload("res://assets/infinite-backdrop.png")
 
@@ -54,6 +55,7 @@ func _ready() -> void:
 	starting_tile.position = Vector3(0, 0, 0.7)
 	starting_tile.neutral = stone
 	starting_tile.set_state(PathTile.State.NORMAL)
+	finish_position = Vector3(0, 0.03, finish_z)
 	if endless:
 		return
 	MeshFactory.beveled_box(self, Vector3(config.lane_count * config.lane_spacing + 0.5, 0.6, 3.4), Vector3(0, -0.3, finish_z), stone)

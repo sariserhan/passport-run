@@ -8,6 +8,10 @@ The user explicitly requests broad country coverage, superseding the five-countr
 
 250 free countries and territories, a separately purchased 24-destination Special Expeditions route (16 landmarks plus eight fantasy worlds), and an independently purchased eight-destination Cinema Worlds route. Total passport coverage: 282 destinations. Ranked Daily retains its immutable 197-country catalog. Special Expeditions includes Everest, Sahara, underwater, space, Moon and Mars. Cinema Worlds contains original scenes inspired by Lord of the Rings, Harry Potter, dinosaur adventures and Wonderland. Each pack uses its own one-time non-consumable Apple purchase; buying one never unlocks the other. Free country travel excludes paid places. Paid challenge codes require the relevant ownership. Every completed destination uses the same jump, celebration and passport-stamp mechanics.
 
+## Latest approved finish landing — 2026-10-02
+
+After clearing the final row of a finite path, the character jumps onto the solid finish stone before celebrating, taking out the passport and stamping the completed destination. Reduced Motion keeps the move to the finish without the jump arc. Completion scoring and timing stay unchanged.
+
 ## Latest approved pressure feedback — 2026-10-02
 
 While deciding, the stone underneath the player develops progressive surface fissures in proportion to the ten-second decision clock. At expiry, every stone in the occupied row cracks and falls together, taking the character with it. Before the first jump, the full starting platform is the occupied surface and collapses on timeout. Successful landing resets crack growth on the new stone. Preview, jumping, pause, travel and completion freeze the decision clock; legacy untimed rules remain untimed. Wrong-tile failures retain their single-stone collapse. Reduced Motion shows the cracks and hides the collapsed row without shaking/dropping movement. Score/replay rules are unchanged.

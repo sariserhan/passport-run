@@ -1,5 +1,7 @@
 # iPhone validation — 2026-10-02
 
+Latest signed build: `/private/tmp/passport-native-finish/PassportRun.xcodeproj`, with the character landing on the solid finish stone before stamping. Godot export and Xcode development-signed build succeeded. Desktop rendered verification passed; physical-phone installation, launch and performance remain pending.
+
 ## Native evidence
 
 Godot 4.5.2 standard and its matching iOS template are installed. Xcode detects a paired iPhone15,2. The existing Apple development certificate's OU confirmed Team ID `BA24C6W48D`. The development bundle is `com.serhansari.passportrun`; no private credentials are committed.
