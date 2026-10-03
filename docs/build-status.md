@@ -1,6 +1,6 @@
 # Build status — 2026-10-02
 
-The 197-destination game is a playable prototype. Online competition now works against a real local Convex instance; no hosted service or commercial release is claimed. [HANDOFF.md](../HANDOFF.md) contains continuation instructions.
+The game with 250 free destinations and 32 separately purchased locations is a playable prototype. Online competition now works against a real local Convex instance; no hosted service or commercial release is claimed. [HANDOFF.md](../HANDOFF.md) contains continuation instructions.
 
 | Milestone | Implemented | Remaining acceptance/work |
 | --- | --- | --- |
@@ -38,3 +38,9 @@ The latest requested thinking/jump/fall/celebration/pocket/passport/stamp sequen
 The user approved broad coverage: 197 destinations, including all listed countries and Dubai under UAE. One bundled geography snapshot feeds Godot and Convex. Searchable picker/passport, capital rewards, land-border routing, regional illustrated scenery and catalog-version compatibility are implemented. Existing five-country ranked retries remain intact. See [destination coverage](destinations.md).
 
 Latest seven-suite regression: core 1,143; scene 348; progression 5,676; modes 364; mobile 20; polish 208; animations/timer 36. Backend typecheck and 154 tests passed, including a full 3,940-event hard Daily and coexistence with old same-day challenges. Real HTTP smoke and 19-check Godot/backend integration passed. Sixteen scenery variants and Dubai picker/passport/sticker screens were rendered. No hosted deployment or physical-device performance acceptance is claimed.
+
+## Additional destination packs — 2026-10-02
+
+250 free countries and territories, a separately purchased 24-destination Special Expeditions route (16 landmarks plus eight fantasy worlds), and an independently purchased eight-destination Cinema Worlds route. Total passport coverage: 282 destinations. Ranked Daily retains its immutable 197-country catalog. All 32 paid locations have dedicated illustrated scenes across eight atlases. Territory progress beyond 200 stamps now persists. Native StoreKit purchase/restore/refund integration is included; App Store Connect product configuration and device purchase acceptance remain pending. See [purchase setup](purchases.md).
+
+This continuation passed 10,427 Godot checks, three Python tests, 155 backend tests/typecheck, real local HTTP smoke, 19 online integration checks, and rendered destination/payment checks. Signed iPhone build and 282-destination exported-pack loading passed. Native device purchases and performance remain unverified.

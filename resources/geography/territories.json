@@ -1,0 +1,707 @@
+{
+  "AS": {
+    "name": "American Samoa",
+    "region": "Polynesia",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Pago Pago"
+    ],
+    "aliases": "AS Amerika Sāmoa Amelika Sāmoa Sāmoa Amelika",
+    "stamp": "AS"
+  },
+  "AI": {
+    "name": "Anguilla",
+    "region": "Caribbean",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "The Valley"
+    ],
+    "aliases": "AI",
+    "stamp": "AI"
+  },
+  "AQ": {
+    "name": "Antarctica",
+    "region": "Antarctic",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "8faac8",
+    "art": 3,
+    "capital": [],
+    "aliases": "AQ",
+    "stamp": "AQ",
+    "landmark_atlas": 1
+  },
+  "AW": {
+    "name": "Aruba",
+    "region": "Caribbean",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Oranjestad"
+    ],
+    "aliases": "AW",
+    "stamp": "AW"
+  },
+  "BM": {
+    "name": "Bermuda",
+    "region": "North America",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "91b8b0",
+    "art": 0,
+    "capital": [
+      "Hamilton"
+    ],
+    "aliases": "BM The Islands of Bermuda The Bermudas Somers Isles",
+    "stamp": "BM"
+  },
+  "BV": {
+    "name": "Bouvet Island",
+    "region": "Antarctic",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "8faac8",
+    "art": 3,
+    "capital": [],
+    "aliases": "BV Bouvetøya Bouvet-øya",
+    "stamp": "BV",
+    "landmark_atlas": 1
+  },
+  "IO": {
+    "name": "British Indian Ocean Territory",
+    "region": "Eastern Africa",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Diego Garcia"
+    ],
+    "aliases": "IO",
+    "stamp": "IO"
+  },
+  "VG": {
+    "name": "British Virgin Islands",
+    "region": "Caribbean",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Road Town"
+    ],
+    "aliases": "VG Virgin Islands, British",
+    "stamp": "VG"
+  },
+  "BQ": {
+    "name": "Caribbean Netherlands",
+    "region": "Caribbean",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Kralendijk",
+      "Oranjestad",
+      "The Bottom"
+    ],
+    "aliases": "BES islands Bonaire Sint Eustatius and Saba",
+    "stamp": "BQ"
+  },
+  "KY": {
+    "name": "Cayman Islands",
+    "region": "Caribbean",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "George Town"
+    ],
+    "aliases": "KY",
+    "stamp": "KY"
+  },
+  "CX": {
+    "name": "Christmas Island",
+    "region": "Australia and New Zealand",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "69afc4",
+    "art": 5,
+    "capital": [
+      "Flying Fish Cove"
+    ],
+    "aliases": "CX Territory of Christmas Island",
+    "stamp": "CX"
+  },
+  "CC": {
+    "name": "Cocos (Keeling) Islands",
+    "region": "Australia and New Zealand",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "69afc4",
+    "art": 5,
+    "capital": [
+      "West Island"
+    ],
+    "aliases": "CC Keeling Islands Cocos Islands",
+    "stamp": "CC"
+  },
+  "CK": {
+    "name": "Cook Islands",
+    "region": "Polynesia",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Avarua"
+    ],
+    "aliases": "CK Kūki 'Āirani",
+    "stamp": "CK"
+  },
+  "CW": {
+    "name": "Curaçao",
+    "region": "Caribbean",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Willemstad"
+    ],
+    "aliases": "CW Curacao Kòrsou Country of Curaçao Land Curaçao Pais Kòrsou",
+    "stamp": "CW"
+  },
+  "FK": {
+    "name": "Falkland Islands",
+    "region": "South America",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "73bba0",
+    "art": 7,
+    "capital": [
+      "Stanley"
+    ],
+    "aliases": "FK Islas Malvinas Falkland Islands (Malvinas)",
+    "stamp": "FK"
+  },
+  "FO": {
+    "name": "Faroe Islands",
+    "region": "Northern Europe",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "8cb8cf",
+    "art": 6,
+    "capital": [
+      "Tórshavn"
+    ],
+    "aliases": "FO Føroyar Færøerne Faeroe Islands",
+    "stamp": "FO"
+  },
+  "GF": {
+    "name": "French Guiana",
+    "region": "South America",
+    "kind": "territory",
+    "neighbors": [
+      "BR",
+      "SR"
+    ],
+    "color": "73bba0",
+    "art": 7,
+    "capital": [
+      "Cayenne"
+    ],
+    "aliases": "GF Guiana Guyane",
+    "stamp": "GF"
+  },
+  "PF": {
+    "name": "French Polynesia",
+    "region": "Polynesia",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Papeetē"
+    ],
+    "aliases": "PF Polynésie française French Polynesia Pōrīnetia Farāni",
+    "stamp": "PF"
+  },
+  "TF": {
+    "name": "French Southern and Antarctic Lands",
+    "region": "Antarctic",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "8faac8",
+    "art": 3,
+    "capital": [
+      "Port-aux-Français"
+    ],
+    "aliases": "TF French Southern Territories",
+    "stamp": "TF",
+    "landmark_atlas": 1
+  },
+  "GI": {
+    "name": "Gibraltar",
+    "region": "Southern Europe",
+    "kind": "territory",
+    "neighbors": [
+      "ES"
+    ],
+    "color": "d9ac85",
+    "art": 1,
+    "capital": [
+      "Gibraltar"
+    ],
+    "aliases": "GI",
+    "stamp": "GI"
+  },
+  "GL": {
+    "name": "Greenland",
+    "region": "North America",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "8faac8",
+    "art": 3,
+    "capital": [
+      "Nuuk"
+    ],
+    "aliases": "GL Grønland",
+    "stamp": "GL",
+    "landmark_atlas": 1
+  },
+  "GP": {
+    "name": "Guadeloupe",
+    "region": "Caribbean",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Basse-Terre"
+    ],
+    "aliases": "GP Gwadloup",
+    "stamp": "GP"
+  },
+  "GU": {
+    "name": "Guam",
+    "region": "Micronesia",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Hagåtña"
+    ],
+    "aliases": "GU Guåhån",
+    "stamp": "GU"
+  },
+  "GG": {
+    "name": "Guernsey",
+    "region": "Northern Europe",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "8cb8cf",
+    "art": 6,
+    "capital": [
+      "St. Peter Port"
+    ],
+    "aliases": "GG Bailiwick of Guernsey Bailliage de Guernesey",
+    "stamp": "GG"
+  },
+  "HM": {
+    "name": "Heard Island and McDonald Islands",
+    "region": "Antarctic",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "8faac8",
+    "art": 3,
+    "capital": [],
+    "aliases": "HM Heard Island and McDonald Islands",
+    "stamp": "HM",
+    "landmark_atlas": 1
+  },
+  "HK": {
+    "name": "Hong Kong",
+    "region": "Eastern Asia",
+    "kind": "territory",
+    "neighbors": [
+      "CN"
+    ],
+    "color": "91bca5",
+    "art": 3,
+    "capital": [
+      "City of Victoria"
+    ],
+    "aliases": "HK",
+    "stamp": "HK"
+  },
+  "IM": {
+    "name": "Isle of Man",
+    "region": "Northern Europe",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "8cb8cf",
+    "art": 6,
+    "capital": [
+      "Douglas"
+    ],
+    "aliases": "IM Ellan Vannin Mann Mannin",
+    "stamp": "IM"
+  },
+  "JE": {
+    "name": "Jersey",
+    "region": "Northern Europe",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "8cb8cf",
+    "art": 6,
+    "capital": [
+      "Saint Helier"
+    ],
+    "aliases": "JE Bailiwick of Jersey Bailliage de Jersey Bailliage dé Jèrri",
+    "stamp": "JE"
+  },
+  "MO": {
+    "name": "Macau",
+    "region": "Eastern Asia",
+    "kind": "territory",
+    "neighbors": [
+      "CN"
+    ],
+    "color": "91bca5",
+    "art": 3,
+    "capital": [],
+    "aliases": "MO 澳门 Macao Macao Special Administrative Region of the People's Republic of China 中華人民共和國澳門特別行政區 Região Administrativa Especial de Macau da República Popular da China",
+    "stamp": "MO"
+  },
+  "MQ": {
+    "name": "Martinique",
+    "region": "Caribbean",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Fort-de-France"
+    ],
+    "aliases": "MQ",
+    "stamp": "MQ"
+  },
+  "YT": {
+    "name": "Mayotte",
+    "region": "Eastern Africa",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Mamoudzou"
+    ],
+    "aliases": "YT Department of Mayotte Département de Mayotte",
+    "stamp": "YT"
+  },
+  "MS": {
+    "name": "Montserrat",
+    "region": "Caribbean",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Plymouth"
+    ],
+    "aliases": "MS",
+    "stamp": "MS"
+  },
+  "NC": {
+    "name": "New Caledonia",
+    "region": "Melanesia",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Nouméa"
+    ],
+    "aliases": "NC",
+    "stamp": "NC"
+  },
+  "NU": {
+    "name": "Niue",
+    "region": "Polynesia",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Alofi"
+    ],
+    "aliases": "NU",
+    "stamp": "NU"
+  },
+  "NF": {
+    "name": "Norfolk Island",
+    "region": "Australia and New Zealand",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "69afc4",
+    "art": 5,
+    "capital": [
+      "Kingston"
+    ],
+    "aliases": "NF Territory of Norfolk Island Teratri of Norf'k Ailen",
+    "stamp": "NF"
+  },
+  "MP": {
+    "name": "Northern Mariana Islands",
+    "region": "Micronesia",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Saipan"
+    ],
+    "aliases": "MP Commonwealth of the Northern Mariana Islands Sankattan Siha Na Islas Mariånas",
+    "stamp": "MP"
+  },
+  "PN": {
+    "name": "Pitcairn Islands",
+    "region": "Polynesia",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Adamstown"
+    ],
+    "aliases": "PN Pitcairn Pitcairn Henderson Ducie and Oeno Islands",
+    "stamp": "PN"
+  },
+  "PR": {
+    "name": "Puerto Rico",
+    "region": "Caribbean",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "San Juan"
+    ],
+    "aliases": "PR Commonwealth of Puerto Rico Estado Libre Asociado de Puerto Rico",
+    "stamp": "PR"
+  },
+  "RE": {
+    "name": "Réunion",
+    "region": "Eastern Africa",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Saint-Denis"
+    ],
+    "aliases": "RE Reunion",
+    "stamp": "RE"
+  },
+  "BL": {
+    "name": "Saint Barthélemy",
+    "region": "Caribbean",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Gustavia"
+    ],
+    "aliases": "BL St. Barthelemy Collectivity of Saint Barthélemy Collectivité de Saint-Barthélemy",
+    "stamp": "BL"
+  },
+  "SH": {
+    "name": "Saint Helena, Ascension and Tristan da Cunha",
+    "region": "Western Africa",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "d0b87e",
+    "art": 12,
+    "capital": [
+      "Jamestown"
+    ],
+    "aliases": "Saint Helena St. Helena, Ascension and Tristan da Cunha",
+    "stamp": "SH"
+  },
+  "MF": {
+    "name": "Saint Martin",
+    "region": "Caribbean",
+    "kind": "territory",
+    "neighbors": [
+      "SX"
+    ],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Marigot"
+    ],
+    "aliases": "MF Collectivity of Saint Martin Collectivité de Saint-Martin Saint Martin (French part)",
+    "stamp": "MF"
+  },
+  "PM": {
+    "name": "Saint Pierre and Miquelon",
+    "region": "North America",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "91b8b0",
+    "art": 0,
+    "capital": [
+      "Saint-Pierre"
+    ],
+    "aliases": "PM Collectivité territoriale de Saint-Pierre-et-Miquelon",
+    "stamp": "PM"
+  },
+  "SX": {
+    "name": "Sint Maarten",
+    "region": "Caribbean",
+    "kind": "territory",
+    "neighbors": [
+      "MF"
+    ],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Philipsburg"
+    ],
+    "aliases": "SX Sint Maarten (Dutch part)",
+    "stamp": "SX"
+  },
+  "GS": {
+    "name": "South Georgia",
+    "region": "Antarctic",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "8faac8",
+    "art": 3,
+    "capital": [
+      "King Edward Point"
+    ],
+    "aliases": "GS South Georgia and the South Sandwich Islands",
+    "stamp": "GS",
+    "landmark_atlas": 1
+  },
+  "SJ": {
+    "name": "Svalbard and Jan Mayen",
+    "region": "Northern Europe",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "8faac8",
+    "art": 3,
+    "capital": [
+      "Longyearbyen"
+    ],
+    "aliases": "SJ Svalbard and Jan Mayen Islands",
+    "stamp": "SJ",
+    "landmark_atlas": 1
+  },
+  "TK": {
+    "name": "Tokelau",
+    "region": "Polynesia",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Fakaofo"
+    ],
+    "aliases": "TK",
+    "stamp": "TK"
+  },
+  "TC": {
+    "name": "Turks and Caicos Islands",
+    "region": "Caribbean",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Cockburn Town"
+    ],
+    "aliases": "TC",
+    "stamp": "TC"
+  },
+  "UM": {
+    "name": "United States Minor Outlying Islands",
+    "region": "North America",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "91b8b0",
+    "art": 0,
+    "capital": [],
+    "aliases": "UM",
+    "stamp": "UM"
+  },
+  "VI": {
+    "name": "United States Virgin Islands",
+    "region": "Caribbean",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Charlotte Amalie"
+    ],
+    "aliases": "VI Virgin Islands, U.S.",
+    "stamp": "VI"
+  },
+  "WF": {
+    "name": "Wallis and Futuna",
+    "region": "Polynesia",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "76c2c4",
+    "art": 15,
+    "capital": [
+      "Mata-Utu"
+    ],
+    "aliases": "WF Territory of the Wallis and Futuna Islands Territoire des îles Wallis et Futuna",
+    "stamp": "WF"
+  },
+  "EH": {
+    "name": "Western Sahara",
+    "region": "Northern Africa",
+    "kind": "territory",
+    "neighbors": [
+      "DZ",
+      "MA",
+      "MR"
+    ],
+    "color": "dcb475",
+    "art": 4,
+    "capital": [
+      "El Aaiún"
+    ],
+    "aliases": "EH Taneẓroft Tutrimt",
+    "stamp": "EH"
+  },
+  "AX": {
+    "name": "Åland Islands",
+    "region": "Northern Europe",
+    "kind": "territory",
+    "neighbors": [],
+    "color": "8cb8cf",
+    "art": 6,
+    "capital": [
+      "Mariehamn"
+    ],
+    "aliases": "AX Aaland Aland Ahvenanmaa",
+    "stamp": "AX"
+  }
+}

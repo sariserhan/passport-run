@@ -33,6 +33,10 @@ var decision_remaining := GameCatalog.DECISION_SECONDS
 var failure_reason := ""
 var celebrating := false
 var passport_stamp: PassportStamp
+var purchase: RoutePurchase
+var cinema_purchase: RoutePurchase
+var cinema_start := "HOBBIT_VILLAGE"
+var special_start := "EVEREST"
 
 func _ready() -> void:
 	config = GameCatalog.difficulty("easy")
@@ -76,6 +80,26 @@ func _ready() -> void:
 	passport_stamp.setup(hud)
 	passport_stamp.stamped.connect(func(): traveler.play_animation("stamp"); audio.play_cue("stamp"))
 	passport_stamp.finished.connect(finish_celebration)
+	purchase = RoutePurchase.new()
+	add_child(purchase)
+	menu.purchase = purchase
+	purchase.changed.connect(menu.purchase_changed)
+	purchase.changed.connect(func():
+		if not has_paid_access() and not menu.root.visible:
+			return_to_menu()
+			menu.show_special_route()
+	)
+	cinema_purchase = RoutePurchase.new(RoutePurchase.CINEMA_PRODUCT_ID)
+	add_child(cinema_purchase)
+	menu.cinema_purchase = cinema_purchase
+	cinema_purchase.changed.connect(menu.purchase_changed)
+	cinema_purchase.changed.connect(func():
+		if not has_paid_access() and not menu.root.visible:
+			return_to_menu()
+			menu.show_cinema_route()
+	)
+	menu.cinema_requested.connect(func(id: String): cinema_start = id; start_game("cinema", profile.difficulty))
+	menu.special_requested.connect(func(id: String): special_start = id; start_game("special", profile.difficulty))
 	menu.start_requested.connect(start_game)
 	menu.challenge_requested.connect(func(data: Dictionary): imported_challenge = data; start_game("challenge", data.difficulty))
 	menu.settings_changed.connect(func(): audio.apply_settings(profile.settings))
@@ -120,15 +144,23 @@ func start_game(mode: String, difficulty_key: String) -> void:
 			return
 		network_busy = false
 	online = requested_online
-	if mode not in ["world", "infinite", "daily", "kids", "tutorial", "challenge"]:
+	if mode == "special" or (mode == "challenge" and imported_challenge.get("route", []).any(func(id): return id in GameCatalog.PREMIUM_DESTINATIONS)):
+		if not purchase.unlocked:
+			menu.show_special_route()
+			return
+	if mode == "cinema" or (mode == "challenge" and imported_challenge.get("route", []).any(func(id): return id in GameCatalog.CINEMA_DESTINATIONS)):
+		if not cinema_purchase.unlocked:
+			menu.show_cinema_route()
+			return
+	if mode not in ["world", "infinite", "daily", "kids", "tutorial", "challenge", "special", "cinema"]:
 		return
-	if mode in ["world", "kids"] and profile.home_country.is_empty():
+	if mode in ["world", "kids"] and profile.home_country not in GameCatalog.FREE_DESTINATIONS:
 		menu.pending_mode = mode
 		menu.show_countries()
 		return
 	if mode == "challenge" and imported_challenge.is_empty():
 		return
-	session.begin(mode, difficulty_key, profile.home_country, randi_range(1, PathGenerator.MODULUS - 2), imported_challenge)
+	session.begin(mode, difficulty_key, special_start if mode == "special" else (cinema_start if mode == "cinema" else profile.home_country), randi_range(1, PathGenerator.MODULUS - 2), imported_challenge)
 	if online:
 		session.balance_version = int(issued.balanceVersion)
 		session.seed_value = int(issued.seed)
@@ -176,7 +208,7 @@ func restart(new_path: bool = false, auto_preview: bool = true) -> void:
 	# A daily retry stays pinned to the UTC date it started, even across midnight.
 	var old_date := session.date
 	var old_route: Array[String] = session.fixed_route.duplicate()
-	session.begin(session.mode, session.difficulty, profile.home_country, next_seed, imported_challenge)
+	session.begin(session.mode, session.difficulty, special_start if session.mode == "special" else (cinema_start if session.mode == "cinema" else profile.home_country), next_seed, imported_challenge)
 	if session.mode == "daily" and not old_date.is_empty():
 		session.date = old_date
 		session.seed_value = next_seed
@@ -331,6 +363,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		choose_tile(tile.row, tile.lane)
 
 func choose_tile(row: int, lane: int) -> bool:
+	if not has_paid_access():
+		return false
 	if session.balance_version >= 2 and decision_remaining <= 0:
 		return false
 	if paused or travel.active or not run.select(row, lane, config.lane_count):
@@ -456,7 +490,7 @@ func show_failure() -> void:
 			hud.modal_title.text = "Time’s up!"
 			hud.modal_body.text += "\nEach new row gives you 10 seconds."
 		return
-	var body := "%d tiles · %d countries\nSame path. Another chance." % [total_score(), session.completed_countries]
+	var body := "%d tiles · %d destinations\nSame path. Another chance." % [total_score(), session.completed_countries]
 	if failure_reason == "timeout":
 		body += "\nTime ran out. Each new row gives you 10 seconds."
 	if session.mode == "infinite":
@@ -529,7 +563,7 @@ func complete_country() -> void:
 		var id: String = destination
 		actions.append({"text": ("FLY TO " if options.size() > 1 else "CONTINUE TO ") + GameCatalog.country_name(id).to_upper(), "primary": true, "callback": func(): travel_to(id)})
 	var title := "Passport stamped!"
-	var body := "%s\n%d %s · %d tiles" % [GameCatalog.country_name(session.current_country()), session.completed_countries, "country" if session.completed_countries == 1 else "countries", session.banked_tiles]
+	var body := "%s\n%d %s · %d tiles" % [GameCatalog.country_name(session.current_country()), session.completed_countries, "destination" if session.completed_countries == 1 else "destinations", session.banked_tiles]
 	if session.mode == "kids":
 		body += "\nSticker collected!\n" + CountryRewards.fact(session.current_country())
 	if options.is_empty():
@@ -554,7 +588,7 @@ func travel_to(id: String) -> void:
 	if not session.travel_to(id):
 		return
 	telemetry.track("destination_selected", {"country": id, "mode": session.mode})
-	if id not in GameCatalog.COUNTRIES[departure].neighbors:
+	if id not in GameCatalog.DESTINATIONS[departure].neighbors:
 		telemetry.track("long_haul_selected", {"country": id, "mode": session.mode})
 	audio.play_cue("travel")
 	travel.begin(departure, id, profile.settings.reduced_motion)
@@ -588,6 +622,14 @@ func share_challenge() -> void:
 		else:
 			hud.modal_body.text = "Code copied. The share image\ncould not be saved here."
 	sharing = false
+
+func has_paid_access() -> bool:
+	var route: Array = session.fixed_route if session.mode == "challenge" else []
+	if (session.mode == "special" or route.any(func(id): return id in GameCatalog.PREMIUM_DESTINATIONS)) and not purchase.unlocked:
+		return false
+	if (session.mode == "cinema" or route.any(func(id): return id in GameCatalog.CINEMA_DESTINATIONS)) and not cinema_purchase.unlocked:
+		return false
+	return true
 
 func metadata() -> Dictionary:
 	return {"mode": session.mode, "difficulty": session.difficulty, "country": session.current_country(), "row": run.completed_rows, "score": total_score(), "countries": session.completed_countries, "seed": session.seed_value, "version": PathGenerator.VERSION, "balance_version": session.balance_version}
@@ -693,6 +735,6 @@ func sync_online_passport() -> void:
 	var value: Variant = response.get("value")
 	if value is Dictionary and value.get("discoveries") is Array:
 		for id in value.discoveries:
-			if id is String and id in GameCatalog.COUNTRIES and id not in profile.discoveries:
+			if id is String and id in GameCatalog.DESTINATIONS and id not in profile.discoveries:
 				profile.discoveries.append(id)
 		profile.save()

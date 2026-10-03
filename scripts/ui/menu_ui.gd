@@ -6,9 +6,15 @@ signal challenge_requested(data: Dictionary)
 signal settings_changed
 signal home_country_selected(id: String)
 signal difficulty_selected(key: String)
+signal cinema_requested(id: String)
+signal special_requested(id: String)
 signal online_records_requested
 var online_available := false
 var revision := 0
+var purchase: RoutePurchase
+var cinema_purchase: RoutePurchase
+var cinema_page := false
+var special_page := false
 
 var profile: PlayerProfile
 var style: GameHUD
@@ -67,6 +73,8 @@ func update_safe_area() -> void:
 
 func clear(title: String, subtitle: String) -> void:
 	revision += 1
+	special_page = false
+	cinema_page = false
 	root.show()
 	for child in content.get_children():
 		content.remove_child(child)
@@ -106,7 +114,7 @@ func show_main() -> void:
 	hero.custom_minimum_size.y = 210
 	hero.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	content.add_child(hero)
-	home_button = action("Start: " + (GameCatalog.country_name(profile.home_country) if not profile.home_country.is_empty() else "Choose your home country"), false, func(): show_countries())
+	home_button = action("Start: " + (GameCatalog.country_name(profile.home_country) if not profile.home_country.is_empty() else "Choose your starting destination"), false, func(): show_countries())
 	difficulty_picker = OptionButton.new()
 	difficulty_picker.custom_minimum_size.y = 52
 	difficulty_picker.add_theme_font_size_override("font_size", 19)
@@ -125,6 +133,8 @@ func show_main() -> void:
 	for item in [["world", "WORLD TOUR"], ["infinite", "INFINITE MEMORY"], ["daily", "DAILY WORLD TOUR"], ["kids", "KIDS ADVENTURE"]]:
 		var mode: String = item[0]
 		mode_buttons[mode] = action(item[1], mode == "world", func(): request_mode(mode))
+	action("CINEMA WORLDS · SEPARATE PAID ROUTE", false, show_cinema_route)
+	action("SPECIAL EXPEDITIONS · PAID ROUTE", false, show_special_route)
 	copy("Daily: same UTC date + difficulty = same route. Scores are local until online rankings are connected.", 15)
 	if online_available:
 		copy("Online play uses an anonymous account and syncs your passport.", 15)
@@ -139,7 +149,7 @@ func show_main() -> void:
 		copy(profile.last_error)
 
 func request_mode(mode: String) -> void:
-	if mode in ["world", "kids"] and profile.home_country.is_empty():
+	if mode in ["world", "kids"] and profile.home_country not in GameCatalog.FREE_DESTINATIONS:
 		pending_mode = mode
 		show_countries()
 		return
@@ -148,12 +158,12 @@ func request_mode(mode: String) -> void:
 func show_countries() -> void:
 	clear("Where should your\njourney begin?", "Choose a starting point. Changing it keeps all your passport stamps.")
 	var search := LineEdit.new()
-	search.placeholder_text = "Search countries"
+	search.placeholder_text = "Search countries and territories"
 	search.custom_minimum_size.y = 54
 	search.add_theme_font_size_override("font_size", 20)
 	content.add_child(search)
 	var buttons: Array[Button] = []
-	for id in GameCatalog.sorted_countries():
+	for id in GameCatalog.sorted_destinations():
 		var country: String = id
 		var control := action(country + "   " + GameCatalog.country_name(country), country == profile.home_country, func():
 			profile.home_country = country
@@ -166,29 +176,30 @@ func show_countries() -> void:
 			else:
 				show_main()
 		)
+		control.set_meta("destination_id", country)
 		buttons.append(control)
 	search.text_changed.connect(func(query: String):
 		for control in buttons:
-			var id := control.text.left(2)
-			control.visible = query.to_lower() in (control.text + " " + str(GameCatalog.COUNTRIES[id].aliases)).to_lower()
+			var id: String = control.get_meta("destination_id")
+			control.visible = query.to_lower() in (control.text + " " + str(GameCatalog.DESTINATIONS[id].aliases)).to_lower()
 	)
 	copy("Geography: mledoze/countries · ODbL 1.0", 15)
-	copy("%d destinations to explore. Dubai is included under the United Arab Emirates." % GameCatalog.COUNTRIES.size(), 15)
+	copy("%d destinations to explore: countries and territories. Special places have their own paid route." % GameCatalog.FREE_DESTINATIONS.size(), 15)
 	action("BACK", false, func(): pending_mode = ""; show_main())
 
 func show_passport() -> void:
-	clear("My passport", "%d / %d countries discovered" % [profile.discoveries.size(), GameCatalog.COUNTRIES.size()])
+	clear("My passport", "%d / %d destinations discovered" % [profile.discoveries.size(), GameCatalog.DESTINATIONS.size()])
 	var search := LineEdit.new()
 	search.placeholder_text = "Search your passport"
 	search.custom_minimum_size.y = 54
 	search.add_theme_font_size_override("font_size", 20)
 	content.add_child(search)
 	var panels: Dictionary = {}
-	for id in GameCatalog.sorted_countries():
+	for id in GameCatalog.DESTINATIONS:
 		var visited: bool = id in profile.discoveries
 		var panel := PanelContainer.new()
 		panel.add_theme_stylebox_override("panel", style.panel_style(Color("fff6df") if visited else Color("28546b"), 12))
-		var text_label := style.label("  %s   %s\n  %s" % [id, GameCatalog.country_name(id), "STAMPED · " + str(GameCatalog.COUNTRIES[id].region) if visited else "Waiting to be discovered"], 19, GameHUD.INK if visited else Color("c4dce5"))
+		var text_label := style.label("  %s   %s\n  %s" % [id, GameCatalog.country_name(id), "STAMPED · " + str(GameCatalog.DESTINATIONS[id].region) if visited else "Waiting to be discovered"], 19, GameHUD.INK if visited else Color("c4dce5"))
 		text_label.custom_minimum_size.y = 82
 		text_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		panel.add_child(text_label)
@@ -196,23 +207,23 @@ func show_passport() -> void:
 		panels[id] = panel
 	search.text_changed.connect(func(query: String):
 		for id in panels:
-			panels[id].visible = query.to_lower() in (id + " " + GameCatalog.country_name(id) + " " + str(GameCatalog.COUNTRIES[id].aliases)).to_lower()
+			panels[id].visible = query.to_lower() in (id + " " + GameCatalog.country_name(id) + " " + str(GameCatalog.DESTINATIONS[id].aliases)).to_lower()
 	)
-	if profile.discoveries.size() == GameCatalog.COUNTRIES.size():
+	if profile.discoveries.size() == GameCatalog.DESTINATIONS.size():
 		copy("WORLD EXPLORER · Every destination sticker collected!", 21)
 	action("MY TRAVEL STICKERS", false, show_stickers)
 	copy("Recent journey", 22)
 	var names: Array[String] = []
 	for id in profile.history.slice(-12):
 		names.append(GameCatalog.country_name(id))
-	copy(" → ".join(names) if not names.is_empty() else "Complete a country to collect your first stamp.")
+	copy(" → ".join(names) if not names.is_empty() else "Complete a destination to collect your first stamp.")
 	action("BACK", true, show_main)
 
 func show_stickers() -> void:
 	clear("Travel stickers", "Your discoveries become a little collection of the world.")
 	if profile.discoveries.is_empty():
 		copy("Complete a destination to collect its sticker.")
-	for id in GameCatalog.sorted_countries():
+	for id in GameCatalog.DESTINATIONS:
 		if id in profile.discoveries:
 			copy(GameCatalog.country_name(id), 23)
 			var artwork := TravelArtwork.new()
@@ -228,6 +239,8 @@ func show_records() -> void:
 	for key in GameCatalog.DIFFICULTIES:
 		copy(key.capitalize(), 24)
 		copy("World Tour: %d tiles\nInfinite: %d tiles\nDaily (%s UTC): %d tiles" % [profile.records.get("world:" + key, 0), profile.records.get("infinite:" + key, 0), GameCatalog.today_utc(), profile.records.get("daily:" + key + ":" + GameCatalog.today_utc(), 0)])
+	copy("Special Expeditions: %d tiles" % profile.records.get("special:" + profile.difficulty, 0))
+	copy("Cinema Worlds: %d tiles" % profile.records.get("cinema:" + profile.difficulty, 0))
 	copy("Kids Adventure: %d tiles" % profile.records.get("kids:kids", 0))
 	action("BACK", true, show_main)
 
@@ -275,3 +288,66 @@ func show_challenge() -> void:
 			challenge_requested.emit(decoded)
 	)
 	action("BACK", false, show_main)
+
+func show_special_route() -> void:
+	show_paid_route(false)
+
+func show_cinema_route() -> void:
+	show_paid_route(true)
+
+func show_paid_route(cinema: bool) -> void:
+	var manager := cinema_purchase if cinema else purchase
+	var destinations := GameCatalog.CINEMA_DESTINATIONS if cinema else GameCatalog.PREMIUM_DESTINATIONS
+	clear("Cinema\nWorlds" if cinema else "Special\nExpeditions", "Original movie-inspired worlds. This pack has its own purchase." if cinema else "A separate route through famous landmarks and fantasy worlds.")
+	special_page = not cinema
+	cinema_page = cinema
+	copy("%d destinations · One-time route-pack purchase" % destinations.size(), 20)
+	if manager:
+		copy(manager.message)
+		if manager.busy:
+			copy("Please wait…")
+		elif not manager.unlocked:
+			var buy := action("UNLOCK · " + manager.price if not manager.price.is_empty() else "PURCHASE UNAVAILABLE", true, manager.purchase)
+			buy.disabled = manager.price.is_empty()
+			var restore := action("RESTORE PURCHASE", false, manager.restore)
+			restore.disabled = manager.store == null
+	var search := LineEdit.new()
+	search.placeholder_text = "Search your destination…"
+	search.custom_minimum_size.y = 54
+	search.add_theme_font_size_override("font_size", 20)
+	content.add_child(search)
+	var cards: Dictionary = {}
+	var ids := destinations.keys()
+	ids.sort_custom(func(a: String, b: String): return GameCatalog.country_name(a) < GameCatalog.country_name(b))
+	for id in ids:
+		var place: String = id
+		var card := VBoxContainer.new()
+		card.add_theme_constant_override("separation", 8)
+		content.add_child(card)
+		var heading := style.label(GameCatalog.country_name(place), 23, GameHUD.CREAM)
+		heading.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		card.add_child(heading)
+		var artwork := TravelArtwork.new()
+		artwork.country_id = place
+		artwork.show_traveler = false
+		artwork.custom_minimum_size.y = 145
+		card.add_child(artwork)
+		var play := style.button("PLAY " + GameCatalog.country_name(place).to_upper() if manager and manager.unlocked else "LOCKED · ROUTE PACK REQUIRED", manager and manager.unlocked)
+		play.disabled = not manager or not manager.unlocked or manager.busy
+		play.pressed.connect(func():
+			if cinema: cinema_requested.emit(place)
+			else: special_requested.emit(place)
+		)
+		card.add_child(play)
+		cards[place] = card
+	search.text_changed.connect(func(query: String):
+		for id in cards:
+			cards[id].visible = query.to_lower() in (GameCatalog.country_name(id) + " " + str(GameCatalog.DESTINATIONS[id].aliases)).to_lower()
+	)
+	action("BACK", false, show_main)
+
+func purchase_changed() -> void:
+	if cinema_page and root.visible:
+		show_cinema_route()
+	elif special_page and root.visible:
+		show_special_route()

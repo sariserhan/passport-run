@@ -4,6 +4,10 @@
 
 The user explicitly requests broad country coverage, superseding the five-country expansion gate in the original spec. Ship 197 travel destinations: the existing five, all explicitly requested countries, the remaining independent entries, Palestine, Taiwan and Kosovo. Dubai is presented under United Arab Emirates. Every destination supports gameplay, home selection, travel, passport stamps and rewards. Use land-border neighbors with long-haul flights for islands. Regional illustrated scenery may be shared; do not claim every country has a unique landmark painting. Preserve existing five-country ranked runs and challenge routes with catalog versioning.
 
+### Additional approved routes — 2026-10-02
+
+250 free countries and territories, a separately purchased 24-destination Special Expeditions route (16 landmarks plus eight fantasy worlds), and an independently purchased eight-destination Cinema Worlds route. Total passport coverage: 282 destinations. Ranked Daily retains its immutable 197-country catalog. Special Expeditions includes Everest, Sahara, underwater, space, Moon and Mars. Cinema Worlds contains original scenes inspired by Lord of the Rings, Harry Potter, dinosaur adventures and Wonderland. Each pack uses its own one-time non-consumable Apple purchase; buying one never unlocks the other. Free country travel excludes paid places. Paid challenge codes require the relevant ownership. Every completed destination uses the same jump, celebration and passport-stamp mechanics.
+
 ## Latest approved rules — 2026-10-02
 
 - The visual direction must follow the supplied reference images: detailed destination scenery, a backpacker, a perspective stone path, and polished mobile presentation.

@@ -53,3 +53,27 @@ root = Path(__file__).resolve().parent.parent
     'Country names, capitals, subregions, and filtered land-border neighbors are snapshot data.\n'
     'Dubai is offered under the United Arab Emirates; artwork is stylized regional scenery.\n')
 print(f'Imported {len(result)} destinations')
+
+# Extra countries/territories remain separate from the immutable ranked catalog.
+all_countries = json.loads(raw)
+all_lookup = {c['cca3']: c['cca2'] for c in all_countries}
+extra = {}
+for c in sorted(all_countries, key=lambda item: item['name']['common']):
+    code = c['cca2']
+    if code in result:
+        continue
+    region = c['subregion'] or c['region'] or 'Polar regions'
+    art = art_overrides.get(code, art_by_region.get(region, 15))
+    extra[code] = {'name': c['name']['common'], 'region': region, 'kind': 'territory',
+                   'neighbors': sorted(all_lookup[n] for n in c['borders'] if n in all_lookup),
+                   'color': colors[art], 'art': art, 'capital': c['capital'],
+                   'aliases': ' '.join(c.get('altSpellings', [])), 'stamp': code}
+    if code in ('AQ', 'GL', 'BV', 'GS', 'HM', 'TF', 'SJ'):
+        extra[code]['landmark_atlas'] = 1
+        extra[code]['art'] = 3
+        extra[code]['color'] = '8faac8'
+(root / 'resources/geography/territories.json').write_text(json.dumps(extra, ensure_ascii=False, indent=2) + '\n')
+print(f'Imported {len(extra)} additional territory destinations; ranked country catalog unchanged')
+
+with (root / 'resources/geography/SOURCE.txt').open('a') as attribution:
+    attribution.write(f'The separate territories.json adapts {len(extra)} additional country/territory entries from the same snapshot under ODbL-1.0.\n')

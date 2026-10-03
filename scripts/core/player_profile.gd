@@ -24,7 +24,7 @@ func load_profile() -> void:
 		data = read_valid(file_path + ".bak")
 	if data.is_empty():
 		return
-	if data.get("home_country", "") in GameCatalog.COUNTRIES:
+	if data.get("home_country", "") in GameCatalog.DESTINATIONS:
 		home_country = data.home_country
 	if data.get("difficulty", "") in GameCatalog.DIFFICULTIES:
 		difficulty = data.difficulty
@@ -33,8 +33,8 @@ func load_profile() -> void:
 	tutorial_done = data.get("tutorial_done", false) == true
 	for field in ["discoveries", "history"]:
 		if data.get(field) is Array:
-			for id in data[field].slice(0, 200):
-				if id is String and id in GameCatalog.COUNTRIES:
+			for id in data[field].slice(0, 200 if field == "history" else GameCatalog.DESTINATIONS.size()):
+				if id is String and id in GameCatalog.DESTINATIONS:
 					if field == "history":
 						history.append(id)
 					elif id not in discoveries:
@@ -82,7 +82,7 @@ func save() -> bool:
 	return error == OK
 
 func discover(id: String) -> void:
-	if id not in GameCatalog.COUNTRIES:
+	if id not in GameCatalog.DESTINATIONS:
 		return
 	if id not in discoveries:
 		discoveries.append(id)

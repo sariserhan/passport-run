@@ -27,7 +27,7 @@ static func save_card(owner_node: Node, session: JourneySession, score: int, hud
 	stack.add_child(artwork)
 	stack.add_child(hud.label(str(score), 98, Color("a6e771")))
 	stack.add_child(hud.label("TILES REMEMBERED", 24, GameHUD.CREAM))
-	stack.add_child(hud.label("%s · %d countries reached" % [session.difficulty.capitalize(), session.completed_countries], 25, GameHUD.CREAM))
+	stack.add_child(hud.label("%s · %d destinations reached" % [session.difficulty.capitalize(), session.completed_countries], 25, GameHUD.CREAM))
 	var route_names: Array[String] = []
 	for id in session.challenge_route().slice(0, 6):
 		route_names.append(GameCatalog.country_name(id))

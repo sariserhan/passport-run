@@ -2,7 +2,7 @@ import { afterEach, expect, test, vi } from "vitest";
 import { convexTest } from "convex-test";
 import schema from "../convex/schema";
 import { api } from "../convex/_generated/api";
-import { BALANCE, derivedSeed, laneAt, manifestFor, routeFrom } from "../convex/competition";
+import { BALANCE, DESTINATIONS, derivedSeed, laneAt, manifestFor, routeFrom } from "../convex/competition";
 const modules = import.meta.glob("../convex/**/*.ts");
 afterEach(() => vi.useRealTimers());
 
@@ -107,4 +107,19 @@ test("all new passport destinations persist through authenticated sync", async (
   const saved = await client.mutation(api.players.syncPassport, {homeCountry: "AE", discoveries: route});
   expect(saved.homeCountry).toBe("AE");
   expect(saved.discoveries).toHaveLength(197);
+});
+
+
+test("territories and landmarks sync a complete passport without changing Daily routes", async () => {
+  const {client} = await setup();
+  const saved = await client.mutation(api.players.syncPassport, {homeCountry: "EVEREST", discoveries: DESTINATIONS});
+  expect(saved.homeCountry).toBe("EVEREST");
+  expect(saved.discoveries).toHaveLength(282);
+  expect(saved.discoveries).toContain("SAHARA");
+  const merged = await client.mutation(api.players.syncPassport, {homeCountry: "GL", discoveries: ["FR", "PETRA"]});
+  expect(merged.discoveries).toHaveLength(282);
+  await expect(client.mutation(api.players.syncPassport, {homeCountry: "UNKNOWN", discoveries: []})).rejects.toThrow("Invalid passport");
+  const issued = await client.mutation(api.runs.begin, {mode: "daily", difficulty: "hard"});
+  expect(issued.route).toHaveLength(197);
+  expect(issued.route).not.toContain("EVEREST");
 });

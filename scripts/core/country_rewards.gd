@@ -13,8 +13,10 @@ const FACTS := {
 static func fact(id: String) -> String:
 	if id in FACTS:
 		return FACTS[id]
-	var country: Dictionary = GameCatalog.COUNTRIES.get(id, {})
+	var country: Dictionary = GameCatalog.DESTINATIONS.get(id, {})
 	if country.is_empty():
 		return ""
+	if country.has("fact"):
+		return str(country.fact)
 	var capitals: Array = country.capital
 	return "Capital: " + ", ".join(capitals) + "." if not capitals.is_empty() else GameCatalog.country_name(id) + " is in " + str(country.region) + "."

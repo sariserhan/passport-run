@@ -1,6 +1,6 @@
 # World destinations
 
-197 travel destinations, including every country explicitly requested. Dubai appears as **United Arab Emirates (Dubai)**, code AE. Search by name, code or dataset alias in the home-country picker and passport. World Tour and Kids travel to unvisited destinations through land-border neighbors and periodic long-haul choices. New Daily tours contain all 197 countries; Infinite cycles through the expanded catalog.
+250 free countries and territories, including every country explicitly requested. Dubai appears as **United Arab Emirates (Dubai)**, code AE. Search by name, code or dataset alias in the home-country picker and passport. World Tour and Kids travel to unvisited destinations through land-border neighbors and periodic long-haul choices. New Daily tours retain 197 ranked countries; Infinite cycles through the 250 free destinations.
 
 Country names, capitals, subregions and land-border links come from [mledoze/countries](https://github.com/mledoze/countries), downloaded 2026-10-02. The snapshot includes independent entries plus Palestine, Taiwan and Kosovo, yielding 197 game destinations. This is a travel catalog, not a statement about recognition. Filtered border edges are made reciprocal; islands use flights. Source hash and attribution are in `resources/geography/SOURCE.txt`. The adapted database is provided under ODbL-1.0; the full license is bundled in `resources/geography/LICENSE.txt`, exported with the game, and credited in the picker.
 
@@ -61,3 +61,15 @@ Artwork: five original destination paintings plus sixteen original illustrated r
 ## Verification
 
 Route checks cover every starting country, every requested destination, reciprocal borders, all artwork, and full-length challenge encoding. Backend checks include all 197 passport entries, coexistence with previously saved Daily challenges, legacy retries, deterministic routes and a complete 3,940-event hard tour. Native export includes catalog, license and atlas. `tools/capture_destinations.gd` checks Dubai search and captures all sixteen new scenery variants, passport and sticker screens. Desktop captures and signed builds do not establish physical-iPhone performance.
+
+## Additional free destinations
+
+American Samoa, Anguilla, Antarctica, Aruba, Bermuda, Bouvet Island, British Indian Ocean Territory, British Virgin Islands, Caribbean Netherlands, Cayman Islands, Christmas Island, Cocos (Keeling) Islands, Cook Islands, Curaçao, Falkland Islands, Faroe Islands, French Guiana, French Polynesia, French Southern and Antarctic Lands, Gibraltar, Greenland, Guadeloupe, Guam, Guernsey, Heard Island and McDonald Islands, Hong Kong, Isle of Man, Jersey, Macau, Martinique, Mayotte, Montserrat, New Caledonia, Niue, Norfolk Island, Northern Mariana Islands, Pitcairn Islands, Puerto Rico, Réunion, Saint Barthélemy, Saint Helena, Ascension and Tristan da Cunha, Saint Martin, Saint Pierre and Miquelon, Sint Maarten, South Georgia, Svalbard and Jan Mayen, Tokelau, Turks and Caicos Islands, United States Minor Outlying Islands, United States Virgin Islands, Wallis and Futuna, Western Sahara, Åland Islands.
+
+## Special Expeditions — separate purchase
+
+Mount Everest, Sahara Desert, Grand Canyon, Machu Picchu, Petra, Taj Mahal, Angkor Wat, Northern Lights, Great Barrier Reef, Victoria Falls, Salar de Uyuni, Serengeti, Amazon Rainforest, Venice Canals, Stonehenge, Santorini, Underwater World, Space Station, Moon, Mars, Saturn Rings, Crystal Cavern, Cloud City, Dragon Island.
+
+## Cinema Worlds — independent purchase
+
+Hobbit Village, Elven Valley, Volcanic Realm, Wizard Castle, Wizard Village, Enchanted Forest, Dinosaur Island, Wonderland. Original movie-inspired compositions. Each paid route starts at the chosen destination and visits its own pack once. Paid places are excluded from free home selection and free routes; imported challenges enforce both ownership gates. See [purchase setup](purchases.md).

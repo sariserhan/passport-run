@@ -1,7 +1,12 @@
 // Generator/presets v1 stay immutable; balance v2 adds the decision deadline.
 export const MODULUS = 2147483647n;
 import destinations from "../../resources/geography/destinations.json";
+import territories from "../../resources/geography/territories.json";
+import fantasy from "../../resources/geography/fantasy.json";
+import landmarks from "../../resources/geography/landmarks.json";
+import cinema from "../../resources/geography/cinema.json";
 export const COUNTRIES = Object.keys(destinations);
+export const DESTINATIONS = Object.keys({...destinations, ...territories, ...landmarks, ...fantasy, ...cinema});
 const legacyCountries = ["US", "FR", "EG", "TR", "JP"];
 const geography: Record<string, {neighbors: string[]}> = destinations;
 export type Difficulty = "easy" | "moderate" | "hard";

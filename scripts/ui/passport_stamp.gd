@@ -39,7 +39,7 @@ func draw_book() -> void:
 		book.draw_set_transform(Vector2(252, 122), -0.14, Vector2.ONE * lerpf(1.25, 1.0, mark))
 		book.draw_arc(Vector2.ZERO, 62, 0, TAU, 48, ink, 4, true)
 		book.draw_arc(Vector2.ZERO, 55, 0, TAU, 48, ink, 1, true)
-		book.draw_string(font, Vector2(-47, -14), country_id, HORIZONTAL_ALIGNMENT_CENTER, 94, 31, ink)
+		book.draw_string(font, Vector2(-47, -14), GameCatalog.stamp_code(country_id), HORIZONTAL_ALIGNMENT_CENTER, 94, 31, ink)
 		book.draw_string(font, Vector2(-49, 17), "VISITED", HORIZONTAL_ALIGNMENT_CENTER, 98, 18, ink)
 		book.draw_line(Vector2(-24, 32), Vector2(-8, 44), ink, 4, true)
 		book.draw_line(Vector2(-8, 44), Vector2(25, 27), ink, 4, true)
@@ -47,7 +47,7 @@ func draw_book() -> void:
 
 func present(id: String, from: Vector2, reduced_motion: bool) -> void:
 	cancel()
-	if id not in GameCatalog.COUNTRIES:
+	if id not in GameCatalog.DESTINATIONS:
 		finished.emit()
 		return
 	country_id = id

@@ -10,7 +10,7 @@ static func encode(seed_value: int, difficulty_key: String, route: Array[String]
 
 static func decode(code: String) -> Dictionary:
 	code = code.strip_edges()
-	if not code.begins_with(PREFIX) or code.length() > 2048:
+	if not code.begins_with(PREFIX) or code.length() > 8192:
 		return {}
 	var encoded := code.trim_prefix(PREFIX)
 	var pattern := RegEx.new()
@@ -41,11 +41,11 @@ static func decode(code: String) -> Dictionary:
 			return {}
 	if data.seed >= PathGenerator.MODULUS - 1:
 		return {}
-	if not data.get("route") is Array or data.route.is_empty() or data.route.size() > GameCatalog.COUNTRIES.size():
+	if not data.get("route") is Array or data.route.is_empty() or data.route.size() > GameCatalog.DESTINATIONS.size():
 		return {}
 	var unique: Array = []
 	for id in data.route:
-		if not id is String or id not in GameCatalog.COUNTRIES or id in unique:
+		if not id is String or id not in GameCatalog.DESTINATIONS or id in unique:
 			return {}
 		unique.append(id)
 	if data.get("starting_country") != data.route[0]:

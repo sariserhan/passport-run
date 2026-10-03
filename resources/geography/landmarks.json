@@ -1,0 +1,276 @@
+{
+  "EVEREST": {
+    "name": "Mount Everest",
+    "region": "Himalayas",
+    "neighbors": [
+      "NP",
+      "CN"
+    ],
+    "color": "8faac8",
+    "landmark_atlas": 0,
+    "art": 0,
+    "capital": [],
+    "aliases": "Sagarmatha Chomolungma mountain snow Nepal China",
+    "stamp": "EVR",
+    "kind": "mountain",
+    "fact": "Everest is the world’s highest mountain above sea level.",
+    "source": "https://whc.unesco.org/en/list/120/"
+  },
+  "SAHARA": {
+    "name": "Sahara Desert",
+    "region": "North Africa",
+    "neighbors": [
+      "DZ",
+      "MA",
+      "EG",
+      "TN",
+      "LY",
+      "SD",
+      "TD",
+      "NE",
+      "ML",
+      "MR"
+    ],
+    "color": "dfbd80",
+    "landmark_atlas": 0,
+    "art": 1,
+    "capital": [],
+    "aliases": "desert dunes oasis sand Africa",
+    "stamp": "SHR",
+    "kind": "desert",
+    "fact": "The Sahara stretches across northern Africa.",
+    "source": "https://whc.unesco.org/en/list/179/"
+  },
+  "GRAND_CANYON": {
+    "name": "Grand Canyon",
+    "region": "Arizona · United States",
+    "neighbors": [
+      "US"
+    ],
+    "color": "d89574",
+    "landmark_atlas": 0,
+    "art": 2,
+    "capital": [],
+    "aliases": "canyon Arizona Colorado America",
+    "stamp": "GCN",
+    "kind": "canyon",
+    "fact": "The Colorado River carved the Grand Canyon in Arizona.",
+    "source": "https://whc.unesco.org/en/list/75/"
+  },
+  "MACHU_PICCHU": {
+    "name": "Machu Picchu",
+    "region": "Andes · Peru",
+    "neighbors": [
+      "PE"
+    ],
+    "color": "8bb9a7",
+    "landmark_atlas": 0,
+    "art": 3,
+    "capital": [],
+    "aliases": "Inca ruins Andes Peru mountains",
+    "stamp": "MPC",
+    "kind": "landmark",
+    "fact": "Inca stone terraces sit among the mountains at Machu Picchu.",
+    "source": "https://whc.unesco.org/en/list/274/"
+  },
+  "PETRA": {
+    "name": "Petra",
+    "region": "Jordan",
+    "neighbors": [
+      "JO"
+    ],
+    "color": "d6ac89",
+    "landmark_atlas": 1,
+    "art": 0,
+    "capital": [],
+    "aliases": "Treasury Al Khazneh Jordan ruins desert",
+    "stamp": "PTR",
+    "kind": "landmark",
+    "fact": "Petra is known for buildings carved into sandstone cliffs.",
+    "source": "https://whc.unesco.org/en/list/326/"
+  },
+  "TAJ_MAHAL": {
+    "name": "Taj Mahal",
+    "region": "Agra · India",
+    "neighbors": [
+      "IN"
+    ],
+    "color": "e7c8bd",
+    "landmark_atlas": 1,
+    "art": 1,
+    "capital": [],
+    "aliases": "Agra India palace marble",
+    "stamp": "TAJ",
+    "kind": "landmark",
+    "fact": "The Taj Mahal is a marble mausoleum in Agra.",
+    "source": "https://whc.unesco.org/en/list/252/"
+  },
+  "ANGKOR_WAT": {
+    "name": "Angkor Wat",
+    "region": "Siem Reap · Cambodia",
+    "neighbors": [
+      "KH"
+    ],
+    "color": "8fb795",
+    "landmark_atlas": 1,
+    "art": 2,
+    "capital": [],
+    "aliases": "Khmer temple Cambodia jungle ruins",
+    "stamp": "ANG",
+    "kind": "landmark",
+    "fact": "Angkor Wat belongs to Cambodia’s Angkor temple complex.",
+    "source": "https://whc.unesco.org/en/list/668/"
+  },
+  "NORTHERN_LIGHTS": {
+    "name": "Northern Lights",
+    "region": "Iceland",
+    "neighbors": [
+      "IS"
+    ],
+    "color": "89c3c9",
+    "landmark_atlas": 1,
+    "art": 3,
+    "capital": [],
+    "aliases": "Aurora Borealis arctic polar Iceland snow",
+    "stamp": "AUR",
+    "kind": "natural wonder",
+    "fact": "Auroras can light up Iceland’s dark winter skies.",
+    "source": "https://www.visiticeland.com/the-northern-lights/"
+  },
+  "GREAT_BARRIER_REEF": {
+    "name": "Great Barrier Reef",
+    "region": "Queensland · Australia",
+    "neighbors": [
+      "AU"
+    ],
+    "color": "7ac6c8",
+    "landmark_atlas": 2,
+    "art": 0,
+    "capital": [],
+    "aliases": "coral reef ocean diving Queensland Australia",
+    "stamp": "GBR",
+    "kind": "natural wonder",
+    "fact": "The Great Barrier Reef lies off Australia’s northeastern coast.",
+    "source": "https://whc.unesco.org/en/list/154/"
+  },
+  "VICTORIA_FALLS": {
+    "name": "Victoria Falls",
+    "region": "Zambia · Zimbabwe",
+    "neighbors": [
+      "ZM",
+      "ZW"
+    ],
+    "color": "83bbba",
+    "landmark_atlas": 2,
+    "art": 1,
+    "capital": [],
+    "aliases": "Mosi oa Tunya waterfall Zambia Zimbabwe",
+    "stamp": "VIC",
+    "kind": "waterfall",
+    "fact": "Victoria Falls spans the Zambezi River between Zambia and Zimbabwe.",
+    "source": "https://whc.unesco.org/en/list/509/"
+  },
+  "SALAR_UYUNI": {
+    "name": "Salar de Uyuni",
+    "region": "Bolivia",
+    "neighbors": [
+      "BO"
+    ],
+    "color": "b3c1c8",
+    "landmark_atlas": 2,
+    "art": 2,
+    "capital": [],
+    "aliases": "salt flat mirror desert Bolivia Uyuni",
+    "stamp": "UYU",
+    "kind": "natural wonder",
+    "fact": "Salar de Uyuni is a vast salt-flat landscape in Bolivia.",
+    "source": "https://boliviatravel.gob.bo/salar-de-uyuni-y-lagunade-colores/"
+  },
+  "SERENGETI": {
+    "name": "Serengeti",
+    "region": "Tanzania",
+    "neighbors": [
+      "TZ"
+    ],
+    "color": "d2b37a",
+    "landmark_atlas": 2,
+    "art": 3,
+    "capital": [],
+    "aliases": "safari savanna grassland wildlife Tanzania Africa",
+    "stamp": "SRN",
+    "kind": "wildlife",
+    "fact": "The Serengeti is known for migrating herds across its plains.",
+    "source": "https://whc.unesco.org/en/list/156/"
+  },
+  "AMAZON": {
+    "name": "Amazon Rainforest",
+    "region": "South America",
+    "neighbors": [
+      "BR",
+      "PE",
+      "CO",
+      "BO",
+      "EC",
+      "VE",
+      "GY",
+      "SR"
+    ],
+    "color": "6cae98",
+    "landmark_atlas": 3,
+    "art": 0,
+    "capital": [],
+    "aliases": "rainforest jungle river Brazil Peru Colombia",
+    "stamp": "AMZ",
+    "kind": "rainforest",
+    "fact": "The Amazon basin contains tropical forests, rivers and abundant wildlife.",
+    "source": "https://whc.unesco.org/en/list/998/"
+  },
+  "VENICE": {
+    "name": "Venice Canals",
+    "region": "Venice · Italy",
+    "neighbors": [
+      "IT"
+    ],
+    "color": "b6a18f",
+    "landmark_atlas": 3,
+    "art": 1,
+    "capital": [],
+    "aliases": "Venice Venezia Grand Canal gondola Italy",
+    "stamp": "VEN",
+    "kind": "city",
+    "fact": "Venice is built on islands within a lagoon.",
+    "source": "https://whc.unesco.org/en/list/394/"
+  },
+  "STONEHENGE": {
+    "name": "Stonehenge",
+    "region": "Wiltshire · United Kingdom",
+    "neighbors": [
+      "GB"
+    ],
+    "color": "9aae90",
+    "landmark_atlas": 3,
+    "art": 2,
+    "capital": [],
+    "aliases": "England Britain UK ancient stones circle",
+    "stamp": "STN",
+    "kind": "landmark",
+    "fact": "Stonehenge is a prehistoric stone circle in southern England.",
+    "source": "https://whc.unesco.org/en/list/373/"
+  },
+  "SANTORINI": {
+    "name": "Santorini",
+    "region": "Cyclades · Greece",
+    "neighbors": [
+      "GR"
+    ],
+    "color": "82b2cf",
+    "landmark_atlas": 3,
+    "art": 3,
+    "capital": [],
+    "aliases": "Thera Oia Greece blue domes island volcano",
+    "stamp": "SAN",
+    "kind": "island",
+    "fact": "Santorini’s volcanic landscape includes a sea-filled caldera.",
+    "source": "https://www.visitgreece.gr/en/islands/cyclades/santorini"
+  }
+}

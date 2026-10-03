@@ -28,12 +28,17 @@ func begin(selected_mode: String, selected_difficulty: String, home: String, new
 		date = GameCatalog.today_utc()
 		seed_value = GameCatalog.daily_seed(date, difficulty)
 		fixed_route = RoutePlanner.standardized("FR", seed_value)
+	elif mode in ["special", "cinema"]:
+		var places := GameCatalog.PREMIUM_DESTINATIONS.keys() if mode == "special" else GameCatalog.CINEMA_DESTINATIONS.keys()
+		var start := maxi(0, places.find(home))
+		fixed_route.assign(places.slice(start) + places.slice(0, start))
 	elif mode == "challenge":
 		seed_value = int(challenge.seed)
 		difficulty = challenge.difficulty
 		fixed_route.assign(challenge.route)
 		target = int(challenge.target_score)
 	elif mode in ["world", "kids"]:
+		planner.include_territories = true
 		planner.start(home, seed_value)
 
 func current_country() -> String:
@@ -42,7 +47,7 @@ func current_country() -> String:
 	if not fixed_route.is_empty():
 		return fixed_route[country_index]
 	if mode == "infinite":
-		return GameCatalog.COUNTRIES.keys()[country_index % GameCatalog.COUNTRIES.size()]
+		return GameCatalog.FREE_DESTINATIONS.keys()[country_index % GameCatalog.FREE_DESTINATIONS.size()]
 	return ""
 
 func path_seed() -> int:

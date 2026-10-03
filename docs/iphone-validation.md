@@ -47,3 +47,9 @@ The newest exported/signed project is `/private/tmp/passport-native-animated`. I
 ### 197-destination native pass
 
 Latest project: `/private/tmp/passport-native-world/PassportRun.xcodeproj`. Export includes the shared JSON catalog, geography license/source, five original backdrop paintings and the sixteen-scene world atlas. Signed generic-iPhone build succeeded. Resource-pack loading verifies all 197 destination textures. The new country scenes and Dubai search/passport/sticker UI were captured at 390×844 (`artifacts/destination-*.png`, `29-dubai-search.png` through `31-dubai-sticker.png`). Physical-device install/performance acceptance remains pending.
+
+## Paid routes native continuation — 2026-10-02
+
+Latest exported project: `/private/tmp/passport-native-cinema/PassportRun.xcodeproj`; signed app: `/private/tmp/passport-native-cinema/build/Build/Products/Debug-iphoneos/PassportRun.app`. Generic-iPhone Xcode build succeeded with the pinned StoreKit 2 plugin linked. Exported resource-pack loading verifies 282 destination records, every backdrop, geography source and license. Free travel includes 250 countries/territories; Special Expeditions has 24 paid locations and Cinema Worlds eight under a separate product. Tests and screenshots are excluded from the native pack.
+
+Final desktop checks: 10,427 Godot assertions across eight suites, three Python report tests, backend typecheck and 155 backend tests. The 2,630 destination/payment assertions also passed rendered at 390×844. Real local HTTP smoke and 19 Godot/backend integration assertions passed. Live App Store products, purchase/restore/refund device acceptance, phone installation and FPS validation remain pending. The paired phone was previously locked; no new physical-device acceptance is claimed.

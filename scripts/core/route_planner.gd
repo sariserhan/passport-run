@@ -4,13 +4,14 @@ extends RefCounted
 # Land-border neighbors from the bundled geography snapshot; v1 preserves existing ranked routes.
 const REGIONAL_WEIGHT: int = 80
 const FLIGHT_INTERVAL: int = 3
+var include_territories := false
 var catalog_version := GameCatalog.CATALOG_VERSION
 var route_seed: int = 1
 var route: Array[String] = []
 var completed: Array[String] = []
 
 func start(home: String, seed_value: int) -> void:
-	assert(GameCatalog.COUNTRIES.has(home))
+	assert(catalog().has(home))
 	route_seed = seed_value
 	route.assign([home])
 	completed.clear()
@@ -50,6 +51,8 @@ func travel_to(id: String) -> bool:
 	return true
 
 func catalog() -> Dictionary:
+	if include_territories:
+		return GameCatalog.FREE_DESTINATIONS
 	return GameCatalog.LEGACY_COUNTRIES if catalog_version == 1 else GameCatalog.COUNTRIES
 
 static func standardized(home: String, seed_value: int, version: int = GameCatalog.CATALOG_VERSION) -> Array[String]:

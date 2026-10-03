@@ -3,3 +3,4 @@ Retrieved 2026-10-02; source countries.json SHA-256: 913e5d716f9dc6b59881ee23488
 Includes independent entries plus Palestine, Taiwan, Kosovo; 197 travel destinations.
 Country names, capitals, subregions, and filtered land-border neighbors are snapshot data.
 Dubai is offered under the United Arab Emirates; artwork is stylized regional scenery.
+The separate territories.json adapts 53 additional country/territory entries from the same snapshot under ODbL-1.0.

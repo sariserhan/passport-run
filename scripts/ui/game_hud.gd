@@ -209,7 +209,7 @@ func update_decision(remaining: float, total: float) -> void:
 
 func show_celebration() -> void:
 	phase_title.text = "You made it!"
-	phase_hint.text = "One more country for your passport."
+	phase_hint.text = "One more destination for your passport."
 	timer_label.text = "COUNTRY COMPLETE"
 	timer_bar.value = 1
 

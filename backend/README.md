@@ -59,3 +59,5 @@ Version-2 replay choices carry integer `decisionMs` in [0, 10000]. Verification 
 ### Expanded destination catalog
 
 Both backend and Godot read `resources/geography/destinations.json` (197 destinations). New manifests carry optional `catalogVersion: 2`; old persisted runs with no field keep the five-country catalog and original board keys. Daily challenge indexing includes catalogVersion, so new routes cannot inherit old saved five-country routes on the same date. New boards append `:c2`; retries preserve the issued catalog and route. A complete hard Daily is 3,940 selections, below the existing 4,096-event cap. Dataset provenance and license: [world destinations](../docs/destinations.md).
+
+Passport sync accepts all 282 destination IDs, including territories and both paid packs, as cosmetic discovery data. This does not grant native purchase ownership or competitive points. Ranked Daily route generation retains the immutable 197-country catalog. Special Expeditions and Cinema Worlds use local scores and separate StoreKit products; see [purchase setup](../docs/purchases.md).
