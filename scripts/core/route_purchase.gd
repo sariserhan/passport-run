@@ -42,7 +42,7 @@ func load_product() -> void:
 	# Native StoreKit reports only Apple-verified current entitlements. Never read a saved premium flag.
 	unlocked = info.get("is_purchased", false) == true
 	if product_id == AdService.PRODUCT_ID:
-		message = "Ads removed. Thank you for supporting Passport Run!" if unlocked else "One purchase removes the ad that plays after every few retries. Kids Mode never shows ads."
+		message = "Ads removed. Thank you for supporting Passport Run!" if unlocked else "One purchase removes every ad: the menu banner and the ad after every few retries."
 		return
 	message = ("Traveler pack unlocked." if unlocked else "Unlock all milestone travelers. World Champion requires completing the world tour.") if is_character_pack else ("Route pack unlocked." if unlocked else "One purchase unlocks every destination in this route.")
 

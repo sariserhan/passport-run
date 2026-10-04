@@ -35,6 +35,7 @@ var wardrobe_page := false
 var settings_page := false
 var remove_ads: RoutePurchase
 var ads: AdService
+var banner_padding := 0 # logical units reserved under the menu for the bottom banner
 var cinema_purchase: RoutePurchase
 var cinema_page := false
 var special_page := false
@@ -92,9 +93,14 @@ func setup(saved_profile: PlayerProfile, hud_style: GameHUD) -> void:
 	update_safe_area.call_deferred()
 
 func update_safe_area() -> void:
-	SafeAreaMargins.apply(safe_margin, root.size, Vector4i(28, 48, 28, 38))
+	SafeAreaMargins.apply(safe_margin, root.size, Vector4i(28, 48, 28, 38 + banner_padding))
 	# Landscape is too short for the key art; show the menu buttons on the first screen instead.
 	if is_instance_valid(hero): hero.visible = root.size.x <= root.size.y
+
+func set_banner_pixels(pixels: int) -> void:
+	var window_height := maxf(1, DisplayServer.window_get_size().y)
+	banner_padding = ceili(pixels * root.size.y / window_height)
+	update_safe_area()
 
 func clear(title: String, subtitle: String) -> void:
 	wardrobe_page = false

@@ -132,6 +132,7 @@ func _ready() -> void:
 	ads.remove_ads = remove_ads
 	add_child(ads)
 	menu.ads = ads
+	ads.banner_resized.connect(menu.set_banner_pixels)
 	var character_purchase := RoutePurchase.new("com.serhansari.passportrun.travelers")
 	add_child(character_purchase)
 	menu.character_purchase = character_purchase
@@ -442,6 +443,7 @@ func start_preview() -> void:
 	hud.update_preview(preview_remaining, config.preview_seconds)
 
 func _process(delta: float) -> void:
+	ads.set_menu_banner(menu.root.visible and not is_instance_valid(arcade))
 	link_poll += delta
 	if OS.get_name() == "iOS" and link_poll > 0.5:
 		link_poll = 0

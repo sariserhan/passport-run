@@ -10,18 +10,23 @@ const PRODUCT_ID := "com.serhansari.passportrun.remove_ads"
 # Google's public test unit until the real AdMob unit goes in this project setting.
 const UNIT_SETTING := "passport_run/ads/interstitial_ios"
 const TEST_UNIT := "ca-app-pub-3940256099942544/4411468910"
+const BANNER_SETTING := "passport_run/ads/banner_ios"
+const TEST_BANNER := "ca-app-pub-3940256099942544/2435281174" # Google's adaptive-banner test unit
 
 signal finished
+signal banner_resized(pixels: int) # 0 when hidden; the menu pads its bottom by this
 var remove_ads: RoutePurchase
 var failures := 0
 var showing := false
 var last_due := false # whether the latest failure was due an ad (testable off-device)
 var bridge: RefCounted
+var banner_wanted := false
 
 func _ready() -> void:
 	if OS.get_name() != "iOS": return
 	bridge = load("res://scripts/core/admob_bridge.gd").new()
 	bridge.closed.connect(func(): showing = false; finished.emit())
+	bridge.banner_resized.connect(func(pixels: int): banner_resized.emit(pixels))
 	bridge.begin()
 
 # Returns true when an ad is now covering the screen; `finished` fires when it closes.
@@ -34,6 +39,16 @@ func note_failure(mode: String) -> bool:
 	showing = true
 	bridge.show()
 	return true
+
+# Banners belong on menu screens only: never during play, results or Kids Mode, and
+# never after Remove Ads. The caller passes whether a menu screen is showing.
+func set_menu_banner(menu_showing: bool) -> void:
+	var wanted := menu_showing and not (remove_ads and remove_ads.unlocked)
+	if wanted == banner_wanted: return
+	banner_wanted = wanted
+	if bridge:
+		if wanted: bridge.show_banner()
+		else: bridge.hide_banner()
 
 func privacy_options_required() -> bool:
 	return bridge != null and bridge.privacy_options_required()

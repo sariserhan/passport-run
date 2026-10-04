@@ -37,7 +37,18 @@ func run() -> void:
 		game.show_failure()
 		await process_frame
 	expect(game.ads.failures == 4 and game.ads.last_due, "The memory-game failure screen counts toward the every-4th ad")
+	await process_frame
+	expect(not game.ads.banner_wanted, "No banner during play or on the results screen")
 	game.return_to_menu()
+	await process_frame
+	expect(game.ads.banner_wanted, "Menu screens show the bottom banner")
+	game.menu.set_banner_pixels(150)
+	expect(game.menu.banner_padding > 0 and game.menu.safe_margin.get_theme_constant("margin_bottom") >= 38 + game.menu.banner_padding, "The menu leaves room for the banner")
+	game.menu.set_banner_pixels(0)
+	game.remove_ads.unlocked = true
+	await process_frame
+	expect(not game.ads.banner_wanted, "Remove Ads hides the menu banner")
+	game.remove_ads.unlocked = false
 	for physical in [Vector2i(844,390), Vector2i(667,375), Vector2i(390,844)]:
 		root.size = physical
 		await settle()

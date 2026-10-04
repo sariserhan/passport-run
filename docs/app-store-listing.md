@@ -48,7 +48,7 @@ EXTRA DESTINATIONS (optional purchases)
 • Special Expeditions: famous landmarks plus fantasy worlds like the Moon and Mars
 • Cinema Worlds: eight original movie-inspired destinations
 • Traveler Pack: extra animal, space and fantasy travelers
-• Remove Ads: turns off the ad that plays after every few retries
+• Remove Ads: turns off the menu banner and the ads between retries
 Each pack is a one-time purchase and unlocks only its own content.
 
 Play. Travel. Remember. Have fun.
