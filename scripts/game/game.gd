@@ -36,6 +36,8 @@ var parcel: SouvenirParcel
 var passport_stamp: PassportStamp
 var purchase: RoutePurchase
 var cinema_purchase: RoutePurchase
+var remove_ads: RoutePurchase
+var ads: AdService
 var cinema_start := "HOBBIT_VILLAGE"
 var trip_id := "europe"
 var jump_streak := 0
@@ -122,6 +124,14 @@ func _ready() -> void:
 			return_to_menu()
 			menu.show_cinema_route()
 	)
+	remove_ads = RoutePurchase.new(AdService.PRODUCT_ID)
+	add_child(remove_ads)
+	menu.remove_ads = remove_ads
+	remove_ads.changed.connect(func(): if menu.root.visible and menu.settings_page: menu.show_settings())
+	ads = AdService.new()
+	ads.remove_ads = remove_ads
+	add_child(ads)
+	menu.ads = ads
 	var character_purchase := RoutePurchase.new("com.serhansari.passportrun.travelers")
 	add_child(character_purchase)
 	menu.character_purchase = character_purchase
@@ -699,6 +709,7 @@ func show_failure() -> void:
 		actions.append({"text": "NEXT PLAYER", "callback": func(): switch_player_slot((player_slot + 1) % menu.player_count); TravelExtrasUI.new(menu).show("multiplayer")})
 	actions.append({"text": "MAIN MENU", "callback": return_to_menu})
 	hud.show_journey_result("Great try!", body, actions)
+	ads.note_failure(session.mode) # natural break: results are already on screen
 
 func celebrate() -> void:
 	if session.current_country() not in failed_countries:
@@ -1062,6 +1073,7 @@ func start_arcade(kind: String, destination: String = "") -> void:
 		arcade.route.assign(GameCatalog.PREMIUM_DESTINATIONS.keys() if kind == "special" else GameCatalog.CINEMA_DESTINATIONS.keys())
 		arcade.country_index = RoutePlanner.next_uncleared(arcade.route, profile.discoveries)
 	arcade.exited.connect(return_to_menu)
+	arcade.round_failed.connect(func(): ads.note_failure("arcade"))
 	layer.add_child(arcade)
 
 func close_arcade() -> void:

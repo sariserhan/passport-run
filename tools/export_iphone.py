@@ -30,4 +30,6 @@ if __name__ == '__main__':
     output = args.directory.resolve()
     output.mkdir(parents=True, exist_ok=True)
     subprocess.run([os.environ.get('GODOT_BIN', '/Applications/Godot.app/Contents/MacOS/Godot'), '--headless', '--path', str(ROOT), '--export-release' if args.release else '--export-debug', 'iPhone', str(output / 'PassportRun.zip')], check=True)
+    if (output / 'admob_spm').is_dir():  # Google Mobile Ads via Swift Package Manager
+        subprocess.run([os.environ.get('GODOT_BIN', '/Applications/Godot.app/Contents/MacOS/Godot'), '--headless', '--path', str(ROOT), '--script', 'tools/patch_admob_spm.gd', '--', str(output / 'PassportRun.xcodeproj/project.pbxproj')], check=True)
     patch_project(output)

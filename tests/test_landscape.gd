@@ -32,6 +32,12 @@ func run() -> void:
 	game.profile.home_country = "AF"
 	game.profile.settings.music = 0.0
 	game.audio.apply_settings(game.profile.settings)
+	game.start_game("world", "easy")
+	for attempt in 4:
+		game.show_failure()
+		await process_frame
+	expect(game.ads.failures == 4 and game.ads.last_due, "The memory-game failure screen counts toward the every-4th ad")
+	game.return_to_menu()
 	for physical in [Vector2i(844,390), Vector2i(667,375), Vector2i(390,844)]:
 		root.size = physical
 		await settle()

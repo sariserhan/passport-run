@@ -1,6 +1,6 @@
 # App Store listing draft
 
-Paste-ready fields for App Store Connect. Character limits are Apple's; counts were checked when this was written. Everything here describes the current offline build: no online leaderboards, ads or accounts. Do not add memory-health or medical claims (spec §2).
+Paste-ready fields for App Store Connect. Character limits are Apple's; counts were checked when this was written. Everything here describes the current build: offline play with no online leaderboards or accounts, and non-personalized AdMob ads with a Remove Ads purchase. Do not add memory-health or medical claims (spec §2).
 
 ## Name (30 max)
 
@@ -42,12 +42,13 @@ BALLOON TOUR ARCADE
 FOR THE WHOLE FAMILY
 • Kids Mode with simpler paths, a friendly robot and country facts
 • Reduced motion, high contrast, larger controls and adjustable text size
-• Plays fully offline: no account and no ads
+• Plays offline with no account. Kids Mode never shows ads
 
 EXTRA DESTINATIONS (optional purchases)
 • Special Expeditions: famous landmarks plus fantasy worlds like the Moon and Mars
 • Cinema Worlds: eight original movie-inspired destinations
 • Traveler Pack: extra animal, space and fantasy travelers
+• Remove Ads: turns off the ad that plays after every few retries
 Each pack is a one-time purchase and unlocks only its own content.
 
 Play. Travel. Remember. Have fun.
@@ -58,11 +59,11 @@ Play. Travel. Remember. Have fun.
 | --- | --- |
 | Primary category | Games › Puzzle |
 | Secondary category | Games › Family |
-| Age rating | 4+ (no violence, no user-generated content shared online, no web access) |
-| Kids Category | Optional. Purchases and every share sheet now sit behind `ParentGate`, a typed multiplication question asked each time. Apple's Kids Category also requires no third-party analytics or ads, which the game already meets. If you opt in, choose the 6–8 or 9–11 band. |
-| App Privacy | Data Not Collected. Event logs and the performance log stay on the device; the backend URL is empty, so nothing is sent. Re-answer this if online play is ever turned on. |
+| Age rating | Answer "Advertising: Yes". Cartoon blasters and rockets pop balloons; no character is harmed. Expect 4+ or 9+ depending on the weapons answer. |
+| Kids Category | Do not opt in. Apple restricts third-party ads in Kids Category apps. Kids Mode itself still never shows ads. |
+| App Privacy | Follow Google's [AdMob data disclosure](https://developers.google.com/admob/ios/privacy/data-disclosure): Coarse Location, Device ID, Product Interaction, Advertising Data, Crash and Performance Data, collected by Google for Third-Party Advertising and Analytics, not linked to identity. **Tracking: No** (no tracking prompt; ads are non-personalized). |
 | Encryption | Already declared: `ITSAppUsesNonExemptEncryption = false` in the exported Info.plist. |
-| In-app purchases | Three non-consumables: `com.serhansari.passportrun.special_routes`, `com.serhansari.passportrun.cinema_worlds` and `com.serhansari.passportrun.travelers` (Traveler Pack). See [purchases](purchases.md). |
+| In-app purchases | Four non-consumables: `com.serhansari.passportrun.special_routes`, `com.serhansari.passportrun.cinema_worlds`, `com.serhansari.passportrun.travelers` (Traveler Pack) and `com.serhansari.passportrun.remove_ads` (Remove Ads, $4.99). See [purchases](purchases.md). |
 | Support URL | https://sariserhan.github.io/passport-run/support.html |
 | Privacy policy URL | https://sariserhan.github.io/passport-run/privacy.html |
 | Version | 0.1.0, set in `export_presets.cfg`. `tools/release_iphone.sh` stamps a UTC build number. |

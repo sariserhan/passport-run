@@ -122,6 +122,23 @@ func check_parent_gate() -> void:
 	await settle()
 	expect(root.find_children("*", "ParentGate", false, false).is_empty(), "Parent gate closes after answering")
 
+func check_ad_rule() -> void:
+	var ads := AdService.new()
+	var due: Array = []
+	for attempt in 8:
+		ads.note_failure("world")
+		due.append(ads.last_due)
+	expect(due == [false, false, false, true, false, false, false, true], "An ad is due on every 4th failure: " + str(due))
+	for mode in ["kids", "tutorial", "kids", "kids"]:
+		ads.note_failure(mode)
+		expect(not ads.last_due, "Kids Mode and the tutorial never count toward ads")
+	ads.remove_ads = RoutePurchase.new(AdService.PRODUCT_ID)
+	ads.remove_ads.unlocked = true
+	for attempt in 4: ads.note_failure("arcade")
+	expect(not ads.last_due and ads.failures == 8, "Remove Ads stops forced ads")
+	ads.remove_ads.free()
+	ads.free()
+
 func run_tests() -> void:
 	var defaults := Vector4i(24, 24, 24, 26)
 	var insets := SafeAreaMargins.calculate(Vector2(390, 844), Vector2i(1170, 2532), Rect2i(0, 177, 1170, 2253), defaults)
@@ -140,6 +157,7 @@ func run_tests() -> void:
 	await check_touch_scroll(menu)
 	await check_backdrop_lifetime()
 	await check_parent_gate()
+	check_ad_rule()
 	menu.root.hide()
 	await check_globe_swipe()
 	for viewport_size in [Vector2i(480, 900), Vector2i(390, 844), Vector2i(375, 667), Vector2i(320, 568)]:

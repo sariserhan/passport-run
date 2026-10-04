@@ -11,18 +11,15 @@ config_version=5
 [application]
 
 config/name="Passport Run"
-config/icon="res://assets/branding/app-icon.png"
-config/macos_native_icon="res://assets/branding/PassportRun.icns"
-boot_splash/bg_color=Color(0.016, 0.09, 0.18, 1)
-boot_splash/image="res://assets/branding/splash-screen.png"
-boot_splash/show_image=true
-boot_splash/fullsize=true
-boot_splash/use_filter=true
-config/version="0.1.0"
 config/description="Remember the path. Travel the world."
+config/version="0.1.0"
 run/main_scene="res://scenes/game.tscn"
 config/quit_on_go_back=false
 config/features=PackedStringArray("4.5", "GL Compatibility")
+boot_splash/bg_color=Color(0.016, 0.09, 0.18, 1)
+boot_splash/image="res://assets/branding/splash-screen.png"
+config/icon="res://assets/branding/app-icon.png"
+config/macos_native_icon="res://assets/branding/PassportRun.icns"
 
 [debug]
 
@@ -38,10 +35,14 @@ window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 window/handheld/orientation=6
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/admob/plugin.cfg")
+
 [rendering]
 
-textures/vram_compression/import_etc2_astc=true
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+textures/vram_compression/import_etc2_astc=true
 anti_aliasing/quality/msaa_3d=1
 environment/defaults/default_clear_color=Color(0.34, 0.73, 0.88, 1)

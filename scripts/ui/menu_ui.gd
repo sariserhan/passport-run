@@ -32,6 +32,9 @@ var revision := 0
 var purchase: RoutePurchase
 var character_purchase: RoutePurchase
 var wardrobe_page := false
+var settings_page := false
+var remove_ads: RoutePurchase
+var ads: AdService
 var cinema_purchase: RoutePurchase
 var cinema_page := false
 var special_page := false
@@ -95,6 +98,7 @@ func update_safe_area() -> void:
 
 func clear(title: String, subtitle: String) -> void:
 	wardrobe_page = false
+	settings_page = false
 	revision += 1
 	special_page = false
 	cinema_page = false
@@ -368,6 +372,7 @@ func show_records() -> void:
 
 func show_settings() -> void:
 	clear("Settings", "Make the journey comfortable for you.")
+	settings_page = true
 	for key in ["music", "sound"]:
 		copy("Music volume" if key == "music" else "Sound effects volume", 21)
 		var slider := HSlider.new()
@@ -387,7 +392,16 @@ func show_settings() -> void:
 		toggle.button_pressed = profile.settings[setting]
 		toggle.toggled.connect(func(value: bool): profile.settings[setting] = value; profile.save(); settings_changed.emit())
 		content.add_child(toggle)
-	copy("Progress and a bounded gameplay log stay on this device. Online modes connect only when configured. No chat, advertisements, or remote analytics are active.", 15)
+	if remove_ads:
+		copy("Remove ads", 21)
+		copy(remove_ads.message, 15)
+		if not remove_ads.unlocked:
+			var buy := action("REMOVE ADS · " + remove_ads.price if not remove_ads.price.is_empty() else "REMOVE ADS UNAVAILABLE", true, func(): if await ParentGate.ask(self): remove_ads.purchase())
+			buy.disabled = remove_ads.busy or remove_ads.price.is_empty()
+			action("RESTORE PURCHASE", false, remove_ads.restore).disabled = remove_ads.store == null
+	if ads and ads.privacy_options_required():
+		action("AD PRIVACY CHOICES", false, ads.show_privacy_options)
+	copy("Progress and a bounded gameplay log stay on this device. Ads are non-personalized and never appear in Kids Mode. No chat or remote analytics.", 15)
 	if not OS.has_feature("mobile"):
 		action("OPEN USER DATA FOLDER", false, func(): OS.shell_open(ProjectSettings.globalize_path("user://")))
 	copy("Starting country: " + GameCatalog.country_name(profile.home_country) + " · permanent" if profile.home_country in GameCatalog.FREE_DESTINATIONS else "Choose your starting country when you begin your first tour.", 15)

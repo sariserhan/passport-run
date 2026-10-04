@@ -2,6 +2,7 @@ class_name BalloonArcade
 extends Control
 
 signal exited
+signal round_failed # GAME OVER panel is up: a natural break for an ad
 const WORLD := Vector2(720, 600)
 var floor_y := 570.0
 var world_height := 600.0
@@ -1082,7 +1083,9 @@ func simulate(delta: float) -> void:
  if phase == Phase.FAILED and death_time > 0:
   death_time = maxf(0, death_time - delta)
   queue_redraw()
-  if death_time == 0: show_panel("GAME OVER · %d pts\n%s" % [score, death_reason], "RETRY ROUND", retry_round)
+  if death_time == 0:
+   show_panel("GAME OVER · %d pts\n%s" % [score, death_reason], "RETRY ROUND", retry_round)
+   round_failed.emit()
   return
  if phase != Phase.PLAY: return
  tick_timers(delta)
