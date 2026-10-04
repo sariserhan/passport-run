@@ -159,6 +159,12 @@ func run_tests() -> void:
 	menu.show_main()
 	await settle()
 	expect(menu.safe_margin.get_theme_constant("margin_top") == 48, "Menu padding initialized without requiring a resize")
+	for phone in [Vector2i(390, 844), Vector2i(375, 667)]:
+		root.size = phone
+		await settle()
+		menu.show_main()
+		await settle()
+		expect(menu.content.get_combined_minimum_size().y <= menu.scroll.size.y, "The whole main menu fits on one screen without scrolling: " + str(phone))
 	await check_touch_scroll(menu)
 	await check_backdrop_lifetime()
 	await check_parent_gate()

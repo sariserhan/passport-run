@@ -3,7 +3,7 @@ extends SceneTree
 # Opens every menu/activity/journey screen at phone sizes, reports controls that spill
 # past the screen edge, and (rendered runs) saves artifacts/screens/<size>-<screen>.png.
 const SIZES := [Vector2i(375, 667), Vector2i(390, 844), Vector2i(844, 390)]
-const MENU := ["show_main", "show_countries", "show_passport", "show_world_map", "show_stickers", "show_records", "show_settings", "show_challenge", "show_special_route", "show_cinema_route", "show_trips", "show_goals", "show_missions", "show_souvenirs", "show_adventures", "show_wardrobe", "show_room", "show_character_quests", "show_album", "show_arcade", "show_arcade_practice", "show_arcade_achievements", "show_arcade_daily_goals", "show_arcade_drop_journal", "show_arcade_mastery", "show_buddies", "show_journal", "show_regions", "show_rare_challenges", "show_replay"]
+const MENU := ["show_main", "show_play_hub", "show_collection_hub", "show_extras_hub", "show_countries", "show_passport", "show_world_map", "show_stickers", "show_records", "show_settings", "show_challenge", "show_special_route", "show_cinema_route", "show_trips", "show_goals", "show_missions", "show_souvenirs", "show_adventures", "show_wardrobe", "show_room", "show_character_quests", "show_album", "show_arcade", "show_arcade_practice", "show_arcade_achievements", "show_arcade_daily_goals", "show_arcade_drop_journal", "show_arcade_mastery", "show_buddies", "show_journal", "show_regions", "show_rare_challenges", "show_replay"]
 const ACTIVITIES := ["hub", "arrival", "souvenirs", "quests", "scrapbook", "weekly", "passport", "mastery", "hunt", "bingo", "lounge", "timeline", "weather", "knowledge", "celebrations", "checklist"]
 
 var problems: Array[String] = []

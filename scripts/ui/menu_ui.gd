@@ -103,8 +103,8 @@ func setup(saved_profile: PlayerProfile, hud_style: GameHUD) -> void:
 
 func update_safe_area() -> void:
 	SafeAreaMargins.apply(safe_margin, root.size, Vector4i(28, 48, 28, 38 + banner_padding))
-	# Landscape is too short for the key art; show the menu buttons on the first screen instead.
-	if is_instance_valid(hero): hero.visible = root.size.x <= root.size.y
+	# Landscape and short phones (iPhone SE) are too short for the key art; buttons come first.
+	if is_instance_valid(hero): hero.visible = root.size.x <= root.size.y and root.size.y >= 950 # short phones keep every button on one screen
 
 func set_banner_pixels(pixels: int) -> void:
 	var window_height := maxf(1, DisplayServer.window_get_size().y)
@@ -162,11 +162,12 @@ func show_main() -> void:
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.add_theme_font_size_override("font_size", 48)
 	title.add_theme_color_override("font_color", Color("ffda65"))
+	if root.size.y < 950: title.text = "PASSPORT RUN" # one line on short phones
 	hero = TextureRect.new()
 	hero.texture = preload("res://assets/realistic/menu.png")
 	hero.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	hero.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-	hero.custom_minimum_size.y = 210
+	hero.custom_minimum_size.y = 150
 	hero.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	content.add_child(hero)
 	update_safe_area()
@@ -187,38 +188,38 @@ func show_main() -> void:
 	content.add_child(difficulty_picker)
 	if not profile.tutorial_done:
 		action("LEARN THE PATH", true, func(): start_requested.emit("tutorial", "easy"))
+	# Main screen keeps only the core journey; everything else lives in three hubs.
+	mode_button("world", "WORLD TOUR")
+	action("BALLOON TOUR · ARCADE", true, show_arcade)
+	action("MORE WAYS TO PLAY", false, show_play_hub)
+	action("MY PASSPORT & COLLECTION", false, show_collection_hub)
+	action("JOURNEYS & WORKSHOP", false, show_extras_hub)
+	action("SETTINGS", false, show_settings)
+	if not profile.last_error.is_empty():
+		copy(profile.last_error)
+
+func mode_button(mode: String, title: String) -> void:
+	var label := title
+	if mode in ["world", "kids"] and profile.home_country in profile.discoveries and not profile.world_champion(): label = "CONTINUE " + label
+	mode_buttons[mode] = action(label, mode == "world", func(): request_mode(mode))
+	if mode == "world" and label.begins_with("CONTINUE"):
+		var route := profile.tour_route()
+		if not route.is_empty(): copy("Next stop: " + GameCatalog.country_name(route[RoutePlanner.next_uncleared(route, profile.discoveries)]), 17)
+	if mode == "daily" and not profile.can_visit_route(GameCatalog.COUNTRIES.keys()):
+		mode_buttons[mode].text = "? · DAILY WORLD TOUR · REACH ITS STOPS FIRST"
+		mode_buttons[mode].disabled = true
+
+func show_play_hub() -> void:
+	clear("More ways to play", "Short trips, special mechanics, endless paths and paid routes.")
 	action("SHORT ADVENTURES · 3 COUNTRIES", true, show_trips)
 	action("ADVENTURE PLAY · SPECIAL MECHANICS", false, show_adventures)
-	action("BALLOON TOUR · ARCADE", true, show_arcade)
-	for item in [["world", "WORLD TOUR"], ["infinite", "INFINITE MEMORY"], ["daily", "DAILY WORLD TOUR"], ["kids", "KIDS ADVENTURE"]]:
-		var mode: String = item[0]
-		var label: String = item[1]
-		if mode in ["world", "kids"] and profile.home_country in profile.discoveries and not profile.world_champion(): label = "CONTINUE " + label
-		mode_buttons[mode] = action(label, mode == "world", func(): request_mode(mode))
-		if mode == "world" and label.begins_with("CONTINUE"):
-			var route := profile.tour_route()
-			if not route.is_empty(): copy("Next stop: " + GameCatalog.country_name(route[RoutePlanner.next_uncleared(route, profile.discoveries)]), 17)
-		if mode == "daily" and not profile.can_visit_route(GameCatalog.COUNTRIES.keys()):
-			mode_buttons[mode].text = "? · DAILY WORLD TOUR · REACH ITS STOPS FIRST"
-			mode_buttons[mode].disabled = true
-	action("NEW JOURNEYS & WORKSHOP", false, func(): TravelExtrasUI.new(self).show("hub"))
-	action("MORE ADVENTURES & CREATIVE TOOLS", false, func(): TravelActivityUI.new(self).show("hub"))
-	action("DEPARTURE LOUNGE", false, func(): TravelActivityUI.new(self).show("lounge"))
-	action("COLLECTION GOALS", false, show_goals)
-	action("MY TRAVEL ROOM", false, show_room)
-	action("MY TRAVEL ALBUM", false, show_album)
-	action("TRAVEL BUDDIES", false, show_buddies)
-	action("TODAY’S TRAVEL JOURNAL", false, show_journal)
-	if profile.world_champion(): action("WORLD CHAMPION · RELIVE YOUR JOURNEY", false, show_champion)
-	action("REGIONAL TROPHIES", false, show_regions)
-	action("RARE KEEPSAKE CHALLENGES", false, show_rare_challenges)
-	action("REPLAY MY JOURNEY", false, show_replay)
-	action("CHARACTER QUESTS", false, show_character_quests)
-	action("EXPLORER WARDROBE", false, show_wardrobe)
-	action("DAILY TRAVEL MISSIONS", false, show_missions)
-	action("CINEMA WORLDS · SEPARATE PAID ROUTE", false, show_cinema_route)
-	action("SPECIAL EXPEDITIONS · PAID ROUTE", false, show_special_route)
+	mode_button("infinite", "INFINITE MEMORY")
+	mode_button("daily", "DAILY WORLD TOUR")
 	copy("Daily: same UTC date + difficulty = same route. Scores are local until online rankings are connected.", 15)
+	mode_button("kids", "KIDS ADVENTURE")
+	action("PLAY A CHALLENGE CODE", false, show_challenge)
+	action("SPECIAL EXPEDITIONS · PAID ROUTE", false, show_special_route)
+	action("CINEMA WORLDS · SEPARATE PAID ROUTE", false, show_cinema_route)
 	if online_available:
 		copy("Online play uses an anonymous account and syncs your passport.", 15)
 		var daily_online := action("ONLINE DAILY", false, func(): start_requested.emit("online_daily", profile.difficulty))
@@ -226,13 +227,33 @@ func show_main() -> void:
 		if daily_online.disabled: daily_online.text = "? · ONLINE DAILY · REACH ITS STOPS FIRST"
 		action("ONLINE INFINITE", false, func(): start_requested.emit("online_infinite", profile.difficulty))
 		action("ONLINE RANKINGS", false, func(): online_records_requested.emit())
+	action("BACK", true, show_main)
+
+func show_collection_hub() -> void:
+	clear("My passport & collection", "Everything you've earned on your travels.")
+	action("MY PASSPORT", true, show_passport)
 	action("WORLD MAP", false, show_world_map)
-	action("MY PASSPORT", false, show_passport)
+	action("MY TRAVEL ALBUM", false, show_album)
+	action("MY TRAVEL ROOM", false, show_room)
+	action("EXPLORER WARDROBE", false, show_wardrobe)
+	action("TRAVEL BUDDIES", false, show_buddies)
+	action("DAILY TRAVEL MISSIONS", false, show_missions)
+	action("COLLECTION GOALS", false, show_goals)
+	action("REGIONAL TROPHIES", false, show_regions)
+	action("CHARACTER QUESTS", false, show_character_quests)
+	action("RARE KEEPSAKE CHALLENGES", false, show_rare_challenges)
+	action("TODAY’S TRAVEL JOURNAL", false, show_journal)
+	action("REPLAY MY JOURNEY", false, show_replay)
+	if profile.world_champion(): action("WORLD CHAMPION · RELIVE YOUR JOURNEY", false, show_champion)
 	action("LOCAL RECORDS", false, show_records)
-	action("PLAY A CHALLENGE CODE", false, show_challenge)
-	action("SETTINGS", false, show_settings)
-	if not profile.last_error.is_empty():
-		copy(profile.last_error)
+	action("BACK", true, show_main)
+
+func show_extras_hub() -> void:
+	clear("Journeys & workshop", "City stops, crafting, creative tools and more.")
+	action("NEW JOURNEYS & WORKSHOP", true, func(): TravelExtrasUI.new(self).show("hub"))
+	action("MORE ADVENTURES & CREATIVE TOOLS", false, func(): TravelActivityUI.new(self).show("hub"))
+	action("DEPARTURE LOUNGE", false, func(): TravelActivityUI.new(self).show("lounge"))
+	action("BACK", true, show_main)
 
 func request_mode(mode: String) -> void:
 	if mode in ["world", "kids"] and profile.home_country not in GameCatalog.FREE_DESTINATIONS:
