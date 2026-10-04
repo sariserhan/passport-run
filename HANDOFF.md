@@ -80,6 +80,14 @@ Relevant artifacts: `artifacts/batch-*.png`, `artifacts/extras-*.png`, `artifact
 - `tools/capture_screens.gd` sweeps 62 screens at three phone sizes; `tools/capture_store.gd` makes 6.9-inch App Store screenshots; `docs/app-store-listing.md` has the listing text.
 - `tools/release_iphone.sh` builds a distribution-signed App Store IPA locally, and uploads to TestFlight once `ASC_KEY_ID`, `ASC_ISSUER_ID` and `ASC_KEY_PATH` are set. Still needed: the issuer ID, the App Store Connect app record, the purchase products, and support/privacy URLs.
 
+## Ads, App Store Connect and TestFlight (2026-10-04)
+
+- Ads: vendored Poing AdMob plugin v5.1.0 (`addons/admob`, iOS "ads" lib only). `AdService` shows a forced interstitial on every 4th failure (memory results screen and arcade GAME OVER), never in Kids Mode or the tutorial, and never mid-run. Requests are non-personalized with no ATT prompt; Google UMP consent runs first. Plugin calls live in `admob_bridge.gd`, loaded only on iOS, because the plugin's desktop mocks leak at exit. `tools/export_iphone.py` runs the plugin's SPM pbxproj patch, which headless export skips. **Still uses Google's test App ID and unit**: set `admob/general/ios/app_id` and `passport_run/ads/interstitial_ios` once the AdMob account exists.
+- Remove Ads: `com.serhansari.passportrun.remove_ads` ($4.99), in Settings behind ParentGate.
+- App Store Connect app `6819080280` (bundle ID renamed "Passport Run"). Done through the API: subtitle, privacy URL, description, keywords, promo text, support and marketing URLs, copyright, categories (Games: Puzzle and Family), five 6.9-inch screenshots, and four non-consumable IAPs with localization, availability and review screenshots (only Remove Ads is priced). Blocked by permission checks, so left for the user: age-rating questionnaire (Advertising = Yes), app price (Free) and availability, IAP prices for the three packs, App Privacy label, content-rights declaration, review contact details.
+- TestFlight: builds 202610042039 (0.1.0) and 202610042109 (1.0, ads) uploaded with key `B64B7LA698` and issuer `98986775-96ac-42d1-bf30-abc0f3ba7135` via `tools/release_iphone.sh`.
+- Overflow fixes: OptionButtons no longer widen to their longest item, which made the travel room 497 units wide on a 480-unit portrait screen. Captures must use the 480-unit logical base.
+
 ## What remains
 
 1. **Done (install/launch only):** full `tools/check.sh` passed with zero failures at `4bd13f0`. That build was exported, development-signed and installed on the iPhone 14 Pro (`00008120-001E28663CE3C01E`) at `/private/tmp/passport-native-device`. It launched and kept running; it wrote the GLES3 shader cache to `Documents`. The app was not previously installed, so no save was overwritten. This is not gameplay acceptance; items 2–5 still need a person holding the phone.
