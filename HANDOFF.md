@@ -77,7 +77,7 @@ Relevant artifacts: `artifacts/batch-*.png`, `artifacts/extras-*.png`, `artifact
 - `project.godot` enables file logging, so device errors land in `Documents/logs/godot.log`. One harmless engine startup error ("Mouse is not supported") appears on iOS.
 - 138 opaque photo textures import as lossy WebP 0.8: the data pack went from 198 MB to 44 MB, and a release IPA is 78 MB. Alpha sprite sheets stay lossless.
 - Backdrop cache fix: drawers hold their texture, because the 8-entry cache could free an on-screen card's image (white card).
-- `tools/capture_screens.gd` sweeps 62 screens at three phone sizes; `tools/capture_store.gd` makes 6.9-inch App Store screenshots; `docs/app-store-listing.md` has the listing text.
+- `tools/capture_screens.gd` sweeps 62 screens at three phone sizes; `tools/capture_store.gd` makes 6.9-inch App Store screenshots; `docs/app-store-listing.md` has the listing text. The website is noout.app/passport-run (noout repo, `website/passport-run/`); App Store Connect privacy, support and marketing URLs point there.
 - `tools/release_iphone.sh` builds a distribution-signed App Store IPA locally, and uploads to TestFlight once `ASC_KEY_ID`, `ASC_ISSUER_ID` and `ASC_KEY_PATH` are set. Still needed: the issuer ID, the App Store Connect app record, the purchase products, and support/privacy URLs.
 
 ## Ads, App Store Connect and TestFlight (2026-10-04)

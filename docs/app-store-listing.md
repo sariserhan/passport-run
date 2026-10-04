@@ -64,11 +64,12 @@ Play. Travel. Remember. Have fun.
 | App Privacy | Follow Google's [AdMob data disclosure](https://developers.google.com/admob/ios/privacy/data-disclosure): Coarse Location, Device ID, Product Interaction, Advertising Data, Crash and Performance Data, collected by Google for Third-Party Advertising and Analytics, not linked to identity. **Tracking: No** (no tracking prompt; ads are non-personalized). |
 | Encryption | Already declared: `ITSAppUsesNonExemptEncryption = false` in the exported Info.plist. |
 | In-app purchases | Four non-consumables: `com.serhansari.passportrun.special_routes`, `com.serhansari.passportrun.cinema_worlds`, `com.serhansari.passportrun.travelers` (Traveler Pack) and `com.serhansari.passportrun.remove_ads` (Remove Ads, $4.99). See [purchases](purchases.md). |
-| Support URL | https://sariserhan.github.io/passport-run/support.html |
-| Privacy policy URL | https://sariserhan.github.io/passport-run/privacy.html |
+| Support URL | https://noout.app/passport-run/support |
+| Privacy policy URL | https://noout.app/passport-run/privacy |
+| Marketing URL | https://noout.app/passport-run/ |
 | Version | 0.1.0, set in `export_presets.cfg`. `tools/release_iphone.sh` stamps a UTC build number. |
 
-Pages source: `site/` on `main`, published from the `gh-pages` branch. Contact goes through GitHub Issues; replace it with an email address if you prefer.
+The website lives in the `noout` repo under `website/passport-run/` (home, tour, guides, FAQ, pricing, privacy, terms, support) and deploys with noout.app. `site/` here only redirects the old GitHub Pages URLs there.
 
 ## Screenshots
 
