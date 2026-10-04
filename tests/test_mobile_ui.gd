@@ -58,6 +58,9 @@ func check_touch_scroll(menu: MenuUI) -> void:
 	await settle()
 	var sliders := menu.content.find_children("*", "HSlider", true, false)
 	expect(not sliders.is_empty() and sliders.all(func(slider): return slider.mouse_filter == Control.MOUSE_FILTER_STOP), "Settings sliders keep their drag instead of scrolling the page")
+	menu.show_room()
+	await settle()
+	expect(menu.safe_margin.size.x <= root.get_visible_rect().size.x + 1, "Travel room dropdowns stay inside a phone-width page")
 	menu.show_main()
 	await settle()
 

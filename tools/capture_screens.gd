@@ -18,6 +18,8 @@ func settle() -> void:
 func audit(menu: MenuUI, name: String, size: Vector2i) -> void:
 	await settle()
 	var width := root.get_visible_rect().size.x
+	if menu.safe_margin.size.x > width + 1: # unwrapped content can widen the whole page past the screen
+		problems.append("%dx%d %s: page is %d wide on a %d-wide screen" % [size.x, size.y, name, menu.safe_margin.size.x, width])
 	for node in menu.content.find_children("*", "Control", true, false):
 		var control := node as Control
 		if not control.is_visible_in_tree() or control.size.x < 1: continue

@@ -470,7 +470,9 @@ func show_paid_route(cinema: bool) -> void:
 			artwork.custom_minimum_size.y = 145
 			card.add_child(artwork)
 		else:
-			card.add_child(style.label("? · Scenery revealed when you reach this destination", 17, GameHUD.CREAM))
+			var hidden := style.label("? · Scenery revealed when you reach this destination", 17, GameHUD.CREAM)
+			hidden.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART # unwrapped, it widened the whole page past narrow screens
+			card.add_child(hidden)
 		var play := style.button("PLAY " + GameCatalog.country_name(place).to_upper() if manager and manager.unlocked else "LOCKED · ROUTE PACK REQUIRED", manager and manager.unlocked)
 		play.disabled = not manager or not manager.unlocked or manager.busy or not profile.can_visit(place)
 		if manager and manager.unlocked and not profile.can_visit(place): play.text = "? · REACH THIS STOP TO UNLOCK"
@@ -1034,4 +1036,8 @@ func apply_control_accessibility(node: Node) -> void:
 		node.add_theme_font_size_override("font_size", int(node.get_meta("base_font_size") * profile.settings.text_scale))
 		if node is Button:
 			node.custom_minimum_size.y = maxf(node.custom_minimum_size.y, 68 if profile.settings.large_controls else 56)
+		if node is OptionButton: # by default it widens to its longest item and pushes the page off narrow screens
+			node.fit_to_longest_item = false
+			node.clip_text = true
+			node.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	for child in node.get_children(): apply_control_accessibility(child)

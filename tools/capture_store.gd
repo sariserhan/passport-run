@@ -1,6 +1,6 @@
 extends SceneTree
 
-# App Store screenshots at 6.9" iPhone size (1320x2868, 3x of 440x956 logical).
+# App Store screenshots at 6.9" iPhone size (1320x2868 = 2.75x of 480x1043 logical).
 # Isolated save; writes artifacts/store/NN-name.png. Run rendered (not --headless).
 const PIXELS := Vector2i(1320, 2868)
 var game
@@ -21,7 +21,7 @@ func capture(name: String) -> void:
 func run() -> void:
 	DirAccess.make_dir_recursive_absolute("res://artifacts/store")
 	root.size = PIXELS
-	root.content_scale_size = PIXELS / 3
+	root.content_scale_size = Vector2i(480, 1043) # the game's 480-unit base; narrower than any real iPhone otherwise
 	var path := "user://store-capture.json"
 	for suffix in ["", ".tmp", ".bak"]: DirAccess.remove_absolute(path + suffix)
 	game = load("res://scenes/game.tscn").instantiate()
