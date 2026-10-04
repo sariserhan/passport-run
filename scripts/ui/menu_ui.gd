@@ -96,13 +96,18 @@ func setup(saved_profile: PlayerProfile, hud_style: GameHUD) -> void:
 	content = VBoxContainer.new()
 	content.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	content.add_theme_constant_override("separation", 14)
-	scroll.add_child(content)
+	# The scrollbar sits near the screen edge; this inner gutter keeps buttons clear of it.
+	var gutter := MarginContainer.new()
+	gutter.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	gutter.add_theme_constant_override("margin_right", 18)
+	scroll.add_child(gutter)
+	gutter.add_child(content)
 	root.resized.connect(update_safe_area)
 	update_safe_area()
 	update_safe_area.call_deferred()
 
 func update_safe_area() -> void:
-	SafeAreaMargins.apply(safe_margin, root.size, Vector4i(28, 48, 28, 38 + banner_padding))
+	SafeAreaMargins.apply(safe_margin, root.size, Vector4i(28, 48, 8, 38 + banner_padding))
 	# Landscape and short phones (iPhone SE) are too short for the key art; buttons come first.
 	if is_instance_valid(hero): hero.visible = root.size.x <= root.size.y and root.size.y >= 950 # short phones keep every button on one screen
 
