@@ -44,7 +44,9 @@ func run() -> void:
 	expect(game.ads.banner_wanted, "Menu screens show the bottom banner")
 	game.menu.set_banner_pixels(150)
 	expect(game.menu.banner_padding > 0 and game.menu.safe_margin.get_theme_constant("margin_bottom") >= 38 + game.menu.banner_padding, "The menu leaves room for the banner")
+	expect(game.menu.banner_strip.visible and game.menu.banner_strip.get_global_rect().end.y >= game.menu.root.size.y - 1 and game.menu.banner_strip.size.y >= game.menu.banner_padding, "A bar fills behind the banner down to the screen edge")
 	game.menu.set_banner_pixels(0)
+	expect(not game.menu.banner_strip.visible, "No bar without a banner")
 	game.remove_ads.unlocked = true
 	await process_frame
 	expect(not game.ads.banner_wanted, "Remove Ads hides the menu banner")

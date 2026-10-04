@@ -36,6 +36,7 @@ var settings_page := false
 var remove_ads: RoutePurchase
 var ads: AdService
 var banner_padding := 0 # logical units reserved under the menu for the bottom banner
+var banner_strip: ColorRect
 var cinema_purchase: RoutePurchase
 var cinema_page := false
 var special_page := false
@@ -82,6 +83,14 @@ func setup(saved_profile: PlayerProfile, hud_style: GameHUD) -> void:
 	margins.add_theme_constant_override("margin_top", 48)
 	margins.add_theme_constant_override("margin_bottom", 38)
 	root.add_child(margins)
+	# The banner sits above the home indicator (Google requires the safe area), so this
+	# bar fills behind it down to the screen edge and the banner reads as anchored.
+	banner_strip = ColorRect.new()
+	banner_strip.color = Color("0b1c26")
+	banner_strip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	banner_strip.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
+	banner_strip.hide()
+	root.add_child(banner_strip)
 	scroll = TouchScroll.new()
 	margins.add_child(scroll)
 	content = VBoxContainer.new()
@@ -100,6 +109,11 @@ func update_safe_area() -> void:
 func set_banner_pixels(pixels: int) -> void:
 	var window_height := maxf(1, DisplayServer.window_get_size().y)
 	banner_padding = ceili(pixels * root.size.y / window_height)
+	var inset := 0.0
+	if OS.has_feature("mobile"):
+		inset = maxf(0, DisplayServer.screen_get_size().y - DisplayServer.get_display_safe_area().end.y) * root.size.y / maxf(1, DisplayServer.screen_get_size().y)
+	banner_strip.visible = banner_padding > 0
+	banner_strip.offset_top = -(banner_padding + inset)
 	update_safe_area()
 
 func clear(title: String, subtitle: String) -> void:
