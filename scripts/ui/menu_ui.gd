@@ -210,7 +210,7 @@ func mode_button(mode: String, title: String) -> void:
 		mode_buttons[mode].disabled = true
 
 func show_play_hub() -> void:
-	clear("More ways to play", "Short trips, special mechanics, endless paths and paid routes.")
+	clear("More ways to play", "Short trips, special mechanics, endless paths and special routes.")
 	action("SHORT ADVENTURES · 3 COUNTRIES", true, show_trips)
 	action("ADVENTURE PLAY · SPECIAL MECHANICS", false, show_adventures)
 	mode_button("infinite", "INFINITE MEMORY")
@@ -218,8 +218,8 @@ func show_play_hub() -> void:
 	copy("Daily: same UTC date + difficulty = same route. Scores are local until online rankings are connected.", 15)
 	mode_button("kids", "KIDS ADVENTURE")
 	action("PLAY A CHALLENGE CODE", false, show_challenge)
-	action("SPECIAL EXPEDITIONS · PAID ROUTE", false, show_special_route)
-	action("CINEMA WORLDS · SEPARATE PAID ROUTE", false, show_cinema_route)
+	action("SPECIAL EXPEDITIONS", false, show_special_route)
+	action("CINEMA WORLDS", false, show_cinema_route)
 	if online_available:
 		copy("Online play uses an anonymous account and syncs your passport.", 15)
 		var daily_online := action("ONLINE DAILY", false, func(): start_requested.emit("online_daily", profile.difficulty))
@@ -305,7 +305,7 @@ func show_countries() -> void:
 			control.visible = query.is_empty() or query.to_lower() in (control.text + " " + str(GameCatalog.DESTINATIONS[id].aliases)).to_lower()
 	)
 	copy("Geography: mledoze/countries · ODbL 1.0", 15)
-	copy("%d destinations to explore: countries and territories. Special places have their own paid route." % GameCatalog.FREE_DESTINATIONS.size(), 15)
+	copy("%d destinations to explore: countries and territories. Special places have their own route." % GameCatalog.FREE_DESTINATIONS.size(), 15)
 	action("BACK", false, func(): pending_mode = ""; pending_arcade = ""; show_main())
 
 func show_passport() -> void:
@@ -837,8 +837,8 @@ func show_arcade() -> void:
 	var daily := action("DAILY ARCADE" if profile.can_visit(BalloonArcade.daily_destination(GameCatalog.today_utc())) else "? · DAILY ARCADE · REACH THIS STOP FIRST", false, func(): arcade_requested.emit("daily"))
 	daily.disabled = not profile.can_visit(BalloonArcade.daily_destination(GameCatalog.today_utc()))
 	action("WORLD BALLOON TOUR · 250 DESTINATIONS", true, func(): request_arcade("world"))
-	action("SPECIAL BALLOON TOUR · EXPEDITIONS PACK", false, func(): arcade_requested.emit("special"))
-	action("CINEMA BALLOON TOUR · CINEMA PACK", false, func(): arcade_requested.emit("cinema"))
+	action("SPECIAL EXPEDITIONS BALLOON TOUR", false, func(): arcade_requested.emit("special"))
+	action("CINEMA WORLDS BALLOON TOUR", false, func(): arcade_requested.emit("cinema"))
 	action("PRACTICE VISITED DESTINATIONS", false, show_arcade_practice)
 	action("BALLOON ACHIEVEMENTS", false, show_arcade_achievements)
 	action("BALLOON DAILY GOALS", false, show_arcade_daily_goals)
