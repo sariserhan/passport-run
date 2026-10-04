@@ -8,6 +8,10 @@
 
 config_version=5
 
+[admob]
+
+general/ios/app_id="ca-app-pub-4959375849193463~3682545892"
+
 [application]
 
 config/name="Passport Run"
@@ -38,6 +42,11 @@ window/handheld/orientation=6
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/admob/plugin.cfg")
+
+[passport_run]
+
+ads/interstitial_ios="ca-app-pub-4959375849193463/2177892535"
+ads/banner_ios="ca-app-pub-4959375849193463/5925565859"
 
 [rendering]
 

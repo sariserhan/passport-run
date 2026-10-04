@@ -141,6 +141,8 @@ func check_ad_rule() -> void:
 	expect(not ads.last_due and ads.failures == 8, "Remove Ads stops forced ads")
 	ads.remove_ads.free()
 	ads.free()
+	expect(str(ProjectSettings.get_setting(AdService.UNIT_SETTING)).begins_with("ca-app-pub-4959375849193463/") and str(ProjectSettings.get_setting(AdService.BANNER_SETTING)).begins_with("ca-app-pub-4959375849193463/"), "Real AdMob units are configured for release builds")
+	expect(AdService.unit_id(AdService.UNIT_SETTING, AdService.TEST_UNIT) == AdService.TEST_UNIT and AdService.unit_id(AdService.BANNER_SETTING, AdService.TEST_BANNER) == AdService.TEST_BANNER, "Debug builds only ever request Google's test ads")
 
 func run_tests() -> void:
 	var defaults := Vector4i(24, 24, 24, 26)

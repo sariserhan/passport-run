@@ -7,7 +7,8 @@ extends Node
 # runs first. Plugin calls live in admob_bridge.gd, loaded only on iOS.
 const EVERY := 4
 const PRODUCT_ID := "com.serhansari.passportrun.remove_ads"
-# Google's public test unit until the real AdMob unit goes in this project setting.
+# Real AdMob units live in these project settings; debug builds always use Google's
+# public test units so development never requests live ads (invalid-traffic risk).
 const UNIT_SETTING := "passport_run/ads/interstitial_ios"
 const TEST_UNIT := "ca-app-pub-3940256099942544/4411468910"
 const BANNER_SETTING := "passport_run/ads/banner_ios"
@@ -28,6 +29,9 @@ func _ready() -> void:
 	bridge.closed.connect(func(): showing = false; finished.emit())
 	bridge.banner_resized.connect(func(pixels: int): banner_resized.emit(pixels))
 	bridge.begin()
+
+static func unit_id(setting: String, test_unit: String) -> String:
+	return test_unit if OS.is_debug_build() else str(ProjectSettings.get_setting(setting, test_unit))
 
 # Returns true when an ad is now covering the screen; `finished` fires when it closes.
 func note_failure(mode: String) -> bool:

@@ -39,7 +39,7 @@ func load_ad() -> void:
 		ad.full_screen_content_callback.on_ad_dismissed_full_screen_content = close
 		ad.full_screen_content_callback.on_ad_failed_to_show_full_screen_content = func(_error): close()
 		loaded.emit()
-	InterstitialAdLoader.new().load(ProjectSettings.get_setting(AdService.UNIT_SETTING, AdService.TEST_UNIT), request, callback)
+	InterstitialAdLoader.new().load(AdService.unit_id(AdService.UNIT_SETTING, AdService.TEST_UNIT), request, callback)
 
 func ready_to_show() -> bool:
 	return ad != null
@@ -64,7 +64,7 @@ func show_banner() -> void:
 	banner_visible = true
 	if not started: return
 	if not banner:
-		banner = AdView.new(ProjectSettings.get_setting(AdService.BANNER_SETTING, AdService.TEST_BANNER), AdSize.get_current_orientation_anchored_adaptive_banner_ad_size(AdSize.FULL_WIDTH), AdPosition.BOTTOM)
+		banner = AdView.new(AdService.unit_id(AdService.BANNER_SETTING, AdService.TEST_BANNER), AdSize.get_current_orientation_anchored_adaptive_banner_ad_size(AdSize.FULL_WIDTH), AdPosition.BOTTOM)
 		banner.ad_listener.on_ad_loaded = func(): banner_resized.emit(banner.get_height_in_pixels() if banner_visible else 0)
 		banner.ad_listener.on_ad_failed_to_load = func(error: LoadAdError): print("AdMob: banner failed to load: ", error.message)
 		var request := AdRequest.new()
