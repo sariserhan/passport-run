@@ -345,6 +345,7 @@ func load_country(auto_preview: bool) -> void:
 	traveler = Traveler.new()
 	traveler.buddy_kind = profile.travel_buddy
 	traveler.kids = session.mode == "kids"
+	audio.kids = session.mode == "kids"
 	traveler.reduced_motion = profile.settings.reduced_motion
 	passport_stamp.ink_color = Color("276e62") if profile.activities.custom.ink == "jade" else Color("285f86") if profile.activities.custom.ink == "ocean" else Color("a24c40")
 	traveler.weather = profile.activities.custom.weather

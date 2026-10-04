@@ -71,7 +71,11 @@ func run_tests() -> void:
   expect(game.choose_tile(row, game.run.safe_lane(row)), "Streak accepts correct jump")
   await until(func(): return game.run.phase != RunState.Phase.JUMPING)
  expect(game.jump_streak == 3 and "STREAK" in game.hud.phase_hint.text, "Correct jumps build visible streak")
- expect(game.audio.effect.pitch_scale > 1, "Streak sound rises in pitch")
+ expect(not game.audio.kids and game.audio.effect.pitch_scale <= 1.06, "Outside Kids Mode the streak landing stays a natural footstep")
+ game.audio.kids = true
+ game.audio.play_streak(5)
+ expect(game.audio.effect.pitch_scale > 1.1, "Kids Mode streaks still rise in pitch")
+ game.audio.kids = false
  await capture("streak")
  var motion: float = game.environment.atmosphere.clock
  await create_timer(0.08).timeout
