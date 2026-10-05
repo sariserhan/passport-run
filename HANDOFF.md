@@ -88,6 +88,10 @@ Relevant artifacts: `artifacts/batch-*.png`, `artifacts/extras-*.png`, `artifact
 - TestFlight: builds 202610042039 (0.1.0) and 202610042109 (1.0, ads) uploaded with key `B64B7LA698` and issuer `98986775-96ac-42d1-bf30-abc0f3ba7135` via `tools/release_iphone.sh`.
 - Overflow fixes: OptionButtons no longer widen to their longest item, which made the travel room 497 units wide on a 480-unit portrait screen. Captures must use the 480-unit logical base.
 
+## Submitted to App Review (2026-10-05)
+
+Version 1.0 with build 202610050702 (adult traveler, all 282 souvenir pictures, difficulty ramp, ads, review prompt and Remove Ads offer) was submitted on 2026-10-05 07:08 UTC together with all four in-app purchases. State: WAITING_FOR_REVIEW. The review notes explain that there is no account, how ads work, and where each purchase and the parental gate are. Watch App Store Connect for review messages; a rejection arrives as Resolution Center notes on the version.
+
 ## World Tour difficulty ramp (2026-10-05)
 
 `GameCatalog.tour_ramp` grows the path with tour position (`JourneySession.ramp_step()`, absolute country index): +1 row every 10 countries (cap +6), preview -0.1 s per 10 (floor 2.0 s), and +1 lane from country 50 (cap 5). Kids Mode gets +1 row per 15 countries (cap +3) only. From country 30, jungle and ocean countries get Adventure Play's moving stones; from 60, ice countries drift (off for Kids and Reduced Motion). Applies to world, kids, trip, special, cinema and adventure; never to daily, infinite, practice, expeditions or online, so ranked scoring and the balance version are unchanged. Challenge links carry `ramp_start` so friends replay identical paths; links without it replay unramped. Tests: `tests/test_tour_ramp.gd`.
