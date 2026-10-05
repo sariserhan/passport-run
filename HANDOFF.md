@@ -94,7 +94,7 @@ Relevant artifacts: `artifacts/batch-*.png`, `artifacts/extras-*.png`, `artifact
 
 ## Pending art work (2026-10-05)
 
-Two image-generation tasks are specified in [art handoff](docs/art-handoff-souvenirs-and-traveler.md): realistic pictures for all 282 souvenirs (names and the source list are in `docs/souvenir-list.csv`), and redrawing the memory-game traveler with adult proportions. Both are blocked only on image-generation access; the Gemini API project had no credit.
+Round 1 delivered 192 of 282 souvenir pictures and an interim traveler. **Continue from [art handoff round 2](docs/art-handoff-2.md)**: 90 missing and 6 redo souvenirs (`docs/souvenir-art-todo.csv`), and a traveler redraw that meets measured proportions. Round 1 brief, for formats: realistic pictures for all 282 souvenirs (names and the source list are in `docs/souvenir-list.csv`), and redrawing the memory-game traveler with adult proportions. Both are blocked only on image-generation access; the Gemini API project had no credit.
 
 ## What remains
 
