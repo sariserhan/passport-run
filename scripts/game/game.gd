@@ -45,6 +45,7 @@ var failed_countries: Array[String] = []
 var special_start := "EVEREST"
 var adventure_start := "NO"
 var friend_steps: Array[int] = []
+var ice_drift := false # traveler slides on ice countries (Adventure Play, and late World Tour)
 var selected_decision_ms := 0
 var ghost: FriendGhost
 var extra_stage: TravelStage
@@ -314,6 +315,7 @@ func load_country(auto_preview: bool) -> void:
 	failure_reason = ""
 	decision_remaining = GameCatalog.DECISION_SECONDS
 	config = GameCatalog.difficulty(session.difficulty, session.balance_version) if session.mode != "tutorial" else config
+	if session.mode != "tutorial": GameCatalog.tour_ramp(config, session.ramp_step(), session.mode == "kids")
 	var stage_data := TravelExtras.stage(imported_challenge.get("kind", ""), imported_challenge.get("key", "")) if session.mode == "expedition" else {}
 	if not stage_data.is_empty(): config.row_count = int(stage_data.get("rows", 7 if imported_challenge.kind == "secret" else config.row_count))
 	run.reset(session.path_seed(), config, session.mode == "infinite")
@@ -327,7 +329,12 @@ func load_country(auto_preview: bool) -> void:
 			config.jump_height = 2.0
 			config.jump_seconds = 0.7
 	if not stage_data.is_empty(): grid.layout = stage_data.layout
-	grid.moving = session.mode == "adventure" and DestinationTheme.style(grid.destination_id) in ["jungle", "ocean"]
+	# Adventure Play mechanics also join the World Tour later on (never for Kids or Reduced Motion).
+	var step := session.ramp_step()
+	var tour_mechanics: bool = session.mode != "kids" and not profile.settings.reduced_motion
+	var theme := DestinationTheme.style(grid.destination_id)
+	grid.moving = theme in ["jungle", "ocean"] and (session.mode == "adventure" or (tour_mechanics and step >= GameCatalog.RAMP_MOVING_FROM))
+	ice_drift = theme == "ice" and (session.mode == "adventure" or (tour_mechanics and step >= GameCatalog.RAMP_ICE_FROM))
 	if session.mode == "expedition" and imported_challenge.get("kind") == "transport": grid.moving = imported_challenge.get("key") in ["boat", "cable_car"] and not profile.settings.reduced_motion
 	grid.transport_kind = imported_challenge.get("key", "") if session.mode == "expedition" and imported_challenge.get("kind") == "transport" else ""
 	grid.climb_step = 0.16 if not stage_data.is_empty() and stage_data.layout == "climb" else 0.0
@@ -474,10 +481,10 @@ func _process(delta: float) -> void:
 		return
 	if run.phase == RunState.Phase.PLAY and session.balance_version >= 2:
 		decision_remaining = maxf(0, decision_remaining - delta)
-		if session.mode == "adventure":
+		if grid.moving or ice_drift:
 			if grid.moving and run.completed_rows > 0:
 				traveler.position = standing_tile().position + Vector3.UP * 0.03
-			elif DestinationTheme.style(session.current_country()) == "ice":
+			elif ice_drift:
 				traveler.position = Vector3(standing_tile().position.x + (GameCatalog.DECISION_SECONDS - decision_remaining) * 0.075, traveler.position.y, traveler.position.z)
 		hud.update_decision(decision_remaining, GameCatalog.DECISION_SECONDS)
 		standing_tile().set_pressure(1.0 - decision_remaining / GameCatalog.DECISION_SECONDS)
@@ -870,7 +877,7 @@ func copy_challenge() -> void:
 	var route := session.challenge_route()
 	if route.is_empty():
 		return
-	var code := ChallengeCode.encode(session.challenge_seed(), session.difficulty, route, total_score(), session.balance_version, friend_steps)
+	var code := ChallengeCode.encode(session.challenge_seed(), session.difficulty, route, total_score(), session.balance_version, friend_steps, session.challenge_ramp_start())
 	DisplayServer.clipboard_set(ChallengeCode.link(code))
 	hud.modal_body.text = "Challenge link copied.\nSend it to a friend to replay\nthe same route and path."
 	telemetry.track("challenge_created", metadata())

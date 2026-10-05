@@ -77,6 +77,24 @@ static func difficulty(key: String, balance_version: int = BALANCE_VERSION) -> D
 		config.preview_seconds = 3.0
 	return config
 
+# World-tour difficulty ramp: the path grows as the trip goes on. `step` is the
+# country's absolute position on the tour (-1 = mode without a ramp). Daily,
+# Infinite, practice and online runs never ramp, so their scores stay comparable.
+const RAMP_MAX_ROWS := 6
+const RAMP_MODES := ["world", "kids", "trip", "special", "cinema", "adventure"]
+const RAMP_MOVING_FROM := 30 # jungle/ocean stones start to sway
+const RAMP_ICE_FROM := 60 # ice countries start to drift
+
+static func tour_ramp(config: DifficultyConfig, step: int, kids: bool) -> void:
+	if step < 0: return
+	if kids:
+		config.row_count += mini(3, step / 15)
+		return
+	var level := step / 10
+	config.row_count += mini(RAMP_MAX_ROWS, level)
+	config.preview_seconds = maxf(2.0, config.preview_seconds - 0.1 * level)
+	if level >= 5: config.lane_count = mini(5, config.lane_count + 1)
+
 static func country_name(id: String) -> String:
 	return str(DESTINATIONS.get(id, {"name": "Practice Island"}).name)
 

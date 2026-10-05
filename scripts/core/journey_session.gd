@@ -9,6 +9,7 @@ var planner := RoutePlanner.new()
 var fixed_route: Array[String] = []
 var branches: Array = []
 var route_start_index: int = 0
+var ramp_start: int = -1 # tour position of country_index 0; -1 = no difficulty ramp
 var country_index: int = 0
 var completed_countries: int = 0
 var banked_tiles: int = 0
@@ -23,6 +24,7 @@ func begin(selected_mode: String, selected_difficulty: String, home: String, new
 	country_index = 0
 	route_start_index = 0
 	completed_countries = 0
+	ramp_start = int(challenge.get("ramp_start", -1)) if mode == "challenge" else 0 if mode in GameCatalog.RAMP_MODES else -1
 	banked_tiles = 0
 	fixed_route.clear()
 	branches.clear()
@@ -107,6 +109,13 @@ func resume_world(discoveries: Array[String]) -> void:
 			return
 		travel_to(next[0])
 		route_start_index = country_index
+
+func ramp_step() -> int:
+	return -1 if ramp_start < 0 else ramp_start + country_index
+
+# Tour position of the first country in a shared challenge route, so a friend gets the same ramp.
+func challenge_ramp_start() -> int:
+	return -1 if ramp_start < 0 else ramp_start + route_start_index
 
 func challenge_seed() -> int:
 	return GameCatalog.derived_seed(seed_value, route_start_index) if mode in ["world", "kids"] else seed_value
