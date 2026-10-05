@@ -42,6 +42,7 @@ func _initialize() -> void:
    assert(pixels.get_pixelv(corner).a < 0.05, "Souvenir pictures are cut out on a transparent background: " + id)
  for file in DirAccess.get_files_at("res://assets/realistic/souvenirs"):
   if file.ends_with(".png"): assert(file.get_basename() in GameCatalog.DESTINATIONS, "Every souvenir picture belongs to a destination: " + file)
+ assert(pictured == 282, "All 282 destinations must have souvenir artwork: pictured %d" % pictured)
  print("Souvenir pictures: %d of %d destinations" % [pictured, GameCatalog.DESTINATIONS.size()])
  print("Unique artwork checks: all 282 destinations have separate images")
  quit()
