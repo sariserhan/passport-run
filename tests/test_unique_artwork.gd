@@ -23,5 +23,11 @@ func _initialize() -> void:
  var explorer: Variant = JSON.parse_string(FileAccess.get_file_as_string("res://resources/realistic-explorer.json"))
  assert(explorer is Array and explorer.size() == 16, "Runtime character-alignment data ships with all frames")
  assert(RealisticArt.surface_3d("stone").get_image().has_mipmaps(), "Memory-path surfaces retain distant texture detail without shimmer")
+ var souvenirs := {}
+ for id in GameCatalog.DESTINATIONS:
+  assert(id in DestinationTheme.SOUVENIRS, "Every destination has its own named souvenir: " + id)
+  assert(not souvenirs.has(DestinationTheme.souvenir(id)), "Souvenirs never repeat between destinations: " + id)
+  souvenirs[DestinationTheme.souvenir(id)] = id
+ assert(DestinationTheme.souvenir("RU") == "Painted nesting doll")
  print("Unique artwork checks: all 282 destinations have separate images")
  quit()
