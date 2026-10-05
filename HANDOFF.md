@@ -88,6 +88,10 @@ Relevant artifacts: `artifacts/batch-*.png`, `artifacts/extras-*.png`, `artifact
 - TestFlight: builds 202610042039 (0.1.0) and 202610042109 (1.0, ads) uploaded with key `B64B7LA698` and issuer `98986775-96ac-42d1-bf30-abc0f3ba7135` via `tools/release_iphone.sh`.
 - Overflow fixes: OptionButtons no longer widen to their longest item, which made the travel room 497 units wide on a 480-unit portrait screen. Captures must use the 480-unit logical base.
 
+## Pending art work (2026-10-05)
+
+Two image-generation tasks are specified in [art handoff](docs/art-handoff-souvenirs-and-traveler.md): realistic pictures for all 282 souvenirs (names and the source list are in `docs/souvenir-list.csv`), and redrawing the memory-game traveler with adult proportions. Both are blocked only on image-generation access; the Gemini API project had no credit.
+
 ## What remains
 
 1. **Done (install/launch only):** full `tools/check.sh` passed with zero failures at `4bd13f0`. That build was exported, development-signed and installed on the iPhone 14 Pro (`00008120-001E28663CE3C01E`) at `/private/tmp/passport-native-device`. It launched and kept running; it wrote the GLES3 shader cache to `Documents`. The app was not previously installed, so no save was overwritten. This is not gameplay acceptance; items 2–5 still need a person holding the phone.
