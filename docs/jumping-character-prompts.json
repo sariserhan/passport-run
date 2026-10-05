@@ -17,5 +17,13 @@
       "reference": "assets/realistic/robot-explorer.png",
       "prompt": "Use case: precise-object-edit. Edit target: supplied 4x4 transparent jumping-game sprite sheet. Correct ONLY the viewing direction: ALL SIXTEEN figures must be seen FROM BEHIND, backs toward camera, facing AWAY from viewer up the path. Full REAR VIEW for EVERY pose. Show back of head and tan backpack prominently; NO visible faces, eyes, chest, front visor, or side profiles in ANY frame. Shoulders square away from viewer, toes pointing away into the scene. Preserve subject identity, outfit/materials, photorealistic cinematic quality, natural lighting, exact row-major pose sequence and transparent background. Exact 4 columns and 4 rows, sixteen equal cells, one entire figure per cell with at least 12px transparent margins, no overlaps or cropping. All upright poses same scale and grounded boot baseline. Row 1: 0 calm upright standing back view, 1 thoughtful hand near chin seen from behind, 2 hand near forehead seen from behind, 3 worried standing back view. Row 2: 4 crouched jump anticipation rear view, 5 rising jump away from camera rear view knees bent, 6 midair arms wide jumping away from camera rear view, 7 landing crouch rear view. Row 3: 8 modest planted celebration with raised fist rear view, 9 retrieving passport from pocket rear view, 10 holding open passport in front of body while still seen FROM BEHIND, 11 stamping passport in front of body while still seen FROM BEHIND. Row 4: 12 losing balance back view, 13 stumbling away back view, 14 falling FORWARD AWAY from camera with backpack and back of head facing viewer, 15 prone face-down fall pointing AWAY from camera with back and backpack visible. Hands/passport may be partly occluded naturally in rear view; NEVER turn toward viewer to expose face or book. No floor, cast ground shadows, text, labels, border or grid. IMPORTANT: this character progresses UP THE SCREEN AWAY from the camera; its BACK must face the viewer consistently throughout ALL poses. Subject: same small friendly cream-metal and dark navy enamel robot, brown hiking boots, tan canvas backpack, physically textured brushed metal, rubber joints and fabric. Rear view means back of rounded metal head (no face visor or amber eyes), rear metal shell and prominently visible tan backpack."
     }
-  ]
+  ],
+  "measured_acceptance": {
+    "pose_0_width": 92,
+    "pose_0_height": 285,
+    "pose_0_height_to_width_ratio": 3.098,
+    "pose_0_head_height": 39.0,
+    "pose_0_head_to_total_ratio": 0.1368,
+    "pose_0_heads_tall": 7.31
+  }
 }

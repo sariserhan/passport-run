@@ -3,8 +3,10 @@ import sys
 import os
 from PIL import Image
 
-def slice_batch(batch_img_path, batch_index):
-    with open('docs/souvenir-list.csv', 'r') as f:
+def slice_batch(batch_img_path, batch_index, csv_file='docs/souvenir-art-todo.csv'):
+    if not os.path.exists(csv_file):
+        csv_file = 'docs/souvenir-list.csv'
+    with open(csv_file, 'r') as f:
         rows = list(csv.DictReader(f))
     
     batch_rows = rows[batch_index * 16 : (batch_index + 1) * 16]
@@ -88,6 +90,7 @@ def slice_batch(batch_img_path, batch_index):
 
 if __name__ == '__main__':
     if len(sys.argv) < 3:
-        print('Usage: python3 slice_souvenir_batch.py <image_path> <batch_index_0_based>')
+        print('Usage: python3 slice_souvenir_batch.py <image_path> <batch_index_0_based> [csv_path]')
         sys.exit(1)
-    slice_batch(sys.argv[1], int(sys.argv[2]))
+    csv_arg = sys.argv[3] if len(sys.argv) > 3 else 'docs/souvenir-art-todo.csv'
+    slice_batch(sys.argv[1], int(sys.argv[2]), csv_arg)
