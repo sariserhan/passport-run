@@ -35,6 +35,7 @@ var cached_tour: Array[String] = []
 var settings: Dictionary = {"music": 0.35, "sound": 0.65, "reduced_motion": false, "high_contrast": false, "haptics": true, "arcade_swap": false, "arcade_large": false, "large_controls": false, "text_scale": 1.0}
 var travel_buddy := "bird"
 var champion_seen := false
+var prompts_shown: Array[String] = [] # one-time asks already made (review-N, remove-ads-offer)
 var travel_journal: Dictionary = {}
 var journal_pages: Dictionary = {}
 var regions_seen: Array[String] = []
@@ -86,6 +87,9 @@ func load_profile() -> void:
 							if value is String and (field != "countries" or value in GameCatalog.DESTINATIONS): clean[field].append(value.left(160))
 				journal_pages[date] = clean
 	champion_seen = data.get("champion_seen", false) == true
+	prompts_shown.clear()
+	for key in data.get("prompts_shown", []) if data.get("prompts_shown") is Array else []:
+		if key is String and key.length() <= 32 and key not in prompts_shown: prompts_shown.append(key)
 	var journal: Variant = data.get("travel_journal")
 	if journal is Dictionary and journal.get("date") == GameCatalog.today_utc():
 		travel_journal = {"date": journal.date, "moments": [], "rewards": []}
@@ -206,6 +210,7 @@ func save() -> bool:
 	var data := {"version": SCHEMA_VERSION, "anonymous_id": anonymous_id, "home_country": home_country, "difficulty": difficulty, "tutorial_done": tutorial_done, "discoveries": discoveries, "history": history, "records": records, "badges": badges, "passport_cover": passport_cover, "daily_missions": daily_missions, "character_style": character_style, "room_display": room_display, "settings": settings, "arcade_saves": arcade_saves}
 	data["travel_buddy"] = travel_buddy
 	data["champion_seen"] = champion_seen
+	data["prompts_shown"] = prompts_shown.duplicate()
 	data["travel_journal"] = travel_journal
 	data["journal_pages"] = journal_pages
 	data["regions_seen"] = regions_seen
@@ -598,3 +603,10 @@ func record_recap(name: String, ids: Array, tiles: int) -> void:
 	extras.recaps.append({"name": name.left(64), "date": GameCatalog.today_utc(), "route": ids.duplicate(), "tiles": tiles})
 	extras.recaps = extras.recaps.slice(-10)
 	save()
+
+# Marks a one-time ask as used; true only the first time.
+func first_prompt(key: String) -> bool:
+	if key in prompts_shown: return false
+	prompts_shown.append(key)
+	save()
+	return true

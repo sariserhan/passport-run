@@ -19,6 +19,7 @@ signal banner_resized(pixels: int) # 0 when hidden; the menu pads its bottom by 
 var remove_ads: RoutePurchase
 var failures := 0
 var showing := false
+var ads_seen := 0 # full-screen ads closed this session
 var last_due := false # whether the latest failure was due an ad (testable off-device)
 var bridge: RefCounted
 var banner_wanted := false
@@ -26,7 +27,7 @@ var banner_wanted := false
 func _ready() -> void:
 	if OS.get_name() != "iOS": return
 	bridge = load("res://scripts/core/admob_bridge.gd").new()
-	bridge.closed.connect(func(): showing = false; finished.emit())
+	bridge.closed.connect(func(): showing = false; ads_seen += 1; finished.emit())
 	bridge.banner_resized.connect(func(pixels: int): banner_resized.emit(pixels))
 	bridge.begin()
 

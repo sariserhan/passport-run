@@ -144,6 +144,16 @@ func check_ad_rule() -> void:
 	expect(str(ProjectSettings.get_setting(AdService.UNIT_SETTING)).begins_with("ca-app-pub-4959375849193463/") and str(ProjectSettings.get_setting(AdService.BANNER_SETTING)).begins_with("ca-app-pub-4959375849193463/"), "Real AdMob units are configured for release builds")
 	expect(AdService.unit_id(AdService.UNIT_SETTING, AdService.TEST_UNIT) == AdService.TEST_UNIT and AdService.unit_id(AdService.BANNER_SETTING, AdService.TEST_BANNER) == AdService.TEST_BANNER, "Debug builds only ever request Google's test ads")
 
+func check_review_prompt() -> void:
+	for suffix in ["", ".bak", ".tmp"]: DirAccess.remove_absolute("user://review-test.json" + suffix)
+	var profile := PlayerProfile.new("user://review-test.json")
+	for id in ["FR", "IT"]: profile.discover(id)
+	expect(ReviewPrompt.due(profile, "world").is_empty(), "No review request before the third stamp")
+	profile.discover("ES")
+	expect(ReviewPrompt.due(profile, "world") == "review-3" and ReviewPrompt.due(profile, "kids").is_empty(), "Third stamp is due a review request, never in Kids Mode")
+	expect(profile.first_prompt("review-3") and not profile.first_prompt("review-3"), "Each review milestone is asked once")
+	expect(ReviewPrompt.due(PlayerProfile.new("user://review-test.json"), "world").is_empty(), "Asked prompts are remembered after reloading the save")
+
 func run_tests() -> void:
 	var defaults := Vector4i(24, 24, 24, 26)
 	var insets := SafeAreaMargins.calculate(Vector2(390, 844), Vector2i(1170, 2532), Rect2i(0, 177, 1170, 2253), defaults)
@@ -169,6 +179,7 @@ func run_tests() -> void:
 	await check_backdrop_lifetime()
 	await check_parent_gate()
 	check_ad_rule()
+	check_review_prompt()
 	menu.root.hide()
 	await check_globe_swipe()
 	for viewport_size in [Vector2i(480, 900), Vector2i(390, 844), Vector2i(375, 667), Vector2i(320, 568)]:

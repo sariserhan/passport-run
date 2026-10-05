@@ -133,6 +133,7 @@ func _ready() -> void:
 	add_child(ads)
 	menu.ads = ads
 	ads.banner_resized.connect(menu.set_banner_pixels)
+	ads.finished.connect(maybe_offer_remove_ads)
 	var character_purchase := RoutePurchase.new("com.serhansari.passportrun.travelers")
 	add_child(character_purchase)
 	menu.character_purchase = character_purchase
@@ -837,6 +838,8 @@ func complete_country() -> void:
 		actions.append({"text": "SHARE LINK + SAVE CARD", "callback": share_challenge})
 	actions.append({"text": "MAIN MENU", "callback": return_to_menu})
 	hud.show_journey_result(title, body, actions)
+	var review_key := ReviewPrompt.due(profile, session.mode)
+	if not review_key.is_empty() and profile.first_prompt(review_key): ReviewPrompt.request()
 	parcel.present(session.current_country(), int(profile.souvenir_counts.get(session.current_country(), 1)), profile.settings.reduced_motion)
 	if options.is_empty() and online:
 		submit_online()
@@ -1078,6 +1081,13 @@ func start_arcade(kind: String, destination: String = "") -> void:
 	arcade.exited.connect(return_to_menu)
 	arcade.round_failed.connect(func(): ads.note_failure("arcade"))
 	layer.add_child(arcade)
+
+# Once, after the second full-screen ad: offer Remove Ads (never in Kids Mode or without a price).
+func maybe_offer_remove_ads() -> bool:
+	if ads.ads_seen < 2 or session.mode == "kids" or remove_ads.unlocked or remove_ads.price.is_empty(): return false
+	if not profile.first_prompt("remove-ads-offer"): return false
+	RemoveAdsOffer.present(self, remove_ads)
+	return true
 
 func close_arcade() -> void:
 	if not is_instance_valid(arcade): return

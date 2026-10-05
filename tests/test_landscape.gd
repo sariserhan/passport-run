@@ -51,6 +51,16 @@ func run() -> void:
 	await process_frame
 	expect(not game.ads.banner_wanted, "Remove Ads hides the menu banner")
 	game.remove_ads.unlocked = false
+	game.remove_ads.price = "$4.99"
+	game.profile.prompts_shown.erase("remove-ads-offer")
+	game.ads.ads_seen = 1
+	expect(not game.maybe_offer_remove_ads(), "No Remove Ads offer after only one ad")
+	game.ads.ads_seen = 2
+	expect(game.maybe_offer_remove_ads() and not root.find_children("*", "RemoveAdsOffer", false, false).is_empty(), "The second ad brings the one-time Remove Ads offer")
+	expect(not game.maybe_offer_remove_ads(), "The Remove Ads offer is shown only once")
+	for offer in root.find_children("*", "RemoveAdsOffer", false, false): offer.queue_free()
+	game.ads.ads_seen = 0
+	game.remove_ads.price = ""
 	for physical in [Vector2i(844,390), Vector2i(667,375), Vector2i(390,844)]:
 		root.size = physical
 		await settle()
